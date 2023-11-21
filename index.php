@@ -2,14 +2,24 @@
   require_once ('connect.php');
   $query = ' SELECT * from `pim` ';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
+
+  // Assuming $result is your SQL query result
+  $records_per_page = 10;
+  $total_rows = mysqli_num_rows($result);
+  $total_pages = ceil($total_rows / $records_per_page);
+
+  // Get the current page or set it to 1 if not set
+  $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+  // Calculate the offset for the SQL query
+  $offset = ($current_page - 1) * $records_per_page;
 ?>
 
 <html>
   <head>
     <title> SGA PIM </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
   </head>
   <script type="text/javascript">$(document).ready( function () { $('#myTable').DataTable();} );</script>
   <body>
