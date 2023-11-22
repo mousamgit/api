@@ -18,47 +18,52 @@
 <html>
   <head>
     <title> SGA PIM </title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   
+    <?php include 'header.php'; ?>
+    
 
   </head>
-  <script type="text/javascript">$(document).ready( function () { $('#myTable').DataTable();} );</script>
-  <body>
 
+  <body>
+<div id="app">
 <div style="width:100%; border:1px solid #000; margin:10px; padding:20px;">
   <div style="display:inline-block; width:10%;"><a href="import.php">[ Import Products ]</a></div>
   <div style="display:inline-block; width:10%;"><a href="update.php">[ Update Products ]</a></div>
 </div>
 
 <?php
-  echo '<table id=myTable class=display><thead><tr>';
   $row=mysqli_fetch_assoc($result);
-  foreach ($row as $colName => $val) { echo '<th>'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>'; } // show column headers
+  echo '<div class="showcols" ><h2>columns you want to show</h2><div class="colscontainer">';
+  foreach ($row as $colName => $val) { 
+    $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+    echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
+  } // show column headers
+  echo '</div></div>';
+  echo '<table id=myTable class=display><thead><tr>';
+ 
+  foreach ($row as $colName => $val) { 
+    $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+    echo '<th :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>'; 
+  } // show column headers
   echo '</tr></thead><tbody>';
   mysqli_data_seek($result,0); //reset counter to 0
   while($row = mysqli_fetch_assoc($result)){
     echo '<tr>';
     foreach ($row as $colName => $val ) {
-      if( $colName == "sku" ){ echo '<td><a href="/pim/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
-      elseif ($colName == "image1" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "image2" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "image3" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "image4" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "image5" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "image6" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "packaging_image" && $row[$colName] != "" ) { echo '<td><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif ($colName == "image1" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      elseif ($colName == "image2" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      elseif ($colName == "image3" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      elseif ($colName == "image4" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      elseif ($colName == "image5" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      elseif ($colName == "image6" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      elseif ($colName == "packaging_image" && $row[$colName] == "" ) { echo '<td align=center>No Image</td>';}
-      else { echo '<td>'.$row[$colName].'</td>'; }
+      $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+      if( $colName == "sku" ){ echo '<td :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/pim/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
+      elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td  :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
+      elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td  :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
+      else { echo '<td :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'</td>'; }
     }
     echo '</tr>';
   }
   echo '</tbody></table>';
 ?>
+</div>
 
+<script>
+const callmyapp = myapp.mount('#app');
+</script>
 </body>
 </html>

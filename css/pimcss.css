@@ -1,0 +1,14 @@
+.colscontainer a {
+    border: 1px solid #222;
+    border-radius: 5px;
+    color: #222;
+    display: inline-block;
+    font-size: 14px;
+    margin: 0 5px 3px 0;
+    padding: 5px 15px;
+}
+.colscontainer a.active{
+    color:#fff;
+    background-color: #222;
+}
+.hidden{display: none;}
