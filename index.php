@@ -1,18 +1,19 @@
 <?php
   require_once ('connect.php');
-  $query = ' SELECT * from `pim` ';
+  $query = ' SELECT * from `pim`';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   // Assuming $result is your SQL query result
-  $records_per_page = 10;
+  $records_per_page = 100;
   $total_rows = mysqli_num_rows($result);
   $total_pages = ceil($total_rows / $records_per_page);
 
   // Get the current page or set it to 1 if not set
   $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-  // Calculate the offset for the SQL query
   $offset = ($current_page - 1) * $records_per_page;
+  $sql = "SELECT * FROM pim LIMIT $offset, $records_per_page";
+  $result = mysqli_query($con, $sql);
 ?>
 
 <html>
@@ -33,7 +34,7 @@
 
 <?php
   $row=mysqli_fetch_assoc($result);
-  echo '<div class="showcols" ><h2>columns you want to show</h2><div class="colscontainer">';
+  echo '<div class="showcols" value="'.$offset.'"><h2>columns you want to show</h2><div class="colscontainer">';
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
     echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
@@ -59,6 +60,13 @@
     echo '</tr>';
   }
   echo '</tbody></table>';
+
+  // Pagination links
+echo '<div class="pagination">';
+for ($page = 1; $page <= $total_pages; $page++) {
+    echo '<a href="?page=' . $page . '">' . $page . '</a>';
+}
+echo '</div>';
 ?>
 </div>
 
