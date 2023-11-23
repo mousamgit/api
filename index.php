@@ -37,14 +37,14 @@
   echo '<div class="showcols" value="'.$offset.'"><h2>columns you want to show</h2><div class="colscontainer">';
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-    echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
+    echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
   } // show column headers
   echo '</div></div>';
   echo '<table id=myTable class=display><thead><tr>';
  
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-    echo '<th :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>'; 
+    echo '<th :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>'; 
   } // show column headers
   echo '</tr></thead><tbody>';
   mysqli_data_seek($result,0); //reset counter to 0
@@ -52,10 +52,10 @@
     echo '<tr>';
     foreach ($row as $colName => $val ) {
       $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-      if( $colName == "sku" ){ echo '<td :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/pim/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
-      elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td  :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
-      elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td  :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
-      else { echo '<td :class="{ hidden: activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'</td>'; }
+      if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/pim/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
+      elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td  col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
+      elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td  col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
+      else { echo '<td  col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'</td>'; }
     }
     echo '</tr>';
   }

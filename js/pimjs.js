@@ -1,7 +1,7 @@
 const myapp = Vue.createApp({
     data(){
         return{
-            activeColumns: []
+            activeColumns: ["sku","product_title","brand","type","wholesale_aud","stone_price_retail_aud","image1"]
         }
     },
     methods: {
