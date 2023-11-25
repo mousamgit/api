@@ -1,4 +1,5 @@
 <?php
+ 'test';
   require_once ('connect.php');
   $query = ' SELECT * from `pim`';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
@@ -21,7 +22,7 @@
     <title> SGA PIM </title>
    
     <?php include 'header.php'; ?>
-    
+
 
   </head>
 
@@ -35,16 +36,16 @@
 <?php
   $row=mysqli_fetch_assoc($result);
   echo '<div class="showcols" value="'.$offset.'"><h2>columns you want to show</h2><div class="colscontainer">';
-  foreach ($row as $colName => $val) { 
+  foreach ($row as $colName => $val) {
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-    echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
+    echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>';
   } // show column headers
   echo '</div></div>';
   echo '<table id=myTable class=display><thead><tr>';
- 
-  foreach ($row as $colName => $val) { 
+
+  foreach ($row as $colName => $val) {
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-    echo '<th :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>'; 
+    echo '<th :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>';
   } // show column headers
   echo '</tr></thead><tbody>';
   mysqli_data_seek($result,0); //reset counter to 0
