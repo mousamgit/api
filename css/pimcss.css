@@ -1,5 +1,6 @@
 body{font-family: Verdana, Geneva, Tahoma, sans-serif;}
-.colscontainer a {
+.showcols, .showrows{width:50%; float: left;}
+a.btn {
     border: 1px solid #222;
     border-radius: 5px;
 
@@ -11,14 +12,16 @@ body{font-family: Verdana, Geneva, Tahoma, sans-serif;}
     color:#fff;
     background-color: #222;
 }
-.colscontainer a.active{
+a.btn.active{
     color: #222;
     background-color: #fff;
 }
 .hidden{display: none;}
-#myTable{       margin-top: 50px; text-align: left; font-size: 12px;}
+#myTable{  width:100%;  margin-top: 50px; text-align: left; font-size: 12px;}
 #myTable thead tr{background: #efefef;}
 #myTable tbody tr:nth-child(even) {background: #efefef;}
+#myTable .img-cell{background: #fff;}
+#myTable .img-cell img{width:80px;}
 #myTable td, #myTable th{padding:5px 10px;}
 .pagination{max-width: 100%; margin-top:20px; padding-bottom: 50px;}
 .pagination a{margin-right:10px; float: left; cursor: pointer; font-size: 10px;;}
