@@ -6,6 +6,19 @@ const myapp = Vue.createApp({
             filters: []
         }
     },
+    computed: {
+        filterUrl() {
+            // Construct the filter URL based on applied filters
+            // You may need to adjust this logic based on your specific requirements
+            const filterParams = this.filters.map(filter => {
+                return `${filter.selectedFilterColumn}=${filter.filterValue}`;
+            });
+
+            // Combine filter parameters into a URL
+            const filterUrl = '/pim/index.php?' + filterParams.join('&');
+            return filterUrl;
+        },
+    },
     methods: {
         toggleColumn(colName) {
             const index = this.activeColumns.indexOf(colName);
@@ -22,24 +35,14 @@ const myapp = Vue.createApp({
             // Mount the rowfilter component and push it to the filters array
             this.filters.push(filterApp.component('rowfilter'));
             filterApp.mount(); // Mount the component (this is required to create a new instance)
-            
-            console.log(filters);
+
         },
         removeFilter(index) {
             // Remove the filter at the specified index from the array
             this.filters.splice(index, 1);
         },
         applyFilters() {
-            // Implement logic to apply filters
-            // You can iterate over this.filters and access the selected columns and values
-            // Use this information to construct the filter conditions for your SQL query
+            console.log(filterUrl);
         }
     }
 });
-// $(document).ready( function () { 
-//     // $('#myTable').DataTable();
-//     $('.colfilter').click(function(){
-//         if($(this).hasClass('active')){$(this).removeClass('active')}
-//         else{$(this).addClass('active')}
-//     });
-// } );

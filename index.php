@@ -43,7 +43,7 @@
   echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" ></rowfilter>
   </div>
-  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" :href="filterurl">Filter</a></div>
+  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters()" >Filter</a></div>
   </div>';
 
 
