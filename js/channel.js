@@ -1,7 +1,11 @@
-const app = Vue.createApp({
+import { createApp } from 'vue';
+import AddChannel from './Components/Channel/AddChannel.vue';
+import ChannelsList from './Components/Channel/ChannelsList.vue';
+
+const app = createApp({
     data() {
         return {
-            channels: null // Initialize channels as null
+            channels: null, // Initialize channels as null
         };
     },
     mounted() {
@@ -12,7 +16,7 @@ const app = Vue.createApp({
         async fetchChannels() {
             try {
                 // Make an AJAX request to your PHP file
-                const response = await fetch('channel_data_detch.php');
+                const response = await fetch('channel_data_fetch.php');
 
                 // Parse the JSON response
                 const data = await response.json();
@@ -22,35 +26,11 @@ const app = Vue.createApp({
             } catch (error) {
                 console.error('Error fetching channels:', error);
             }
-        }
-    }
+        },
+    },
 });
 
-app.component('channels-table', {
-    props: ['channels'],
-    template: `
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Last Time Proceed</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="channel in channels" :key="channel.id">
-                    <td>{{ channel.id }}</td>
-                    <td>{{ channel.name }}</td>
-                    <td>{{ channel.type }}</td>
-                    <td>{{ channel.status === 1 ? 'Active' : 'Inactive' }}</td>
-                    <td>{{ channel.last_time_proceed }}</td>
-                </tr>
-            </tbody>
-        </table>
-    `
-});
+app.component('add-channel-modal', AddChannel);
+app.component('channels-list', ChannelsList);
 
 app.mount('#app');
-
