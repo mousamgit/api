@@ -21,13 +21,7 @@ myapp.component('rowfilter', {
             this.options.push(button.textContent.trim());
         });
     },
-    applyFiltersFromHtml() {
-        // Emit a custom event with selectedFilterColumn and filterValue
-        this.$emit('filter-changed', {
-            selectedColumn: this.selectedFilterColumn,
-            filterValue: this.filterValue,
-        });
-    },
+
     template: /*html*/ `
         <div class="filter-form">
             <label for="filter-column">Filter by Column:</label>
@@ -40,6 +34,13 @@ myapp.component('rowfilter', {
         </div>
     `,
     methods: {
+        applyFilters() {
+            // Emit a custom event with selectedFilterColumn and filterValue
+            this.$emit('filter-changed', {
+                selectedColumn: this.selectedFilterColumn,
+                filterValue: this.filterValue,
+            });
+        },
         removeFilter() {
             // You can implement logic to remove the filter component
             // For example, emit an event to the parent component

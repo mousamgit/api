@@ -7,12 +7,24 @@
   $records_per_page = 100;
   $total_rows = mysqli_num_rows($result);
   $total_pages = ceil($total_rows / $records_per_page);
-
+// Get filter and pagination parameters from the request
+  $selectedColumn = $_GET['selectedColumn'];
+  $filterValue = $_GET['filterValue'];
+  
   // Get the current page or set it to 1 if not set
   $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 
   $offset = ($current_page - 1) * $records_per_page;
-  $sql = "SELECT * FROM pim LIMIT $offset, $records_per_page";
+
+
+  // Construct the SQL query based on the selected column and filter value
+// $sql = "SELECT * FROM pim";
+// if (!empty($selectedColumn) && !empty($filterValue)) {
+//     $sql .= " WHERE $selectedColumn = '$filterValue'";
+// }
+// // Add LIMIT clause to the SQL query for pagination
+// $sql .= " LIMIT $offset, $recordsPerPage";
+$sql = "SELECT * FROM pim LIMIT $offset, $records_per_page";
   $result = mysqli_query($con, $sql);
 ?>
 
@@ -41,9 +53,9 @@
   } // show column headers
   echo '</div></div>';
   echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
-  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" ></rowfilter>
+  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @filter-changed="applyFilters"></rowfilter>
   </div>
-  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters()" >Filter</a></div>
+  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters()"  >Filter</a></div>
   </div>';
 
 

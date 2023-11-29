@@ -2,23 +2,11 @@ const myapp = Vue.createApp({
     data(){
         return{
             activeColumns: ["sku","product_title","brand","type","colour","clarity","carat","shape","measurement","wholesale_aud","stone_price_retail_aud","image1"],
-            filterurl: '/',
-            filters: []
+            products: [],    // Add an array to store your products
+            filters: [],     // Add an array to store filters
         }
     },
-    computed: {
-        filterUrl() {
-            // Construct the filter URL based on applied filters
-            // You may need to adjust this logic based on your specific requirements
-            const filterParams = this.filters.map(filter => {
-                return `${filter.selectedFilterColumn}=${filter.filterValue}`;
-            });
 
-            // Combine filter parameters into a URL
-            const filterUrl = '/pim/index.php?' + filterParams.join('&');
-            return filterUrl;
-        },
-    },
     methods: {
         toggleColumn(colName) {
             const index = this.activeColumns.indexOf(colName);
@@ -42,7 +30,8 @@ const myapp = Vue.createApp({
             this.filters.splice(index, 1);
         },
         applyFilters() {
-            console.log(filterUrl);
+          // You may need to adjust this logic based on your specific requirements
+
         }
     }
 });
