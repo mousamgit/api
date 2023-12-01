@@ -1,31 +1,43 @@
 <?php
-  require_once ('connect.php');
-  $query = ' SELECT * from `pim`';
-  $result = mysqli_query($con, $query) or die(mysqli_error($con));
+require_once('connect.php');
 
-  // Assuming $result is your SQL query result
-  $records_per_page = 100;
-  $total_rows = mysqli_num_rows($result);
-  $total_pages = ceil($total_rows / $records_per_page);
-// Get filter and pagination parameters from the request
-  $selectedColumn = $_GET['selectedColumn'];
-  $filterValue = $_GET['filterValue'];
-  
-  // Get the current page or set it to 1 if not set
-  $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+// Initial query without pagination or filtering
+$baseQuery = 'SELECT * FROM pim';
 
-  $offset = ($current_page - 1) * $records_per_page;
+// Extract all parameters and their values from the URL
+$urlData = $_GET;
 
+// Initialize an array to store conditions
+$conditions = [];
+foreach ($urlData as $key => $value) {
+    // Ensure that the key is alphanumeric to prevent SQL injection
+    if (ctype_alnum($key)) {
+        // Add the condition to the array
+        $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
+    }
+}
 
-  // Construct the SQL query based on the selected column and filter value
-// $sql = "SELECT * FROM pim";
-// if (!empty($selectedColumn) && !empty($filterValue)) {
-//     $sql .= " WHERE $selectedColumn = '$filterValue'";
-// }
-// // Add LIMIT clause to the SQL query for pagination
-// $sql .= " LIMIT $offset, $recordsPerPage";
-$sql = "SELECT * FROM pim LIMIT $offset, $records_per_page";
-  $result = mysqli_query($con, $sql);
+// Check if there are conditions to add
+if (!empty($conditions)) {
+    $baseQuery .= " WHERE " . implode(' AND ', $conditions);
+}
+
+// Calculate total rows for pagination
+$totalRowsResult = mysqli_query($con, $baseQuery);
+$total_rows = mysqli_num_rows($totalRowsResult);
+
+// Assuming $result is your SQL query result
+$records_per_page = 100;
+$total_pages = ceil($total_rows / $records_per_page);
+
+// Get the current page or set it to 1 if not set
+$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+$offset = ($current_page - 1) * $records_per_page;
+
+// Construct the SQL query with pagination
+$sql = $baseQuery . " LIMIT $offset, $records_per_page";
+$result = mysqli_query($con, $sql);
 ?>
 
 <html>
@@ -45,6 +57,11 @@ $sql = "SELECT * FROM pim LIMIT $offset, $records_per_page";
 </div>
 
 <?php
+// Extract all parameters and their values from the URL
+$urlData = $_GET;
+
+// Loop through the URL parameters and display the data
+
   $row=mysqli_fetch_assoc($result);
   echo '<div class="showcols" ><h2>Column Filter</h2><div class="colscontainer">';
   foreach ($row as $colName => $val) { 
@@ -53,9 +70,9 @@ $sql = "SELECT * FROM pim LIMIT $offset, $records_per_page";
   } // show column headers
   echo '</div></div>';
   echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
-  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @filter-changed="applyFilters"></rowfilter>
+  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @findindex="updateindex(index)"  @title-changed="updatetitle"  @value-changed="updatevalue"></rowfilter>
   </div>
-  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters()"  >Filter</a></div>
+  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a></div>
   </div>';
 
 
