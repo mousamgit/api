@@ -2,10 +2,11 @@ const myapp = Vue.createApp({
     data(){
         return{
             activeColumns: ["sku","product_title","brand","type","colour","clarity","carat","shape","measurement","wholesale_aud","stone_price_retail_aud","image1"],
-            filterurl: '/',
-            filters: []
+            products: [],    // Add an array to store your products
+            filters: [],     // Add an array to store filters
         }
     },
+
     methods: {
         toggleColumn(colName) {
             const index = this.activeColumns.indexOf(colName);
@@ -22,24 +23,15 @@ const myapp = Vue.createApp({
             // Mount the rowfilter component and push it to the filters array
             this.filters.push(filterApp.component('rowfilter'));
             filterApp.mount(); // Mount the component (this is required to create a new instance)
-            
-            console.log(filters);
+
         },
         removeFilter(index) {
             // Remove the filter at the specified index from the array
             this.filters.splice(index, 1);
         },
         applyFilters() {
-            // Implement logic to apply filters
-            // You can iterate over this.filters and access the selected columns and values
-            // Use this information to construct the filter conditions for your SQL query
+          // You may need to adjust this logic based on your specific requirements
+
         }
     }
 });
-// $(document).ready( function () { 
-//     // $('#myTable').DataTable();
-//     $('.colfilter').click(function(){
-//         if($(this).hasClass('active')){$(this).removeClass('active')}
-//         else{$(this).addClass('active')}
-//     });
-// } );
