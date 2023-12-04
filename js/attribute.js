@@ -1,6 +1,5 @@
 // channel.js
-import AddChannel from './components/channel/AddChannel.js';
-import ChannelList from './components/channel/ChannelList.js';
+import AttributeList from './components/channel/AttributeList.js';
 
 const app = Vue.createApp({
     data() {
@@ -10,22 +9,22 @@ const app = Vue.createApp({
     },
     mounted() {
         // Fetch data when the component is mounted
-        this.fetchChannels();
-        console.log('js',channelName)
+        this.fetchAttributes();
+
     },
     methods: {
-        async fetchChannels() {
+        async fetchAttributes() {
             try {
-                // Make an AJAX request to your PHP file
-                const response = await fetch('channel_data_fetch.php');
+                // Make an AJAX request to your PHP file to fetch attributes
+                const response = await fetch('attribute_data_fetch.php');
 
                 // Parse the JSON response
                 const data = await response.json();
 
-                // Update the channels data
-                this.channels = data;
+                // Update the attributes data
+                this.attributes = data;
             } catch (error) {
-                console.error('Error fetching channels:', error);
+                console.error('Error fetching attributes:', error);
             }
         },
         // handleChannelCreated(newChannel) {
@@ -36,7 +35,6 @@ const app = Vue.createApp({
     },
 });
 
-app.component('add-channel', AddChannel);
-app.component('channel-list', ChannelList);
+app.component('attribute-list', AttributeList);
 
 app.mount('#app');
