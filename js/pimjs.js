@@ -2,8 +2,11 @@ const myapp = Vue.createApp({
     data(){
         return{
             activeColumns: ["sku","product_title","brand","type","colour","clarity","carat","shape","measurement","wholesale_aud","stone_price_retail_aud","image1"],
-            products: [],    // Add an array to store your products
             filters: [],     // Add an array to store filters
+            filterarray: [],
+            filterindex: 0,
+            filtertitle: '',
+            filtervalue: '',
         }
     },
 
@@ -23,15 +26,45 @@ const myapp = Vue.createApp({
             // Mount the rowfilter component and push it to the filters array
             this.filters.push(filterApp.component('rowfilter'));
             filterApp.mount(); // Mount the component (this is required to create a new instance)
+            if (!this.filterarray[this.filterindex]) {
+                this.filterarray[this.filterindex] = ['', ''];
+            } else {
+                // If filterarray is already initialized, add a new empty filter
+                this.filterarray.push(['', '']);
+            }
 
+        },
+        updateindex(index){            
+            this.filterindex = index;
+        },
+        updatetitle(title) {
+            this.filtertitle = title;
+        },
+        updatevalue(value){
+            this.filtervalue = value;
         },
         removeFilter(index) {
             // Remove the filter at the specified index from the array
+            console.log('remove',index);
             this.filters.splice(index, 1);
+
         },
         applyFilters() {
-          // You may need to adjust this logic based on your specific requirements
+            // Log the filter data for now, you can use it as needed
+            console.log('Filter Changed:', this.filterarray);
 
-        }
-    }
+        },
+    },
+    watch: {
+        filtertitle() {
+            // Watch for changes in filterindex and call updatetitle
+            console.log('updatetitle', this.filtertitle, this.filterindex);
+            this.filterarray[this.filterindex][0] = this.filtertitle;
+        },
+        filtervalue() {
+            // Watch for changes in filterindex and call updatetitle
+            console.log('updatevalue', this.filtervalue, this.filterindex);
+            this.filterarray[this.filterindex][1] = this.filtervalue;
+        },
+    },
 });
