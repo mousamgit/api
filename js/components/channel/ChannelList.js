@@ -10,12 +10,7 @@ export default {
       channelId:0,
       channelIdGlobal:0,
       showModal: false,
-      newAttribute: [{
-        id:0,
-        channel_id:0,
-        attribute_name: '',
-        output_label: '',
-      }],
+      newAttribute: [],
       columns: [],
     };
   },
@@ -34,7 +29,7 @@ export default {
 
         this.channelIdGlobal = channel_id;
 
-        if(data.length == 0)
+        if(data==null)
         {
           this.newAttribute.push({
             id:0,
@@ -209,7 +204,7 @@ export default {
                   <input type="text" id="channelName" v-model="channelName" class="form-control"  required>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary mt-3">Add Channel</button>
+              <button type="submit" class="btn btn-primary mt-3">Save Channel</button>
             </form>
           </div>
         </div>
