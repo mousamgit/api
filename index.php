@@ -11,10 +11,8 @@ $urlData = $_GET;
 $conditions = [];
 foreach ($urlData as $key => $value) {
     // Ensure that the key is alphanumeric to prevent SQL injection
-    if (ctype_alnum($key)) {
-        // Add the condition to the array
         $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
-    }
+
 }
 
 // Check if there are conditions to add
@@ -72,7 +70,7 @@ $urlData = $_GET;
   echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @findindex="updateindex(index)"  @title-changed="updatetitle"  @value-changed="updatevalue"></rowfilter>
   </div>
-  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a></div>
+  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/" >Clear All Filters</a></div>
   </div>';
 
 
