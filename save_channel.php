@@ -14,10 +14,18 @@ $channelName = $data['channelName'];
 $channelType = $data['type']?$data['type']:'type1';
 $currentDateTime = date("Y-m-d H:i:s");
 
-// Insert channel data into the database
-$sql= "INSERT INTO channels (id,name, type,status,last_time_proceed) 
- VALUES ('$channelId','$channelName','$channelType',1,'$currentDateTime')
-ON DUPLICATE KEY UPDATE name = '$channelName'";
+// Insert/update channel data into the database
+if($channelId == 0)
+{
+    $sql= "INSERT INTO channels (name, type,status,last_time_proceed) 
+ VALUES ('$channelName','$channelType',1,'$currentDateTime')";
+}
+else
+{
+   $sql = "UPDATE channels SET name = '$channelName' WHERE id = '$channelId'";
+}
+
+
 if ($con->query($sql) === TRUE) {
 
     echo json_encode(['success' => true]);

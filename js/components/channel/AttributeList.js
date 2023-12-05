@@ -4,6 +4,7 @@ export default {
         return {
             attributes: [], // Populate this with your actual attribute data
             columns: [], // Populate this with your actual attribute data
+            channel_id:0
         };
     },
     mounted() {
@@ -21,8 +22,9 @@ export default {
 
                 // Update the attributes data
                 this.attributes = data;
+                this.channel_id = data[0]['channel_id'];
 
-                console.log(this.attributes);
+                console.log(this.channel_id);
             } catch (error) {
                 console.error('Error fetching attributes:', error);
             }
@@ -36,13 +38,15 @@ export default {
 
     },
     template: `
-        <div class="container mt-3">
+        <div class="container mt-3 text-end ">
             <!-- Add Attribute Button -->
-            <button type="button" @click="editAttribute(attributes={})" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAttributeModal">
-                Add Attribute
-            </button>
+<!--            <button type="button" @click="editAttribute(attributes={})" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAttributeModal">-->
+<!--                Add Attribute-->
+<!--            </button>-->
 
-            <!-- Bootstrap Modal for Adding Attributes -->
+            <a class="btn btn-success" :href="'/pim/channel_attribute_export.php?channel_id='+channel_id">
+            <i class="fas fa-file-export"></i> Export
+            </a>
             
 
             <!-- Attribute List Table -->
@@ -50,7 +54,7 @@ export default {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
+                        <th>Attribute Name</th>
                         <th>Output Label</th>
                         <th>Formatting</th>
                         <th>Action</th>
@@ -64,7 +68,7 @@ export default {
                         <td>{{ attribute.formatting }}</td>
                         <td>
                             <!-- Add buttons for edit, delete, and other actions as needed -->
-                            <a class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</a>
+                            <a class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
                             <!-- Add more buttons/actions here -->
                         </td>
                     </tr>

@@ -7,7 +7,7 @@ export default {
       isAddChannelModalOpen: false,
       isEditModalOpen: false,
       channelName: null,
-      channelId:null,
+      channelId:0,
       channelIdGlobal:0,
       showModal: false,
       newAttribute: [{
@@ -31,15 +31,23 @@ export default {
       try {
         const response = await fetch(`get-attribute_channelwise.php?channelId=${channel_id}`);
         const data = await response.json();
-        this.channelIdGlobal = channel_id;
-        this.newAttribute=data;
 
-        this.newAttribute.push({
-          id:0,
-          channel_id:this.channelIdGlobal,
-          attribute_name: '',
-          output_label: '',
-        });
+        this.channelIdGlobal = channel_id;
+
+        if(data.length == 0)
+        {
+          this.newAttribute.push({
+            id:0,
+            channel_id:this.channelIdGlobal,
+            attribute_name: '',
+            output_label: '',
+          });
+        }
+        else
+        {
+          this.newAttribute=data;
+        }
+
 
         console.log(this.newAttribute)
 
@@ -85,6 +93,7 @@ export default {
         attribute_name: '',
         output_label: '',
       });
+      console.log(this.newAttribute)
     },
     removeAttributeRow(index) {
       // Remove the row at the given index
@@ -96,7 +105,12 @@ export default {
       this.$emit('add-channel', channel);
       console.log('channel',channel.name)
       this.channelName = channel.name
-      this.channelId = channel.id
+      this.channelId = channel?channel.id:0;
+      if(channel.id == undefined)
+      {
+        this.channelId =0;
+      }
+
       // Open the edit modal
       this.isEditModalOpen = true;
     },
@@ -110,7 +124,7 @@ export default {
         });
 
         const data = await response.json();
-        console.log(data)
+
 
         if (data.success) {
           console.log('Channel saved successfully!');
@@ -121,6 +135,7 @@ export default {
           this.resetForm();
         } else {
           console.error('Error saving attribute:', data.error);
+          this.resetForm();
         }
 
     },
@@ -187,7 +202,7 @@ export default {
           <div class="modal-body">
             <form @submit.prevent="submitForm">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <label for="channelName" class="form-label">Channel Name:</label>
                   <!-- Use 'channelName' for v-model -->
                   <input type="hidden" id="channelId" v-model="channelId" class="form-control" >
@@ -223,13 +238,13 @@ export default {
                              </div>
                              </div>
                             </div>
-                            {{newAttribute}}
+                            
                                 <div v-for="(attribute, index) in newAttribute" :key="index" class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="mb-3"> 
                                          <select v-model="attribute.attribute_name" class="form-control" required>
                                             <option v-for="column in columns" :key="column.COLUMN_NAME" :value="column.COLUMN_NAME">{{ column.COLUMN_NAME }}</option>
-                                            </select>                                        
+                                          </select>                                        
 
                                          </div>
                                     </div>
