@@ -51,8 +51,16 @@ const myapp = Vue.createApp({
         },
         applyFilters() {
             // Log the filter data for now, you can use it as needed
+            var pimurl ='?';
             console.log('Filter Changed:', this.filterarray);
+            this.filterarray.forEach((filter, index) => {
+                const [title, value] = filter;
+                pimurl += title +'='+value +'&';
 
+                
+                // You can perform additional actions with title and value as needed
+            });
+            window.open(pimurl);
         },
     },
     watch: {

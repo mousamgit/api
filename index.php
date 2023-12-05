@@ -1,7 +1,28 @@
 <?php
-require_once ('connect.php');
-$query = ' SELECT * from `pim`';
-$result = mysqli_query($con, $query) or die(mysqli_error($con));
+require_once('connect.php');
+
+// Initial query without pagination or filtering
+$baseQuery = 'SELECT * FROM pim';
+
+// Extract all parameters and their values from the URL
+$urlData = $_GET;
+
+// Initialize an array to store conditions
+$conditions = [];
+foreach ($urlData as $key => $value) {
+    // Ensure that the key is alphanumeric to prevent SQL injection
+        $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
+
+}
+
+// Check if there are conditions to add
+if (!empty($conditions)) {
+    $baseQuery .= " WHERE " . implode(' AND ', $conditions);
+}
+
+// Calculate total rows for pagination
+$totalRowsResult = mysqli_query($con, $baseQuery);
+$total_rows = mysqli_num_rows($totalRowsResult);
 
 // Assuming $result is your SQL query result
 $records_per_page = 100;
@@ -43,7 +64,7 @@ $result = mysqli_query($con, $sql);
     echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" ></rowfilter>
   </div>
-  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" :href="filterurl">Filter</a></div>
+  <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/" >Clear All Filters</a></div>
   </div>';
 
 
