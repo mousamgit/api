@@ -66,7 +66,7 @@ const myapp = Vue.createApp({
     watch: {
         filtertitle() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatetitle', this.filtertitle, this.filterindex);
+            console.log('updatetitle', this.filtertitle, this.filterindex);
             this.filterarray[this.filterindex][0] = this.filtertitle;
         },
         filtervalue() {
