@@ -7,6 +7,8 @@ myapp.component('rowfilter', {
             filterTitle: '',
             filterValue: '',
             filterType: '',
+            filterFrom: 0,
+            filterTo: 0,
             options: [], // Add an array to store options
 
         };
@@ -32,16 +34,16 @@ myapp.component('rowfilter', {
                 <option v-for="option in options" :value="option">{{ option }}</option>
             </select>
             
-            <select v-model="filterType" id="filter-column" @change="updatefilterType">
+            <select v-model="filterType" id="filter-column"  @change="updatefilterType">
                 <option value="equals">equals</option>
                 <option value="range">range</option>
             </select>
             <label v-if="this.filterType === 'equals'" for="filter-value">Filter Value:</label>
             <input v-if="this.filterType === 'equals'" v-model="filterValue" type="text" id="filter-value" @input="updatefiltervalue">
             <label v-if="this.filterType === 'range'" for="filter-from">from:</label>
-            <input v-if="this.filterType === 'range'" v-model="filterValue" type="text" class="inputnumber" id="filter-from" @input="updatefilterfrom">
+            <input v-if="this.filterType === 'range'" v-model="filterFrom" type="text" class="inputnumber" id="filter-from" @input="updatefilterfrom">
             <label v-if="this.filterType === 'range'" for="filter-to">to:</label>
-            <input v-if="this.filterType === 'range'" v-model="filterValue" type="text" class="inputnumber" id="filter-to" @input="updatefilterto">
+            <input v-if="this.filterType === 'range'" v-model="filterTo" type="text" class="inputnumber" id="filter-to" @input="updatefilterto">
             <button @click="removeFilter">Remove</button>
         </div>
     `,
@@ -51,7 +53,16 @@ myapp.component('rowfilter', {
             this.$emit('findindex', this);
         },
         updatefilterType(){
-
+            this.$emit('type-changed', this.filterType);
+            this.$emit('findindex', this);
+        },
+        updatefilterfrom(){
+            this.$emit('from-changed', this.filterFrom);
+            this.$emit('findindex', this);
+        },
+        updatefilterto(){
+            this.$emit('to-changed', this.filterTo);
+            this.$emit('findindex', this);
         },
         updatefiltervalue(){
             this.$emit('value-changed', this.filterValue);

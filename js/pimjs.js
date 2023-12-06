@@ -7,6 +7,9 @@ const myapp = Vue.createApp({
             filterindex: 0,
             filtertitle: '',
             filtervalue: '',
+            filtertype: '',
+            filterfrom:0,
+            filterto:99999999,
         }
     },
 
@@ -37,11 +40,20 @@ const myapp = Vue.createApp({
         updateindex(index){            
             this.filterindex = index;
         },
-        updatetitle(title) {
-            this.filtertitle = title;
+        updatetitle(value) {
+            this.filtertitle = value;
+        },
+        updatetype(value) {
+            this.filtertype = value;
         },
         updatevalue(value){
             this.filtervalue = value;
+        },
+        updatefrom(value){
+            this.filterfrom = value;
+        },
+        updateto(value){
+            this.filterto = value;
         },
         removeFilter(index) {
             // Remove the filter at the specified index from the array
@@ -54,8 +66,13 @@ const myapp = Vue.createApp({
             var pimurl ='?';
             console.log('Filter Changed:', this.filterarray);
             this.filterarray.forEach((filter, index) => {
-                const [title, value] = filter;
-                pimurl += title +'='+value +'&';
+                const [title, value,type, from, to] = filter;
+                if(type == 'equals'){
+                    pimurl += title +'='+value +'&';
+                }
+                if(type == 'range'){
+                    pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
+                }
 
                 
                 // You can perform additional actions with title and value as needed
@@ -73,6 +90,21 @@ const myapp = Vue.createApp({
             // Watch for changes in filterindex and call updatetitle
             // console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][1] = this.filtervalue;
+        },
+        filtertype() {
+            // Watch for changes in filterindex and call updatetitle
+            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            this.filterarray[this.filterindex][2] = this.filtertype;
+        },
+        filterfrom() {
+            // Watch for changes in filterindex and call updatetitle
+            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            this.filterarray[this.filterindex][3] = this.filterfrom;
+        },
+        filterto() {
+            // Watch for changes in filterindex and call updatetitle
+            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            this.filterarray[this.filterindex][4] = this.filterto;
         },
     },
 });

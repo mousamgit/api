@@ -79,7 +79,7 @@ $urlData = $_GET;
   } // show column headers
   echo '</div></div>';
   echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
-  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @findindex="updateindex(index)"  @title-changed="updatetitle"  @value-changed="updatevalue"></rowfilter>
+  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
   </div>
   <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/" >Clear All Filters</a></div>
   </div>';
