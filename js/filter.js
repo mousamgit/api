@@ -1,6 +1,8 @@
 myapp.component('rowfilter', {
     props: {
-
+        dataindex: {
+            type: Number,
+          },
       },
     data() {
         return {
@@ -28,7 +30,7 @@ myapp.component('rowfilter', {
 
 
     template: /*html*/ `
-        <div class="filter-form">
+        <div class="filter-form" :key="dataindex">
             <label for="filter-column">Filter by Column:</label>
             <select v-model="filterTitle" id="filter-column" @change="updatefilterTitle">
                 <option v-for="option in options" :value="option">{{ option }}</option>
@@ -72,7 +74,9 @@ myapp.component('rowfilter', {
         removeFilter() {
             // You can implement logic to remove the filter component
             // For example, emit an event to the parent component
-            this.$emit('remove-filter', this);
+            this.$emit('findindex', this);
+            this.$emit('remove-filter');
+            console.log('index',this.dataindex);
         }
     }
 });

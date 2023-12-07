@@ -10,8 +10,9 @@ $urlData = $_GET;
 // Initialize an array to store conditions
 $conditions = [];
 foreach ($urlData as $key => $value) {
+  
     // Ensure that the key is alphanumeric to prevent SQL injection
-    if (is_numeric($value)) {
+    if ($key != 'page') {
       // For numeric values, handle greater than and less than conditions
       if (strpos($key, '>=') === 0) {
           $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
@@ -20,9 +21,7 @@ foreach ($urlData as $key => $value) {
       } else {
           $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
       }
-  } else {
-      $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
-  }
+  } 
 
 }
 
@@ -79,7 +78,7 @@ $urlData = $_GET;
   } // show column headers
   echo '</div></div>';
   echo '<div class="showrows" ><h2>Row Filter</h2><div class="rowscontainer">
-  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter(index)" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
+  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter()" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
   </div>
   <div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/" >Clear All Filters</a></div>
   </div>';
@@ -108,8 +107,14 @@ $urlData = $_GET;
 
   // Pagination links
 echo '<div class="pagination">';
+if(strpos($_SERVER['REQUEST_URI'], "?") !==  false){
+    $pageurl = $_SERVER['REQUEST_URI'] . 'page=';
+}
+else{
+  $pageurl = '?page=';
+}
 for ($page = 1; $page <= $total_pages; $page++) {
-    echo '<a href="?page=' . $page . '">' . $page . '</a>';
+    echo '<a href="' . $pageurl . $page .'">' . $page . '</a>';
 }
 echo '</div>';
 ?>

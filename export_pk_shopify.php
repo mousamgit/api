@@ -6,7 +6,7 @@
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/pk-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy");
+  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy","Variant Inventory Tracker","Variant Fulfillment Service");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -49,6 +49,7 @@
     // Create handle
     $handle ="";
     if( substr($row[sku],0,3) == "TDR" || substr($row[sku],0,3) == "TPR" ){ $handle = "argyle-tender-diamond-".$row[shape]."-".$row[colour]."-".$row[clarity]."-".$row[sku]; $handle = strtolower($handle); } elseif( strtolower($row[type]) == "loose diamonds" ) { $handle = ""; $handle = "argyle-pink-diamond-".$row[shape]."-".$row[colour]."-".$row[clarity]."-".$row[sku]; $handle = strtolower($handle); } else{ $handle = ""; $handle = str_replace(" ","-",strtolower($row[product_title])) ."-". strtolower($row[sku]); }
+    $handle = str_replace("--","-",$handle);
 
     // Purchase Cost Calculation
     $purchase_cost = "";
@@ -99,15 +100,18 @@
         16 => $imageURL,
         17 => $status,
         18 => $row[colour],
-        19 => "deny"
+        19 => "deny",
+        20 => "shopify",
+        21 => "manual",
       );
 
       fputcsv($fp, $content);
   }
 
-
+$count = mysqli_num_rows($result) -1;
 date_default_timezone_set('Australia/Sydney');
 echo "PK Export Completed<br>";
+echo "Total Products Uploaded: ".$count."<br>";
 echo date("Y-m-d G:i a");
 
   fclose($fp);

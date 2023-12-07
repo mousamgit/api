@@ -6,7 +6,7 @@
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/sd-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Sapphire Dreams Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Inventory Policy","Metafield:custom.metal_colour","Metafield:custom.metal_info","Metafield:custom.stone_info","Metafield:custom.stone_shape","Metafield:title_tag","Metafield:custom.certification","Metafield:custom.specifications","Metafield:custom.stone_colour","Metafield:custom.stone_specifications");
+  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Sapphire Dreams Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Inventory Policy","Metafield:custom.metal_colour","Metafield:custom.metal_info","Metafield:custom.stone_info","Metafield:custom.stone_shape","Metafield:title_tag","Metafield:custom.certification","Metafield:custom.specifications","Metafield:custom.stone_colour","Metafield:custom.stone_specifications","Variant Inventory Tracker","Variant Fulfillment Service");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -21,12 +21,18 @@
   $type_mod = str_replace(["rings","pendants","necklaces","bracelets","earring"],["ring","pendant","necklace","bracelet","earrings"],strtolower($row[type]));
 
         // Metafield: Stone Specifications
-        if ( preg_match("/Cert/i", $row[specifications]) > 0) { $stone_specifications = "ID No.: ".str_replace("SDS","",$row[sku])."<br>Colour: ".strtoupper($row[colour]).str_replace("Unheated"," NH",$row[treatment])."<br>Shape: ".strtoupper($row[shape])."<br>Weight: ".$row[carat]."ct<br>Size: ".$row[measurement]."<br>Origin: AUSTRALIA"; $stone_specifications = str_replace("  "," ",$stone_specifications);}
+        if ( strpos($row[specifications], "Certificate") !== false) { $stone_specifications = "ID No.: ".str_replace("SDS","",$row[sku])."<br>Colour: ". strtoupper($row[colour])."<br>Shape: ".strtoupper($row[shape])."<br>Weight: ".$row[carat]."ct<br>Size: ".$row[measurement]."<br>Origin: AUSTRALIA";}
         else { $stone_specifications = "";}
 
         // Metafield: Certification
-        if ( preg_match("/Cert/i", $row[specifications]) > 0) { $certification = "YES"; }
+        if ( strpos($row[specifications], "Certificate") !== false)  { $certification = "YES"; }
         else { $certification = "NO";}
+
+        //Descriptions, if loose sapphire generate description else import from field description
+        if (strtolower($type) == "loose sapphires") 
+          if( strtolower($treatment) == "unheated") { $description = "An unheated Australian " .  ucfirst(strtlower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . "."; }
+          else {$description = "An Australian " .  ucfirst(strtlower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . ".";  }
+        else { $description = $row[description];}
 
         //check images
         $imageURL = "";
@@ -59,9 +65,13 @@
 
         // Create handle
         $handle = "";
-        if( strtolower($row[type]) == "loose sapphires" ){ $handle = $row[shape]."-".$row[colour]."-australian-sapphire-".$row[sku]; $handle = str_replace(" ","-",strtolower($handle)); }
-        else{ $handle = $title_mod."-".$row[colour]."-".str_replace("unheated", "nh", strtolower($row[treatment]))."-".str_replace("  "," ",str_replace("&","",$row[metal_composition]))."-".$type_mod."-".$row[sku];
-        $handle = str_replace([" ","--"],"-",strtolower($handle));}
+        if( strtolower($row[type]) == "loose sapphires" )
+          if ( strtolower($row[treatment]) == "unheated") { $handle = $row[shape]."-".$row[colour].$row[edl]."-australian-sapphire-".$row[sku]; }
+          else { $handle = $row[shape]."-".$row[colour]."-australian-sapphire-".$row[sku]; }
+        else{ 
+          if ( strtolower($row[treatment]) == "unheated") {$handle = $title_mod."-".$row[colour]."-".$row[edl3]."-".str_replace("  "," ",str_replace("&","",$row[metal_composition]))."-".$type_mod."-".$row[sku]; }
+          else {$handle = $title_mod."-".$row[colour]."-".str_replace("  "," ",str_replace("&","",$row[metal_composition]))."-".$type_mod."-".$row[sku];}
+        } $handle = str_replace([" ","--"],"-",strtolower($handle));
 
         $purchase_cost = "";
         if( strtolower($row[type]) == "loose sapphires" ) { $purchase_cost = $row[purchase_cost_aud] * $row[carat]; $purchase_cost = round($purchase_cost,2); } else{ $purchase_cost = $row[purchase_cost_aud]; }
@@ -115,7 +125,7 @@
             0 => $row[sku],
             1 => $handle,
             2 => $command,
-            3 => $row[description],
+            3 => $description,
             4 => "REPLACE",
             5 => $row[shopify_qty],
             6 => "REPLACE",
@@ -138,14 +148,20 @@
             23 => $certification,
             24 => $row[specifications],
             25 => $row[colour],
-            26 => $stone_specifications
+            26 => $stone_specifications,
+            27 => "shopify",
+            28 => "manual",
+
           );
 
           fputcsv($fp, $content);
   }
 
+$count = mysqli_num_rows($result) - 1;
+
 date_default_timezone_set('Australia/Sydney');
 echo "SD Export Completed!<br>";
+echo "Total Products Uploaded: ".$count."<br>";
 echo date("Y-m-d G:i a");
 
 

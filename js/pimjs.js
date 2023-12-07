@@ -28,6 +28,19 @@ const myapp = Vue.createApp({
             const filterApp = Vue.createApp({});
             // Mount the rowfilter component and push it to the filters array
             this.filters.push(filterApp.component('rowfilter'));
+
+            // Update filterarray with an empty filter at the correct index
+            const newIndex = this.filters.length - 1; // Get the last index
+            if (!this.filterarray[newIndex]) {
+                this.filterarray[newIndex] = ['', ''];
+            }
+            
+            // Use $nextTick to ensure DOM has been updated
+            this.$nextTick(() => {
+                // Update the filterindex to the new index
+                this.filterindex = newIndex;
+            });
+            
             filterApp.mount(); // Mount the component (this is required to create a new instance)
             if (!this.filterarray[this.filterindex]) {
                 this.filterarray[this.filterindex] = ['', ''];
@@ -55,10 +68,19 @@ const myapp = Vue.createApp({
         updateto(value){
             this.filterto = value;
         },
-        removeFilter(index) {
+        removeFilter() {
             // Remove the filter at the specified index from the array
-            console.log('remove',index);
-            this.filters.splice(index, 1);
+           
+            // this.filters.forEach((filter, index) =>{
+            //     console.log(index, filter);
+            // });
+            // this.filters.splice(this.filterindex, 1);
+                // Find the index of the filter in filters array
+            const indexToRemove = this.filters.indexOf(this.filters[this.filterindex]);
+            console.log('indexToRemove',indexToRemove);
+            if (indexToRemove !== -1) {
+                this.filters.splice(indexToRemove, 1);
+            }
 
         },
         applyFilters() {
@@ -77,13 +99,13 @@ const myapp = Vue.createApp({
                 
                 // You can perform additional actions with title and value as needed
             });
-            window.open(pimurl);
+            window.location.replace(pimurl);
         },
     },
     watch: {
         filtertitle() {
             // Watch for changes in filterindex and call updatetitle
-            console.log('updatetitle', this.filtertitle, this.filterindex);
+            // console.log('updatetitle', this.filtertitle, this.filterindex);
             this.filterarray[this.filterindex][0] = this.filtertitle;
         },
         filtervalue() {
