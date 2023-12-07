@@ -1,9 +1,13 @@
 <?php
+  $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
+  include_once ('mkdir.php');
+
   $query = 'SELECT * from pim WHERE (image1<>"" AND brand = "Pink Kimberley Diamonds" AND retail_aud > 0 AND description<>"" AND sync_shopify=1) OR (image1<>"" AND brand = "Blush Pink Diamonds" AND retail_aud > 0 AND description<>"" AND sync_shopify=1) OR (image1<>"" AND brand LIKE "%Argyle Pink%" AND SKU NOT LIKE "%MEL%" AND SKU NOT LIKE "%STX%" AND retail_aud > 0 AND description<>"" AND sync_shopify=1) OR (image1<>"" AND brand LIKE "%Argyle Origin%" AND SKU NOT LIKE "%MEL%" AND retail_aud > 0 AND description<>"" AND sync_shopify=1);';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/pk-shopify.csv';
+
+  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/public_html/export/pk-shopify.csv';
   $fp = fopen($filepath, 'w');
 
   $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy","Variant Inventory Tracker","Variant Fulfillment Service");
@@ -108,11 +112,16 @@
       fputcsv($fp, $content);
   }
 
+fclose($fp);
 $count = mysqli_num_rows($result) -1;
 date_default_timezone_set('Australia/Sydney');
-echo "PK Export Completed<br>";
-echo "Total Products Uploaded: ".$count."<br>";
-echo date("Y-m-d G:i a");
+echo "<h2>PK Export Completed</h2><br>";
+echo "Total Products Exported to CSV: ".$count."<br>";
+echo "File URL: <a href='https://samsgroup.info/export/pk-shopify.csv'>https://samsgroup.info/export/pk-shopify.csv</a><br><br>";
+echo date("Y-m-d G:i a")."<br>";
+$endScriptTime=microtime(TRUE);
+$totalScriptTime=$endScriptTime-$startScriptTime;
+echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds';
 
-  fclose($fp);
+
 ?>
