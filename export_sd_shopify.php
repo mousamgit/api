@@ -57,9 +57,10 @@
         //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "";
         if ($row[shopify_qty] > 0) {
-        if ($status == "active") { $command = "MERGE";  }
-        if ($status == "draft") { $command = "MERGE"; }
-        }else { $command = "DELETE";}
+          if ($status == "active") { $command = "MERGE";  }
+          if ($status == "draft") { $command = "MERGE"; }
+          if ($row[deletion] == 1) { $command = "DELETE"; }
+        }else { $command = "DELETE";} 
 
 
         // Stone price vs item price

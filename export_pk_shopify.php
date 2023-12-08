@@ -38,11 +38,12 @@
     elseif ( preg_match("/wholesale_only/i", strtolower($row[collections_2]))) { $status = "draft"; }
     else { $status = "active"; }
 
-    //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
+    //Command - delete if 0 stock or marked for deletion (deletion = 1), MERGE if in stock but status is draft, MERGE if everything passes
     $command = "";
     if ($row[shopify_qty] > 0) {
       if ($status == "active") { $command = "MERGE";  }
       if ($status == "draft") { $command = "MERGE"; }
+      if ($row[deletion] == 1) { $command= "DELETE"; }
     }else { $command = "DELETE";}
 
 
