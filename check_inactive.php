@@ -9,6 +9,7 @@
     table { border: 2px solid #000; }
     th { font-size: 14px; font-weight: 700; border: 1px solid #000; padding:20px 40px; }
     td { font-size: 12px; font-weight: 400; border: 1px solid #000; padding: 20px; }
+    input[type=checkbox] {width:20px; height: 20px;}  
   </style>
 
 </head>
@@ -23,7 +24,7 @@ $filedirect = dirname($_SERVER['DOCUMENT_ROOT']).'/files/'.$filename;
 
 $file = file_get_contents($filedirect);
 
-$sql = "SELECT sku FROM pim";
+$sql = "SELECT sku, deletion FROM pim";
 $result = mysqli_query($con, $sql);
 
 $count = 1;
@@ -42,7 +43,13 @@ echo "</tr>";
 while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
   if (strpos($file, $row[sku]) == false) {
     echo "<tr>";
-    echo "<td align=center>".$count."</td><td>".$row[sku]."</td><td align=center><input type='checkbox' id='checkbox' value='".$row[sku]."' name='checkbox[]'></td>";
+    if ($row[deletion] == 0)
+    {
+      echo "<td align=center>".$count."</td><td>".$row[sku]."</td><td align=center><input type='checkbox' id='checkbox' value='".$row[sku]."' name='checkbox[]'></td>";
+    }
+    else{
+      echo "<td align=center>".$count."</td><td>".$row[sku]."</td><td align=center>Marked for Deletion</td>";
+    }
     $count++;
     echo "</tr>";
   }
