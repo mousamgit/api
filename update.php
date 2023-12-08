@@ -29,7 +29,7 @@
                     <fieldset>
 
                         <!-- Form Name -->
-                        <legend>Update Single Column</legend>
+                        <legend>Update or Add to PIM</legend>
 
                         <!-- File Button -->
                         <div class="form-group">

@@ -16,15 +16,38 @@
            {
              if ($skipHeaders == 0)
              {
-               $header .= $getData[1];
+               $header = $getData;
+               $header = str_replace(" ","_",$header);
+               $header = array_map('mb_strtolower', $header);
+               $header = array_map('trim', $header);
+               $header[0] = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $header[0]);
+
+               if ($header[0] != "sku")
+               {
+                echo "Error! First Column must be sku<br><a href='javascript:history.go(-1)'>Go Back</a>";
+                break;
+               }
              }
              $skipHeaders++;
              if ($skipHeaders > 1){
-               $sql = "UPDATE pim set ".$header." = '".$getData[1]."' WHERE sku = '".$getData[0]."'";
-               $result = mysqli_query($con, $sql);
+               $values = $getData;
+               $arrayLength = count($values);
+               
+               for ($i = 1; $i < $arrayLength; $i++ )
+               {
+                $sku = $values[0];
+                $head = $header[$i];
+                $val = $values[$i];
 
-               echo 'Updated '.$header.' of '.$getData[0];
-               echo '<ul><li>'.$getData[1].'</li></ul>';
+                $key = $head."='".$val."'";
+
+
+                $sql = " INSERT into pim (sku, $head) VALUES ('$sku', '$val') ON DUPLICATE KEY UPDATE $key "; 
+                $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ;
+
+                echo "Updated or Added ".$sku.", ".$head." = ".$val."<br>";
+               }
+               echo "<hr>";
              }
 
            }
