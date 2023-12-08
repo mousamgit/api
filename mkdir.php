@@ -1,6 +1,6 @@
 <?php
 
-$folder = dirname($_SERVER['DOCUMENT_ROOT']) . '/public_html/export/';
+$folder = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/';
 
 if (!is_dir($folder)) {
   mkdir($folder, 0755);

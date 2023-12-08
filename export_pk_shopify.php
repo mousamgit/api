@@ -7,7 +7,7 @@
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
 
-  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/public_html/export/pk-shopify.csv';
+  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/pk-shopify.csv';
   $fp = fopen($filepath, 'w');
 
   $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy","Variant Inventory Tracker","Variant Fulfillment Service");
@@ -122,7 +122,10 @@ echo "File URL: <a href='https://samsgroup.info/export/pk-shopify.csv'>https://s
 echo date("Y-m-d G:i a")."<br>";
 $endScriptTime=microtime(TRUE);
 $totalScriptTime=$endScriptTime-$startScriptTime;
-echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds';
+echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds<br><br>';
+
+$error = mysqli_error($con);
+if($error != "") { print($sku."Error Occurred: ".$error."<br>"); }
 
 
 ?>
