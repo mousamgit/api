@@ -6,7 +6,7 @@
   $query = 'SELECT * FROM pim WHERE (image1<> "" AND retail_aud > 0 AND description<> "" AND sync_shopify=1 AND brand = "Sapphire Dreams" AND collections != "SDL" AND collections != "SDM");';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/public_html/export/sd-shopify.csv';
+  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sd-shopify.csv';
   $fp = fopen($filepath, 'w');
 
   $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Sapphire Dreams Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Inventory Policy","Metafield:custom.metal_colour","Metafield:custom.metal_info","Metafield:custom.stone_info","Metafield:custom.stone_shape","Metafield:title_tag","Metafield:custom.certification","Metafield:custom.specifications","Metafield:custom.stone_colour","Metafield:custom.stone_specifications","Variant Inventory Tracker","Variant Fulfillment Service");
@@ -57,9 +57,10 @@
         //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "";
         if ($row[shopify_qty] > 0) {
-        if ($status == "active") { $command = "MERGE";  }
-        if ($status == "draft") { $command = "MERGE"; }
-        }else { $command = "DELETE";}
+          if ($status == "active") { $command = "MERGE";  }
+          if ($status == "draft") { $command = "MERGE"; }
+          if ($row[deletion] == 1) { $command = "DELETE"; }
+        }else { $command = "DELETE";} 
 
 
         // Stone price vs item price
@@ -169,7 +170,10 @@
   echo date("Y-m-d G:i a")."<br>";
   $endScriptTime=microtime(TRUE);
   $totalScriptTime=$endScriptTime-$startScriptTime;
-  echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds';
+  echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds<br><br>';
+
+  $error = mysqli_error($con);
+  if($error != "") { print($sku."Error Occurred: ".$error."<br>"); }
 
 
   fclose($fp);

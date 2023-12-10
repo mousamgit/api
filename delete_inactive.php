@@ -24,11 +24,12 @@ if(isset($_POST['checkbox'])) $sku= $_POST['checkbox'];
 
 foreach ($sku as $key => $value)
 {
-  $sql = " DELETE FROM pim WHERE sku = '".$value."'; ";
+  $sql = " UPDATE pim SET deletion='1' WHERE sku = '".$value."'; ";
   $result = mysqli_query($con, $sql);
-  echo $value." has been deleted.<br>";
+  echo $value." has been marked for deletion.<br>";
 }
 
+echo "The deletion will take place everyday at 12AM.";
 
 ?>
 
