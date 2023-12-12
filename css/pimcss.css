@@ -1,5 +1,6 @@
 body{font-family: Verdana, Geneva, Tahoma, sans-serif;}
 .showcols, .showrows{width:50%; float: left;}
+img{max-width: 100%;}
 a.btn {
     border: 1px solid #222;
     border-radius: 5px;
