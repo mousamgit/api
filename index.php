@@ -1,5 +1,5 @@
 <?php
-require_once('connect.php');
+require('connect.php');
 
 // Initial query without pagination or filtering
 $baseQuery = 'SELECT * FROM pim';

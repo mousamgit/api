@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+include 'functions.php';
 // Check if the user is logged in
 if (!isset($_SESSION["username"])) {
     header("Location: login.php");
@@ -8,26 +8,19 @@ if (!isset($_SESSION["username"])) {
 }
 else{
     $username = $_SESSION["username"];
+    
+    $usertype = getValue('users', 'username', $username, 'type');
+    $usercol = getValue('users', 'username', $username, 'columns');
 }
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   
+    $value = $_POST["column"];
+    updateValue('users','username',$username,'columns',$value);
 
-function getAttribute($sku, $attribute) {
-    require('connect.php');
-    // Construct the SQL query
-    $escapedAttribute = mysqli_real_escape_string($con, $attribute);
-    $sql = "SELECT `$escapedAttribute` FROM users WHERE username = '$username' LIMIT 1";
-    $result = mysqli_query($con, $sql);
-
-    if ($result) {
-        $row = mysqli_fetch_assoc($result);
-        mysqli_free_result($result);
-        // return $row[$attribute];
-        return $row[$escapedAttribute];
-    } else {
-        // Handle query error (you might want to log or display an error message)
-        return 'not found';
-    }
-
-}
+    // Display a success message or redirect the user
+    echo "<h2>Update Completed</h2>";
+} else {}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +31,17 @@ function getAttribute($sku, $attribute) {
 </head>
 <body>
     <h2>Welcome, <?php echo $_SESSION["username"]; ?>!</h2>
-    <p>This is your homepage content.</p>
+    <p>Your user type is <?php echo $usertype; ?></p>
+    <p>Your default columns:</p>
+    <p><?php echo $usercol; ?></p>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+    <label for="column">New Value:</label>
+        <textarea name="column" rows="4" cols="50" required></textarea>
+        <br>
+
+        <input type="submit" value="Update">
+    </form>
     <a href="logout.php">Logout</a>
 </body>
 </html>
