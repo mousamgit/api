@@ -2,8 +2,8 @@
 
 $sku = $getData[0];
 $brand = $getData[26];
-if($getData[97] == "RED:PURPLISH RED"){$colour = "pRed";} else { $colour = rtrim($getData[97]); }
-if( preg_match("/NH/i", $colour) > 0 ) { $colour = str_replace("NH","",rtrim($colour)); }
+if($getData[97] == "RED:PURPLISH RED"){$colour = "pRed";} else { $colour = $getData[97]; }
+if( preg_match("/NH/i", $colour) > 0 ) { $colour = str_replace("NH","",$colour); $colour = rtrim($colour);}
 $clarity = $getData[98];
 $centreSKU = $getData[101];
 $carat = $getData[102];
@@ -16,6 +16,7 @@ $metalcomposition = $getData[93];
 $centerstonesku = $getData[101];
 $centrestoneqty = $getData[103];
 $allocatedQty = $getData[136];
+$cert_availability = $getData[100];
 
 //Prices
 $purchasecostAUD = $getData[2];
@@ -62,19 +63,16 @@ $productTitle = "";
 if (strtolower($brand) == "pink kimberley diamonds" || strtolower($brand) == "blush pink diamonds" ){ $productTitle .= mb_convert_case($getData[19], MB_CASE_TITLE); }
 elseif ( strtolower($brand) == "sapphire dreams" && strtolower($type) != "loose sapphires" ) { $productTitle .= mb_convert_case($getData[19], MB_CASE_TITLE); }
 elseif ( strtolower($brand) == "sapphire dreams" && strtolower($type) == "loose sapphires" ) {
-  if(substr($sku,0,3)=="SDM")
-  {
-    $productTitle .="Australian Sapphire Melee ".$colour." ".$shape." ".$measurement;
-  }else{
-    $productTitle .= "Australian Sapphire ".$shape." ".$centrestoneqty." ".$colour;
-  }
+  if(substr($sku,0,3)=="SDM") {$productTitle .="Australian Sapphire Melee ".$colour." ".$shape." ".$measurement;}
+  else{$productTitle .= "Australian Sapphire ".$shape." ".$centrestoneqty." ".$colour;}
 }
 elseif(strtolower($type) == "loose diamonds"){
   if (preg_match("/argyle/i", $brand) > 0) { $productTitle .= $getData[19]; if (substr($sku,0,3)=="AWD"){$productTitle .=" ".$measurement;}}
 }
 elseif ( strtolower($brand) == "classique watches" ) { $productTitle .= $getData[34]; }
+else { $productTitle .= mb_convert_case($getData[19], MB_CASE_TITLE); }
 
-//Treatment
+//Treatments
 $treatment="";
 if ( preg_match("/NH/i", $getData[97]) > 0 ) { $treatment .= "Unheated"; }
 
@@ -111,7 +109,7 @@ elseif ( strtolower($brand) == "sapphire dreams" && strtolower($type) != "loose 
 }
 elseif ( strtolower($brand) == "sapphire dreams" && strtolower($type) == "loose sapphires" ) {
   $measurements = "";
-  if ($edl2 != "") { $measurements = "<br>Certification: ".$edl2; }
+  if ($cert_availability == "YES") { $measurements = "<br>Certification: ".$edl2; }
   if (strtolower($edl3) == "nh") { $comment .= "<br>An unheated natural Australian sapphire.";}
   $specifications .= "Shape: ".$shape."<br>Carat Weight: ".$carat."ct<br>Colour: ".$colour."<br>Measurement: ".$measurement.$measurements.$comment;
   $comment = "";

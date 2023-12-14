@@ -112,7 +112,7 @@ jQuery(document).ready(function ($) {
                         {
                             echo "<td>
                                 <img src='https://pim.samsgroup.info/temp-images/".$value."'>
-                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check' class='".$keys[$i]."' />
+                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' class='".$keys[$i]."' />
                                 </td>";
                         }
                         else

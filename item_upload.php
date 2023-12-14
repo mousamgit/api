@@ -51,7 +51,6 @@ $fields = array(
                 array('allocated_qty', $allocatedQty),
             );
 
-
 $substringsToRemove = ['\'', '"'];
 
 for ($i = 0; $i < count($fields); $i++) { $insertSQL .= $fields[$i][0].","; }
@@ -68,16 +67,22 @@ $valuesSQL = rtrim($valuesSQL,",");
 
 for ($row = 0; $row < count($fields); $row++)
 {
-  $key .= $fields[$row][0]."='";
   for ($column = 1; $column < 2; $column++) {
-    $values = mysqli_real_escape_string($con,$fields[$row][$column]);
-    /*if (preg_match("/'/", $values) > 0){$values = preg_replace("/'/", "", $values);}*/
-    $key .= $values."',"; }
+    if( $fields[$row][1] == "" ){
+      unset($fields[1]);
+    } // if value is empty, delete
+    else{
+      $key .= $fields[$row][0]."='";
+      $values = mysqli_real_escape_string($con,$fields[$row][$column]);
+      $key .= $values."',"; 
+    }
+  }
 }
 $key = rtrim($key,",");
 
 
 $sql = "INSERT into pim ($insertSQL) VALUES ($valuesSQL) ON DUPLICATE KEY UPDATE $key";
+//echo $sql."<br><br>";
 $result = mysqli_query($con, $sql);
 
 $error = mysqli_error($con);
