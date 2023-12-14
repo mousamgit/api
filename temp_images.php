@@ -112,11 +112,7 @@ jQuery(document).ready(function ($) {
                         {
                             echo "<td>
                                 <img src='https://pim.samsgroup.info/temp-images/".$value."'>
-<<<<<<< HEAD
                                 <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' class='".$keys[$i]."' />
-=======
-                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check' class='".$keys[$i]."' />
->>>>>>> f461d4d2696f082fdaa72c218301621e8093140b
                                 </td>";
                         }
                         else

@@ -1,11 +1,9 @@
 <?php
   include_once ('connect.php');
-  include_once ('connect.php');
-
-  $query = 'SELECT * FROM pim WHERE (brand <> "" AND wholesale_aud > 0 AND master_qty > 0 AND retail_aud > 0 );';
+  $query = 'SELECT * FROM pim WHERE (brand <> "" AND brand <> "classique watches" AND brand <> "shopify cl" AND wholesale_aud > 0 AND master_qty > 0 AND retail_aud > 0 );';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/rephopper.csv';
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/rephopper/rephopper.csv';
   $fp = fopen($filepath, 'w');
 
   $headers = array("stock_code","name","EAN","qty_avail","qty_held","order_qty_min","order_qty_step","price","rrp","special","cost","image","description","category","subcategory","Custom field 1","Custom field 2","Custom field 3","Custom field 4","Custom field 5","Custom field 6","Custom field 7","Custom field 8","Custom field 9");
@@ -32,7 +30,9 @@
     else {$category = $row[brand];}
 
     //Descriptions, if loose sapphire generate description else import from field description
-    if (strtolower($type) == "loose sapphires") { $description = "An Australian " .  ucfirst(strtlower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement; }
+    if (strtolower($type) == "loose sapphires") 
+        if( strtolower($treatment) == "unheated") { $description = "An unheated Australian " .  ucfirst(strtlower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . "."; }
+        else {$description = "An Australian " .  ucfirst(strtlower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . ".";  }
     else { $description = $row[description];}
 
     //name
@@ -86,7 +86,7 @@
     } else {$subcategory = $row[type];}
 
     //Custom Field 7 Warehouse QTY
-    if ( $row[warehouse_qty] > 0)
+    if ( $row[warehouse_qty] !== 0)
         if ( $row[allocated_qty] > 0)  {$custom7 = "W/H: " . $row[warehouse_qty] . " - Appro: " . $row[allocated_qty];}
         else { $custom7 = "W/H: " . $row[warehouse_qty];}
 
@@ -126,10 +126,13 @@
     
       fputcsv($fp, $content);
     }
+$count = mysqli_num_rows($result) - 1;
 
 date_default_timezone_set('Australia/Sydney');
 echo "REPHOPPER Export Completed!<br>";
+echo "Total Products Uploaded: ".$count."<br>";
 echo date("Y-m-d G:i a");
+
 
 fclose($fp);
 

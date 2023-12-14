@@ -1,9 +1,12 @@
 <?php
+  $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
-  $query = 'SELECT * FROM pim WHERE (brand = "blush pink diamonds" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND (shopify_qty > 0 OR preorder = 1)) OR (brand in ("sapphire dreams","argyle white diamonds","pink kimberley diamonds","white diamond jewellery","argyle pink diamonds","argyle blue diamonds","argyle origin diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND shopify_qty > 0);';
+  include_once ('mkdir.php');
+
+  $query = 'SELECT * FROM pim WHERE (brand = "blush pink diamonds" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND (shopify_qty > 0 OR preorder = 1)) OR (brand in ("sapphire dreams","argyle white diamonds","pink kimberley diamonds","white diamond jewellery","argyle pink diamonds","argyle blue diamonds","argyle origin diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND shopify_qty > 0) OR (brand = "shopify cl") OR ((type = "loose sapphires" OR type = "loose diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND image1 <> "" AND shopify_qty > 0);';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/sga-shopify.csv';
+  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sga-shopify.csv';
   $fp = fopen($filepath, 'w');
 
   $headers = array("Variant SKU","Command","Handle","Body HTML","Inventory Available:Home","Inventory Available:MD","Inventory Available:PS","Status","Tags","Tags Command","Title","Type","Variant Barcode","Variant Command","Variant Cost","Variant Inventory Policy","Variant Inventory Tracker","Variant Price","Vendor","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Image Src","Image Command","Variant Image","Metafield:custom.argyle_colour","Metafield:custom.certification","Metafield:custom.product_caratprice","Metafield:custom.product_rrp","Metafield:custom.specifications","Metafield:custom.stone_carat","Metafield:custom.stone_clarity","Metafield:custom.stone_colour","Metafield:custom.stone_measurement","Metafield:custom.stone_shape","Metafield:custom.table_specifications","Variant Fullfilment Service");
@@ -22,25 +25,24 @@
 
         // Create handle
         $handle = "";
-        if (strtolower($row[brand]) === "sapphire dreams")
-          if( strtolower($row[type]) == "loose sapphires" )
-            if ( strtolower($row[treatment]) == "unheated") { $handle = $row[shape]."-".$row[colour].$row[edl]."-australian-sapphire-".$row[sku]; }
-            else { $handle = $row[shape]."-".$row[colour]."-australian-sapphire-".$row[sku]; }
-          else{ 
-            if ( strtolower($row[treatment]) == "unheated") {$handle = $title_mod."-".$row[colour]."-".$row[edl3]."-".str_replace("  "," ",str_replace("&","",$row[metal_composition]))."-".$type_mod."-".$row[sku]; }
-            else {$handle = $title_mod."-".$row[colour]."-".str_replace("  "," ",str_replace("&","",$row[metal_composition]))."-".$type_mod."-".$row[sku];}
-          }
-        elseif ( strtolower($row[brand]) === "pink kimberley diamonds" || strtolower($row[brand]) === "blush pink diamonds") { $handle = $handle = $row[product_title]."-".$row[colour]."-".$row[sku]; }    
-        elseif ( strtolower($row[brand]) === "argyle pink diamonds" || strtolower($row[brand]) === "argyle origin diamonds") { $handle = "argyle-pink-diamond-" . $row[shape] . "-" . $row[colour] . "-" . $row[clarity] . "-" . $row[sku]; } 
-        else{ $handle = $row[product_title]."-".$row[colour]."-".$row[sku];}       
-        $handle = str_replace([" ","--"],"-",strtolower($handle));
+        if ( strtolower($row[brand]) == "shopify cl") { $handle .= $row[product_title] . "-watch";}
+        elseif ( strtolower($row[brand]) == "sapphire dreams")
+          if ( strtolower($row[type]) == "loose sapphires") { $handle .= $row[shape] . "-" . $row[colour] . "-australian-sapphire-" . $row[sku];}
+          else { $handle .= $row[product_title] . "-" . $row[sku];}
+        elseif ( strtolower($row[brand]) == "argyle origin diamonds" || strtolower($row[brand]) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row[shape] . "-" . $row[colour] . "-" . $row[clarity] . "-" . $row[sku];}
+        elseif ( strtolower($row[brand])== "pink kimberley diamonds" || strtolower($row[brand]) == "blush pink diamonds") { $handle .= $row[product_title] . "-" . $row[sku];}
+        else { $handle .= $row[product_title] . "-" . $row[sku];}
+        $handle = str_replace([" ","--"],"-",strtolower($handle));             
 
         //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "";
-        if ($row[shopify_qty] > 0) {
-        if ($status == "active") { $command = "MERGE";  }
-        if ($status == "draft") { $command = "MERGE"; }
-        }else { $command = "DELETE";}
+        if ( strtolower($row[brand]) == "shopify cl") { $command .= "MERGE"; }
+        else{
+          if ($row[shopify_qty] > 0) {
+            if ($status == "active") { $command = "MERGE";  }
+            elseif ($status == "draft") { $command = "MERGE"; }
+          }else { $command = "DELETE";}
+        }
 
         //Status - draft if steve, discontinued, wholesale only
         $status = "";
@@ -84,20 +86,45 @@
             elseif ($row[carat] >= 2.50 && $row[carat] <= 2.99){ $tags .= "2.50ct - 2.99ct"; }
             elseif ($row[carat] >= 3.00 && $row[carat] <= 3.99){ $tags .= "3.00ct - 3.99ct"; }
             elseif ($row[carat] >= 4.00){ $tags .= "Greater than 4.00ct"; }
-        }
+        } elseif ( strtolower($row[brand]) === "shopify cl")
+            if ( $row[watch_material] != "") { $tags .= "Material " . $row[watch_material];}
+            if ( $row[watch_dial] != "") { $tags .= "," . $row[watch_strap];}
+            if ( $row[product_title] != "") { $tags .= ",_alt_" . $row[product_title];}
+            if ( $row[watch_movement] != "") { $tags .= "," . $row[watch_movement];}
+            if ( $row[watch_strap] != "") { $tags .= "," . $row[watch_strap];}
+            if ( strpos($row[watch_strap], "leather")) { $tags .= ",Leather Strap Watch";}
+            if ( strtolower($row[watch_strap]) == "solid gold") { $tags .= ",solid-gold";}
+            if ( $row[type] != "") { $tags .= "," . $row[type];}
+            if ( $row[collections] != "") { $tags .= "," . $row[watch_collections];}
+            $tags .= ",Classique watches,relatedproducts";
+            for ($length = 1; $length <= strlen($sku); $length++) {
+              $tags .= substr($sku, 0, $length) . ",";
+          }
 
         //Title
-        if ( strtolower($row[type]) == "loose sapphires" && $row[carat] !== ["",0]) { $title = "Australian Sapphire ".$row[shape]." 1=".$row[carat]."ct ".$row[colour];}
+        if ( strtolower($row[brand]) == "sapphire dreams")
+          if ( strtolower($row[type]) == "loose sapphires")
+            if ( $row[treatment] == "Unheated") { $title = "Australian Sapphire ". ucfirst(strtolower($row[shape]))." 1=".$row[carat]."ct ".$row[colour] . " NH";}
+            else { $title = "Australian Sapphire ".ucfirst(strtolower($row[shape]))." 1=".$row[carat]."ct ".$row[colour];}
+          elseif ( strtolower($row[type]) !== "loose sapphires")
+            if ( strpos(strtolower($row[collections_2]), "variants") !== false) { $title = ucwords($title_mod) . " " . $row[shape] . " Sapphire " . ucwords($type_mod);}
+            else { $title = $row[product_title];}
+        elseif ( strtolower($row[brand]) == "shopify cl") { $title = $row[product_title] . " " . $row[type];}
         else {
-          if ( strpos(strtolower($row[collections_2]), "variants") !== false) { $title = ucwords($title_mod) . " " . $row[shape] . " Sapphire " . ucwords($type_mod) ;}
+          if ($row[collections] == "TPR" || $row[collections] == "TDR") { $title = str_replace("pink diamond","tender diamond",$row[product_title]);}
           else { $title = $row[product_title];}
-        }
+        } 
+        $title = str_replace("  "," ",$row[title]);
 
         //Metafield : argyle colour
         if ( strpos(strtolower($row[brand]), "argyle") !== false) { $argyle_colour = str_replace("RED:PURPLISH RED","pRed",$row[colour]);}
+        elseif ( strtolower($row[brand]) == "blush pink diamonds" || strtolower($row[brand]) == "pink kimberley diamonds") { $argyle_colour = str_replace("RED:PURPLISH RED","pRed",$row[colour]);}
+        else { $argyle_colour = "";}
 
         // Metafield: Certification
-        if ( strpos($row[specifications], "Certificate") !== false)  { $certification = "YES"; }
+        if ( strpos(strtolower($row[specifications]), "cert") !== false)  { $certification = "YES"; }
+        elseif ( strpos($row[specifications], "GIA") !== false)  { $certification = "YES"; }
+        elseif ( strpos($row[specifications], "GSL") !== false)  { $certification = "YES"; }
         else { $certification = "NO";}
 
         //Descriptions, if loose sapphire generate description else import from field description
@@ -155,6 +182,33 @@
         if ( $row[add_desc4] != "") { $add_desc .= $row[add_desc4];}
         $table_specifications .= $add_desc  . "</td></tr></table></div>";
 
+        //Brand replace shopify cl to classique watches
+        $brand = str_replace("Shopify CL","Classique Watches",$row[brand]);
+
+        //Product Carat Price
+        if ( strpos(strtolower($row[type]), "loose") !== false ) { $caratprice = $row[wholesale_aud];}
+        else { $caratprice = "";}
+
+        //Product RRP
+        if ( strpos(strtolower($row[type]), "loose") !== false ) { $rrp = $row[stone_price_retail_aud];}
+        else { $rrp = $row[retail_aud];}
+
+        //Price wholesale AUD
+        if ( strpos(strtolower($row[type]), "loose") !== false ) { $variant_price = $row[stone_price_wholesale_aud];}
+        else { $variant_price = $row[wholesale_aud];}
+
+        //Carat
+        if ( strpos(strtolower($row[type]), "loose") !== false ) { $caratweight = $row[carat];}
+        else { $caratweight = "";}
+
+        //Stone Colour 'Pink' for argyle colour + treatment for SD
+        if ( strtolower($row[brand]) == "sapphire dreams") 
+          if ($row[$treatment] == "Unheated") { $stonecolour = $row[colour] . " NH"; }
+          else {$stonecolour = $row[colour]; }
+        elseif ( strtolower($row[brand]) == "pink kimberley diamonds" || strtolower($row[brand]) == "blush pink diamonds" || strtolower($row[brand]) == "argyle pink diamonds" || strtolower($row[brand]) == "argyle origin diamonds") { $stonecolour = "Pink";}
+        else { $stonecolour = "";}
+
+
 
         $content = array (
             0 => $row[sku],
@@ -174,8 +228,8 @@
             14 => $row[purchase_cost_aud],
             15 => "deny",
             16 => "shopify",
-            17 => $row[wholesale_aud],
-            18 => $row[brand],
+            17 => $variant_price,
+            18 => $brand,
             19 => $optionOneName,
             20 => $row[watch_material],
             21 => $optionTwoName,
@@ -187,12 +241,12 @@
             27 => $row[image1],
             28 => $argyle_colour,
             29 => $certification,
-            30 => $row[stone_price_wholesale_aud],
-            31 => $row[retail_aud],
+            30 => $caratprice,
+            31 => $rrp,
             32 => $row[specifications],
-            33 => $row[carat],
+            33 => $caratweight,
             34 => $row[clarity],
-            35 => $row[colour],
+            35 => $stonecolour,
             36 => $row[measurement],
             37 => $row[shape],
             38 => $table_specifications,
@@ -203,12 +257,20 @@
           fputcsv($fp, $content);
   }
 
-$count = mysqli_num_rows($result) - 1;
 
-date_default_timezone_set('Australia/Sydney');
-echo "SGA Wholesale Export Completed!<br>";
-echo "Total Products Uploaded: ".$count."<br>";
-echo date("Y-m-d G:i a");
+  fclose($fp);
+  $count = mysqli_num_rows($result) -1;
+  date_default_timezone_set('Australia/Sydney');
+  echo "<h2>SGA Export Completed</h2><br>";
+  echo "Total Products Exported to CSV: ".$count."<br>";
+  echo "File URL: <a href='https://samsgroup.info/export/sga-shopify.csv'>https://samsgroup.info/export/sga-shopify.csv</a><br><br>";
+  echo date("Y-m-d G:i a")."<br>";
+  $endScriptTime=microtime(TRUE);
+  $totalScriptTime=$endScriptTime-$startScriptTime;
+  echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds<br><br>';
+
+  $error = mysqli_error($con);
+  if($error != "") { print($sku."Error Occurred: ".$error."<br>"); }
 
 
   fclose($fp);
