@@ -1,6 +1,7 @@
 <html>
 <head>
   <title>Images Uploaded</title>
+  <?php include 'header.php'; ?>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
@@ -12,12 +13,22 @@
     th, td { width: 12.5%; height: 12.5%; border: 1px solid #000; padding:10px;}
   </style>
   <script>
-    $(function(){
-        $('.checkAll').click(function(){
+jQuery(document).ready(function ($) {
+    $('.checkAll').click(function(){
+        if($(this).prop("checked")){
             $(this).closest('tr').find('input[type="checkbox"]').each(function(){
-            $(this).prop("checked", true);
-        });
+                $(this).prop("checked", true);
+            });
+        }
+        else{
+            $(this).closest('tr').find('input[type="checkbox"]').each(function(){
+                $(this).prop("checked", false);
+            });
+        }
+
+        
     });
+});
   </script>
 </head>
 <body>
@@ -101,7 +112,7 @@
                         {
                             echo "<td>
                                 <img src='https://pim.samsgroup.info/temp-images/".$value."'>
-                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check' class='".$keys[$i]."' />
+                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' class='".$keys[$i]."' />
                                 </td>";
                         }
                         else
@@ -109,7 +120,7 @@
                             echo "<td></td>";
                         }
                     }
-                    echo "<td><button type='button' name='checkAll' class='checkAll' sku='".$keys[$i]."'> Select All </button></td>";
+                    echo "<td><input type='checkbox' name='checkAll' class='checkAll' sku='".$keys[$i]."'></td>";
                     echo "</tr>";
                 }
                 
