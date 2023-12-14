@@ -1,51 +1,10 @@
 <?php
-require('connect.php');
-
-// Initial query without pagination or filtering
-$baseQuery = 'SELECT * FROM pim';
-
-// Extract all parameters and their values from the URL
+include 'functions.php';
 $urlData = $_GET;
-
-// Initialize an array to store conditions
-$conditions = [];
-foreach ($urlData as $key => $value) {
-  
-    // Ensure that the key is alphanumeric to prevent SQL injection
-    if ($key != 'page') {
-      // For numeric values, handle greater than and less than conditions
-      if (strpos($key, '>=') === 0) {
-          $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
-      } elseif (strpos($key, '<=') === 0) {
-          $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
-      } else {
-          $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
-      }
-  } 
-
-}
-
-// Check if there are conditions to add
-if (!empty($conditions)) {
-    $baseQuery .= " WHERE " . implode(' AND ', $conditions);
-}
-
-// Calculate total rows for pagination
-$totalRowsResult = mysqli_query($con, $baseQuery);
-$total_rows = mysqli_num_rows($totalRowsResult);
-
-// Assuming $result is your SQL query result
 $records_per_page = 100;
-$total_pages = ceil($total_rows / $records_per_page);
-
-// Get the current page or set it to 1 if not set
-$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-
-$offset = ($current_page - 1) * $records_per_page;
-
-// Construct the SQL query with pagination
-$sql = $baseQuery . " LIMIT $offset, $records_per_page";
-$result = mysqli_query($con, $sql);
+$baseQuery = getQuery('pim',$records_per_page);
+$result = getResult($baseQuery , $records_per_page);
+$total_pages = getTotalPages($baseQuery , $records_per_page);
 ?>
 
 <html>
@@ -66,8 +25,7 @@ $result = mysqli_query($con, $sql);
 </div>
 
 <?php
-// Extract all parameters and their values from the URL
-$urlData = $_GET;
+
 
 // Loop through the URL parameters and display the data
 
