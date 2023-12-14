@@ -28,19 +28,8 @@ const myapp = Vue.createApp({
             const filterApp = Vue.createApp({});
             // Mount the rowfilter component and push it to the filters array
             this.filters.push(filterApp.component('rowfilter'));
-
-            // Update filterarray with an empty filter at the correct index
-            const newIndex = this.filters.length - 1; // Get the last index
-            if (!this.filterarray[newIndex]) {
-                this.filterarray[newIndex] = ['', ''];
-            }
-            
-            // Use $nextTick to ensure DOM has been updated
-            this.$nextTick(() => {
-                // Update the filterindex to the new index
-                this.filterindex = newIndex;
-            });
-            
+            console.log(this.filters);
+        
             filterApp.mount(); // Mount the component (this is required to create a new instance)
             if (!this.filterarray[this.filterindex]) {
                 this.filterarray[this.filterindex] = ['', ''];
@@ -76,11 +65,11 @@ const myapp = Vue.createApp({
             // });
             // this.filters.splice(this.filterindex, 1);
                 // Find the index of the filter in filters array
-            const indexToRemove = this.filters.indexOf(this.filters[this.filterindex]);
-            console.log('indexToRemove',indexToRemove);
-            if (indexToRemove !== -1) {
-                this.filters.splice(indexToRemove, 1);
-            }
+
+            console.log('indexToRemove',this.filters.indexOf(this.filters[2]), this.filterindex);
+    
+                // this.filters.splice(0, 2);
+
 
         },
         applyFilters() {

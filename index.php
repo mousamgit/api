@@ -1,5 +1,5 @@
 <?php
-require_once('connect.php');
+require('connect.php');
 
 // Initial query without pagination or filtering
 $baseQuery = 'SELECT * FROM pim';
@@ -54,7 +54,8 @@ $result = mysqli_query($con, $sql);
    
     <?php include 'header.php'; ?>
     
-
+<script src="./js/pimjs.js" ></script>
+<script src="./js/filter.js" ></script>
   </head>
 
   <body>
@@ -107,14 +108,17 @@ $urlData = $_GET;
 
   // Pagination links
 echo '<div class="pagination">';
-if(strpos($_SERVER['REQUEST_URI'], "?") !==  false){
-    $pageurl = $_SERVER['REQUEST_URI'] . 'page=';
-}
-else{
-  $pageurl = '?page=';
-}
+// if(strpos($_SERVER['REQUEST_URI'], "?") !==  false){
+//     $pageurl = $_SERVER['REQUEST_URI'] . 'page=';
+// }
+// else{
+//   $pageurl = '?page=';
+// }
+
 for ($page = 1; $page <= $total_pages; $page++) {
-    echo '<a href="' . $pageurl . $page .'">' . $page . '</a>';
+  $urlData ['page'] = $page;
+  $pageurl =  '?' . http_build_query($urlData);
+    echo '<a href="' . $pageurl . '">' . $page . '</a>';
 }
 echo '</div>';
 ?>
