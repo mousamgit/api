@@ -39,6 +39,11 @@
                 $head = $header[$i];
                 $val = $values[$i];
 
+                if ($head == "description")
+                {
+                  $val = str_replace("'","\'",$val);
+                }
+
                 $key = $head."='".$val."'";
 
 
@@ -48,11 +53,14 @@
                 echo "Updated or Added ".$sku.", ".$head." = ".$val."<br>";
                }
                echo "<hr>";
+               $count++;
              }
 
            }
 
            fclose($file);
+
+           echo $count." products update";
      }
   }
 
