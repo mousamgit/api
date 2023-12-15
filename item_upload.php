@@ -28,8 +28,8 @@ $fields = array(
                 array('image4',$image4),
                 array('image5',$image5),
                 array('image6',$image6),
-                array('shopify_qty', $shopifyqty),
                 array('packaging_image',$packagingimg),
+                array('shopify_qty', $shopifyqty),
                 array('shape', $shape),
                 array('edl1', $edl1),
                 array('edl2', $edl2),
@@ -65,11 +65,12 @@ for ($row = 0; $row < count($fields); $row++) {
 }
 $valuesSQL = rtrim($valuesSQL,",");
 
+
 for ($row = 0; $row < count($fields); $row++)
 {
   for ($column = 1; $column < 2; $column++) {
-    if( $fields[$row][1] == "" ){
-      unset($fields[1]);
+    if( $fields[$row][1] == "" && $fields[$row][0] == "product_title" ){
+        unset($fields[1]);
     } // if value is empty, delete
     else{
       $key .= $fields[$row][0]."='";
