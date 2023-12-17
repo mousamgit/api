@@ -1,13 +1,12 @@
 <?php
-require_once('connect.php');
+require_once('connect_mousam.php');
 
 $channels = [];
 $channel_attribute = [];
 
 $result = $con->query("SELECT column_name
                        FROM information_schema.columns
-                       WHERE table_schema = 'pim' AND table_name = 'pim'");
-
+                       WHERE table_schema = '".$name."' AND table_name = 'pim'");
 
 
 if ($result->num_rows > 0) {

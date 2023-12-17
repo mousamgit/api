@@ -80,7 +80,7 @@ export default {
         // Update the attributes data
         this.columns = data;
 
-        console.log(this.columns);
+        console.log(this.columns,'column_list');
       } catch (error) {
         console.error('Error fetching attributes:', error);
       }
@@ -250,7 +250,7 @@ export default {
                              </div>
                              </div>
                             </div>
-                            
+                                
                                 <div v-for="(attribute, index) in newAttribute" :key="index" class="row mb-3">
                                     <div class="col-md-2">
                                         <div class="mb-3"> 

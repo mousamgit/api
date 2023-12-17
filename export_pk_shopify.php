@@ -1,12 +1,16 @@
 <?php
+  $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
+  include_once ('mkdir.php');
+
   $query = 'SELECT * from pim WHERE (image1<>"" AND brand = "Pink Kimberley Diamonds" AND retail_aud > 0 AND description<>"" AND sync_shopify=1) OR (image1<>"" AND brand = "Blush Pink Diamonds" AND retail_aud > 0 AND description<>"" AND sync_shopify=1) OR (image1<>"" AND brand LIKE "%Argyle Pink%" AND SKU NOT LIKE "%MEL%" AND SKU NOT LIKE "%STX%" AND retail_aud > 0 AND description<>"" AND sync_shopify=1) OR (image1<>"" AND brand LIKE "%Argyle Origin%" AND SKU NOT LIKE "%MEL%" AND retail_aud > 0 AND description<>"" AND sync_shopify=1);';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/pk-shopify.csv';
+
+  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/pk-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy");
+  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy","Variant Inventory Tracker","Variant Fulfillment Service");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -34,11 +38,12 @@
     elseif ( preg_match("/wholesale_only/i", strtolower($row[collections_2]))) { $status = "draft"; }
     else { $status = "active"; }
 
-    //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
+    //Command - delete if 0 stock or marked for deletion (deletion = 1), MERGE if in stock but status is draft, MERGE if everything passes
     $command = "";
     if ($row[shopify_qty] > 0) {
       if ($status == "active") { $command = "MERGE";  }
       if ($status == "draft") { $command = "MERGE"; }
+      if ($row[deletion] == 1) { $command= "DELETE"; }
     }else { $command = "DELETE";}
 
 
@@ -49,6 +54,7 @@
     // Create handle
     $handle ="";
     if( substr($row[sku],0,3) == "TDR" || substr($row[sku],0,3) == "TPR" ){ $handle = "argyle-tender-diamond-".$row[shape]."-".$row[colour]."-".$row[clarity]."-".$row[sku]; $handle = strtolower($handle); } elseif( strtolower($row[type]) == "loose diamonds" ) { $handle = ""; $handle = "argyle-pink-diamond-".$row[shape]."-".$row[colour]."-".$row[clarity]."-".$row[sku]; $handle = strtolower($handle); } else{ $handle = ""; $handle = str_replace(" ","-",strtolower($row[product_title])) ."-". strtolower($row[sku]); }
+    $handle = str_replace("--","-",$handle);
 
     // Purchase Cost Calculation
     $purchase_cost = "";
@@ -99,16 +105,27 @@
         16 => $imageURL,
         17 => $status,
         18 => $row[colour],
-        19 => "deny"
+        19 => "deny",
+        20 => "shopify",
+        21 => "manual",
       );
 
       fputcsv($fp, $content);
   }
 
-
+fclose($fp);
+$count = mysqli_num_rows($result) -1;
 date_default_timezone_set('Australia/Sydney');
-echo "PK Export Completed<br>";
-echo date("Y-m-d G:i a");
+echo "<h2>PK Export Completed</h2><br>";
+echo "Total Products Exported to CSV: ".$count."<br>";
+echo "File URL: <a href='https://samsgroup.info/export/pk-shopify.csv'>https://samsgroup.info/export/pk-shopify.csv</a><br><br>";
+echo date("Y-m-d G:i a")."<br>";
+$endScriptTime=microtime(TRUE);
+$totalScriptTime=$endScriptTime-$startScriptTime;
+echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds<br><br>';
 
-  fclose($fp);
+$error = mysqli_error($con);
+if($error != "") { print($sku."Error Occurred: ".$error."<br>"); }
+
+
 ?>

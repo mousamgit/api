@@ -28,8 +28,8 @@ $fields = array(
                 array('image4',$image4),
                 array('image5',$image5),
                 array('image6',$image6),
-                array('shopify_qty', $shopifyqty),
                 array('packaging_image',$packagingimg),
+                array('shopify_qty', $shopifyqty),
                 array('shape', $shape),
                 array('edl1', $edl1),
                 array('edl2', $edl2),
@@ -44,33 +44,57 @@ $fields = array(
                 array('main_metal', $mainmetal),
                 array('collections', $collections),
                 array('centre_stone_sku', $centrestonesku),
-                array('centre_stone_qty', $centrestoneqty)
+                array('centre_stone_qty', $centrestoneqty),
+                array('stone_price_wholesale_aud', $stonepricewholesaleaud),
+                array('stone_price_retail_aud', $stonepriceretailaud),
+                array('treatment', $treatment),
+                array('allocated_qty', $allocatedQty),
             );
 
+$substringsToRemove = ['\'', '"'];
 
 for ($i = 0; $i < count($fields); $i++) { $insertSQL .= $fields[$i][0].","; }
 $insertSQL = rtrim($insertSQL,",");
 
 for ($row = 0; $row < count($fields); $row++) {
-  for ($column = 1; $column < 2; $column++) { $valuesSQL .= "'".$fields[$row][$column]."',"; }
+  for ($column = 1; $column < 2; $column++) {
+    $values = mysqli_real_escape_string($con,$fields[$row][$column]);
+    /*if (preg_match("/'/", $values) > 0){$values = preg_replace("/'/", "", $values);}*/
+
+    $valuesSQL .= "'".$values."',"; }
 }
 $valuesSQL = rtrim($valuesSQL,",");
 
+
 for ($row = 0; $row < count($fields); $row++)
 {
-  $key .= $fields[$row][0]."='";
-  for ($column = 1; $column < 2; $column++) { $key .= $fields[$row][$column]."',"; }
+  for ($column = 1; $column < 2; $column++) {
+    if( $fields[$row][1] == "" && $fields[$row][0] == "product_title" ){
+        unset($fields[1]);
+    } // if value is empty, delete
+    else{
+      $key .= $fields[$row][0]."='";
+      $values = mysqli_real_escape_string($con,$fields[$row][$column]);
+      $key .= $values."',"; 
+    }
+  }
 }
 $key = rtrim($key,",");
 
+
 $sql = "INSERT into pim ($insertSQL) VALUES ($valuesSQL) ON DUPLICATE KEY UPDATE $key";
-     $result = mysqli_query($con, $sql);
+//echo $sql."<br><br>";
+$result = mysqli_query($con, $sql);
+
+$error = mysqli_error($con);
+if($error != "") { print($sku."Error Occurred: ".$error."<br>"); }
+
 
 
 $insertSQL = "";
 $valuesSQL = "";
 $key = "";
 
-include ('clearattributes.php');
 
+include ('clearattributes.php');
 ?>

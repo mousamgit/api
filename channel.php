@@ -15,8 +15,6 @@
 <body>
 <!-- Include Vue.js -->
 <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-select@4/dist/vue-select.css">
-<script src="https://cdn.jsdelivr.net/npm/vue-select@4"></script>
 
 <!-- Your HTML content here -->
 <div id="app">
