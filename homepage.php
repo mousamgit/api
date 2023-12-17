@@ -29,16 +29,7 @@ else{
     <title>Homepage</title>
 </head>
 <body>
-    <header>
-        <div class="welcome_info">Welcome, <?php echo $_SESSION["username"]; ?>!</div>
-        <div class="header_nav">
-            <a href="logout.php" >Logout</a>
-            <a href="import.php" >Import Products</a>
-            <a href="update.php" >Update Products</a>
-            <a href="profile.php" >User Profile</a>
-            
-        </div>
-    </header>
+<?php include 'topbar.php'; ?>
     <div id="app">
 <div class="filter-functions">
 <a class="show-filter" @click="showhidecols()">Column Filter</a>
@@ -46,12 +37,13 @@ else{
 <?php
 // Loop through the URL parameters and display the data
 
-  $row=mysqli_fetch_assoc($result);
+
   echo '<div class="row"><div class="showrows col-md-6" v-show="show_row_filter"><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter()" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
   </div><div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/" >Clear All Filters</a></div></div>';
   
   echo '<div class="showcols colscontainer col-md-6" v-show="show_col_filter">';
+  $row=mysqli_fetch_assoc($result);
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
     echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
