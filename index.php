@@ -4,6 +4,8 @@ require_once('connect.php');
 // Initial query without pagination or filtering
 $baseQuery = 'SELECT * FROM pim';
 
+
+
 // Extract all parameters and their values from the URL
 $urlData = $_GET;
 
@@ -32,6 +34,7 @@ if (!empty($conditions)) {
 
 // Calculate total rows for pagination
 $totalRowsResult = mysqli_query($con, $baseQuery);
+
 $total_rows = mysqli_num_rows($totalRowsResult);
 
 // Assuming $result is your SQL query result
@@ -71,6 +74,7 @@ $urlData = $_GET;
 // Loop through the URL parameters and display the data
 
   $row=mysqli_fetch_assoc($result);
+
   echo '<div class="showcols" ><h2>Column Filter</h2><div class="colscontainer">';
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');

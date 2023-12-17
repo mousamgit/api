@@ -16,6 +16,7 @@ myapp.component('rowfilter', {
         };
     },
     mounted() {
+        console.log('this is',this.options)
         // Get the colscontainer element
         const colsContainer = document.querySelector('.colscontainer');
 
