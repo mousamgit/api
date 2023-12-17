@@ -1,5 +1,5 @@
 <?php
-require_once('connect.php');
+require_once('connect_mousam.php');
 
 $channels = [];
 $channel_attribute = [];

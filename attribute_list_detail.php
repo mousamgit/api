@@ -1,5 +1,5 @@
 <?php
-require_once('connect.php');
+require_once('connect_mousam.php');
 
 // Getting the referring URL
 $currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';

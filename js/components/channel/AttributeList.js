@@ -67,8 +67,7 @@ export default {
 
       <!-- Pagination controls -->
       <div>
-        <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Previous</button>
-        <span>Page {{ currentPage }}</span>
+git        <span>Page {{ currentPage }}</span>
         <button class="btn btn-primary" @click="nextPage">Next</button>
       </div>
       

@@ -2,7 +2,7 @@
 // save_channel.php
 
 // Include your database connection logic here
-require_once('connect.php');
+require_once('connect_mousam.php');
 
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
