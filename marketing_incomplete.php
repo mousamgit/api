@@ -6,7 +6,7 @@
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/marketing/marketing-incomplete.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("sku", "descriptions", "tags");
+  $headers = array("sku", "description", "tags");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }

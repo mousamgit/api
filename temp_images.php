@@ -6,11 +6,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Open Sans', sans-serif; }
-    .main-box { width:1200px; margin:0 auto; padding:50px; border:1px solid #000; background-color:#F9F6F0; text-align:center; }
+    body { font-family: 'Open Sans', sans-serif; text-align:center; }
+    .top-bar { display:block; padding:20px; text-align:left; background-color:#fafafa; margin-bottom:100px;}
+    .main-box { width:100%; margin:0 auto; padding:50px; text-align:center; }
     table {border: 1px solid #000; width:100%;}
-    img { width: 100%; height:100%; }
     th, td { width: 12.5%; height: 12.5%; border: 1px solid #000; padding:10px;}
+    input[type=checkbox] { height:20px; width:20px; }
+    input.checkAll { height: 100px; width: 100px; }
+    .image-box:hover img { transform: scale(2); transition: all 0.3s ease-in-out;}
+    .exists { color:green; font-size:8px; }
+    .warning { color:red; font-size:8px; }
   </style>
   <script>
 jQuery(document).ready(function ($) {
@@ -32,6 +37,9 @@ jQuery(document).ready(function ($) {
   </script>
 </head>
 <body>
+<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
+
+<h2>Check Images and Upload</h2>
 
 <div class="main-box">
 <form action="approve_temp_images.php" method="post" name="approve_images" enctype="multipart/form-data">
@@ -48,6 +56,8 @@ jQuery(document).ready(function ($) {
             <th>Approve All</th>
         </tr>
             <?php
+                include_once ('connect.php');
+
                 $dir = "temp-images/";
                 $files = scandir($dir);
                 unset($files[0]);
@@ -93,8 +103,22 @@ jQuery(document).ready(function ($) {
 
                 for ($i=0; $i < count($itemArray); $i++)
                 {
-                    echo "<tr>";
-                    echo "<td>".$keys[$i]."</td>";
+                    $sql = "SELECT sku FROM pim where sku ='".$keys[$i]."';";
+                    $result = mysqli_query($con, $sql);
+                    echo "<tr><td>";
+
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        if ($row[sku] == $keys[$i])
+                        {
+                            echo "<span class='exists'> ✅ SKU exists in database</span><br>";
+                        }
+                        else
+                        {
+                            echo "<span class='warning'>⛔ WARNING: SKU does not exist in database</span><br>";
+                        }
+                    }
+
+                    echo $keys[$i]."</td>";
 
                     for ($a=1; $a<=6; $a++)//add "No Image" text to keys without images
                     {
@@ -111,8 +135,9 @@ jQuery(document).ready(function ($) {
                         if ($value != "No Image")
                         {
                             echo "<td>
-                                <img src='https://pim.samsgroup.info/temp-images/".$value."'>
-                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' class='".$keys[$i]."' />
+                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' class='".$keys[$i]."' /><br><br>
+                                <div class='image-box'><img src='https://pim.samsgroup.info/temp-images/".$value."'></div>
+                                
                                 </td>";
                         }
                         else
@@ -120,7 +145,7 @@ jQuery(document).ready(function ($) {
                             echo "<td></td>";
                         }
                     }
-                    echo "<td><input type='checkbox' name='checkAll' class='checkAll' sku='".$keys[$i]."'></td>";
+                    echo "<td align=center><input type='checkbox' name='checkAll' class='checkAll' sku='".$keys[$i]."'></td>";
                     echo "</tr>";
                 }
                 
