@@ -77,18 +77,33 @@ $treatment="";
 if ( preg_match("/NH/i", $getData[97]) > 0 ) { $treatment .= "Unheated"; }
 
 // Shopify Qty Calculations
-$shopifyqty = 0; $whshopify = 0; $mdshopify = 0; $psshopify = 0;
+$shopifyqty = 0; $whshopify = 0; $mdshopify = 0; $psshopify = 0; $allocatedshopify = 0;
 if (preg_match("/loose/i", strtolower($type)) > 0){
   if ( $mdqty == 0 ) { $mdshopify = 0; } else { $mdshopify = 1; }
   if ( $psqty == 0 ) { $psshopify = 0; } else { $psshopify = 1; }
   if ( $warehouseqty == 0 ) { $whshopify = 0; } else { $whshopify = 1; }
-  $shopifyqty = $whshopify + $mdshopify + $psshopify;
+  if ( $allocatedQty == 0 ) { $allocatedshopify = 0; } else { $allocatedshopify = 1; }
+  if (strtolower($brand) == "sapphire dreams")
+  {
+    $shopifyqty = $whshopify + $mdshopify + $psshopify;
+    $shopifyqty = $shopifyqty - $allocatedshopify;
+  }
+  else{
+    $shopifyqty = $whshopify + $mdshopify + $psshopify;
+  } 
 }
 else{
   if ( $warehouseqty > 0 && $warehouseqty <= 1 ) { $whshopify = 1; } elseif ( $warehouseqty > 1 ) { $whshopify = $warehouseqty; }
   if ( $mdqty > 0 && $mdqty <= 1 ) { $mdshopify = 1; } elseif ( $mdqty > 1 ) { $mdshopify = $mdqty; }
   if ( $psqty > 0 && $psqty <= 1 ) { $psshopify = 1; } elseif ( $psqty > 1 ) { $psshopify = $psqty; }
-  $shopifyqty = $whshopify + $mdshopify + $psshopify;
+  if (strtolower($brand) == "sapphire dreams")
+  {
+    $shopifyqty = $whshopify + $mdshopify + $psshopify;
+    $shopifyqty = $shopifyqty - $allocatedQty;
+  }
+  else{
+    $shopifyqty = $whshopify + $mdshopify + $psshopify;
+  }
 }
 
 
