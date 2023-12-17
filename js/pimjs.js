@@ -1,7 +1,7 @@
 const myapp = Vue.createApp({
     data(){
         return{
-            activeColumns: ["sku","product_title","brand","type","colour","clarity","carat","shape","measurement","wholesale_aud","stone_price_retail_aud","image1"],
+            activeColumns: usercol,
             filters: [],     // Add an array to store filters
             filterarray: [],
             filterindex: 0,
@@ -10,10 +10,18 @@ const myapp = Vue.createApp({
             filtertype: '',
             filterfrom:0,
             filterto:99999999,
+            show_col_filter: false,
+            show_row_filter: true,
         }
     },
 
     methods: {
+        showhidecols() {
+            this.show_col_filter = !this.show_col_filter;
+        },
+        showhiderows() {
+            this.show_row_filter = !this.show_row_filter;
+        },
         toggleColumn(colName) {
             const index = this.activeColumns.indexOf(colName);
             if (index !== -1) {
@@ -21,7 +29,7 @@ const myapp = Vue.createApp({
             } else {
                 this.activeColumns.push(colName);
             }
-            console.log(this.activeColumns);
+
         },
         addFilter() {
             // Create a new app instance for the rowfilter component
@@ -68,7 +76,7 @@ const myapp = Vue.createApp({
 
             console.log('indexToRemove',this.filters.indexOf(this.filters[2]), this.filterindex);
     
-                // this.filters.splice(0, 2);
+            this.filters.splice(this.filterindex, 1);
 
 
         },
