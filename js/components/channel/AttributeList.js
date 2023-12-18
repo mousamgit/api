@@ -67,9 +67,14 @@ export default {
 
       <!-- Pagination controls -->
       <div>
-git        <span>Page {{ currentPage }}</span>
-        <button class="btn btn-primary" @click="nextPage">Next</button>
-      </div>
+        
+            <div class="btn-group" role="group" aria-label="Pagination">
+             <button class="btn btn-primary" @click="prevPage">Prev</button>
+               <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>
+              <button class="btn btn-primary" @click="nextPage">Next</button>
+            </div>
+</div>
+
       
     </div>
   `,

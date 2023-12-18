@@ -255,7 +255,7 @@ export default {
                                     <div class="col-md-2">
                                         <div class="mb-3"> 
                                          <select v-model="attribute.attribute_name" class="form-control" required>
-                                            <option v-for="column in columns" :key="column.COLUMN_NAME" :value="column.COLUMN_NAME">{{ column.COLUMN_NAME }}</option>
+                                            <option v-for="column in columns" :key="column.column_name" :value="column.column_name">{{ column.column_name }}</option>
                                           </select>                                        
                                           
                                          </div>

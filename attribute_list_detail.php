@@ -10,7 +10,7 @@ $urlParts = parse_url($currentUrl);
 parse_str($urlParts['query'] ?? '', $queryParameters);
 
 // Extracting the channel_id parameter
-$channelId = $queryParameters['channel_id'] ?? null;
+$channelId = $queryParameters['channel_id'] ?? 2;
 
 $page = $_GET['page'] ?? 1;
 $itemsPerPage = 10;
