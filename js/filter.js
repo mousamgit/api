@@ -38,6 +38,7 @@ myapp.component('rowfilter', {
             </select>
             
             <select v-model="filterType" id="filter-column"  @change="updatefilterType">
+                <option value="" selected disabled hidden>Choose here</option>
                 <option value="equals">equals</option>
                 <option value="range">range</option>
             </select>

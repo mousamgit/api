@@ -40,10 +40,10 @@ const myapp = Vue.createApp({
         
             filterApp.mount(); // Mount the component (this is required to create a new instance)
             if (!this.filterarray[this.filterindex]) {
-                this.filterarray[this.filterindex] = ['', ''];
+                this.filterarray[this.filterindex] = ['', '', 'equals', '', ''];
             } else {
                 // If filterarray is already initialized, add a new empty filter
-                this.filterarray.push(['', '']);
+                this.filterarray.push(['', '', 'equals', '', '']);
             }
 
         },
@@ -76,9 +76,9 @@ const myapp = Vue.createApp({
 
             console.log('indexToRemove',this.filters.indexOf(this.filters[2]), this.filterindex);
     
-            this.filters.splice(this.filterindex, 1);
+            // this.filters.splice(this.filterindex, 1);
 
-
+            console.log('Filter Changed:', this.filterarray);
         },
         applyFilters() {
             // Log the filter data for now, you can use it as needed
@@ -102,17 +102,17 @@ const myapp = Vue.createApp({
     watch: {
         filtertitle() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatetitle', this.filtertitle, this.filterindex);
+            console.log('updatetitle', this.filtertitle, this.filterindex);
             this.filterarray[this.filterindex][0] = this.filtertitle;
         },
         filtervalue() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][1] = this.filtervalue;
         },
         filtertype() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            console.log('filtertype', this.filtertype, this.filterindex);
             this.filterarray[this.filterindex][2] = this.filtertype;
         },
         filterfrom() {
