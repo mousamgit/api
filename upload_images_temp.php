@@ -4,13 +4,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dancss.css">
   <style>
-    body { font-family: 'Open Sans', sans-serif; }
-    .main-box { width:800px; margin:0 auto; padding:50px; border:1px solid #000; background-color:#F9F6F0; }
   </style>
 
 </head>
 <body>
+<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
 
 <?php
 
@@ -62,9 +62,10 @@ if(isset($_POST['Import'])){
 
 ?>
 
-<div class="main-box">
+<div class="box600">
     <h1>Image Upload Results</h1>
     <h3> A total of <?php echo $count; if ($count <= 1){ echo " file has"; }else{ echo " files have"; } ?> been submitted.</h3><br>
+    <div class="left">
     View the files you've uploaded by => <a href="/temp_images.php">Clicking Here</a><br><br>
     <?php if ($failed == 0) { echo "<b>Everything has uploaded successfully!</b> <br><br>"; } else { ?>
     <?php echo $failed; if ($failed <= 1){ echo " file has"; }else{ echo " files have"; } ?> failed uploading:
@@ -89,6 +90,7 @@ if(isset($_POST['Import'])){
     ?>
     </ul>
     <?php } ?>
+    </div>
 
 </div>
 
