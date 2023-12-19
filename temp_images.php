@@ -5,18 +5,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Open Sans', sans-serif; text-align:center; }
-    .top-bar { display:block; padding:20px; text-align:left; background-color:#fafafa; margin-bottom:100px;}
-    .main-box { width:100%; margin:0 auto; padding:50px; text-align:center; }
-    table {border: 1px solid #000; width:100%;}
-    th, td { width: 12.5%; height: 12.5%; border: 1px solid #000; padding:10px;}
-    input[type=checkbox] { height:20px; width:20px; }
-    input.checkAll { height: 100px; width: 100px; }
-    .image-box:hover img { transform: scale(2); transition: all 0.3s ease-in-out;}
-    .exists { color:green; font-size:8px; }
-    .warning { color:red; font-size:8px; }
-  </style>
+  <link rel="stylesheet" href="/css/dancss.css">
   <script>
 jQuery(document).ready(function ($) {
     $('.checkAll').click(function(){
@@ -37,7 +26,7 @@ jQuery(document).ready(function ($) {
   </script>
 </head>
 <body>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
+<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
 
 <h2>Check Images and Upload</h2>
 
@@ -134,10 +123,10 @@ jQuery(document).ready(function ($) {
                     {
                         if ($value != "No Image")
                         {
-                            echo "<td>
-                                <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' class='".$keys[$i]."' /><br><br>
-                                <div class='image-box'><img src='https://pim.samsgroup.info/temp-images/".$value."'></div>
-                                
+                            echo "<td><label for ='".$value."'>
+                                <div style='display:table-cell; vertical-align:middle; padding-right:20px;'> <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' id='".$value."' class='".$keys[$i]."' /> </div>
+                                <div class='image-box' style='display:table-cell; vertical-align:middle;'><img src='https://pim.samsgroup.info/temp-images/".$value."'></div>
+                                </label>
                                 </td>";
                         }
                         else
