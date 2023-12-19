@@ -1,12 +1,5 @@
 <?php
-session_start();
-
-// Check if the user is logged in
-if (!isset($_SESSION["username"])) {
-    header("Location: login.php");
-    exit();
-}
-else{
+include 'login_checking.php';
     include 'functions.php';
     $urlData = $_GET;
     $username = $_SESSION["username"];
@@ -15,7 +8,8 @@ else{
     $result = getResult($baseQuery , $records_per_page);
     $total_pages = getTotalPages($baseQuery , $records_per_page);
     $usercol = getValue('users', 'username', $username, 'columns');
-}
+    $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
 
 ?>
 <!DOCTYPE html>
@@ -40,7 +34,7 @@ else{
 
   echo '<div class="row"><div class="showrows col-md-6" v-show="show_row_filter"><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter()" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
-  </div><div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/" >Clear All Filters</a></div></div>';
+  </div><div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/homepage.php" >Clear All Filters</a></div></div>';
   
   echo '<div class="showcols colscontainer col-md-6" v-show="show_col_filter">';
   $row=mysqli_fetch_assoc($result);
@@ -83,7 +77,14 @@ echo '<div class="pagination">';
 for ($page = 1; $page <= $total_pages; $page++) {
   $urlData ['page'] = $page;
   $pageurl =  '?' . http_build_query($urlData);
+  
+  if($current_page == $page){
+    echo '<a class="active" href="' . $pageurl . '">' . $page . '</a>';
+  }
+  else{
     echo '<a href="' . $pageurl . '">' . $page . '</a>';
+  }
+    
 }
 echo '</div>';
 ?>

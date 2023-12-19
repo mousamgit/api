@@ -1,17 +1,11 @@
+
 <?php
-session_start();
+include 'login_checking.php';
 include 'functions.php';
-// Check if the user is logged in
-if (!isset($_SESSION["username"])) {
-    header("Location: login.php");
-    exit();
-}
-else{
-    $username = $_SESSION["username"];
-    
-    $usertype = getValue('users', 'username', $username, 'type');
-    $usercol = getValue('users', 'username', $username, 'columns');
-}
+$username = $_SESSION["username"];
+$usertype = getValue('users', 'username', $username, 'type');
+$usercol = getValue('users', 'username', $username, 'columns');
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    
@@ -39,12 +33,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p>Your default columns:</p>
     <p><?php echo $usercol; ?></p>
     <?php
-    $row=mysqli_fetch_assoc($result);
-  foreach ($row as $colName => $val) { 
-    $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-    echo '<a class="btn colfilter" :class="{ active: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
-  } // show column headers
-  ?>
+    require('connect.php');
+    $baseQuery = getQuery('pim',1);
+    $result = getResult($baseQuery , 1);
+    $row = mysqli_fetch_assoc($result);
+    foreach ($row as $colName => $val) { 
+        $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+        echo '<a class="btn colfilter" >'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
+    } // show column headers
+    ?>
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
     <label for="column">New Value:</label>

@@ -36,6 +36,7 @@ header a{float:right; margin-left:20px; color:#fff}
 #myTable td, #myTable th{padding:5px 10px;}
 .pagination{max-width: 100%; margin-top:20px; display: block; padding: 10px 30px 80px;}
 .pagination a{margin-right:10px; float: left; cursor: pointer; font-size: 10px; }
+.pagination a.active{font-weight: 600; color:#000;}
 
 .filter-form{margin-bottom: 10px;}
 .filter-form label{font-size: 14px; margin-right: 15px;}
