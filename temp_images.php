@@ -8,19 +8,19 @@
   <link rel="stylesheet" href="/css/dancss.css">
   <script>
 jQuery(document).ready(function ($) {
-    $('.checkAll').click(function(){
+    $('.selectall').click(function(){
         if($(this).prop("checked")){
-            $(this).closest('tr').find('input[type="checkbox"]').each(function(){
+            $('.main-box input[type="checkbox"]').each(function(){
                 $(this).prop("checked", true);
             });
         }
         else{
-            $(this).closest('tr').find('input[type="checkbox"]').each(function(){
+            // $(this).closest('tr').find('input[type="checkbox"]').each(function(){
+            $('.main-box input[type="checkbox"]').each(function(){
                 $(this).prop("checked", false);
             });
         }
-
-        
+ 
     });
 });
   </script>
@@ -42,7 +42,7 @@ jQuery(document).ready(function ($) {
             <th>Image 4</th>
             <th>Image 5</th>
             <th>Image 6</th>
-            <th>Approve All</th>
+            <th>Approve All <input type="checkbox" value="" name="check[]" id="selectall" class="selectall"></th>
         </tr>
             <?php
                 include_once ('connect.php');
