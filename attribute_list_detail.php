@@ -21,12 +21,14 @@ $output_labels=[];
 $columns = [];
 
 // Fetching distinct attributes for the header
-$header = $con->query("SELECT DISTINCT output_label, attribute_name FROM channel_attributes WHERE channel_id = $channelId");
+$header = $con->query("SELECT DISTINCT output_label, attribute_name,(select name from channels where channels.id = channel_attributes.channel_id)channel_name FROM channel_attributes WHERE channel_id = $channelId");
 
+$channel_name='';
 if ($header->num_rows > 0) {
     while ($row = $header->fetch_assoc()) {
         array_push($heads, $row['attribute_name']);
         array_push($output_labels, $row['output_label']);
+        $channel_name = $row['channel_name'];
     }
 }
 
@@ -94,5 +96,5 @@ if ($query->num_rows > 0) {
 $con->close();
 
 header('Content-Type: application/json');
-echo json_encode(['heads'=>$heads,'output_labels' => $output_labels, 'columns' => $columns]);
+echo json_encode(['heads'=>$heads,'output_labels' => $output_labels, 'columns' => $columns,'channel_name'=>$channel_name]);
 ?>

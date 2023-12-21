@@ -4,6 +4,7 @@ export default {
             attributes: [],
             columns: [],
             channel_id: 0,
+            channel_name:'test_channel',
             heads: [],
             output_labels: [],
             currentPage: 1,
@@ -30,6 +31,7 @@ export default {
                 this.heads = data.heads;
                 this.output_labels = data.output_labels;
                 this.columns = data.columns;
+                this.channel_name = data.channel_name;
             } catch (error) {
                 console.error('Error fetching attributes:', error);
             }
@@ -79,6 +81,45 @@ export default {
                     console.error('Error fetching data:', error);
                 });
         },
+        async exportData() {
+            try {
+                const response = await fetch('channel_attribute_export.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.filters),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(new Blob([blob]));
+
+                // Trigger download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = this.channel_name + '.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.textContent = 'Data Exported Successfully';
+                document.body.appendChild(successMessage);
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    document.body.removeChild(successMessage);
+                }, 5000);
+            } catch (error) {
+                console.error('Error exporting data:', error);
+            }
+        },
         clearFilters() {
             // Implement logic to clear filters
             this.filters = [{ column: '', type: '=', value: '', valueTo: '' }];
@@ -86,7 +127,7 @@ export default {
     },
     template: `
     <div class="container mt-3 text-end">
-    <a class="btn btn-success" :href="'/pim/channel_attribute_export.php?channel_id=' + channel_id">
+    <a class="btn btn-success" @click="exportData">
       <i class="fas fa-file-export"></i> Export
     </a>
 
