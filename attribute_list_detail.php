@@ -17,18 +17,71 @@ $itemsPerPage = 10;
 $offset = ($page - 1) * $itemsPerPage;
 
 $heads = [];
+$output_labels=[];
 $columns = [];
 
+// Fetching distinct attributes for the header
 $header = $con->query("SELECT DISTINCT output_label, attribute_name FROM channel_attributes WHERE channel_id = $channelId");
 
 if ($header->num_rows > 0) {
     while ($row = $header->fetch_assoc()) {
         array_push($heads, $row['attribute_name']);
+        array_push($output_labels, $row['output_label']);
     }
 }
 
 $heads = array_unique($heads);
-$query = $con->query("SELECT " . implode($heads, ',') . " FROM pim LIMIT $offset, $itemsPerPage");
+
+implode(',',$heads);
+
+// Getting the raw POST data
+$jsonData = file_get_contents("php://input");
+$data = json_decode($jsonData, true);
+
+// Check if the data is present
+if (!empty($data)) {
+    $whereConditions = [];
+
+    // Loop through each filter condition
+    foreach ($data as $filter) {
+        $column = $con->real_escape_string($filter['column']);
+        $type = $con->real_escape_string($filter['type']);
+
+        // Handle different filter types
+        switch ($type) {
+            case '=':
+                $value = $con->real_escape_string($filter['value']);
+                $whereConditions[] = "$column = '$value'";
+                break;
+
+            case 'between':
+                $value = (int)$filter['value'];
+                $valueTo = (int)$filter['valueTo'];
+                $whereConditions[] = "$column BETWEEN $value AND $valueTo";
+                break;
+
+            // Add more cases for other filter types if needed
+
+            default:
+                // Handle unknown filter types
+                break;
+        }
+    }
+
+    // Constructing the full WHERE condition
+    $whereCondition = !empty($whereConditions) ? ' WHERE ' . implode(' AND ', $whereConditions) : '';
+
+    // Your existing code for pagination
+    $query = $con->query("SELECT ".implode(',',$heads)." FROM pim $whereCondition LIMIT $offset, $itemsPerPage");
+
+    // Rest of your code
+}
+else
+{
+
+    $query = $con->query("SELECT ".implode(',',$heads)." FROM pim LIMIT $offset, $itemsPerPage");
+}
+// Constructing the full SQL query
 
 if ($query->num_rows > 0) {
     while ($row = $query->fetch_assoc()) {
@@ -41,5 +94,5 @@ if ($query->num_rows > 0) {
 $con->close();
 
 header('Content-Type: application/json');
-echo json_encode(['heads' => $heads, 'columns' => $columns]);
+echo json_encode(['heads'=>$heads,'output_labels' => $output_labels, 'columns' => $columns]);
 ?>

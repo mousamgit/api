@@ -1,142 +1,160 @@
-// AddChannel.js
 export default {
-    props: ['isModalOpen'],
-    emits: ['update:isModalOpen'],
     data() {
         return {
-            showModal: false,
-            channelName: '',
-            attributes: [{ attribute_name: '', output_label: '' }],
-            // Add new data properties for editing
-            isEditing: false,
-            editIndex: null,
+            attributes: [],
+            columns: [],
+            channel_id: 0,
+            heads: [],
+            output_labels: [],
+            currentPage: 1,
+            itemsPerPage: 10,
+            showFilterForm: false,
+            filterConditions: [],
+            currentFilter: {
+                column: '',
+                type: 'equals',
+                value: '',
+            },
+            filters: [{ column: '', type: 'equals', value: '', valueTo: '' }],
         };
     },
+    mounted() {
+        this.fetchAttributes();
+    },
     methods: {
-
-        addAttribute() {
-            this.attributes.push({ name: '', type: '' });
-        },
-        removeAttribute(index) {
-            this.attributes.splice(index, 1);
-        },
-        editAttribute(index) {
-            // Set the attribute data for editing
-            this.attribute_name = this.attributes[index].attribute_name;
-            this.output_label = this.attributes[index].output_label;
-            // Set the editing state and index
-            this.isEditing = true;
-            this.editIndex = index;
-        },
-        async submitForm() {
+        async fetchAttributes() {
             try {
-                const response = await fetch('save_channel.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: this.name,
-                        type: this.type,
-                        attributes: this.attributes,
-                    }),
-                });
-
+                const response = await fetch('attribute_list_detail.php?page=' + this.currentPage);
                 const data = await response.json();
 
-                if (data.success) {
-                    // Channel and attributes saved successfully
-                    console.log('Channel and attributes saved successfully!');
-                    location.reload();
-                } else {
-                    // Handle the error
-                    console.error('Error saving channel and attributes:', data.error);
-                }
+                this.heads = data.heads;
+                this.output_labels = data.output_labels;
+                this.columns = data.columns;
             } catch (error) {
-                console.error('Error saving channel and attributes:', error);
+                console.error('Error fetching attributes:', error);
             }
-
-            // Close the modal after form submission
-            $('#addChannelModal').modal('hide');
         },
-        // Add a method to reset the form and editing state
-        resetForm() {
-            this.channelName = '';
-            this.attributes = [{ attribute_name: '', output_label: '' }];
-            this.isEditing = false;
-            this.editIndex = null;
+        nextPage() {
+            this.currentPage++;
+            this.fetchAttributes();
+        },
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.fetchAttributes();
+            }
+        },
+        toggleFilterForm() {
+            this.showFilterForm = !this.showFilterForm;
+        },
+        addFilterRow() {
+            this.filters.push({ column: '', type: 'equals', value: '', valueTo: '' });
+        },
+
+        removeLastFilterRow() {
+            if (this.filters.length > 1) {
+                this.filters.splice(this.filters.length - 1, 1);
+            }
+        },
+        applyFilters() {
+            // Implement logic to apply filters
+            // You can use this.filterConditions to access the filter conditions
+            // For now, let's log the filter conditions to the console
+            console.log('Filter Conditions:', this.filterConditions);
+        },
+        clearFilters() {
+            // Implement logic to clear filters
+            this.filterConditions = [];
         },
     },
     template: `
-    <div class="container mt-5">   
-     <div class="row">
-    <div class="col-md-9">
-      <h2 class="mb-4">Channel List</h2>
-    </div>
-    <div class="col-md-3 text-end">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addChannelModal">
-        Add Channel
-      </button>
-    </div>
-  </div>
-    
-    <div class="modal fade" id="addChannelModal" tabindex="-1" aria-labelledby="addChannelModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addChannelModalLabel">Add Channel</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="submitForm">
-              <div class="row">
-               <div class="col-md-6">
-               <label for="channelName" class="form-label">Channel Name:</label>
-               <input type="text" id="channelName" v-model="name" class="form-control" required>
-              </div> 
-              <div class="col-md-6">
-               <label for="channelType" class="form-label">Channel Type:</label>
-               <input type="text" id="channelType" v-model="type" class="form-control" required>
+    <div class="container mt-3 text-end">
+      <a class="btn btn-success" :href="'/pim/channel_attribute_export.php?channel_id=' + channel_id">
+        <i class="fas fa-file-export"></i> Export
+      </a>
+
+      <div class="showrows">
+        <h2>Row Filter</h2>
+
+        <!-- Show Add Condition, Filter, Clear Filter -->
+
+        <!-- Show Filter Form if toggled -->
+        <div v-if="showFilterForm" class="rowscontainer">
+          <div class="filter-form card p-3 mb-3">
+            <div class="row">
+              <div class="col-md-3">
+                <label for="filter-column">Filter by Column:</label>
+                <select v-model="currentFilter.column" id="filter-column" class="form-select">
+                  <option v-for="(output_label, index) in output_labels" :key="index" :value="heads[index]">{{ output_label }}</option>
+                </select>
               </div>
-              
+
+              <div class="col-md-2">
+                <label for="filter-type">Filter Type:</label>
+                <select v-model="currentFilter.type" id="filter-type" class="form-select">
+                  <option value="equals">equals</option>
+                  <option value="range">range</option>
+                </select>
               </div>
-              <div class="attributes-section mt-3">
-               <h5>Attributes</h5>
-               <div v-for="(attribute, index) in attributes" :key="index" class="mb-2">
-              <div class="row">
-              <div class="col-md-4">
-                    <input type="text" v-model="attribute.attribute_name" placeholder="Attribute Name" class="form-control">   
+
+              <div class="col-md-2" v-if="currentFilter.type === 'equals'">
+                <label for="filter-value">Value:</label>
+                <input v-model="currentFilter.value" type="text" id="filter-value" class="form-control">
               </div>
-              <div class="col-md-4">
-               <input type="text" v-model="attribute.output_label" placeholder="Output Label" class="form-control">
+
+              <div class="col-md-2" v-else-if="currentFilter.type === 'range'">
+                <label for="filter-range-value">From:</label>
+                <input v-model="currentFilter.value" type="number" id="filter-range-value" class="form-control">
+                <label for="filter-range-value-to">To:</label>
+                <input v-model="currentFilter.valueTo" type="number" id="filter-range-value-to" class="form-control">
               </div>
-              <div class="col-md-4">
-              <button type="button" @click.prevent="removeAttribute(index)" class="btn btn-danger">-</button> 
-              <button type="button" @click.prevent="addAttribute" class="btn btn-success ml-1">+</button>
+
+              <div class="col-md-1">
+                <button class="btn btn-success mt-2" @click="addFilterRow">+</button>
+                <button class="btn btn-danger mt-2" @click="removeLastFilterRow">-</button>
               </div>
-              </div>
-               </div>
-                </div>
-        
-                <button type="submit" class="btn btn-primary mt-3">Add Channel</button>
-              </form>
+
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    
 
-
-      
-
-      <div v-if="showModal" class="modal">
-        <div class="modal-content">
-          <span @click="showModal = false" class="close-button">&times;</span>
-          
-         
+        <div class="filter-btn-container mt-3">
+          <button class="btn btn-primary" @click="toggleFilterForm">Add Condition</button>
+          <button class="btn btn-info" @click="applyFilters">Filter</button>
+          <button class="btn btn-secondary" @click="clearFilters">Clear All Filters</button>
         </div>
       </div>
-    </div>
-  `,
+
+      <table class="table table-responsive mt-3">
+        <thead>
+          <tr>
+            <th>S.N</th>
+            <th v-for="(output_label, index) in output_labels" :key="index">{{ output_label }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(column, index) in columns" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td v-for="(head, hindex) in heads" :key="hindex">
+              <span v-if="head.includes('image')">
+                <img :src="column[head]" alt="Image" width="100" height="100">
+              </span>
+              <span v-else>
+                {{ column[head] }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination controls -->
+      <div class="mt-3">
+        <div class="btn-group" role="group" aria-label="Pagination">
+          <button class="btn btn-primary" @click="prevPage">Prev</button>
+          <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>
+          <button class="btn btn-primary" @click="nextPage">Next</button>
+        </div>
+      </div>
+    </div>`,
+
 };
