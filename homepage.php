@@ -33,8 +33,8 @@ include 'login_checking.php';
 
 
   echo '<div class="row"><div class="showrows col-md-6" v-show="show_row_filter"><div class="rowscontainer">
-  <rowfilter v-for="(filter, index) in filters" :key="index" @remove-filter="removeFilter()" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
-  </div><div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a><a class="btn filter" @click="applyFilters" >Filter</a><a class="btn filter" href="/pim/homepage.php" >Clear All Filters</a></div></div>';
+  <rowfilter v-for="(filter, index) in filters" :key="index" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
+  </div><div class="filter-btn-container"> <a class="btn add-condition" @click="addFilter()">Add Condition</a> <a class="btn filter"  @click="removeFilter">Remove Condition</a><a class="btn filter" @click="applyFilters" >Apply Filter</a></div></div>';
   
   echo '<div class="showcols colscontainer col-md-6" v-show="show_col_filter">';
   $row=mysqli_fetch_assoc($result);

@@ -9,6 +9,7 @@ const myapp = Vue.createApp({
             filtervalue: '',
             filtertype: '',
             filterfrom:0,
+            filtertotal:-1,
             filterto:99999999,
             show_col_filter: false,
             show_row_filter: true,
@@ -45,7 +46,7 @@ const myapp = Vue.createApp({
                 // If filterarray is already initialized, add a new empty filter
                 this.filterarray.push(['', '', 'equals', '', '']);
             }
-
+            this.filtertotal ++;
         },
         updateindex(index){            
             this.filterindex = index;
@@ -74,11 +75,13 @@ const myapp = Vue.createApp({
             // this.filters.splice(this.filterindex, 1);
                 // Find the index of the filter in filters array
 
-            console.log('indexToRemove',this.filters.indexOf(this.filters[2]), this.filterindex);
-    
-            // this.filters.splice(this.filterindex, 1);
 
-            console.log('Filter Changed:', this.filterarray);
+
+            this.filters.splice( this.filtertotal, 1);
+            this.filterarray.splice( this.filtertotal, 1);
+            this.filtertotal --;
+
+
         },
         applyFilters() {
             // Log the filter data for now, you can use it as needed

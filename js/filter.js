@@ -48,7 +48,7 @@ myapp.component('rowfilter', {
             <input v-if="this.filterType === 'range'" v-model="filterFrom" type="text" class="inputnumber" id="filter-from" @input="updatefilterfrom">
             <label v-if="this.filterType === 'range'" for="filter-to">to:</label>
             <input v-if="this.filterType === 'range'" v-model="filterTo" type="text" class="inputnumber" id="filter-to" @input="updatefilterto">
-            <button @click="removeFilter">Remove</button>
+            
         </div>
     `,
     methods: {
