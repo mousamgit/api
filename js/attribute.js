@@ -1,5 +1,6 @@
 // channel.js
 import AttributeList from './components/channel/AttributeList.js';
+import ProductFilter from "./components/Filters/ProductFilter.js";
 
 const app = Vue.createApp({
     data() {
@@ -36,5 +37,6 @@ const app = Vue.createApp({
 });
 
 app.component('attribute-list', AttributeList);
+app.component('product-filter', ProductFilter);
 
 app.mount('#app');

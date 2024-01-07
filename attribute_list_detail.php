@@ -40,58 +40,62 @@ implode(',',$heads);
 $jsonData = file_get_contents("php://input");
 $data = json_decode($jsonData, true);
 
+
 // Check if the data is present
 if (!empty($data)) {
-    $whereConditions = [];
+    if($data[0]['column'] != null)
+    {
+        $whereConditions = [];
+        // Loop through each filter condition
+        foreach ($data as $filter) {
+            $column = $con->real_escape_string($filter['column']);
+            $type = $con->real_escape_string($filter['type']);
 
-    // Loop through each filter condition
-    foreach ($data as $filter) {
-        $column = $con->real_escape_string($filter['column']);
-        $type = $con->real_escape_string($filter['type']);
+            // Handle different filter types
+            switch ($type) {
+                case '=':
+                    $value = $con->real_escape_string($filter['value']);
+                    $whereConditions[] = $column."='" .$value."'";
+                    break;
+                case 'includes':
+                    $value = $con->real_escape_string($filter['value']);
+                    $whereConditions[] = "$column like '%$value%'";
+                    break;
 
-        // Handle different filter types
-        switch ($type) {
-            case '=':
-                $value = $con->real_escape_string($filter['value']);
-                $whereConditions[] = "$column = '$value'";
-                break;
+                case 'between':
+                    $value = (int)$filter['value'];
+                    $valueTo = (int)$filter['valueTo'];
+                    $whereConditions[] = "$column BETWEEN $value AND $valueTo";
+                    break;
 
-            case 'between':
-                $value = (int)$filter['value'];
-                $valueTo = (int)$filter['valueTo'];
-                $whereConditions[] = "$column BETWEEN $value AND $valueTo";
-                break;
+                // Add more cases for other filter types if needed
 
-            // Add more cases for other filter types if needed
+                default:
+                    // Handle unknown filter types
+                    break;
+            }
+    }
+        // Constructing of full WHERE condition
+        $whereCondition = !empty($whereConditions) ? ' WHERE ' . implode(' AND ', $whereConditions) : '';
 
-            default:
-                // Handle unknown filter types
-                break;
-        }
+        $query = $con->query("SELECT ".implode(',',$heads)." FROM pim $whereCondition LIMIT $offset, $itemsPerPage");
     }
 
-    // Constructing the full WHERE condition
-    $whereCondition = !empty($whereConditions) ? ' WHERE ' . implode(' AND ', $whereConditions) : '';
-
-    // Your existing code for pagination
-    $query = $con->query("SELECT ".implode(',',$heads)." FROM pim $whereCondition LIMIT $offset, $itemsPerPage");
-
-    // Rest of your code
-}
-else
-{
-
-    $query = $con->query("SELECT ".implode(',',$heads)." FROM pim LIMIT $offset, $itemsPerPage");
-}
-// Constructing the full SQL query
-
-if ($query->num_rows > 0) {
-    while ($row = $query->fetch_assoc()) {
-        if ($row['sku'] != null) {
-            array_push($columns, $row);
+    else
+    {
+        //full query case
+        $query = $con->query("SELECT ".implode(',',$heads)." FROM pim LIMIT $offset, $itemsPerPage");
+    }
+    if ($query->num_rows > 0) {
+        while ($row = $query->fetch_assoc()) {
+            if ($row['sku'] != null) {
+                array_push($columns, $row);
+            }
         }
     }
 }
+
+
 
 $con->close();
 

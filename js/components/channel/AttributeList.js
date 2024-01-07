@@ -16,7 +16,7 @@ export default {
                 type: '=',
                 value: '',
             },
-            filters: [{ column: '', type: '=', value: '', valueTo: '' }],
+            filters: [{ column: '', type: 'includes', value: '', valueTo: '' }],
         };
     },
     mounted() {
@@ -24,17 +24,23 @@ export default {
     },
     methods: {
         async fetchAttributes() {
-            try {
-                const response = await fetch('attribute_list_detail.php?page=' + this.currentPage);
-                const data = await response.json();
-
-                this.heads = data.heads;
-                this.output_labels = data.output_labels;
-                this.columns = data.columns;
-                this.channel_name = data.channel_name;
-            } catch (error) {
-                console.error('Error fetching attributes:', error);
-            }
+            fetch('attribute_list_detail.php?page=' + this.currentPage, {
+                method: 'POST', // or 'GET' depending on your server setup
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.filters),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    this.heads = data.heads;
+                    this.output_labels = data.output_labels;
+                    this.columns = data.columns;
+                    this.channel_name = data.channel_name;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         },
         nextPage() {
             this.currentPage++;
@@ -47,7 +53,7 @@ export default {
             }
         },
         addFilterRow() {
-            this.filters.push({ column: '', type: '=', value: '', valueTo: '' });
+            this.filters.push({ column: '', type: 'includes', value: '', valueTo: '' });
         },
         removeFilterRow(index) {
             if (this.filters.length > 1) {
@@ -59,70 +65,59 @@ export default {
                 this.filters.pop();
             }
         },
-        async applyFilters() {
+        handleFiltersApplied(data) {
+            // Update your Vue data with the new data
+            this.heads = data.heads;
+            this.output_labels = data.output_labels;
+            this.columns = data.columns;
 
-            fetch('attribute_list_detail.php', {
-                method: 'POST', // or 'GET' depending on your server setup
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(this.filters),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Handle the response from the server
-                    console.log('Response from attribute_list_detail.php:', data);
-                    // Update your Vue data with the new data if needed
-                    this.heads = data.heads;
-                    this.output_labels = data.output_labels;
-                    this.columns = data.columns;
+        },
+        async exportData() {
+            // Assuming `this.filters` is an array of filters you want to send as query parameters
+            const queryParams = new URLSearchParams(this.filters.reduce((acc, filter, index) => {
+                Object.entries(filter).forEach(([key, value]) => {
+                    acc[`filter_column_${index + 1}_${key}`] = value;
+                });
+                return acc;
+            }, {})).toString();
+
+            const exportUrl = `channel_attribute_export.php?${queryParams}`;
+
+            fetch(exportUrl)
+                .then(response => {
+                    // Check if the response is successful (status code 2xx)
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    // Trigger download
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = this.channel_name+'.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    // Show success message
+                    const successMessage = document.createElement('div');
+                    successMessage.textContent = 'Data Exported Successfully';
+                    document.body.appendChild(successMessage);
+
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        document.body.removeChild(successMessage);
+                    }, 5000);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         },
-        async exportData() {
-            try {
-                const response = await fetch('channel_attribute_export.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(this.filters),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(new Blob([blob]));
-
-                // Trigger download
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = this.channel_name + '.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-
-                // Show success message
-                const successMessage = document.createElement('div');
-                successMessage.textContent = 'Data Exported Successfully';
-                document.body.appendChild(successMessage);
-
-                // Hide success message after 5 seconds
-                setTimeout(() => {
-                    document.body.removeChild(successMessage);
-                }, 5000);
-            } catch (error) {
-                console.error('Error exporting data:', error);
-            }
-        },
         clearFilters() {
             // Implement logic to clear filters
-            this.filters = [{ column: '', type: '=', value: '', valueTo: '' }];
+            this.filters = [{ column: '', type: 'includes', value: '', valueTo: '' }];
         },
     },
     template: `
@@ -130,59 +125,7 @@ export default {
     <a class="btn btn-success" @click="exportData">
       <i class="fas fa-file-export"></i> Export
     </a>
-
-    <div class="showrows">
-      <h2>Row Filter</h2>
-
-      <div  class="rowscontainer card row justify-content-end">
-      <div class="filter-form card p-3 mb-3 " v-for="(filter, rowIndex) in filters" :key="rowIndex">
-            <div class="row justify-content-center">
-              <div class="col-md-2">
-                <center><label for="filter-column">Filter by Column:</label><center>
-                <select v-model="filter.column" id="filter-column" class="form-select">
-                  <option v-for="(output_label, index) in output_labels" :key="index" :value="heads[index]">{{ output_label }}</option>
-                </select>
-              </div>
-
-              <div class="col-md-2">
-                <center><label for="filter-type">Filter Type:</label><center>
-                <select v-model="filter.type" id="filter-type" class="form-select">
-                  <option value="=">equals</option>
-                  <option value="between">range</option>
-                </select>
-              </div>
-
-              <div class="col-md-2" v-if="filter.type === '='">
-                <center><label for="filter-value">Value:</label><center>
-                <input v-model="filter.value" type="text" id="filter-value" class="form-control">
-              </div>
-
-              <div class="col-md-2" v-else-if="filter.type === 'between'">
-                <center><label for="filter-range-value">From:</label><center>
-                <input v-model="filter.value" type="number" id="filter-range-value" class="form-control">
-                <center><label for="filter-range-value-to">To:</label><center>
-                <input v-model="filter.valueTo" type="number" id="filter-range-value-to" class="form-control">
-              </div>
-
-              <div class="col-md-1">
-                <button class="btn btn-success mt-2" @click="addFilterRow">+</button>
-                <button class="btn btn-danger mt-2" @click="removeLastFilterRow">-</button>
-              </div>
-
-            </div>
-           
-      </div>
-      <center>
-       <div class="filter-btn-container mt-3 justify-content-center">
-                <button class="btn btn-info" @click="applyFilters">Filter List</button>
-                <button class="btn btn-secondary" @click="clearFilters">Clear All Filters</button>
-       </div>
-       </center>
-      </div>
-
-     
-    </div>
-
+   <product-filter :filters="filters" :output_labels="output_labels" :heads="heads" @filters-applied="handleFiltersApplied"></product-filter>
     <table class="table table-responsive mt-3">
       <thead>
         <tr>

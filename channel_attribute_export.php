@@ -31,7 +31,7 @@ $heads = array_unique($heads);
 
 // Handling filter conditions from query parameters
 $whereConditions = [];
-echo $_GET['filter_column_1_column'].'hello';
+
 if($_GET['filter_column_1_column'] != NULL)
 {
     foreach ($_GET as $key => $value) {
@@ -51,7 +51,9 @@ if($_GET['filter_column_1_column'] != NULL)
                     $whereConditions[] = "$column BETWEEN '$filterValue' AND '$filterValueTo'";
                     break;
 
-                // Add more cases for other filter types if needed
+                case 'includes':
+                    $whereConditions[] = "$column like '%$filterValue%'";
+                    break;
 
                 default:
                     // Handle unknown filter types

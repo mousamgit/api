@@ -30,8 +30,6 @@
 <!-- Include your main JavaScript file -->
 <script type="module" src="js/attribute.js" defer></script>
 
-
-
 </body>
 </html>
 
