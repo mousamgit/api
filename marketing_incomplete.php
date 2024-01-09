@@ -1,3 +1,7 @@
+<?php
+  include 'login_checking.php';
+  include 'functions.php';
+?>
 <html>
 <head>
   <title>SGA Marketing - Missing Descriptions or Tags</title>
@@ -8,19 +12,20 @@
   <link rel="stylesheet" href="/css/dancss.css">
 </head>
 <body>
+<?php include 'topbar.php'; ?>
 <div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
 
 <div class="main-box">
 <form class="form-horizontal" action="update_descriptions.php" method="post" name="update_descriptions" enctype="multipart/form-data">
 <?php
-  include_once ('connect.php');
-  $query = 'SELECT * FROM pim WHERE ( (description = "" or description IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds") AND type <> "loose diamonds" AND type <> "loose sapphires") OR ( (tags = "" or tags IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds") AND type <> "loose diamonds" AND type <> "loose sapphires" AND brand <> "white diamond jewellery");';
+  require ('connect.php');
+  $query = 'SELECT * FROM pim WHERE ( (description = "" or description IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds") AND type <> "loose diamonds" AND type <> "loose sapphires") OR ( (tags = "" or tags IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds") AND type <> "loose diamonds" AND type <> "loose sapphires" AND brand <> "white diamond jewellery") ORDER BY pim.product_title ASC;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/marketing/marketing-incomplete.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("sku", "description", "tags");
+  $headers = array("sku", "product_title", "description", "tags", "collections_2");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -33,20 +38,23 @@
   echo "<center>";
   echo "<br><h2>Missing Descriptions or Tags</h2><br>";
   echo "<table><tr>";
-  echo "<th>SKU</th><th>Image 1</th><th>Details</th><th>Description</th><th>Tags</th></tr>"; 
+  echo "<th>SKU</th><th>Image 1</th><th>Details</th><th>Description</th><th>Tags</th><th>Collections 2</th></tr>"; 
   while($row = mysqli_fetch_assoc($result)){
 
 
     $content = array (
       0 => $row[sku],
-      1 => $row[$description],
-      2 => $row[tags]
+      1 => $row[product_title],
+      2 => $row[description],
+      3 => $row[tags],
+      4 => $row[collections_2]
     );
     fputcsv($fp, $content);
 
   echo "<tr><td><input type='hidden' id='sku' name='sku[]' value='".$row[sku]."'>".$row[sku]."</td><td align=center class='image-box'><img src='".$row[image1]."' width=200px></td><td><b>Brand:</b> ".$row[brand]."<br><b>Title:</b> ".$row[product_title]."<br><br>".$row[specifications]."</td>";
   echo "<td align=center width=30%><input type='text' id='description' name='description[]' value='".$row[description]."'></input></td>";
   echo "<td align=center width=30%><input type='text' id='tags' name='tags[]' value='".$row[tags]."'></input></td>";
+  echo "<td align=center width=10%><input type='text' id='collections_2' name='collections_2[]' value='".$row[collections_2]."'></input></td>";
   echo "</tr>";
   
 

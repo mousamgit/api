@@ -32,6 +32,7 @@ include_once ('connect.php');
     
     $description = $_POST['description'];
     $tags = $_POST['tags'];
+    $collections_2 = $_POST['collections_2'];
     $sku = $_POST['sku'];
 
     array_walk_recursive($description, function(&$value){
@@ -40,24 +41,27 @@ include_once ('connect.php');
 
     for ($i = 0; $i < count($sku); $i++)
     {
-        $sql = " UPDATE pim SET description='$description[$i]', tags='$tags[$i]' where sku='$sku[$i]';"; 
+        $sql = " UPDATE pim SET description='$description[$i]', tags='$tags[$i]', collections_2='$collections_2[$i]'  where sku='$sku[$i]';"; 
         $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ;
 
         echo "Updated ".$sku[$i];
         echo "<ul>";
         echo "<li><b>Description:</b> ".$description[$i]."</li>";
         echo "<li><b>Tags:</b> ".$tags[$i]."</li>";
+        echo "<li><b>Collections 2:</b> ".$collections_2[$i]."</li>";
         echo "</ul><br>";
 
         $line1 = $sku[$i]."\n";
         $line2 = "Description:". $description[$i]."\n";
         $line3 = "Tags: ". $tags[$i]."\n";
-        $line4 = "\n\n";
+        $line3 = "Collections 2: ". $collections_2[$i]."\n";
+        $line5 = "\n\n";
 
         fwrite($log,$line1);
         fwrite($log,$line2);
         fwrite($log,$line3);
         fwrite($log,$line4);
+        fwrite($log,$line5);
 
     }
     fclose($log);

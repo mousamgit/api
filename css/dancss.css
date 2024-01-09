@@ -11,7 +11,7 @@ body { font-family: 'Open Sans', sans-serif; text-align:center; }
 .image-box:hover img { transform: scale(2); border:1px solid #000; transition: all 0.3s ease-in-out;}
 .exists { color:green; font-size:8px; }
 .warning { color:red; font-size:8px; }
-.form-box { border:1px solid #000; border-radius:5px; width:600px; margin:0 auto; padding:50px 0px; }
+.form-box { border:1px solid #000; border-radius:5px; width:600px; margin:0 auto; padding:50px 0px; text-align: center !important;}
 .image-box { max-width: 200px !important; }
 
 /* TABLE */
