@@ -7,8 +7,8 @@
 
             
             <?php if ($usertype == "graphics" || $usertype == "admin") { ?>
+                <a href="temp_images.php" > Check Uploaded Images</a>
                 <a href="upload_images.php" >Upload images</a>
-
             <?php } ?>
 
             <?php if ($usertype == "admin" || $usertype == "marketing") { ?>

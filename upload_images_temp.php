@@ -1,5 +1,11 @@
+<?php
+  include 'login_checking.php';
+  include 'functions.php';
+?>
+
 <html>
 <head>
+<?php include 'header.php'; ?>
   <title>Images Uploaded</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,6 +16,7 @@
 
 </head>
 <body>
+<?php include 'topbar.php'; ?>
 <div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
 
 <?php
