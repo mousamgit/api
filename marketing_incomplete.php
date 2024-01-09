@@ -13,8 +13,6 @@
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
-
 <div class="main-box">
 <form class="form-horizontal" action="update_descriptions.php" method="post" name="update_descriptions" enctype="multipart/form-data">
 <?php

@@ -32,9 +32,8 @@ jQuery(document).ready(function ($) {
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
 
-<h2>Check Images and Upload</h2>
+<h2>Approve Uploaded Images</h2>
 
 <div class="main-box">
 <form action="approve_temp_images.php" method="post" name="approve_images" enctype="multipart/form-data">

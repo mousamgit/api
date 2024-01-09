@@ -21,8 +21,6 @@ include 'login_checking.php';
 
 <body>
 <?php include 'topbar.php'; ?>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
-
 
     <div class="form-box">
         <form action="upload_images_temp.php" method="post" name="upload_images" enctype="multipart/form-data">

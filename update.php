@@ -17,7 +17,6 @@
 
 </head>
 <?php include 'topbar.php'; ?>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
 
 <?php
  include ('connect.php');
