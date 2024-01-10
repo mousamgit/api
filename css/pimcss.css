@@ -59,26 +59,34 @@ header a{float:right; margin-left:20px; color:#fff}
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
     text-align:left;
-  }
+}
 
 .menu-icon:hover {
     cursor: pointer;
-    color:#DA203D;
+    color: #DA203D;
+}
+
+.sidenav .title {
+    color:#efd09e;
+    border-bottom: 1px solid #efd09e;
+    padding: 20px 0px 8px 0px;
+    margin: 0px 32px;
+    font-size:12px;
+    text-transform:uppercase;
 }
   
   /* The navigation menu links */
   .sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 14px;
     color: #ccc;
     display: block;
     transition: 0.3s;
   }
   
   .sidenav .active {
-    color:#DA203D;
-    text-decoration: underline;
+    color:#ccccff;
   }
   
   /* When you mouse over the navigation links, change their color */

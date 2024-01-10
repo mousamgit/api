@@ -1,5 +1,11 @@
+<?php
+  include 'login_checking.php';
+  include 'functions.php';
+?>
+
 <html>
 <head>
+<?php include 'header.php'; ?>
   <title>SGA Marketing - Missing Descriptions or Tags</title>
   <?php include 'header.php'; ?>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -8,7 +14,7 @@
   <link rel="stylesheet" href="/css/dancss.css">
 </head>
 <body>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
+<?php include 'topbar.php'; ?>
 
 <h2>Missing Descriptions or Tags</h2>
 
@@ -16,7 +22,7 @@
 
 <?php
 
-include_once ('connect.php');
+include ('connect.php');
 
  if(isset($_POST["Submit"])){
     date_default_timezone_set("Australia/Sydney");
@@ -69,9 +75,8 @@ include_once ('connect.php');
  else{
     echo "Nothing Submitted";
  }
-
 ?>
 
 </div>
 </body>
-</html>fclose($myfile);
+</html>
