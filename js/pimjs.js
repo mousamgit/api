@@ -8,6 +8,7 @@ const myapp = Vue.createApp({
             filtertitle: '',
             filtervalue: '',
             filtertype: '',
+            filtercontains: '',
             filterfrom:0,
             filtertotal:-1,
             filterto:99999999,
@@ -41,7 +42,7 @@ const myapp = Vue.createApp({
         
             filterApp.mount(); // Mount the component (this is required to create a new instance)
             if (!this.filterarray[this.filterindex]) {
-                this.filterarray[this.filterindex] = ['', '', 'equals', '', ''];
+                this.filterarray[this.filterindex] = ['', '', 'equals', '', '',''];
             } else {
                 // If filterarray is already initialized, add a new empty filter
                 this.filterarray.push(['', '', 'equals', '', '']);
@@ -65,6 +66,9 @@ const myapp = Vue.createApp({
         },
         updateto(value){
             this.filterto = value;
+        },
+        updatecontains(value){
+            this.filtercontains = value;
         },
         removeFilter() {
             // Remove the filter at the specified index from the array
@@ -127,6 +131,11 @@ const myapp = Vue.createApp({
             // Watch for changes in filterindex and call updatetitle
             // console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][4] = this.filterto;
+        },
+        updatecontains() {
+            // Watch for changes in filterindex and call updatetitle
+            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            this.filterarray[this.filterindex][5] = this.updatecontains;
         },
     },
 });

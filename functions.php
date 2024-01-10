@@ -11,16 +11,20 @@ function getQuery($db){
     foreach ($urlData as $key => $value) {
         // Ensure that the key is alphanumeric to prevent SQL injection
         if ($key != 'page') {
-          // For numeric values, handle greater than and less than conditions
-          if (strpos($key, '>=') === 0) {
-              $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
-          } elseif (strpos($key, '<=') === 0) {
-              $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
-          } else {
-              $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
-          }
-      } 
+            // Check if the key contains "~" for "contains" filter
+            if (strpos($value, '~') === 0) {
+                $searchTerm = substr($value, 1);
+                $conditions[] = "$key LIKE '%" . mysqli_real_escape_string($con, $searchTerm) . "%'";
+            } elseif (strpos($key, '>=') === 0) {
+                $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
+            } elseif (strpos($key, '<=') === 0) {
+                $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
+            } else {
+                $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
+            }
+        }
     }
+    
     // Check if there are conditions to add
     if (!empty($conditions)) {
         $baseQuery .= " WHERE " . implode(' AND ', $conditions);
