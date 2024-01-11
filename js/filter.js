@@ -41,6 +41,7 @@ myapp.component('rowfilter', {
                 <option value="" selected disabled hidden>Choose here</option>
                 <option value="equals">equals</option>
                 <option value="range">range</option>
+                <option value="contains">contains</option>
             </select>
             <label v-if="this.filterType === 'equals'" for="filter-value">Filter Value:</label>
             <input v-if="this.filterType === 'equals'" v-model="filterValue" type="text" id="filter-value" @input="updatefiltervalue">

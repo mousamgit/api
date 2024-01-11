@@ -12,23 +12,36 @@ function getQuery($db){
         // Ensure that the key is alphanumeric to prevent SQL injection
         if ($key != 'page') {
             // Check if the key contains "~" for "contains" filter
-            if (strpos($value, '~') === 0) {
-                $searchTerm = substr($value, 1);
-                $conditions[] = "$key LIKE '%" . mysqli_real_escape_string($con, $searchTerm) . "%'";
-            } elseif (strpos($key, '>=') === 0) {
+            if (strpos($key, '~') !== false) {
+                // Split the key into parts using the tilde (~) as a separator
+                $keyParts = explode('~', $key);
+            
+                // The first part will be the column name
+                $columnName = $keyParts[0];
+            
+                // The second part will be the search term
+                $searchTerm = $keyParts[1];
+            
+                // Add the condition to the array
+                $conditions[] = "$columnName LIKE '%" . mysqli_real_escape_string($con, $searchTerm) . "%'";
+            }
+            elseif (strpos($key, '>=') === 0) {
                 $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
             } elseif (strpos($key, '<=') === 0) {
                 $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
             } else {
                 $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
             }
+
         }
+        
     }
-    
+
     // Check if there are conditions to add
     if (!empty($conditions)) {
         $baseQuery .= " WHERE " . implode(' AND ', $conditions);
     }
+
 
     return $baseQuery;
   }

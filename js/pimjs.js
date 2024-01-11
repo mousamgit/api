@@ -45,7 +45,7 @@ const myapp = Vue.createApp({
                 this.filterarray[this.filterindex] = ['', '', 'equals', '', '',''];
             } else {
                 // If filterarray is already initialized, add a new empty filter
-                this.filterarray.push(['', '', 'equals', '', '']);
+                this.filterarray.push(['', '', 'equals', '', '','']);
             }
             this.filtertotal ++;
         },
@@ -69,6 +69,7 @@ const myapp = Vue.createApp({
         },
         updatecontains(value){
             this.filtercontains = value;
+
         },
         removeFilter() {
             // Remove the filter at the specified index from the array
@@ -92,14 +93,16 @@ const myapp = Vue.createApp({
             var pimurl ='?';
             console.log('Filter Changed:', this.filterarray);
             this.filterarray.forEach((filter, index) => {
-                const [title, value,type, from, to] = filter;
+                const [title, value,type, from, to, contains] = filter;
                 if(type == 'equals'){
                     pimurl += title +'='+value +'&';
                 }
                 if(type == 'range'){
                     pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
                 }
-
+                if(type == 'contains'){
+                    pimurl += title +'~'+contains +'&';
+                }
                 
                 // You can perform additional actions with title and value as needed
             });
@@ -109,17 +112,17 @@ const myapp = Vue.createApp({
     watch: {
         filtertitle() {
             // Watch for changes in filterindex and call updatetitle
-            console.log('updatetitle', this.filtertitle, this.filterindex);
+            // console.log('updatetitle', this.filtertitle, this.filterindex);
             this.filterarray[this.filterindex][0] = this.filtertitle;
         },
         filtervalue() {
             // Watch for changes in filterindex and call updatetitle
-            console.log('updatevalue', this.filtervalue, this.filterindex);
+            // console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][1] = this.filtervalue;
         },
         filtertype() {
             // Watch for changes in filterindex and call updatetitle
-            console.log('filtertype', this.filtertype, this.filterindex);
+            // console.log('filtertype', this.filtertype, this.filterindex);
             this.filterarray[this.filterindex][2] = this.filtertype;
         },
         filterfrom() {
@@ -132,10 +135,10 @@ const myapp = Vue.createApp({
             // console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][4] = this.filterto;
         },
-        updatecontains() {
+        filtercontains() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatevalue', this.filtervalue, this.filterindex);
-            this.filterarray[this.filterindex][5] = this.updatecontains;
+            // console.log('filtercontains', this.filtercontains, this.filterindex);
+            this.filterarray[this.filterindex][5] = this.filtercontains;
         },
     },
 });
