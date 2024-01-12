@@ -8,9 +8,10 @@ function getQuery($db){
     $urlData = $_GET;
     // Initialize an array to store conditions
     $conditions = [];
+    $filterlogic;
     foreach ($urlData as $key => $value) {
         // Ensure that the key is alphanumeric to prevent SQL injection
-        if ($key != 'page') {
+        if ($key != 'page' && $key != 'logic') {
             // Check if the key contains "~" for "contains" filter
             if (strpos($key, '~') !== false) {
                 // Split the key into parts using the tilde (~) as a separator
@@ -34,12 +35,14 @@ function getQuery($db){
             }
 
         }
-        
+        if($key == 'logic'){
+            $filterlogic=$value;
+        }
     }
 
     // Check if there are conditions to add
     if (!empty($conditions)) {
-        $baseQuery .= " WHERE " . implode(' AND ', $conditions);
+        $baseQuery .= " WHERE " . implode( " $filterlogic ", $conditions);
     }
 
 

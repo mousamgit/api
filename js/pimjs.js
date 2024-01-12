@@ -9,9 +9,11 @@ const myapp = Vue.createApp({
             filtervalue: '',
             filtertype: '',
             filtercontains: '',
+            filterLogic: 'and',
             filterfrom:0,
             filtertotal:-1,
             filterto:99999999,
+            pimurl: '',
             show_col_filter: false,
             show_row_filter: true,
         }
@@ -31,6 +33,11 @@ const myapp = Vue.createApp({
             } else {
                 this.activeColumns.push(colName);
             }
+
+        },
+        togglelogic() {
+            // Toggle between 'and' and 'or'
+            this.filterLogic = this.filterLogic === 'and' ? 'or' : 'and';
 
         },
         addFilter() {
@@ -90,39 +97,39 @@ const myapp = Vue.createApp({
         },
         applyFilters() {
             // Log the filter data for now, you can use it as needed
-            var pimurl ='?';
+            this.pimurl = '?logic='+ this.filterLogic +'&';
             console.log('Filter Changed:', this.filterarray);
             this.filterarray.forEach((filter, index) => {
                 const [title, value,type, from, to, contains] = filter;
                 if(type == 'equals'){
-                    pimurl += title +'='+value +'&';
+                    this.pimurl += title +'='+value +'&';
                 }
                 if(type == 'range'){
-                    pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
+                    this.pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
                 }
                 if(type == 'contains'){
-                    pimurl += title +'~'+contains +'&';
+                    this.pimurl += title +'~'+contains +'&';
                 }
                 
                 // You can perform additional actions with title and value as needed
             });
-            window.location.replace(pimurl);
+            window.location.replace(this.pimurl);
         },
     },
     watch: {
         filtertitle() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatetitle', this.filtertitle, this.filterindex);
+            console.log('updatetitle', this.filtertitle, this.filterindex);
             this.filterarray[this.filterindex][0] = this.filtertitle;
         },
         filtervalue() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('updatevalue', this.filtervalue, this.filterindex);
+            console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][1] = this.filtervalue;
         },
         filtertype() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('filtertype', this.filtertype, this.filterindex);
+            console.log('filtertype', this.filtertype, this.filterindex);
             this.filterarray[this.filterindex][2] = this.filtertype;
         },
         filterfrom() {
@@ -137,7 +144,7 @@ const myapp = Vue.createApp({
         },
         filtercontains() {
             // Watch for changes in filterindex and call updatetitle
-            // console.log('filtercontains', this.filtercontains, this.filterindex);
+            console.log('filtercontains', this.filtercontains, this.filterindex);
             this.filterarray[this.filterindex][5] = this.filtercontains;
         },
     },

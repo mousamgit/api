@@ -55,6 +55,7 @@ myapp.component('rowfilter', {
         </div>
     `,
     methods: {
+
         updatefilterTitle(){
             this.$emit('title-changed', this.filterTitle);
             this.$emit('findindex', this);
