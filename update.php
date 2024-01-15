@@ -1,6 +1,25 @@
-<!DOCTYPE html>
 <?php
- require_once ('connect.php');
+  include 'login_checking.php';
+  include 'functions.php';
+?>
+
+
+
+<html lang="en">
+
+<head>
+<?php include 'header.php'; ?>
+    <link rel="stylesheet" href="/css/dancss.css">
+    <title>Update Products from PIM</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+</head>
+<?php include 'topbar.php'; ?>
+
+<?php
+ include ('connect.php');
  $query = 'SELECT * from pim';
  $result = mysqli_query($con, $query) or die(mysqli_error($con));
  $row=mysqli_fetch_assoc($result);
@@ -11,16 +30,7 @@
  echo "</div>";
 ?>
 
-<html lang="en">
-
-<head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-</head>
-
-<body>
+<body><br><br>
     <div id="wrap">
         <div class="container">
             <div class="row">

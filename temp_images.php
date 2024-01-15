@@ -1,7 +1,12 @@
+<?php
+  include 'login_checking.php';
+  include 'functions.php';
+?>
+
 <html>
 <head>
-  <title>Images Uploaded</title>
   <?php include 'header.php'; ?>
+  <title>Images Uploaded</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
@@ -26,9 +31,9 @@ jQuery(document).ready(function ($) {
   </script>
 </head>
 <body>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
+<?php include 'topbar.php'; ?>
 
-<h2>Check Images and Upload</h2>
+<h2>Approve Uploaded Images</h2>
 
 <div class="main-box">
 <form action="approve_temp_images.php" method="post" name="approve_images" enctype="multipart/form-data">
@@ -45,7 +50,7 @@ jQuery(document).ready(function ($) {
             <th>Approve All <input type="checkbox" value="" name="check[]" id="selectall" class="selectall"></th>
         </tr>
             <?php
-                include_once ('connect.php');
+                include ('connect.php');
 
                 $dir = "temp-images/";
                 $files = scandir($dir);

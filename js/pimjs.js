@@ -8,9 +8,12 @@ const myapp = Vue.createApp({
             filtertitle: '',
             filtervalue: '',
             filtertype: '',
+            filtercontains: '',
+            filterLogic: 'and',
             filterfrom:0,
             filtertotal:-1,
             filterto:99999999,
+            pimurl: '',
             show_col_filter: false,
             show_row_filter: true,
         }
@@ -32,6 +35,11 @@ const myapp = Vue.createApp({
             }
 
         },
+        togglelogic() {
+            // Toggle between 'and' and 'or'
+            this.filterLogic = this.filterLogic === 'and' ? 'or' : 'and';
+
+        },
         addFilter() {
             // Create a new app instance for the rowfilter component
             const filterApp = Vue.createApp({});
@@ -41,10 +49,10 @@ const myapp = Vue.createApp({
         
             filterApp.mount(); // Mount the component (this is required to create a new instance)
             if (!this.filterarray[this.filterindex]) {
-                this.filterarray[this.filterindex] = ['', '', 'equals', '', ''];
+                this.filterarray[this.filterindex] = ['', '', 'equals', '', '',''];
             } else {
                 // If filterarray is already initialized, add a new empty filter
-                this.filterarray.push(['', '', 'equals', '', '']);
+                this.filterarray.push(['', '', 'equals', '', '','']);
             }
             this.filtertotal ++;
         },
@@ -66,6 +74,10 @@ const myapp = Vue.createApp({
         updateto(value){
             this.filterto = value;
         },
+        updatecontains(value){
+            this.filtercontains = value;
+
+        },
         removeFilter() {
             // Remove the filter at the specified index from the array
            
@@ -85,21 +97,23 @@ const myapp = Vue.createApp({
         },
         applyFilters() {
             // Log the filter data for now, you can use it as needed
-            var pimurl ='?';
+            this.pimurl = '?logic='+ this.filterLogic +'&';
             console.log('Filter Changed:', this.filterarray);
             this.filterarray.forEach((filter, index) => {
-                const [title, value,type, from, to] = filter;
+                const [title, value,type, from, to, contains] = filter;
                 if(type == 'equals'){
-                    pimurl += title +'='+value +'&';
+                    this.pimurl += title +'='+value +'&';
                 }
                 if(type == 'range'){
-                    pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
+                    this.pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
                 }
-
+                if(type == 'contains'){
+                    this.pimurl += title +'~'+contains +'&';
+                }
                 
                 // You can perform additional actions with title and value as needed
             });
-            window.location.replace(pimurl);
+            window.location.replace(this.pimurl);
         },
     },
     watch: {
@@ -127,6 +141,11 @@ const myapp = Vue.createApp({
             // Watch for changes in filterindex and call updatetitle
             // console.log('updatevalue', this.filtervalue, this.filterindex);
             this.filterarray[this.filterindex][4] = this.filterto;
+        },
+        filtercontains() {
+            // Watch for changes in filterindex and call updatetitle
+            console.log('filtercontains', this.filtercontains, this.filterindex);
+            this.filterarray[this.filterindex][5] = this.filtercontains;
         },
     },
 });

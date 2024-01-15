@@ -1,13 +1,18 @@
+<?php
+include 'login_checking.php';
+    include 'functions.php';
+?>
 <html lang="en">
 
 <head>
     <title> Upload Images into PIM </title>
     <link rel="stylesheet" href="/css/dancss.css">
     <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <?php include 'header.php'; ?>
 </head>
 
 <body>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
+<?php include 'topbar.php'; ?>
 
     <div class="form-box">
         <form action="upload_images_temp.php" method="post" name="upload_images" enctype="multipart/form-data">

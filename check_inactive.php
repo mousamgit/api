@@ -1,5 +1,10 @@
+<?php
+  include 'login_checking.php';
+  include 'functions.php';
+?>
 <html>
 <head>
+<?php include 'header.php'; ?>
   <title> Inactive SKUs not found in AssetWin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,11 +19,12 @@
 
 </head>
 <body>
+<?php include 'topbar.php'; ?>
 <div style="margin: 0 auto; width:600px; padding:20px; background-color:#F9F6F0; text-align:center;">
 <form class="form-horizontal" action="delete_inactive.php" method="post" enctype="multipart/form-data">
 
 <?php
-include_once ('connect.php');
+include ('connect.php');
 $filename = "APP_WebA2022.csv";
 $filedirect = dirname($_SERVER['DOCUMENT_ROOT']).'/files/'.$filename;
 

@@ -1,3 +1,8 @@
+<?php
+  include 'login_checking.php';
+  include 'functions.php';
+?>
+
 <html>
 <head>
   <title>Images Uploaded</title>
@@ -20,13 +25,14 @@
   </style>
 </head>
 <body>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div>
+<?php include 'topbar.php'; ?>
+<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
 
 <h2>Check Images and Upload</h2>
 
 <div class="main-box">
 <?php
-include_once ('connect.php');
+include ('connect.php');
 $pieces = $_POST['check'];
 
 foreach ($pieces as $key => $value)
