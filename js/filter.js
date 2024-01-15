@@ -41,9 +41,12 @@ myapp.component('rowfilter', {
                 <option value="" selected disabled hidden>Choose here</option>
                 <option value="equals">equals</option>
                 <option value="range">range</option>
+                <option value="contains">contains</option>
             </select>
             <label v-if="this.filterType === 'equals'" for="filter-value">Filter Value:</label>
             <input v-if="this.filterType === 'equals'" v-model="filterValue" type="text" id="filter-value" @input="updatefiltervalue">
+            <label v-if="this.filterType === 'contains'" for="filter-contains">Filter contains:</label>
+            <input v-if="this.filterType === 'contains'" v-model="filtercontains" type="text" id="filter-contains" @input="updatefiltercontains">
             <label v-if="this.filterType === 'range'" for="filter-from">from:</label>
             <input v-if="this.filterType === 'range'" v-model="filterFrom" type="text" class="inputnumber" id="filter-from" @input="updatefilterfrom">
             <label v-if="this.filterType === 'range'" for="filter-to">to:</label>
@@ -52,6 +55,7 @@ myapp.component('rowfilter', {
         </div>
     `,
     methods: {
+
         updatefilterTitle(){
             this.$emit('title-changed', this.filterTitle);
             this.$emit('findindex', this);
@@ -72,7 +76,10 @@ myapp.component('rowfilter', {
             this.$emit('value-changed', this.filterValue);
             this.$emit('findindex', this);
         },
-
+        updatefiltercontains(){
+            this.$emit('contains-changed', this.filtercontains);
+            this.$emit('findindex', this);
+        },
         removeFilter() {
             // You can implement logic to remove the filter component
             // For example, emit an event to the parent component

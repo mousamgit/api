@@ -170,6 +170,7 @@ export default {
         } else {
           console.error('Error saving channel:', data.error);
         }
+        location.reload();
       } catch (error) {
         console.error('Error saving channel:', error);
       }
@@ -179,7 +180,37 @@ export default {
       this.channelId = null;
       location.reload();
     },
+    deleteChannel(channel){
 
+      try {
+        // Display a confirmation dialog
+        const confirmed = window.confirm(`Are you sure you want to delete the channel "${channel.name}" and its linked attributes?`);
+
+        if (confirmed) {
+        const response = fetch('delete_channel.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            channelName: channel.name,
+            channelId:channel.id
+          }),
+        });
+        if (data.success) {
+          console.log('Channel with its attributes Deleted successfully!');
+          this.resetForm();
+        } else {
+          console.error('Error saving channel:', data.error);
+        }
+        } else {
+          // User canceled, do nothing or provide feedback
+          console.log('Deletion canceled by the user.');
+        }
+      } catch (error) {
+        console.error('Error Deleting channel:', error);
+      }
+    }
   },
   template: `
 <div class="container mt-5">
@@ -255,7 +286,7 @@ export default {
                                     <div class="col-md-2">
                                         <div class="mb-3"> 
                                          <select v-model="attribute.attribute_name" class="form-control" required>
-                                            <option v-for="column in columns" :key="column.column_name" :value="column.column_name">{{ column.column_name }}</option>
+                                            <option v-for="column in columns" :key="column.COLUMN_NAME" :value="column.COLUMN_NAME">{{ column.COLUMN_NAME }}</option>
                                           </select>                                         
                                          </div>
                                     </div>
@@ -330,8 +361,8 @@ export default {
             <i class="fas fa-file-export"></i> Export
             </a>
             
-             <a class="btn btn-danger">
-            <i class="fas fa-trash-alt"></i> Delete
+             <a class="btn btn-danger" @click="deleteChannel(channel)">
+            <i class="fas fa-trash-alt" ></i> Delete
             </a>
             </td>
           </tr>

@@ -8,23 +8,43 @@ function getQuery($db){
     $urlData = $_GET;
     // Initialize an array to store conditions
     $conditions = [];
+    $filterlogic;
     foreach ($urlData as $key => $value) {
         // Ensure that the key is alphanumeric to prevent SQL injection
-        if ($key != 'page') {
-          // For numeric values, handle greater than and less than conditions
-          if (strpos($key, '>=') === 0) {
-              $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
-          } elseif (strpos($key, '<=') === 0) {
-              $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
-          } else {
-              $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
-          }
-      } 
+        if ($key != 'page' && $key != 'logic') {
+            // Check if the key contains "~" for "contains" filter
+            if (strpos($key, '~') !== false) {
+                // Split the key into parts using the tilde (~) as a separator
+                $keyParts = explode('~', $key);
+            
+                // The first part will be the column name
+                $columnName = $keyParts[0];
+            
+                // The second part will be the search term
+                $searchTerm = $keyParts[1];
+            
+                // Add the condition to the array
+                $conditions[] = "$columnName LIKE '%" . mysqli_real_escape_string($con, $searchTerm) . "%'";
+            }
+            elseif (strpos($key, '>=') === 0) {
+                $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
+            } elseif (strpos($key, '<=') === 0) {
+                $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
+            } else {
+                $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
+            }
+
+        }
+        if($key == 'logic'){
+            $filterlogic=$value;
+        }
     }
+
     // Check if there are conditions to add
     if (!empty($conditions)) {
-        $baseQuery .= " WHERE " . implode(' AND ', $conditions);
+        $baseQuery .= " WHERE " . implode( " $filterlogic ", $conditions);
     }
+
 
     return $baseQuery;
   }
