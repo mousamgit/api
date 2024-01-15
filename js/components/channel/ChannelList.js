@@ -179,7 +179,28 @@ export default {
       this.channelId = null;
       location.reload();
     },
-
+    deleteChannel(channnel){
+      try {
+        const response = fetch('delete_channel.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            channelName: channel.name,
+            channelId:channel.id
+          }),
+        });
+        if (data.success) {
+          console.log('Channel with its attributes Deleted successfully!');
+          this.resetForm();
+        } else {
+          console.error('Error saving channel:', data.error);
+        }
+      } catch (error) {
+        console.error('Error Deleting channel:', error);
+      }
+    }
   },
   template: `
 <div class="container mt-5">
@@ -330,8 +351,8 @@ export default {
             <i class="fas fa-file-export"></i> Export
             </a>
             
-             <a class="btn btn-danger">
-            <i class="fas fa-trash-alt"></i> Delete
+             <a class="btn btn-danger" @click="deleteChannel(channel)">
+            <i class="fas fa-trash-alt" ></i> Delete
             </a>
             </td>
           </tr>
