@@ -1,5 +1,13 @@
 <?php
- include_once ('connect.php');
+  include 'login_checking.php';
+  include 'functions.php';
+?>
+<head>
+<?php include 'header.php'; ?>
+</head>
+<?php include 'topbar.php'; ?>
+<?php
+ include ('connect.php');
  /*$del = "TRUNCATE TABLE `pimRAW`";
  mysqli_query( $con, $del );*/
 
@@ -46,6 +54,10 @@
 
                 $key = $head."='".$val."'";
 
+                //prepping for log
+                $header = $head; //pull header
+                $newvalue = $val; //get new value
+                include 'log.php'; 
 
                 $sql = " INSERT into pim (sku, $head) VALUES ('$sku', '$val') ON DUPLICATE KEY UPDATE $key "; 
                 $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ;
