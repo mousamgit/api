@@ -26,8 +26,6 @@
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div class="top-bar"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></div><br><br>
-
 <h2>Check Images and Upload</h2>
 
 <div class="main-box">

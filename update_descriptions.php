@@ -25,17 +25,7 @@
 include ('connect.php');
 
  if(isset($_POST["Submit"])){
-    date_default_timezone_set("Australia/Sydney");
-    $current = strtotime("now");
-    $timestamp = date("Y-m-d-h-i-s", $current);
-    $logname = $timestamp."-descriptions-tags.txt";
-    $logfile = dirname(__DIR__) ."/log/marketing/".$logname;
-    
-    $log = fopen($logfile, "w") or die ("Unable to log to file");
 
-    $line = "Time of Log: ".$timestamp."\n\n";
-    fwrite($log,$line);
-    
     $description = $_POST['description'];
     $tags = $_POST['tags'];
     $collections_2 = $_POST['collections_2'];
@@ -47,6 +37,26 @@ include ('connect.php');
 
     for ($i = 0; $i < count($sku); $i++)
     {
+
+        //TEST - to see if description is the same // if not - log it
+        $searchdesc = "SELECT sku,description from pim where sku = '$sku[$i]'";
+        $resultdesc = mysqli_query($con,$searchdesc) or die(mysqli_error($con));
+        while ($rows = mysqli_fetch_array($resultdesc, MYSQLI_ASSOC)) {
+            if ($rows[description] != $description[$i]) { $logsku = $sku[$i]; $logheader = "description"; $newrecord = $description[$i]; include 'log.php'; }
+        }
+        //TEST - to see if tags is the same // if not - log it
+        $searchtags = "SELECT sku,tags from pim where sku = '$sku[$i]'";
+        $resulttags = mysqli_query($con,$searchtags) or die(mysqli_error($con));
+        while ($rows = mysqli_fetch_array($resulttags, MYSQLI_ASSOC)) {
+            if ($rows[tags] != $tags[$i]) { $logsku = $sku[$i]; $logheader = "tags"; $newrecord = $tags[$i]; include 'log.php'; }
+        }
+        //TEST - to see if collections_2 is the same // if not - log it
+        $searchcollection = "SELECT sku,collections_2 from pim where sku = '$sku[$i]'";
+        $resultcollection = mysqli_query($con,$searchcollection) or die(mysqli_error($con));
+        while ($rows = mysqli_fetch_array($resultcollection, MYSQLI_ASSOC)) {
+            if ($rows[collections_2] != $collections_2[$i]) { $logsku = $sku[$i]; $logheader = "collections_2"; $newrecord = $collections_2[$i]; include 'log.php'; }
+        }
+
         $sql = " UPDATE pim SET description='$description[$i]', tags='$tags[$i]', collections_2='$collections_2[$i]'  where sku='$sku[$i]';"; 
         $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ;
 
@@ -63,14 +73,7 @@ include ('connect.php');
         $line3 = "Collections 2: ". $collections_2[$i]."\n";
         $line5 = "\n\n";
 
-        fwrite($log,$line1);
-        fwrite($log,$line2);
-        fwrite($log,$line3);
-        fwrite($log,$line4);
-        fwrite($log,$line5);
-
     }
-    fclose($log);
  }
  else{
     echo "Nothing Submitted";
