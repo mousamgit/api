@@ -55,8 +55,9 @@
                 $key = $head."='".$val."'";
 
                 //prepping for log
-                $header = $head; //pull header
-                $newvalue = $val; //get new value
+                $logheader = $head; //pull header
+                $newrecord = $val; //get new value
+                $logsku = $sku;
                 include 'log.php'; 
 
                 $sql = " INSERT into pim (sku, $head) VALUES ('$sku', '$val') ON DUPLICATE KEY UPDATE $key "; 
