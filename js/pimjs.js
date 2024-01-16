@@ -69,10 +69,10 @@ const myapp = Vue.createApp({
             this.filtervalue = value;
         },
         updatefrom(value){
-            this.filterfrom = value;
+            this.filterfrom = value.replace(/\./g, '_');
         },
         updateto(value){
-            this.filterto = value;
+            this.filterto = value.replace(/\./g, '_');
         },
         updatecontains(value){
             this.filtercontains = value;
@@ -105,7 +105,7 @@ const myapp = Vue.createApp({
                     this.pimurl += title +'='+value +'&';
                 }
                 if(type == 'range'){
-                    this.pimurl += title +'<'+from +'&'+title +'>'+ to +'&';
+                    this.pimurl += title +'>'+from +'&'+title +'<'+ to +'&';
                 }
                 if(type == 'contains'){
                     this.pimurl += title +'~'+contains +'&';
