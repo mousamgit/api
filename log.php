@@ -10,6 +10,10 @@
     $date = date("Y-m-d", $current);
     $time = date("h:i:s", $current);
 
+    $quantityfields = ["master_qty", "warehouse_qty", "mdqty", "psqty", "usdqty", "allocated_qty", "shopify_qty"];
+
+    if(in_array($logheader,$quantityfields)) { $newrecord = number_format($newrecord,"2"); }
+
     $searchsql = "SELECT sku,$logheader from pim where sku = '$logsku'";
     $searchresult = mysqli_query($con,$searchsql) or die(mysqli_error($con));
     while ($row = mysqli_fetch_array($searchresult, MYSQLI_ASSOC)) {
