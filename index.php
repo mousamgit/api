@@ -4,7 +4,7 @@ include 'login_checking.php';
     $urlData = $_GET;
     $username = $_SESSION["username"];
     $records_per_page = 100;
-    $baseQuery = getQuery('pim',$records_per_page);
+    $baseQuery = getQuery('pim');
     $result = getResult($baseQuery , $records_per_page);
     $total_pages = getTotalPages($baseQuery , $records_per_page);
     $usercol = getValue('users', 'username', $username, 'columns');
@@ -26,23 +26,23 @@ include 'login_checking.php';
 <?php include 'topbar.php'; ?>
     <div id="app">
 <div class="filter-functions">
-<a class="show-filter" @click="showhidecols()">Column Filter</a>
-<a class="show-filter" @click="showhiderows()">Row Filter</a>
+<!-- <a class="show-filter" @click="showhidecols()">Column Filter</a>
+<a class="show-filter" @click="showhiderows()">Row Filter</a> -->
 <?php
 // Loop through the URL parameters and display the data
 
-
-  echo '<div class="row"><div class="showrows col-md-6" v-show="show_row_filter"><div class="rowscontainer">
+  echo $baseQuery;
+  echo '<div class="row"><div class="showrows col-md-12" v-show="show_row_filter"><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @contains-changed="updatecontains"  @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
   </div><div class="filter-btn-container"> <a class="btn filter-logic" @click="togglelogic()">{{filterLogic}}</a> <a class="btn add-condition" @click="addFilter()">Add Condition</a> <a class="btn filter"  @click="removeFilter">Remove Condition</a><a class="btn filter" @click="applyFilters" >Apply Filter</a></div></div>';
   
-  echo '<div class="showcols colscontainer col-md-6" v-show="show_col_filter">';
+  echo '<div class="showcols colscontainer col-md-12" v-show="show_col_filter">';
   $row=mysqli_fetch_assoc($result);
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
     echo '<a class="btn colfilter" @click="toggleColumn(\'' . $escapedColName . '\')" :class="{ active: !activeColumns.includes(\'' . $escapedColName . '\') }">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>'; 
   } // show column headers
-  echo '</div></div></div>';
+  echo '</div></div>';
 
   echo '<table id=myTable class=display><thead><tr>';
  
@@ -56,7 +56,7 @@ include 'login_checking.php';
     echo '<tr>';
     foreach ($row as $colName => $val ) {
       $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-      if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/pim/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
+      if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
       else { echo '<td  col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'</td>'; }

@@ -49,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div id="app" class="app-container">
     <p>Your user type is <?php echo $usertype; ?></p>
     <p>Your default columns:</p>
-    <p><?php echo $usercol; ?></p>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
     <div class="row">
@@ -60,8 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $row = mysqli_fetch_assoc($result);
     foreach ($row as $colName => $val) { 
         $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+        $checked = '';
+        $selectedcol = explode(',', str_replace('"', '', $usercol));
+        if (in_array($colName, $selectedcol)) {
+            $checked = 'checked';
+        }
         // echo '<a class="btn colfilter" >'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</a>' 
-        echo '<div class="col-md-2"><input type="checkbox" value="'.$colName.'" name="check[]" class="">'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</div>'; 
+        echo '<div class="col-md-2"><input type="checkbox" value="'.$colName.'" name="check[]" class="" '.$checked.'>'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</div>'; 
     } // show column headers
     ?>
     </div>
