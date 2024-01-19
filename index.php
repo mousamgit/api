@@ -31,10 +31,15 @@ include 'login_checking.php';
 <?php
 // Loop through the URL parameters and display the data
 
-  echo $baseQuery;
+  echo $_SERVER['REQUEST_URI'];
   echo '<div class="row"><div class="showrows col-md-12" v-show="show_row_filter"><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @contains-changed="updatecontains"  @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
-  </div><div class="filter-btn-container"> <a class="btn filter-logic" @click="togglelogic()">{{filterLogic}}</a> <a class="btn add-condition" @click="addFilter()">Add Condition</a> <a class="btn filter"  @click="removeFilter">Remove Condition</a><a class="btn filter" @click="applyFilters" >Apply Filter</a></div></div>';
+  </div><div class="filter-btn-container"> <a class="btn filter-logic" @click="togglelogic()">{{filterLogic}}</a> <a class="btn add-condition" @click="addFilter()">Add Condition</a> <a class="btn filter"  @click="removeFilter">Remove Condition</a><a class="btn filter" @click="applyFilters" >Apply Filter</a>';
+  if (strpos($_SERVER['REQUEST_URI'], 'page') == false && $_SERVER['REQUEST_URI'] !== '/') {
+    $newfilter = $_SERVER['REQUEST_URI'];
+    echo '<a class="btn filter" href="savefilter.php?filter='.$newfilter.'">save filter</a>';
+  }
+  echo '</div></div>';
   
   echo '<div class="showcols colscontainer col-md-12" v-show="show_col_filter">';
   $row=mysqli_fetch_assoc($result);

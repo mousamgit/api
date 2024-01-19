@@ -2,9 +2,14 @@
 <?php
 include 'login_checking.php';
 include 'functions.php';
+require('connect.php');
+
 $username = $_SESSION["username"];
 $usertype = getValue('users', 'username', $username, 'type');
 $usercol = getValue('users', 'username', $username, 'columns');
+
+
+$filtersString = getValue('users', 'username', $username, 'filters');
 
 // Check if the form is submitted
 // if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -47,13 +52,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php include 'topbar.php'; ?>
    
 <div id="app" class="app-container">
-    <p>Your user type is <?php echo $usertype; ?></p>
-    <p>Your default columns:</p>
+    <p>Your user type is <?php echo $usertype; ?></p><br>
+    <?php
+    // Convert the string into an array using explode
+    $filters = explode(',', $filtersString);
+    foreach ($filters as $index => $filter) {
+        echo '<a class="btn" href="' . $filter . '">filter' . ($index + 1) . '</a>';
+        // echo $filter;
+    }
+    ?>
+    <br><p>Your default columns:</p>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
     <div class="row">
     <?php
-    require('connect.php');
     $baseQuery = getQuery('pim',1);
     $result = getResult($baseQuery , 1);
     $row = mysqli_fetch_assoc($result);
@@ -72,6 +84,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <input type="submit" value="Update">
     </form>
+
+
 </div>
     <script>
     var usercol = [<?php echo $usercol; ?>];
