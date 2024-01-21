@@ -46,16 +46,23 @@ foreach ($pieces as $key => $value)
         $number = 1; 
     }
 
-    $temp = $_SERVER['DOCUMENT_ROOT']."/temp-images/".$values[1];
-    $targetFolder = $_SERVER['DOCUMENT_ROOT']."-images/".$values[1];
-    rename($temp, $targetFolder);
+    if ($values[1] != "" )
+    {
+      $temp = $_SERVER['DOCUMENT_ROOT']."/temp-images/".$values[1];
+      $targetFolder = $_SERVER['DOCUMENT_ROOT']."-images/".$values[1];
+      rename($temp, $targetFolder);
+      $newImage = "https://samsgroup.info/pim-images/".$values[1];
+      echo "<div class='image-box'><img src='".$newImage."' width=150px> ".$values[1]." has been updated. Link: <a href='".$newImage."' target='_blank' style='font-size:12px;'>".$newImage."</a></div>";
 
-    $newImage = "https://samsgroup.info/pim-images/".$values[1];
+      $newrecord = $newImage;
+      $logsku = $values[0];
+      $logheader = "image".$number;
+      include ('log.php');
 
-    echo "<div class='image-box'><img src='".$newImage."' width=150px> ".$values[1]." has been updated. Link: <a href='".$newImage."' target='_blank'>".$newImage."</a></div>";
-
-    $sql = " UPDATE pim SET image".$number."='".$newImage."' where sku = '".$values[0]."';";
-    $result = mysqli_query($con, $sql);
+      $sql = " UPDATE pim SET image".$number."='".$newImage."' where sku = '".$values[0]."';";
+      $result = mysqli_query($con, $sql);
+    }
+    
 }
 
 ?>

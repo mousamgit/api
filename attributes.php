@@ -210,7 +210,7 @@ while ($rows = mysqli_fetch_array($resultcolour, MYSQLI_ASSOC)) {
 }
 
 //check qty changes
-$searchqty = "SELECT sku, warehouse_qty, mdqty, psqty, usdqty, allocated_qty from pim where sku = '$sku'";
+/*$searchqty = "SELECT sku, warehouse_qty, mdqty, psqty, usdqty, allocated_qty from pim where sku = '$sku'";
 $resultqty = mysqli_query($con,$searchqty) or die(mysqli_error($con));
 while ($rows = mysqli_fetch_array($resultqty, MYSQLI_ASSOC)) {
   if ($rows[warehouse_qty] != round($warehouseqty,2)) { $logsku = $sku; $logheader = "warehouse_qty"; $newrecord = $warehouseqty; $username = "autoimport"; include 'log.php'; }
@@ -218,5 +218,5 @@ while ($rows = mysqli_fetch_array($resultqty, MYSQLI_ASSOC)) {
   if ($rows[psqty] != round($psqty,2)) { $logsku = $sku; $logheader = "psqty"; $newrecord = $psqty; $username = "autoimport"; include 'log.php'; }
   if ($rows[usdqty] != round($usdqty,2)) { $logsku = $sku; $logheader = "usdqty"; $newrecord = $usdqty; $username = "autoimport"; include 'log.php'; }
   if ($rows[allocated_qty] != round($allocatedQty,2)) { $logsku = $sku; $logheader = "allocated_qty"; $newrecord = round($allocatedQty,2); $username = "autoimport"; include 'log.php'; }
-}
+}*/
  ?>

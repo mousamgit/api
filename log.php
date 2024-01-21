@@ -8,7 +8,7 @@
     date_default_timezone_set("Australia/Sydney");
     $current = strtotime("now");
     $date = date("Y-m-d", $current);
-    $time = date("h:i:s", $current);
+    $time = date("G:i:s", $current);
 
     $quantityfields = ["master_qty", "warehouse_qty", "mdqty", "psqty", "usdqty", "allocated_qty", "shopify_qty"];
 
