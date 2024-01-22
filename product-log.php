@@ -3,9 +3,10 @@
         <?php 
             $logquery = " SELECT * from pimlog WHERE SKU = '".$sku."'";
             $logresult = mysqli_query($con, $logquery) or die(mysqli_error($con));
-            $logrow = mysqli_fetch_assoc($logresult);
+            
         ?>
-        <table class="product-table">
+        <table id="myTable" class="data-table">
+            <thead>
             <tr>
                 <td>Date</td>
                 <td>Time</td>
@@ -14,7 +15,27 @@
                 <td>New Record</td>
                 <td>User</td>
             </tr>
-                <?php foreach ($logrow as $colName => $val) { if ($colName != "sku"){ echo "<td>".$logrow[$colName]."</td>"; } } ?>
+            </thead>
+            <tbody>
+                <?php 
+                    while ($logrow = mysqli_fetch_assoc($logresult)){
+                        echo "<tr>";
+                        echo "<td>".$logrow[date]."</td>";
+                        echo "<td>".$logrow[time]."</td>";
+                        echo "<td>".$logrow[field]."</td>";
+                        echo "<td>".$logrow[oldrecord]."</td>";
+                        echo "<td>".$logrow[newrecord]."</td>";
+                        echo "<td>".$logrow[user]."</td>";
+                        echo "</tr>";
+                    }
+                ?>
+            </tbody>
         </table>
     </p>
 </section>
+
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
