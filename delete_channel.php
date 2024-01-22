@@ -20,25 +20,27 @@ if ($result) {
     // Check if there are any rows returned
     if ($result->num_rows > 0) {
         // Data found in channel_attributes, delete related records first
-        $deleteAttributesQuery = "DELETE FROM channel_attributes WHERE channel_id=".$channelId;
+        $deleteAttributesQuery = "DELETE FROM channel_attributes WHERE channel_id=" . $channelId;
 
+        $deleteChannelQuery = "DELETE FROM channels WHERE id=" . $channelId;
         if ($con->query($deleteAttributesQuery) === TRUE) {
-            //delete the channel record
-            $deleteChannelQuery = "DELETE FROM channels WHERE id=".$channelId;
-
             if ($con->query($deleteChannelQuery) === TRUE) {
-                echo json_encode(['success' => true]);
+            echo json_encode(['success' => true]);
             } else {
-                echo json_encode(['success' => false, 'error' => $con->error]);
+            echo json_encode(['success' => false, 'error' => $con->error]);
             }
+        }
+
+
+    } else {
+        $deleteChannelQuery = "DELETE FROM channels WHERE id=" . $channelId;
+        if ($con->query($deleteChannelQuery) === TRUE) {
+            echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => $con->error]);
         }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'No data found in channel_attributes']);
+
     }
-} else {
-    echo json_encode(['success' => false, 'error' => $con->error]);
 }
 
 // Close the database connection

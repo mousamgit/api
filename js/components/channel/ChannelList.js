@@ -11,8 +11,11 @@ export default {
       channelIdGlobal:0,
       showModal: false,
       newAttribute: [],
+      channelAttribute:[],
       columns: [],
-      attributeType:[]
+      attributeType:[],
+      attribute_values:[],
+      indexCheck:0
     };
   },
   mounted() {
@@ -22,7 +25,21 @@ export default {
 
     this.channelName = null;
     this.attributeType = [{"att_type":"Default"},{"att_type":"Computational"}];
+    this.channelAttribute.push({
+      id:0,
+      attribute_name:'',
+      data_type: '',
+      attribute:'',
+      attribute_condition:''
+    });
 
+  },
+  computed: {
+    // Computed property for autocomplete suggestions
+    filteredAttributeValues() {
+      const query = this.channelAttribute.attribute_condition.toLowerCase();
+      return this.attribute_values.filter(value => value.toLowerCase().includes(query));
+    },
   },
   methods: {
     async editAttribute(channel_id) {
@@ -95,7 +112,7 @@ export default {
         filter_logic: '',
         output_label: '',
       });
-      console.log(this.newAttribute)
+
     },
     removeAttributeRow(index) {
       // Remove the row at the given index
@@ -112,7 +129,6 @@ export default {
       {
         this.channelId =0;
       }
-
       // Open the edit modal
       this.isEditModalOpen = true;
     },
@@ -139,7 +155,6 @@ export default {
           console.error('Error saving attribute:', data.error);
           this.resetForm();
         }
-
     },
 
     async submitForm() {
@@ -151,7 +166,8 @@ export default {
           },
           body: JSON.stringify({
             channelName: this.channelName,
-            channelId:this.channelId
+            channelId:this.channelId,
+            attribute:this.channelAttribute
           }),
         });
 
@@ -175,44 +191,127 @@ export default {
         console.error('Error saving channel:', error);
       }
     },
+    addChannelCondition() {
+      this.channelAttribute.push({
+        id:0,
+        attribute_name:'',
+        data_type: '',
+        attribute:'',
+        attribute_condition:''
+      });
+    },
+
+    removeChannelCondition(index) {
+      if (this.channelAttribute.length > 1) {
+        this.channelAttribute.splice(index, 1);
+      }
+    },
     resetForm() {
       this.channelName = '';
       this.channelId = null;
       location.reload();
     },
-    deleteChannel(channel){
+    handleChangeAttribute(index) {
+      this.attribute_values = [];
+      this.channelAttribute[index].filter_type = '';
+      this.channelAttribute[index].attribute_condition = '';
+      // Get the selected value from the attribute dropdown
+      const selectedValue = this.channelAttribute[index].attribute;
 
+      // Split the selected value based on the comma
+      const [att_name, d_type] = selectedValue.split(',');
+
+      // Update the attribute_name and data_type properties separately
+      this.channelAttribute[index].attribute_name = att_name;
+      this.channelAttribute[index].data_type = d_type;
+      console.log(this.channelAttribute)
+    },
+    async getAttributeValue(index,attributeName,attributeCondition){
+        try {
+          if(attributeCondition.length>2) {
+            // Make an AJAX request to your PHP file to fetch attributes
+            const response = await fetch('fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
+
+            // Parse the JSON response
+            const data = await response.json();
+
+
+            this.attribute_values = data;
+            this.indexCheck = index;
+
+          }
+
+        } catch (error) {
+          console.error('Error fetching values:', error);
+        }
+    },
+    // Method to handle selecting a value from autocomplete suggestions
+    selectAutocompleteValue(index, selectedValue) {
+      this.channelAttribute[index].attribute_condition = selectedValue;
+      this.attribute_values = [];
+    },
+
+    async deleteChannel(channel) {
       try {
         // Display a confirmation dialog
         const confirmed = window.confirm(`Are you sure you want to delete the channel "${channel.name}" and its linked attributes?`);
 
         if (confirmed) {
-        const response = fetch('delete_channel.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            channelName: channel.name,
-            channelId:channel.id
-          }),
-        });
-        if (data.success) {
-          console.log('Channel with its attributes Deleted successfully!');
-          this.resetForm();
-        } else {
-          console.error('Error saving channel:', data.error);
-        }
+          const response = await fetch('delete_channel.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              channelName: channel.name,
+              channelId: channel.id
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            console.log('Channel with its attributes deleted successfully!');
+            this.resetForm();
+            // Reload the page after successful deletion
+            location.reload();
+          } else {
+            console.error('Error deleting channel:', data.error);
+          }
         } else {
           // User canceled, do nothing or provide feedback
           console.log('Deletion canceled by the user.');
         }
       } catch (error) {
-        console.error('Error Deleting channel:', error);
+        console.error('Error deleting channel:', error);
       }
     }
+
   },
   template: `
+<style scoped>  /* Style for autocomplete suggestions */
+  .autocomplete-suggestions {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: absolute;
+    background-color: #fff;
+    z-index: 1000;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  .autocomplete-suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .autocomplete-suggestions li:hover {
+    background-color: green;
+  }
+</style>
 <div class="container mt-5">
     <div class="row">
       <div class="col-md-9">
@@ -241,8 +340,79 @@ export default {
                   <input type="hidden" id="channelId" v-model="channelId" class="form-control" >
                   <input type="text" id="channelName" v-model="channelName" class="form-control"  required>
                 </div>
-              </div>
-              <button type="submit" class="btn btn-primary mt-3">Save Channel</button>
+                </div>
+              <div class="container mt-3">
+                <div class="border p-3 rounded">
+                <fieldset>
+                    <legend> Add Condition </legend>
+                    <hr>
+                        <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
+                        <div class="row mb-3">
+                            <div class="col-md-5">
+                            <label for="attribute" class="form-label">Attribute Name:</label>
+                            <div class="mb-3"> 
+                            <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
+                            <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
+                            {{ column.column_name }}
+                            </option>
+                            </select>
+                            </div>
+                        </div>
+                    <div class="col-md-5">
+                    <label for="attribute" class="form-label">Attribute Condition:</label>
+                    <div class="mb-3">
+                     <!-- Show different input fields based on data type -->
+                  
+                     <template v-if="cAttribute.data_type == 'varchar'">
+                     <select v-model="cAttribute.filter_type" id="filter-type" class="form-select" >
+                        <option value="=">equals</option>
+                        <option value="IS NOT NULL">Is Not Empty</option>
+                     </select>
+                    <template v-if="cAttribute.filter_type == '='" >
+<!--                      <select v-model="cAttribute.attribute_condition" id="filter-type" class="form-select">-->
+<!--                        <template v-for="(value, vindex) in attribute_values" :key="vindex">-->
+<!--                        <option :value="value">{{value}}</option>-->
+<!--                        </template>-->
+<!--                      </select>-->
+                     <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                     <ul v-if="index == indexCheck" class="autocomplete-suggestions">
+                        <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
+                         {{ value }}
+                        </li>
+                      </ul>
+                    </template>
+                    
+                    </template>
+                    
+                    <template v-else>
+                        <div class="row">
+                    <select v-model="cAttribute.filter_type" id="filter-type" class="form-select">
+                        <option value="between">Range</option>
+                        <option value="IS NOT NULL">Greater Than 0</option>
+                     </select>
+                    <template v-if="cAttribute.filter_type == 'between'">
+                        <div class="col-md-6">
+                        <input type="text" v-model="cAttribute.rangeFrom" class="form-control" placeholder="From" required>
+                        </div>
+                        <div class="col-md-6">
+                        <input type="text" v-model="cAttribute.rangeTo" class="form-control" placeholder="To" required>
+                        </div>
+                        </div>
+                     </template>
+                    </div>
+                    </div>
+                    <div class="col-md-2">
+                    <div class="mb-3">
+                    <button type="button" @click="addChannelCondition" class="btn btn-success" v-if="index === channelAttribute.length - 1">+</button>
+                    <button type="button" @click="removeChannelCondition(index)" class="btn btn-danger" v-if="channelAttribute.length > 1">-</button>
+                    </div>
+                </div>
+               </div>
+            </div>
+            </fieldset>   
+                </div>
+               </div>         
+            <button type="submit" class="btn btn-primary mt-3">Save Channel</button>
             </form>
           </div>
         </div>
@@ -286,7 +456,7 @@ export default {
                                     <div class="col-md-2">
                                         <div class="mb-3"> 
                                          <select v-model="attribute.attribute_name" class="form-control" required>
-                                            <option v-for="column in columns" :key="column.COLUMN_NAME" :value="column.COLUMN_NAME">{{ column.COLUMN_NAME }}</option>
+                                            <option v-for="column in columns" :key="column.column_name" :value="column.column_name">{{ column.column_name }}</option>
                                           </select>                                         
                                          </div>
                                     </div>
@@ -368,7 +538,7 @@ export default {
           </tr>
         </tbody>
       </table>
-
+     
     </div>
   `,
 

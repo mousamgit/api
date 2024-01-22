@@ -14,11 +14,13 @@ $channelName = $data['channelName'];
 $channelType = $data['type']?$data['type']:'type1';
 $currentDateTime = date("Y-m-d H:i:s");
 
+
+
 // Insert/update channel data into the database
 if($channelId == 0)
 {
-    $sql= "INSERT INTO channels (name, type,status,last_time_proceed) 
- VALUES ('$channelName','$channelType',1,'$currentDateTime')";
+    $sql= "INSERT INTO channels (name, type,status,last_time_proceed,filter_condition) 
+ VALUES ('$channelName','$channelType',1,'$currentDateTime','hello')";
 }
 else
 {

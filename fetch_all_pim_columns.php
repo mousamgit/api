@@ -4,7 +4,7 @@ require_once('connect_mousam.php');
 $channels = [];
 $channel_attribute = [];
 
-$result = $con->query("SELECT column_name
+$result = $con->query("SELECT COLUMN_NAME as column_name,DATA_TYPE as data_type
                        FROM information_schema.columns
                        WHERE table_schema = '".$name."' AND table_name = 'pim'");
 
