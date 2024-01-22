@@ -36,6 +36,9 @@ header a{float:right; margin-left:20px; color:#fff}
 #myTable .img-cell{background: #fff;}
 #myTable .img-cell img{width:80px;}
 #myTable td, #myTable th{padding:5px 10px;}
+#myTable .tabledata{cursor: pointer;}
+#myTable .tabledata i{display: none;}
+#myTable .tabledata:hover i{display: block;}
 .pagination{max-width: 100%; margin-top:20px; display: block; padding: 10px 30px 80px;}
 .pagination a{margin-right:10px; float: left; cursor: pointer; font-size: 10px; }
 .pagination a.active{font-weight: 600; color:#000;}
@@ -132,6 +135,3 @@ header a{float:right; margin-left:20px; color:#fff}
   .product-table td { padding:10px 20px; border: 1px solid #C1C3D1; text-align:left; font-size:14px; line-height:30px;}
   .product-table .title { background-color:#1b1e24; color:#D5DDE5; text-align:center; font-weight:700; border: 1px solid #1b1e24;}
   .product-table .l { background-color: #efefef; width:35%;}
-  
-
-
