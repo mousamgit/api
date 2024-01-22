@@ -6,7 +6,7 @@
 
   $query = " SELECT * from pim WHERE SKU = '".$sku."'";
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
-  $row = mysqli_fetch_assoc($result);
+  //$row = mysqli_fetch_assoc($result);
 ?>
 
 <html>
@@ -19,17 +19,16 @@
   <?php include 'topbar.php'; ?>
 
   <div class="product">
-    <input id="tab1" type="radio" name="tabs" checked><label for="tab1">Summary</label>
+    <input id="tab1" type="radio" name="tabs" checked><label for="tab1">Quick Summary</label>
     <input id="tab2" type="radio" name="tabs" ><label for="tab2">Information</label>
-    <?php include 'product-summary.php'; include 'product-information.php'; ?>
+    <input id="tab3" type="radio" name="tabs" ><label for="tab3">Media</label>
+    <input id="tab4" type="radio" name="tabs" ><label for="tab4">Log</label>
+    <?php
+      while($row = mysqli_fetch_assoc($result)){
+        include 'product-summary.php'; include 'product-information.php'; include 'product-media.php'; include 'product-log.php';
+      }
+    ?>
   </div>
-
-  <?php
-
-    foreach ($row as $colName => $val) {
-      echo $colName.": ".$row[$colName]."<br>";
-    }
-  ?>
 
 
   <body>
