@@ -10,11 +10,11 @@
         </div>
 </header>
 <div class="top-bar">
-    <div style="width:30%; display:inline-block;"><a href="https://pim.samsgroup.info/homepage.php"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></a></div>
+    <div style="width:30%; display:inline-block;"><a href="/"><img src="https://samsgroup.info/img/logo/SAMSlogo.png" width=100px></a></div>
     <div style="width:69%; text-align:right; display:inline-block;">
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="https://pim.samsgroup.info/homepage.php">Home</a>
+            <a href="/">Home</a>
             <?php if ($usertype == "admin") { ?>
                 <?php if ($usertype == "admin") { ?> <div class="title"><i class="fa-solid fa-caret-right"></i> Admin/Data Menu</div> <?php } ?>
                 <a href="https://pim.samsgroup.info/check_inactive.php">Check Inactive SKUs</a>

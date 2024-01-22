@@ -56,8 +56,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php
     // Convert the string into an array using explode
     $filters = explode(',', $filtersString);
-    foreach ($filters as $index => $filter) {
-        echo '<a class="btn" href="' . $filter . '">filter' . ($index + 1) . '</a>';
+    $filterCount = count($filters);
+
+    // Iterate through the filters, excluding the last one
+    for ($index = 0; $index < $filterCount - 1; $index++) {
+        $filter = trim($filters[$index]);
+        echo '<a class="btn" href="' . $filter . '">filter' . ($index + 1) . '</a> <a class="btn" href="savefilter.php?remove='.$filter.'">Remove Filter' . ($index + 1) . '</a><br>';
         // echo $filter;
     }
     ?>
