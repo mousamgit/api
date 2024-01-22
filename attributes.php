@@ -28,16 +28,8 @@ $retailAUD = $getData[10];
 $retailUSD = $getData[9];
 $stonepricewholesaleaud = "";
 $stonepriceretailaud = "";
-if(strtolower($type) == "loose sapphires" && strtolower($collections) !== "melee")
-{
-  $stonepricewholesaleaud = $carat * $wholesaleAUD;
-  $stonepriceretailaud = round($carat * $retailAUD);
-}
-if(strtolower($type) == "loose diamonds" && strtolower($collections) !== "melee")
-{
-  $stonepricewholesaleaud = $carat * $wholesaleAUD;
-  $stonepriceretailaud = round($carat * $retailAUD);
-}
+if(strtolower($type) == "loose sapphires" && strtolower($collections) !== "melee"){ $stonepricewholesaleaud = $carat * $wholesaleAUD; $stonepriceretailaud = round($carat * $retailAUD); }
+if(strtolower($type) == "loose diamonds" && strtolower($collections) !== "melee") { $stonepricewholesaleaud = $carat * $wholesaleAUD; $stonepriceretailaud = round($carat * $retailAUD); }
 
 
 //Quantity
@@ -186,5 +178,45 @@ elseif (preg_match("/argyle/i", $brand) > 0){
 }
 
 
+//START LOGGING
+//check price changes 
+$searchprice = "SELECT sku, wholesale_aud, stone_price_wholesale_aud, retail_aud, stone_price_retail_aud from pim where sku = '$sku'";
+$resultprice = mysqli_query($con,$searchprice) or die(mysqli_error($con));
+while ($rows = mysqli_fetch_array($resultprice, MYSQLI_ASSOC)) {
+  if(strtolower($type) == "loose sapphires" || strtolower($type) == "loose diamonds") {
+    if ($rows[stone_price_wholesale_aud] != round($stonepricewholesaleaud,2)) { $logsku = $sku; $logheader = "stone_price_wholesale_aud"; $newrecord = $stonepricewholesaleaud; $username = "autoimport"; include 'log.php'; }
+    if ($rows[stone_price_retail_aud] != round($stonepriceretailaud,2)) { $logsku = $sku; $logheader = "stone_price_retail_aud"; $newrecord = $stonepriceretailaud; $username = "autoimport"; include 'log.php'; }
+  }
+  if ($rows[wholesale_aud] != $wholesaleAUD) { $logsku = $sku; $logheader = "wholesale_aud"; $newrecord = $wholesaleAUD; $username = "autoimport"; include 'log.php'; }
+  if ($rows[retail_aud] != $retailAUD) { $logsku = $sku; $logheader = "retail_aud"; $newrecord = $retailAUD; $username = "autoimport"; include 'log.php'; }
+}
 
+//check title changes - if title is blank - skip log for now
+$searchtitle = "SELECT sku, product_title, brand from pim where sku = '$sku'";
+$resulttitle = mysqli_query($con,$searchtitle) or die(mysqli_error($con));
+while ($rows = mysqli_fetch_array($resulttitle, MYSQLI_ASSOC)) {
+  if ($productTitle != ""){ 
+    if ($rows[product_title] != $productTitle) { $logsku = $sku; $logheader = "product_title"; $newrecord = $productTitle; $username = "autoimport"; include 'log.php'; }
+  }
+}
+
+//check colour changes
+$searchcolour = "SELECT sku, colour from pim where sku = '$sku'";
+$resultcolour = mysqli_query($con,$searchcolour) or die(mysqli_error($con));
+while ($rows = mysqli_fetch_array($resultcolour, MYSQLI_ASSOC)) {
+  if($getData[97] != "RED:PURPLISH RED") {
+    if ($rows[colour] != $colour) { $logsku = $sku; $logheader = "colour"; $newrecord = $colour; $username = "autoimport"; include 'log.php'; }
+  }
+}
+
+//check qty changes
+/*$searchqty = "SELECT sku, warehouse_qty, mdqty, psqty, usdqty, allocated_qty from pim where sku = '$sku'";
+$resultqty = mysqli_query($con,$searchqty) or die(mysqli_error($con));
+while ($rows = mysqli_fetch_array($resultqty, MYSQLI_ASSOC)) {
+  if ($rows[warehouse_qty] != round($warehouseqty,2)) { $logsku = $sku; $logheader = "warehouse_qty"; $newrecord = $warehouseqty; $username = "autoimport"; include 'log.php'; }
+  if ($rows[mdqty] != round($mdqty,2)) { $logsku = $sku; $logheader = "mdqty"; $newrecord = $mdqty; $username = "autoimport"; include 'log.php'; }
+  if ($rows[psqty] != round($psqty,2)) { $logsku = $sku; $logheader = "psqty"; $newrecord = $psqty; $username = "autoimport"; include 'log.php'; }
+  if ($rows[usdqty] != round($usdqty,2)) { $logsku = $sku; $logheader = "usdqty"; $newrecord = $usdqty; $username = "autoimport"; include 'log.php'; }
+  if ($rows[allocated_qty] != round($allocatedQty,2)) { $logsku = $sku; $logheader = "allocated_qty"; $newrecord = round($allocatedQty,2); $username = "autoimport"; include 'log.php'; }
+}*/
  ?>

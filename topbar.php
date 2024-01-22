@@ -46,12 +46,18 @@
 
 <script>
     function openNav() {
-    document.getElementById("mySidenav").style.width = "400px";
+        document.getElementById("mySidenav").style.width = "400px";
+        window.addEventListener('mouseup',function(event){
+        var mySidenav = document.getElementById('mySidenav');
+        if(event.target != mySidenav && event.target.parentNode != mySidenav){
+            document.getElementById("mySidenav").style.width = "0";
+        }
+  });  
     }
 
     /* Set the width of the side navigation to 0 */
     function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("mySidenav").style.width = "0";
     }
 
     var active = 0;

@@ -1,4 +1,8 @@
 <?php
+function valuefromString($string, $symbol, $element){
+    $keyParts = explode($symbol, $string);
+    return $keyParts[$element];
+}
 function getQuery($db){
     require('connect.php');
 
@@ -14,22 +18,24 @@ function getQuery($db){
         if ($key != 'page' && $key != 'logic') {
             // Check if the key contains "~" for "contains" filter
             if (strpos($key, '~') !== false) {
-                // Split the key into parts using the tilde (~) as a separator
-                $keyParts = explode('~', $key);
-            
-                // The first part will be the column name
-                $columnName = $keyParts[0];
-            
-                // The second part will be the search term
-                $searchTerm = $keyParts[1];
-            
-                // Add the condition to the array
-                $conditions[] = "$columnName LIKE '%" . mysqli_real_escape_string($con, $searchTerm) . "%'";
+                // $keyParts = explode('~', $key);
+                // $columnName = $keyParts[0];
+                // $searchTerm = $keyParts[1];
+                
+                $conName = valuefromString($key, '~', 0);
+                $conValue = valuefromString($key, '~', 1);
+                $conditions[] = "$conName LIKE '%" . mysqli_real_escape_string($con, $conValue) . "%'";
             }
-            elseif (strpos($key, '>=') === 0) {
-                $conditions[] = substr($key, 2) . " >= " . mysqli_real_escape_string($con, $value);
-            } elseif (strpos($key, '<=') === 0) {
-                $conditions[] = substr($key, 2) . " <= " . mysqli_real_escape_string($con, $value);
+            elseif (strpos($key, '>') !== false) {
+                $conName = valuefromString($key, '>', 0);
+                $conValue = valuefromString($key, '>', 1);
+                $originalValue = str_replace('_', '.', $conValue);
+                $conditions[] = "$conName >= " . $originalValue;
+            } elseif (strpos($key, '<') !== false) {
+                $conName = valuefromString($key, '<', 0);
+                $conValue = valuefromString($key, '<', 1);
+                $originalValue = str_replace('_', '.', $conValue);
+                $conditions[] = "$conName <= " . $originalValue;
             } else {
                 $conditions[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
             }
@@ -44,8 +50,6 @@ function getQuery($db){
     if (!empty($conditions)) {
         $baseQuery .= " WHERE " . implode( " $filterlogic ", $conditions);
     }
-
-
     return $baseQuery;
   }
 
