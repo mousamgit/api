@@ -18,12 +18,18 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
   </head>
   <?php include 'topbar.php'; ?>
-
+  <div style="padding:20px; text-align:center;">
+    <h2>Product information for <?php echo $sku; ?></h2>
+  </div>
   <div class="product">
     <input id="tab1" type="radio" name="tabs" checked><label for="tab1">Quick Summary</label>
     <input id="tab2" type="radio" name="tabs" ><label for="tab2">Information</label>
     <input id="tab3" type="radio" name="tabs" ><label for="tab3">Media</label>
     <input id="tab4" type="radio" name="tabs" ><label for="tab4">Log</label>
+    <?php 
+            $logquery = " SELECT * from pimlog WHERE SKU = '".$sku."'";
+            $logresult = mysqli_query($con, $logquery) or die(mysqli_error($con));
+    ?>
     <?php
       while($row = mysqli_fetch_assoc($result)){
         include 'product-summary.php'; include 'product-information.php'; include 'product-media.php'; include 'product-log.php';

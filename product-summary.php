@@ -13,6 +13,11 @@
           <tr><td class="title" colspan="1000">Quick Specs</td></tr>
           <tr><td class="l"> Specifications: </td> <td><?php echo $row[specifications]; ?></td></tr>
         </table>
+        <table class="product-table">
+          <tr><td class="title" colspan="1000">E-commerce</td></tr>
+          <tr><td class="l"> Description: </td> <td><?php echo $row[description]; ?></td></tr>
+          <tr><td class="l"> Tags: </td> <td><?php echo $row[tags]; ?></td></tr>
+        </table>
       </div>
       <div class="table-column">
         <table class="product-table">
