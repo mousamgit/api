@@ -1,6 +1,9 @@
 <?php
 require_once('connect_mousam.php');
 
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 // Getting the referring URL
 $currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
@@ -22,6 +25,16 @@ $columns = [];
 
 // Fetching distinct attributes for the header
 $header = $con->query("SELECT DISTINCT output_label, attribute_name,(select name from channels where channels.id = channel_attributes.channel_id)channel_name FROM channel_attributes WHERE channel_id = $channelId");
+
+$whereConditionq = $con->query("select filter_condition from channels where id =".$channelId."");
+
+$whereConditionVal ='';
+
+if ($whereConditionq->num_rows > 0) {
+    while ($row = $whereConditionq->fetch_assoc()) {
+      $whereConditionVal = $row['filter_condition'];
+    }
+}
 
 $channel_name='';
 if ($header->num_rows > 0) {
@@ -76,7 +89,7 @@ if (!empty($data)) {
             }
     }
         // Constructing of full WHERE condition
-        $whereCondition = !empty($whereConditions) ? ' WHERE ' . implode(' AND ', $whereConditions) : '';
+        $whereCondition = !empty($whereConditions) ? ' WHERE ' . implode(' AND ', $whereConditions) : $whereConditionVal;
 
         $query = $con->query("SELECT ".implode(',',$heads)." FROM pim $whereCondition LIMIT $offset, $itemsPerPage");
     }
@@ -84,7 +97,7 @@ if (!empty($data)) {
     else
     {
         //full query case
-        $query = $con->query("SELECT ".implode(',',$heads)." FROM pim LIMIT $offset, $itemsPerPage");
+        $query = $con->query("SELECT ".implode(',',$heads)." FROM pim $whereConditionVal LIMIT $offset, $itemsPerPage");
     }
     if ($query->num_rows > 0) {
         while ($row = $query->fetch_assoc()) {
