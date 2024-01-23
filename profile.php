@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Iterate through the filters, excluding the last one
     for ($index = 0; $index < $filterCount - 1; $index++) {
         $filter = trim($filters[$index]);
-        echo '<a class="btn" href="' . $filter . '">filter' . ($index + 1) . '</a> <a class="btn" href="savefilter.php?remove='.$filter.'">Remove Filter' . ($index + 1) . '</a><br>';
+        echo '<a class="btn" href="' . $filter . '">' . $filter. '</a> <a class="btn" href="savefilter.php?remove='.$filter.'">Remove Filter</a><br>';
         // echo $filter;
     }
     ?>
