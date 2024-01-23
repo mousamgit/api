@@ -97,19 +97,14 @@ if (!empty($data)) {
     else
     {
         //full query case
-        $query = $con->query("SELECT ".implode(',',$heads)." FROM pim $whereConditionVal LIMIT $offset, $itemsPerPage");
+        $query = $con->query("SELECT distinct ".implode(',',$heads)." FROM pim $whereConditionVal LIMIT $offset, $itemsPerPage");
     }
     if ($query->num_rows > 0) {
         while ($row = $query->fetch_assoc()) {
-            if ($row['sku'] != null) {
                 array_push($columns, $row);
-            }
         }
     }
 }
-
-
-
 $con->close();
 
 header('Content-Type: application/json');
