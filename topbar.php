@@ -19,7 +19,7 @@
                 <?php if ($usertype == "admin") { ?> <div class="title"><i class="fa-solid fa-caret-right"></i> Admin/Data Menu</div> <?php } ?>
                 <a href="https://pim.samsgroup.info/check_inactive.php">Check Inactive SKUs</a>
             <?php } ?>
-
+                <a href="https://pim.samsgroup.info/logs.php">PIM Logs</a>
             <?php if ($usertype == "graphics" || $usertype == "admin") { ?>
                 <?php if ($usertype == "admin") { ?> <div class="title"><i class="fa-solid fa-caret-right"></i> Graphic Team Menu</div> <?php } ?>
                 <a href="https://pim.samsgroup.info/upload_images.php">Upload images to PIM</a>

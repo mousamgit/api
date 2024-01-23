@@ -184,11 +184,11 @@ $searchprice = "SELECT sku, wholesale_aud, stone_price_wholesale_aud, retail_aud
 $resultprice = mysqli_query($con,$searchprice) or die(mysqli_error($con));
 while ($rows = mysqli_fetch_array($resultprice, MYSQLI_ASSOC)) {
   if(strtolower($type) == "loose sapphires" || strtolower($type) == "loose diamonds") {
-    if ($rows[stone_price_wholesale_aud] != round($stonepricewholesaleaud,2)) { $logsku = $sku; $logheader = "stone_price_wholesale_aud"; $newrecord = $stonepricewholesaleaud; $username = "autoimport"; include 'log.php'; }
-    if ($rows[stone_price_retail_aud] != round($stonepriceretailaud,2)) { $logsku = $sku; $logheader = "stone_price_retail_aud"; $newrecord = $stonepriceretailaud; $username = "autoimport"; include 'log.php'; }
+    if ($rows[stone_price_wholesale_aud] != round($stonepricewholesaleaud,2)) { $logsku = $sku; $logheader = "stone_price_wholesale_aud"; $newrecord = round($stonepricewholesaleaud,2); $username = "autoimport"; include 'log.php'; }
+    if ($rows[stone_price_retail_aud] != round($stonepriceretailaud,2)) { $logsku = $sku; $logheader = "stone_price_retail_aud"; $newrecord = round($stonepriceretailaud,2); $username = "autoimport"; include 'log.php'; }
   }
-  if ($rows[wholesale_aud] != $wholesaleAUD) { $logsku = $sku; $logheader = "wholesale_aud"; $newrecord = $wholesaleAUD; $username = "autoimport"; include 'log.php'; }
-  if ($rows[retail_aud] != $retailAUD) { $logsku = $sku; $logheader = "retail_aud"; $newrecord = $retailAUD; $username = "autoimport"; include 'log.php'; }
+  if ($rows[wholesale_aud] != $wholesaleAUD) { $logsku = $sku; $logheader = "wholesale_aud"; $newrecord = round($wholesaleAUD,2); $username = "autoimport"; include 'log.php'; }
+  if ($rows[retail_aud] != $retailAUD) { $logsku = $sku; $logheader = "retail_aud"; $newrecord = round($retailAUD,2); $username = "autoimport"; include 'log.php'; }
 }
 
 //check title changes - if title is blank - skip log for now

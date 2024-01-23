@@ -49,7 +49,7 @@
     );
     fputcsv($fp, $content);
 
-  echo "<tr><td><input type='hidden' id='sku' name='sku[]' value='".$row[sku]."'>".$row[sku]."</td><td align=center class='image-box'><img src='".$row[image1]."' width=200px></td><td><b>Brand:</b> ".$row[brand]."<br><b>Title:</b> ".$row[product_title]."<br><br>".$row[specifications]."</td>";
+  echo "<tr><td><input type='hidden' id='sku' name='sku[]' value='".$row[sku]."'><a href='https://pim.samsgroup.info/product.php?sku=".$row[sku]."' target='_blank'>".$row[sku]." <i class='fa-solid fa-up-right-from-square'></i></a> </td><td align=center class='image-box'><img src='".$row[image1]."' width=200px></td><td><b>Brand:</b> ".$row[brand]."<br><b>Title:</b> ".$row[product_title]."<br><br>".$row[specifications]."</td>";
   echo "<td align=center width=30%><input type='text' id='description' name='description[]' value='".$row[description]."'></input></td>";
   echo "<td align=center width=30%><input type='text' id='tags' name='tags[]' value='".$row[tags]."'></input></td>";
   echo "<td align=center width=10%><input type='text' id='collections_2' name='collections_2[]' value='".$row[collections_2]."'></input></td>";

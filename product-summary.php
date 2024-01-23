@@ -17,6 +17,7 @@
           <tr><td class="title" colspan="1000">E-commerce</td></tr>
           <tr><td class="l"> Description: </td> <td><?php echo $row[description]; ?></td></tr>
           <tr><td class="l"> Tags: </td> <td><?php echo $row[tags]; ?></td></tr>
+          <tr><td class="l"> Collections 2: </td> <td><?php echo $row[collections_2]; ?></td></tr>
         </table>
       </div>
       <div class="table-column">
