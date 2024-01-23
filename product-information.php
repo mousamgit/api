@@ -1,5 +1,22 @@
 <section id="content2">
     <p class="product-content">
-      Bacon ipsum dolor sit amet landjaeger sausage brisket, jerky drumstick fatback boudin ball tip turducken. Pork belly meatball t-bone bresaola tail filet mignon kevin turkey ribeye shank flank doner cow kielbasa shankle. Pig swine chicken hamburger, tenderloin turkey rump ball tip sirloin frankfurter meatloaf boudin brisket ham hock. Hamburger venison brisket tri-tip andouille pork belly ball tip short ribs biltong meatball chuck. Pork chop ribeye tail short ribs, beef hamburger meatball kielbasa rump corned beef porchetta landjaeger flank. Doner rump frankfurter meatball meatloaf, cow kevin pork pork loin venison fatback spare ribs salami beef ribs.
+      <div class='table-column'>
+        <table class='product-table'>
+          <?php 
+            $col = mysqli_num_fields($result);
+            $col = floor($col/2);
+            $i = 0;
+            foreach ($row as $colName => $val) { 
+              echo "<tr><td class='l'><strong>".$colName."</strong></td><td>".$row[$colName]."</td></tr>"; 
+              $i++;
+              if ($i == $col)
+              {
+                echo "</table></div>";
+                echo "<div class='table-column'><table class='product-table'>";
+              }
+            } 
+          ?>
+        </table>
+      </div> 
     </p>
 </section>
