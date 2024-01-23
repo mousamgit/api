@@ -30,6 +30,10 @@ include 'login_checking.php';
 <a class="show-filter" @click="showhiderows()">Row Filter</a> -->
 <?php
 // Loop through the URL parameters and display the data
+  if (strpos($baseQuery, 'WHERE') !== false){
+    $filterResult = valuefromString($baseQuery, 'WHERE', 1);
+    echo '<div class="filterresult">'. $filterResult .'</div>';
+  }
 
   echo '<div class="row"><div class="showrows col-md-12" v-show="show_row_filter"><div class="rowscontainer">
   <rowfilter v-for="(filter, index) in filters" :key="index" :dataindex="index" @findindex="updateindex(index)"  @title-changed="updatetitle"  @type-changed="updatetype" @value-changed="updatevalue" @contains-changed="updatecontains"  @from-changed="updatefrom"  @to-changed="updateto" ></rowfilter>
@@ -63,7 +67,7 @@ include 'login_checking.php';
       if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
-      else { echo '<td  col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'</td>'; }
+      else { echo '<td @click="editdata()" class="tabledata" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>'; }
     }
     echo '</tr>';
   }

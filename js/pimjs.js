@@ -20,6 +20,7 @@ const myapp = Vue.createApp({
     },
 
     methods: {
+
         showhidecols() {
             this.show_col_filter = !this.show_col_filter;
         },
@@ -33,7 +34,6 @@ const myapp = Vue.createApp({
             } else {
                 this.activeColumns.push(colName);
             }
-
         },
         togglelogic() {
             // Toggle between 'and' and 'or'
@@ -55,6 +55,9 @@ const myapp = Vue.createApp({
                 this.filterarray.push(['', '', 'equals', '', '','']);
             }
             this.filtertotal ++;
+        },
+        editdata(){
+            console.log('edit data');
         },
         updateindex(index){            
             this.filterindex = index;
