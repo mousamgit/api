@@ -38,7 +38,22 @@
                 <a href="https://pim.samsgroup.info/stockist-images/">Grab Images for Stockists</a>
             <?php } ?>
         </div>
+        <span onclick="openSearch()"><i class="fa-solid fa-magnifying-glass"></i></span> &nbsp; &nbsp;
         <span onclick="openNav()"><i class="fa-solid fa-bars fa-xl menu-icon"></i></span>
+
+        <div id="mySearchnav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeSearch()">&times;</a>
+            <div class="searchnav" id="searchnav">
+                <h2>Search PIM</h2>
+                <form action="search.php" method="post" name="searchpim" enctype="multipart/form-data">
+                    <input type="radio" id="sku">Search SKU</input>
+                    <input type="radio" id="name">Search Product Name</input>
+                    <input type="text" id="value" value="Input Search Term"></input>
+                    <button type="submit" id="submit" name="Submit" class="btn btn-primary button-loading">>Submit</button>   
+                </form>
+            </div>
+
+        </div>
     </div>
 </div>
 <br>
@@ -52,12 +67,24 @@
         if(event.target != mySidenav && event.target.parentNode != mySidenav){
             document.getElementById("mySidenav").style.width = "0";
         }
-  });  
+        });  
+    }
+    function openSearch() {
+        document.getElementById("mySearchnav").style.width = "400px";
+        window.addEventListener('mouseup',function(event){
+        var mySidenav = document.getElementById('mySearchnav');
+        /*if(event.target != searchnav && event.target.parentNode != searchnav){
+            document.getElementById("mySearchnav").style.width = "0";
+        }*/
+        }); 
     }
 
     /* Set the width of the side navigation to 0 */
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
+    }
+    function closeSearch() {
+        document.getElementById("mySearchnav").style.width = "0";
     }
 
     var active = 0;

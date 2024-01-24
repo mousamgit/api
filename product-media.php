@@ -9,7 +9,6 @@
                     <?php if($row[image4] != "") { ?><td><img src="<?php echo $row[image4]; ?>"></td><?php } ?>
                     <?php if($row[image5] != "") { ?><td><img src="<?php echo $row[image5]; ?>"></td><?php } ?>
                     <?php if($row[image6] != "") { ?><td><img src="<?php echo $row[image6]; ?>"></td><?php } ?>
-                    <?php if($row[image6] != "") { ?><td><img src="<?php echo $row[image6]; ?>"></td><?php } ?>
                     <?php if($row[packaging_image] != "") { ?><td><img src="<?php echo $row[packaging_image]; ?>"></td><?php } ?>
                 </tr>
                 <tr>
@@ -29,7 +28,6 @@
                     <?php if($row[image3] != "") { ?><td><img src="<?php echo $row[image3]; ?>"></td><?php } ?>
                     <?php if($row[image4] != "") { ?><td><img src="<?php echo $row[image4]; ?>"></td><?php } ?>
                     <?php if($row[image5] != "") { ?><td><img src="<?php echo $row[image5]; ?>"></td><?php } ?>
-                    <?php if($row[image6] != "") { ?><td><img src="<?php echo $row[image6]; ?>"></td><?php } ?>
                     <?php if($row[image6] != "") { ?><td><img src="<?php echo $row[image6]; ?>"></td><?php } ?>
                     <?php if($row[packaging_image] != "") { ?><td><img src="<?php echo $row[packaging_image]; ?>"></td><?php } ?>
                 </tr>

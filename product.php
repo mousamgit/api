@@ -18,6 +18,15 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
   </head>
   <?php include 'topbar.php'; ?>
+
+  <?php 
+    if ($sku == "")
+    {
+      echo "No SKU supplied. Please select another product.";
+    }
+    else{
+
+  ?>
   <div style="padding:20px; text-align:center;">
     <h2>Product information for <?php echo $sku; ?></h2>
   </div>
@@ -36,7 +45,7 @@
       }
     ?>
   </div>
-
+  <?php } ?>
 
   <body>
   </body>
