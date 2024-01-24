@@ -67,7 +67,12 @@ include 'login_checking.php';
       if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
-      else { echo '<td @click="editdata()" class="tabledata" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>'; }
+      else { 
+        echo '<td class="tabledata" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>';
+        // echo '<td v-if="isEditing(\'' . $escapedColName . '\', ' . json_encode($row) . ')" class="d-none" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><input type="text" value="'.$row[$colName].'"></td>'; 
+        // echo '<td v-else @click="editdata(\'' . $escapedColName . '\', ' . json_encode($row) . ')" class="tabledata" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>'; 
+
+      }
     }
     echo '</tr>';
   }
