@@ -11,7 +11,7 @@
  /*$del = "TRUNCATE TABLE `pimRAW`";
  mysqli_query( $con, $del );*/
 
- echo "<div style='width:500px; margin:0 auto; border:1px solid #000; padding:20px;'>";
+ echo "<center><div style='width:70%; padding:20px;'>";
 
  if(isset($_POST["Import"])){
 
@@ -40,6 +40,12 @@
              if ($skipHeaders > 1){
                $values = $getData;
                $arrayLength = count($values);
+
+               ?>
+
+              <table style="border:1px solid #000; ">
+              <tr><td width=20% style="border:1px solid #000; padding:10px; font-weight:700;">SKU</td><td width=20% style="border:1px solid #000; padding:10px; font-weight:700;">Field</td><td style="border:1px solid #000; padding:10px; font-weight:700;">Value</td></tr>
+               <?php
                
                for ($i = 1; $i < $arrayLength; $i++ )
                {
@@ -54,18 +60,18 @@
 
                 $key = $head."='".$val."'";
 
-                //prepping for log
+               //prepping for log
                 $logheader = $head; //pull header
                 $newrecord = $val; //get new value
                 $logsku = $sku;
                 include 'log.php'; 
-
+                
                 $sql = " INSERT into pim (sku, $head) VALUES ('$sku', '$val') ON DUPLICATE KEY UPDATE $key "; 
-                $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ;
+                $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ; 
 
-                echo "Updated or Added ".$sku.", ".$head." = ".$val."<br>";
+                echo "<tr><td style='border:1px solid #000; padding:10px;'>".$sku."</td><td style='border:1px solid #000; padding:10px;'>".$head."</td><td style='border:1px solid #000; padding:10px;'>".$val."</td></tr>";
                }
-               echo "<hr>";
+               echo "</table><br><br>";
                $count++;
              }
 
@@ -77,5 +83,5 @@
      }
   }
 
-  echo "</div>";
+  echo "</div></center>";
  ?>

@@ -110,6 +110,7 @@ header a{ color:#fff}
     margin-left: 50px;
   }
 
+<<<<<<< HEAD
   /* topnav */
   .elevation {
     box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -5px rgba(0,0,0,0.2);
@@ -297,6 +298,10 @@ header a{ color:#fff}
     white-space: nowrap;
  }
   
+=======
+  .searchnav {color:#fff; padding: 20px;}
+ 
+>>>>>>> 7f6650b9fe6be10bc903c1605aa6de95278a0f2d
   
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
