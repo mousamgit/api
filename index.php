@@ -29,6 +29,9 @@ include 'login_checking.php';
 <!-- <a class="show-filter" @click="showhidecols()">Column Filter</a>
 <a class="show-filter" @click="showhiderows()">Row Filter</a> -->
 <?php
+
+
+
 // Loop through the URL parameters and display the data
   if (strpos($baseQuery, 'WHERE') !== false){
     $filterResult = valuefromString($baseQuery, 'WHERE', 1);
@@ -68,9 +71,8 @@ include 'login_checking.php';
       elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
       else { 
-        echo '<td class="tabledata" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>';
-        // echo '<td v-if="isEditing(\'' . $escapedColName . '\', ' . json_encode($row) . ')" class="d-none" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><input type="text" value="'.$row[$colName].'"></td>'; 
-        // echo '<td v-else @click="editdata(\'' . $escapedColName . '\', ' . json_encode($row) . ')" class="tabledata" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>'; 
+        echo '<td class="tabledata" row="' . $row[sku] . '" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><form  v-if="isediting(\'' . $row[sku]. '\', \'' . $colName . '\')"  action="updatetablevalue.php" method="post"><input  type="text" value="'.$row[$colName].'"><button type="submit">Submit</button></form> <a v-else @click="editdata(\'' . $row[sku]. '\', \'' . $colName . '\')" >'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></td>';
+
 
       }
     }

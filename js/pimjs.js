@@ -16,7 +16,7 @@ const myapp = Vue.createApp({
             pimurl: '',
             show_col_filter: false,
             show_row_filter: true,
-            editingCell: null,
+            editingCell: [],
         }
     },
 
@@ -57,14 +57,20 @@ const myapp = Vue.createApp({
             }
             this.filtertotal ++;
         },
-        editdata(colName, row) {
+        editdata(row, col) {
             // Set the editingCell to the combination of colName and row
-            this.editingCell = { colName, row };
+            this.editingCell = [row,col];
           },
         
-          isEditing(colName, row) {
+          isediting(row, col) {
             // Check if the current cell is being edited
-            return this.editingCell && this.editingCell.colName === colName && this.editingCell.row === row;
+            
+            if(this.editingCell[0] == row && this.editingCell[1] == col){
+                return true;
+            }
+            else{
+                return false;
+            }
           },
         updateindex(index){            
             this.filterindex = index;
