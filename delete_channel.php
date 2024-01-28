@@ -12,36 +12,24 @@ $data = json_decode(file_get_contents("php://input"), true);
 // Extract channel data
 $channelId = $data['channelId'];
 $channelName = $data['channelName'];
-$attribute_check = "SELECT id FROM channel_attributes WHERE channel_id=".$channelId;
 
-$result = $con->query($attribute_check);
-
-if ($result) {
-    // Check if there are any rows returned
-    if ($result->num_rows > 0) {
         // Data found in channel_attributes, delete related records first
         $deleteAttributesQuery = "DELETE FROM channel_attributes WHERE channel_id=" . $channelId;
+        $deleteFilterQuery = "DELETE FROM attribute_filter WHERE channel_id=" . $channelId;
 
         $deleteChannelQuery = "DELETE FROM channels WHERE id=" . $channelId;
+        $con->query($deleteAttributesQuery);
+        $con->query($deleteFilterQuery);
+        $con->query($deleteChannelQuery);
+        $con->query($deleteChannelQuery);
         if ($con->query($deleteAttributesQuery) === TRUE) {
-            if ($con->query($deleteChannelQuery) === TRUE) {
-            echo json_encode(['success' => true]);
-            } else {
-            echo json_encode(['success' => false, 'error' => $con->error]);
-            }
-        }
-
-
-    } else {
-        $deleteChannelQuery = "DELETE FROM channels WHERE id=" . $channelId;
-        if ($con->query($deleteChannelQuery) === TRUE) {
-            echo json_encode(['success' => true]);
+         echo json_encode(['success' => true]);
         } else {
-            echo json_encode(['success' => false, 'error' => $con->error]);
+         echo json_encode(['success' => false, 'error' => $con->error]);
         }
 
-    }
-}
+
+
 
 // Close the database connection
 $con->close();

@@ -125,7 +125,7 @@ export default {
     <a class="btn btn-success" @click="exportData">
       <i class="fas fa-file-export"></i> Export
     </a>
-   <product-filter :filters="filters" :output_labels="output_labels" :heads="heads" @filters-applied="handleFiltersApplied"></product-filter>
+<!--   <product-filter :filters="filters" :output_labels="output_labels" :heads="heads" @filters-applied="handleFiltersApplied"></product-filter>-->
     <table class="table table-responsive mt-3">
       <thead>
         <tr>

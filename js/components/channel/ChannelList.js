@@ -34,13 +34,7 @@ export default {
     });
 
   },
-  computed: {
-    // Computed property for autocomplete suggestions
-    filteredAttributeValues() {
-      const query = this.channelAttribute.attribute_condition.toLowerCase();
-      return this.attribute_values.filter(value => value.toLowerCase().includes(query));
-    },
-  },
+
   methods: {
     async editAttribute(channel_id) {
       try {
@@ -64,7 +58,6 @@ export default {
         {
           this.newAttribute=data;
         }
-
 
         console.log(this.newAttribute)
 
@@ -114,9 +107,46 @@ export default {
       });
 
     },
-    removeAttributeRow(index) {
-      // Remove the row at the given index
-      this.newAttribute.splice(index, 1);
+    removeAttributeRow(index,attribute_id) {
+      if (this.newAttribute.length > 1) {
+        // Remove the row at the given index
+
+        if(attribute_id ==0)
+        {
+          this.newAttribute.splice(index, 1);
+
+        }
+        else
+        {
+        this.deleteAttribute(attribute_id,'delete_channel_attributes.php').then((value) => {
+         if(value == 1)
+         {
+           this.newAttribute.splice(index, 1);
+         }
+        });
+
+        }
+      }
+
+    },
+    async fetchChannelAttributeFilter(channel_id){
+      try {
+        const response = await fetch(`get-attribute_filter_channelwise.php?channelId=${channel_id}`);
+        const data = await response.json();
+
+        this.channelIdGlobal = channel_id;
+
+        if(data.length>0)
+        {
+
+
+          this.channelAttribute=data;
+        }
+        console.log('hello',this.channelAttribute)
+
+      } catch (error) {
+        console.error('Error fetching attribute filter:', error);
+      }
     },
     editChannel(channel) {
       this.channelName=null;
@@ -129,6 +159,7 @@ export default {
       {
         this.channelId =0;
       }
+      this.fetchChannelAttributeFilter(this.channelId)
       // Open the edit modal
       this.isEditModalOpen = true;
     },
@@ -183,10 +214,11 @@ export default {
           this.showModal = false;
           // Reset the form and editing state
           this.resetForm();
+          location.reload();
         } else {
           console.error('Error saving channel:', data.error);
         }
-        location.reload();
+
       } catch (error) {
         console.error('Error saving channel:', error);
       }
@@ -201,9 +233,23 @@ export default {
       });
     },
 
-    removeChannelCondition(index) {
+    removeChannelCondition(index,filter_id) {
       if (this.channelAttribute.length > 1) {
-        this.channelAttribute.splice(index, 1);
+          if(filter_id ==0)
+          {
+            this.channelAttribute.splice(index, 1);
+
+          }
+          else
+          {
+            this.deleteAttribute(filter_id,'delete_attribute_filters.php').then((value) => {
+              if(value == 1)
+              {
+                this.channelAttribute.splice(index, 1);
+              }
+            });
+
+          }
       }
     },
     resetForm() {
@@ -285,6 +331,38 @@ export default {
       } catch (error) {
         console.error('Error deleting channel:', error);
       }
+    },
+    async deleteAttribute(id,delete_url) {
+
+      try {
+        // Display a confirmation dialog
+        const confirmed = window.confirm(`Are you sure you want to delete the attributes?`);
+
+        if (confirmed) {
+          const response = await fetch(delete_url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: id
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            return '1';
+            console.log('Attributes deleted successfully!');
+          } else {
+            console.error('Error deleting attribute:', data.error);
+          }
+        } else {
+          console.log('Deletion canceled by the user.');
+        }
+      } catch (error) {
+        console.error('Error deleting channel:', error);
+      }
     }
 
   },
@@ -325,8 +403,8 @@ export default {
     </div>
 
     <div class="modal fade" id="addChannelModal" tabindex="-1" aria-labelledby="addChannelModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content" style="height: 100vh;">
           <div class="modal-header">
             <h5 class="modal-title" id="addChannelModalLabel">Channels</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -346,6 +424,7 @@ export default {
                 <fieldset>
                     <legend> Add Condition </legend>
                     <hr>
+                    
                         <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
                         <div class="row mb-3">
                             <div class="col-md-5">
@@ -361,21 +440,16 @@ export default {
                     <div class="col-md-5">
                     <label for="attribute" class="form-label">Attribute Condition:</label>
                     <div class="mb-3">
-                     <!-- Show different input fields based on data type -->
                   
                      <template v-if="cAttribute.data_type == 'varchar'">
                      <select v-model="cAttribute.filter_type" id="filter-type" class="form-select" >
+                        <option value="includes">Includes</option>
                         <option value="=">equals</option>
                         <option value="IS NOT NULL">Is Not Empty</option>
                      </select>
-                    <template v-if="cAttribute.filter_type == '='" >
-<!--                      <select v-model="cAttribute.attribute_condition" id="filter-type" class="form-select">-->
-<!--                        <template v-for="(value, vindex) in attribute_values" :key="vindex">-->
-<!--                        <option :value="value">{{value}}</option>-->
-<!--                        </template>-->
-<!--                      </select>-->
+                    <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == 'includes'" >
                      <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
-                     <ul v-if="index == indexCheck" class="autocomplete-suggestions">
+                     <ul v-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
                         <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
                          {{ value }}
                         </li>
@@ -388,7 +462,7 @@ export default {
                         <div class="row">
                     <select v-model="cAttribute.filter_type" id="filter-type" class="form-select">
                         <option value="between">Range</option>
-                        <option value="IS NOT NULL">Greater Than 0</option>
+                        <option value="IS NOT NULL">IS NOT EMPTY</option>
                      </select>
                     <template v-if="cAttribute.filter_type == 'between'">
                         <div class="col-md-6">
@@ -403,8 +477,9 @@ export default {
                     </div>
                     <div class="col-md-2">
                     <div class="mb-3">
+                    
                     <button type="button" @click="addChannelCondition" class="btn btn-success" v-if="index === channelAttribute.length - 1">+</button>
-                    <button type="button" @click="removeChannelCondition(index)" class="btn btn-danger" v-if="channelAttribute.length > 1">-</button>
+                    <button type="button" @click="removeChannelCondition(index,cAttribute.id)" class="btn btn-danger" v-if="channelAttribute.length > 1">-</button>
                     </div>
                 </div>
                </div>
@@ -453,6 +528,7 @@ export default {
                             </div>
                                 
                                 <div v-for="(attribute, index) in newAttribute" :key="index" class="row mb-3">
+                                
                                     <div class="col-md-2">
                                         <div class="mb-3"> 
                                          <select v-model="attribute.attribute_name" class="form-control" required>
@@ -482,8 +558,8 @@ export default {
                                     <div class="col-md-2">
                                        <div class="mb-3">
                                        
-                                        <button type="button" @click.prevent="removeAttributeRow(index)" class="btn btn-danger">-</button>
-                                        <button type="button" @click.prevent="addAttributeRow" class="btn btn-success">+</button>
+                                        <button type="button" @click.prevent="addAttributeRow" class="btn btn-success" v-if="index === newAttribute.length - 1">+</button>
+                                        <button type="button" @click.prevent="removeAttributeRow(index,attribute.id)"  v-if="newAttribute.length > 1"  class="btn btn-danger">-</button>
                                         </div>
                                     </div>
                                     
@@ -523,11 +599,11 @@ export default {
             <i class="fas fa-edit"></i> Add Attributes</a>
 
            
-            <a class="btn btn-success" :href="'/pim/channel_attribute.php?channel_id=' + channel.id">
+            <a class="btn btn-success" :href="'/channel_attribute.php?channel_id=' + channel.id">
             <i class="fas fa-file-export"></i> Attributes List
             </a>
             
-            <a class="btn btn-success" :href="'/pim/channel_attribute_export.php?channel_id=' + channel.id">
+            <a class="btn btn-success" :href="'/channel_attribute_export.php?channel_id=' + channel.id">
             <i class="fas fa-file-export"></i> Export
             </a>
             

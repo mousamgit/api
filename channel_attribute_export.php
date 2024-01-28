@@ -20,10 +20,22 @@ $columns = [];
 // Fetching distinct attributes for the header
 $header = $con->query("SELECT DISTINCT output_label, attribute_name,(select name from channels where channels.id = channel_attributes.channel_id)channel_name FROM channel_attributes WHERE channel_id = $channelId");
 
+$whereConditionq = $con->query("select filter_condition from channels where id =".$channelId."");
+
+$whereConditionVal ='';
+
+if ($whereConditionq->num_rows > 0) {
+    while ($row = $whereConditionq->fetch_assoc()) {
+        $whereConditionVal = $row['filter_condition'];
+    }
+}
+
+$channel_name='';
 if ($header->num_rows > 0) {
     while ($row = $header->fetch_assoc()) {
         array_push($heads, $row['attribute_name']);
         array_push($output_labels, $row['output_label']);
+        $channel_name = $row['channel_name'];
     }
 }
 
@@ -70,7 +82,8 @@ if($_GET['filter_column_1_column'] != NULL)
 }
 else
 {
-    $query = $con->query("SELECT " . implode(',', $heads) . " FROM pim ");
+
+    $query = $con->query("SELECT distinct ".implode(',',$heads)." FROM pim $whereConditionVal");
 }
 
 
@@ -87,9 +100,9 @@ fputcsv($output, $output_labels);
 
 // Output CSV data
 while ($row = $query->fetch_assoc()) {
-    if ($row['sku'] !== null) {
+
         fputcsv($output, $row);
-    }
+
 }
 
 // Close the output stream
