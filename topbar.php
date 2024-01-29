@@ -6,7 +6,7 @@
     <div class="drawer-header drawer-header-cover" style="background-color: #e1e1e1; color: #000;">
         <div class="drawer-user">
             <div class="drawer-avatar">
-
+                <img src="https://pim.samsgroup.info/sga-logo.jpg">
             </div>
             <div class="drawer-meta">
                 <span class="drawer-name"><a href="profile.php"> <i class="fa-solid fa-user"></i>  <?php echo $_SESSION["username"]; ?></a></span>
@@ -32,6 +32,7 @@
     </div>
     <nav class="drawer-navigation drawer-border">
         <a class="drawer-list-item drawer-list-item is-active" href="/" >Home</a>
+        <a class="drawer-list-item"  href="/logs.php"><span>PIM Logs</span></a>
     </nav>
     
 
@@ -40,7 +41,7 @@
             echo '<button class="drawer-dropdown-toggle" data-target="#drawer-dropdown-admin"><span>Admin/Data Menu</span><i class="fa-solid fa-caret-down"></i></button>';
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-admin">';
             echo '<a class="drawer-list-item"  href="/check_inactive.php"><span>Check Inactive SKUs</span></a>';
-            echo '<a class="drawer-list-item"  href="/logs.php"><span>PIM Logs</span></a>';
+            //echo '';
             echo '</nav> </nav>';
         }
         ?>
@@ -83,15 +84,16 @@
 <a class="header-drawer-toggle">
         <i class="fa-solid fa-bars fa-xl menu-icon"></i>
     </a>
+    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" style="margin-left:2em; width:100px;"></a>
     <a class="header-search">
         <i class="fa-solid fa-search fa-xl menu-icon"></i>
     </a>
     <a class="header-search-close">
         <i class="fa-solid fa-times fa-xl menu-icon"></i>
     </a>
-    <form id="search-form">
+    <form id="search-form" action="search.php" method="post" name="searchpim">
         <label for="fname">search:</label>
-        <input type="text" id="search-field">
+        <input type="text" id="search-field" name="search-term" placeholder="Type in SKU or Product Name"></input>
         <input type="submit" value="Submit">
     </form>
     </div>
