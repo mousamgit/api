@@ -8,7 +8,6 @@ require_once('connect_mousam.php');
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
 
-
 foreach ($data as $attribute) {
     $attributeName = $attribute['attribute_name'];
     $output_label = $attribute['output_label'];
@@ -25,6 +24,7 @@ foreach ($data as $attribute) {
         $con->query($sql);
     }
 }
+
 
 // Check if any of the queries failed
 $error = $con->error;
