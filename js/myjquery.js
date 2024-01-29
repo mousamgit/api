@@ -1,4 +1,7 @@
 $(document).ready(function(){
+
+
+
     var $document = $(document),
         $header = {
             drawerToggle : $('.header-drawer-toggle')
@@ -38,5 +41,17 @@ $(document).ready(function(){
         $(this).click(function() {
             $(target).slideToggle(300);
         });
+    });
+
+    //search form slide in
+    $('.header-search').click(function(){
+        $('#search-form').animate({right: '100px'});
+        $('.header-search').hide();
+        $('.header-search-close').show();
+    });
+    $('.header-search-close').click(function(){
+        $('#search-form').animate({right: '-400px'});
+        $('.header-search').show();
+        $('.header-search-close').hide();
     });
 });

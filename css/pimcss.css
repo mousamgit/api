@@ -51,9 +51,12 @@ header a{ color:#fff}
 
 /* The side navigation menu */
 .header-drawer-toggle{float: left;}
-.header-search{float:right;}
-#search-form{position: absolute;  right: 24px; display: none;}
+.header-search, .header-search-close{float:right;}
+.header-search-close{display: none;}
+#search-form{position: absolute;  width:400px; right:-400px;}
+#search-field{width:80%;}
 #search-form label{display:none;}
+
 .sidenav {
     height: 100%; /* 100% Full-height */
     width: 0; /* 0 width - change this with JavaScript */
