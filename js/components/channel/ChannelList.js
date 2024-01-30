@@ -15,7 +15,8 @@ export default {
       columns: [],
       attributeType:[],
       attribute_values:[],
-      indexCheck:0
+      indexCheck:0,
+      thisRow:'Default'
     };
   },
   mounted() {
@@ -367,7 +368,7 @@ export default {
 
   },
   template: `
-<style scoped>  /* Style for autocomplete suggestions */
+<style scoped xmlns="http://www.w3.org/1999/html">  /* Style for autocomplete suggestions */
   .autocomplete-suggestions {
     list-style-type: none;
     padding: 0;
@@ -504,66 +505,58 @@ export default {
                         <div class="modal-body">
                             <!-- Form for Adding Attributes -->
                             <form @submit.prevent="submitAttributeForm">
-                            <div class="row mb-3">
-                            <div class="col-md-2">
-                             <div class="mb-3">
-                                 <center><label for=""> Attribute Name</label> </center>          
-                             </div>
-                             </div>
-                             <div class="col-md-2">
-                             <div class="mb-3">
-                                 <center><label for="">Output Label</label> </center>           
-                             </div>
-                             </div>  
-                             <div class="col-md-3">
-                             <div class="mb-3">
-                                 <center><label for="">Attribute Type</label> </center>           
-                             </div>
-                             </div>
-                             <div class="col-md-3">
-                             <div class="mb-3">
-                                 <center><label for="">Filter Logic</label> </center>           
-                             </div>
-                             </div>
-                            </div>
-                                
-                                <div v-for="(attribute, index) in newAttribute" :key="index" class="row mb-3">
-                                
+                            <div v-for="(attribute, index) in newAttribute" :key="index" class="row mb-3">
                                     <div class="col-md-2">
+                                        <div class="mb-3">
+                                        <label for=""> Attribute Type </abel>           
+                                        </div>
+                                        <div class="mb-3">
+                                           <select v-model="attribute.attribute_type" class="form-control" >
+                                             <option v-for="att in attributeType" :key="att.att_type" :value="att.att_type">{{ att.att_type }}</option>
+                                           </select> 
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                         <div class="mb-3">
+                                            <label for=""> Output Label </abel>           
+                                        </div>
+                                        <div class="mb-3">                                         
+                                            <input type="text" v-model="attribute.output_label" placeholder="Output Label" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <template v-if="attribute.attribute_type == 'Default'">
+                                    <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label for=""> Attribute Name </abel>          
+                                    </div>
                                         <div class="mb-3"> 
                                          <select v-model="attribute.attribute_name" class="form-control" required>
                                             <option v-for="column in columns" :key="column.column_name" :value="column.column_name">{{ column.column_name }}</option>
                                           </select>                                         
                                          </div>
                                     </div>
-                                    
-                                    <div class="col-md-2">
-                                        <div class="mb-3">                                         
-                                            <input type="text" v-model="attribute.output_label" placeholder="Output Label" class="form-control" required>
-                                        </div>
-                                    </div>
-                                     <div class="col-md-3">
+                                    </template>
+                                    <template v-else>
+                                     <div class="col-md-5">
                                         <div class="mb-3">
-                                           <select v-model="attribute.attribute_type" class="form-control" >
-                                           <option v-for="att in attributeType" :key="att.att_type" :value="att.att_type">{{ att.att_type }}</option>
-                                          </select> 
+                                        <label for=""> Filter Logic </abel>           
                                         </div>
-                                    </div>
-                                     <div class="col-md-3" >
-                                        <div class="mb-3" v-if="attribute.attribute_type=='Computational'">
+                                        <div class="mb-3" >
                                           <textarea v-model="attribute.filter_logic" class="form-control" placeholder="Enter your computational logic here...">
                                           </textarea> 
                                         </div>
                                     </div>
+                                    </template>
+                                    
                                     <div class="col-md-2">
                                        <div class="mb-3">
-                                       
                                         <button type="button" @click.prevent="addAttributeRow" class="btn btn-success" v-if="index === newAttribute.length - 1">+</button>
                                         <button type="button" @click.prevent="removeAttributeRow(index,attribute.id)"  v-if="newAttribute.length > 1"  class="btn btn-danger">-</button>
                                         </div>
                                     </div>
                                     
-                                </div>
+                            </div>
                                 
                                 <button type="submit" class="btn btn-primary">Save Attributes</button>
                             </form>

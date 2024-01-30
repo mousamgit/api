@@ -7,6 +7,7 @@ export default {
             channel_name:'test_channel',
             heads: [],
             output_labels: [],
+            total_records: [],
             currentPage: 1,
             itemsPerPage: 10,
             showFilterForm: false,
@@ -37,6 +38,7 @@ export default {
                     this.output_labels = data.output_labels;
                     this.columns = data.columns;
                     this.channel_name = data.channel_name;
+                    this.total_records = data.total_records;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -125,6 +127,9 @@ export default {
     <a class="btn btn-success" @click="exportData">
       <i class="fas fa-file-export"></i> Export
     </a>
+    <a class="btn btn-primary" href="/channel.php">
+      <i class="fas fa-arrow-left">Go Back</i> 
+    </a>
 <!--   <product-filter :filters="filters" :output_labels="output_labels" :heads="heads" @filters-applied="handleFiltersApplied"></product-filter>-->
     <table class="table table-responsive mt-3">
       <thead>
@@ -150,12 +155,15 @@ export default {
 
     <!-- Pagination controls -->
     <div class="mt-3">
-      <div class="btn-group" role="group" aria-label="Pagination">
-        <button class="btn btn-primary" @click="prevPage">Prev</button>
-        <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>
-        <button class="btn btn-primary" @click="nextPage">Next</button>
-      </div>
-    </div>
+  <div class="btn-group" role="group" aria-label="Pagination">
+    <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
+    <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>
+    <button class="btn btn-primary" @click="nextPage" :disabled="columns.length < itemsPerPage">Next</button>
+  </div>
+  <div class="text-muted mt-2">
+    Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + columns.length }} of {{ total_records }} records
+  </div>
+</div>
   </div>
   `,
 };
