@@ -4,7 +4,7 @@
   $sku = $_GET['sku'];
   require ('connect.php');
 
-  $logquery = " SELECT * from pimlog ";
+  $logquery = " SELECT * from pimlog ORDER BY `pimlog`.`date` DESC, `pimlog`.`time` DESC ";
   $logresult = mysqli_query($con, $logquery) or die(mysqli_error($con));
 ?>
 <html>
@@ -49,7 +49,7 @@
     </div>
     <script>
     $('#myTable').DataTable( {
-    responsive: true
+    order: [[0, 'desc']]
 } );
     </script>
 </html>

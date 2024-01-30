@@ -49,18 +49,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <?php include 'header.php'; ?>
 </head>
 <body>
-    <h2>Login</h2>
-    <form method="post" action="">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-    <?php if (isset($error)) { echo "<p>$error</p>"; } ?>
+    
+    <div style="width:100%;">
+        <div style="width:500px; background-color:#fafafa; border:1px solid #999; border-radius:5px; margin:50px auto; text-align:center; padding:20px;">
+            <img src="sga-logo.jpg" style="padding-bottom:20px; width:200px;">
+            <form method="post" action="">
+                <div style="display:table; margin:0 auto;">
+                <p style="display:table-row;">
+                    <label for="username" style="display:table-cell; width:10%; text-align:left;">Username:</label>
+                    <input type="text" id="username" name="username" style="margin-bottom:20px; display:table-cell; width:90%;" required >
+                </p>
+                <p style="display:table-row;">
+                    <label for="password" style="display:table-cell; width:10%; text-align:left;">Password:</label>
+                    <input type="password" id="password" name="password" style="margin-bottom:20px; display:table-cell; width:90%;" required>
+                </p>
+                </div>
+                <button type="submit" style="padding:5px 20px; border-radius:5px;">Login</button>
+            </form>
+            <?php if (isset($error)) { echo "<p>$error</p>"; } ?>
+        </div>
+    </div>
 </body>
 </html>
