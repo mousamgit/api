@@ -71,8 +71,17 @@ include 'login_checking.php';
       elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
       else { 
-        echo '<td class="tabledata" row="' . $row[sku] . '" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><form  v-if="isediting(\'' . $row[sku]. '\', \'' . $colName . '\')"  action="updatetablevalue.php" method="post"><input  type="text" value="'.$row[$colName].'"><button type="submit">Submit</button></form> <a v-else @click="editdata(\'' . $row[sku]. '\', \'' . $colName . '\')" >'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></td>';
-
+        echo '<td class="tabledata" row="' . $row[sku] . '" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">';
+        echo '<form  v-if="isediting(\'' . $row[sku]. '\', \'' . $colName . '\')"  action="updatetablevalue.php" method="post">';
+        echo '<input type="hidden" name="username" value="' . $username . '">';
+        echo '<input type="hidden" name="sku" value="' . $row[sku] . '">';
+        echo '<input type="hidden" name="colName" value="' . $colName . '">';
+        echo '<input type="hidden" name="oldValue" value="' .$row[$colName].'">';
+        echo '<input name="colValue" type="text" value="'.$row[$colName].'">';
+        echo '<button type="submit">Submit</button></form>';
+        echo '<a v-else @click="editdata(\'' . $row[sku]. '\', \'' . $colName . '\')" >'.$row[$colName].'<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+        echo '</td>';
+        
 
       }
     }

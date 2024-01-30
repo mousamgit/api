@@ -129,4 +129,14 @@ function updateValue($db, $prkey,$keyvalue, $attribute, $value)
     // Close conection
     $con->close();
 }
+function addtoLog($logsku, $logheader, $oldrecord, $newrecord,$username)
+{
+    date_default_timezone_set("Australia/Sydney");
+    $current = strtotime("now");
+    $date = date("Y-m-d", $current);
+    $time = date("G:i:s", $current);
+
+    $logsql = " INSERT into pimlog (date,time,sku,field,oldrecord,newrecord,user) VALUES ('$date','$time','$logsku','$logheader','$oldrecord','$newrecord','$username')";
+    $logresult = mysqli_query($con,$logsql) or die(mysqli_error($con)); 
+}
 ?>

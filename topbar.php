@@ -45,7 +45,7 @@
             echo '</nav> </nav>';
         }
         ?>
-        <?php if (usertype == "graphics" || $usertype == "admin") { 
+        <?php if ($usertype == "graphics" || $usertype == "admin") { 
             echo '<nav class="drawer-navigation drawer-border">';
             echo '<button class="drawer-dropdown-toggle" data-target="#drawer-dropdown-graphic"><span>Graphic Team Menu</span><i class="fa-solid fa-caret-down"></i></button>';
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-graphic">';
@@ -82,19 +82,19 @@
 <header>
     <div class="header-menu">
 <a class="header-drawer-toggle">
-        <i class="fa-solid fa-bars fa-xl menu-icon"></i>
+        <i class="fa-solid fa-bars fa-xl menu-icon"></i><span>s</span>
     </a>
     <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" style="margin-left:2em; width:100px;"></a>
     <a class="header-search">
-        <i class="fa-solid fa-search fa-xl menu-icon"></i>
+    <span>s</span><i class="fa-solid fa-search fa-xl menu-icon"></i>
     </a>
     <a class="header-search-close">
-        <i class="fa-solid fa-times fa-xl menu-icon"></i>
+    <span>s</span><i class="fa-solid fa-times fa-xl menu-icon"></i>
     </a>
     <form id="search-form" action="search.php" method="post" name="searchpim">
         <label for="fname">search:</label>
         <input type="text" id="search-field" name="search-term" placeholder="Type in SKU or Product Name"></input>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Go">
     </form>
     </div>
 
