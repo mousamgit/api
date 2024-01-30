@@ -93,8 +93,9 @@
     </a>
     <form id="search-form" action="search.php" method="post" name="searchpim">
         <label for="fname">search:</label>
+        <input type="submit" value="Search">
         <input type="text" id="search-field" name="search-term" placeholder="Type in SKU or Product Name"></input>
-        <input type="submit" value="Go">
+        
     </form>
     </div>
 

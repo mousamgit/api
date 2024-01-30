@@ -52,13 +52,13 @@ header a{ color:#fff}
 /* The side navigation menu */
 .header-menu a span{visibility: hidden;}
 .header-drawer-toggle{ position: absolute;  left: 50px;  top: 10px;}
-.header-search, .header-search-close{    position: absolute;  right: 50px;  top: 10px;}
+.header-search, .header-search-close{  z-index: 9;  position: absolute;  right: 50px;  top: 10px;}
 .header-search-close{display: none;}
-#search-form{position: absolute;  width:350px; right:-400px; top:10px;}
-#search-field{width:90%; height:32px;}
+#search-form{position: absolute;  width:90%;  padding:7px 50px; display: none;  background-color: #222; top:0px;  left:0px;}
+#search-field{    width: calc(100% - 120px); height:32px; }
 #search-form label{display:none;}
 #search-form input{border-radius: 8px;font-size: 14px; border:none; padding: 4px 10px; color:#333;}
-#search-form input[type="submit"] {  background-color: #333;   border: none;   color: white;  text-align: center;  cursor: pointer;  transition: background-color 0.3s;  width:50px;  margin-left:-57px;}
+#search-form input[type="submit"] {  background-color: #333;   border: none;   color: white;  text-align: center;  cursor: pointer;  transition: background-color 0.3s;  width:100px;  margin-right:10px; height: 34px;}
 #search-form input[type="submit"]:hover {  background-color: #555; }
 .sidenav {
     height: 100%; /* 100% Full-height */

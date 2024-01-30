@@ -45,12 +45,12 @@ $(document).ready(function(){
 
     //search form slide in
     $('.header-search').click(function(){
-        $('#search-form').animate({right: '100px'});
+        $('#search-form').show();
         $('.header-search').hide();
         $('.header-search-close').show();
     });
     $('.header-search-close').click(function(){
-        $('#search-form').animate({right: '-400px'});
+        $('#search-form').hide();
         $('.header-search').show();
         $('.header-search-close').hide();
     });
