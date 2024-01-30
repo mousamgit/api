@@ -99,14 +99,25 @@ if (!empty($data)) {
         //full query case
         $query = $con->query("SELECT distinct ".implode(',',$heads)." FROM pim $whereConditionVal LIMIT $offset, $itemsPerPage");
     }
+    // Count total records (without LIMIT)
+    $totalRecords=0;
+    $countQuery = $con->query("SELECT distinct ".implode(',',$heads)." FROM pim $whereConditionVal");
+    if ($countQuery->num_rows > 0) {
+        while ($row = $countQuery->fetch_assoc()) {
+           $totalRecords +=1;
+        }
+    }
+
     if ($query->num_rows > 0) {
         while ($row = $query->fetch_assoc()) {
                 array_push($columns, $row);
         }
     }
+
 }
+
 $con->close();
 
 header('Content-Type: application/json');
-echo json_encode(['heads'=>$heads,'output_labels' => $output_labels, 'columns' => $columns,'channel_name'=>$channel_name]);
+echo json_encode(['heads'=>$heads,'total_records'=>$totalRecords,'output_labels' => $output_labels, 'columns' => $columns,'channel_name'=>$channel_name]);
 ?>
