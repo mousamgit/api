@@ -334,6 +334,7 @@ header a{ color:#fff}
   .product-table .title { background-color:#1b1e24; color:#D5DDE5; text-align:center; font-weight:700; border: 1px solid #1b1e24;}
   .product-table .l { background-color: #efefef; width:35%;}
   .dataTables_filter input {display: inline-block !important;}
+  #sirv360{display: none;}
 
   /* SGA Table */
   .sga-table {
