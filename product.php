@@ -17,6 +17,7 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
   </head>
+  <body>
   <?php include 'topbar.php'; ?>
 
   <?php 
@@ -25,8 +26,26 @@
       echo "No SKU supplied. Please select another product.";
     }
     else{
-
+      $brand = getValue('pim', 'sku', $sku, 'brand'); 
+ 
   ?>
+    <link rel="stylesheet" href="https://demo.sirv.com/sirv-controls/sirv-controls.css">
+<script src="https://scripts.sirv.com/sirv.js"></script>
+
+<div id="sirv360" brand="<?php  echo $brand;  ?>" sku="<?php  echo $sku;  ?>">
+
+                    <div class="sirv-container"></div>
+                    	<div class="sirv-controls">
+                          <a onclick="Sirv.instance('sirv-spin').play(-1); return false;" href="#" class="button flaticon-keyboard54" title="Left"></a>
+                          <a id="pause-button-sirv-spin" onclick="Sirv.instance('sirv-spin').pause(); return false;" href="#" class="button flaticon-pause44" title="Pause"></a>
+                          <a id="play-button-sirv-spin" onclick="Sirv.instance('sirv-spin').play(); return false;" href="#" class="button flaticon-play106" title="Play"></a>
+                          <a onclick="Sirv.instance('sirv-spin').play(1); return false;" href="#" class="button flaticon-keyboard53" title="Right"></a>
+                          <a onclick="Sirv.instance('sirv-spin').zoomIn(); return false;" href="#" class="button flaticon-round57" title="Zoom In"></a>
+                          <a onclick="Sirv.instance('sirv-spin').zoomOut(); return false;" href="#" class="button flaticon-round56" title="Zoom Out"></a>
+                          <a onclick="Sirv.instance('sirv-spin').fullscreen('sirv-spin'); return false;" href="#" class="button flaticon-move26" title="Full Screen"></a>
+                          <div class="clear"></div>
+                   </div>  
+    </div>
   <div style="padding:20px; text-align:center;">
     <h2>Product information for <?php echo $sku; ?></h2>
   </div>
@@ -45,8 +64,13 @@
       }
     ?>
   </div>
+
+  
+
+
   <?php } ?>
 
-  <body>
+  
+
   </body>
 </html>
