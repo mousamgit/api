@@ -53,8 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     
-    <div style="width:100%;">
-        <div style="width:500px; background-color:#fafafa; border:1px solid #999; border-radius:5px; margin:50px auto; text-align:center; padding:20px;">
+    <div class="login-container">
+        <div class="login-box">
             <img src="sga-logo.jpg" style="padding-bottom:20px; width:200px;">
             <form method="post" action="">
                 <div style="display:table; margin:0 auto;">

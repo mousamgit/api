@@ -22,35 +22,38 @@
 
     ?>
     
-    <div style="width:100%; padding:35px; margin:0 auto; text-align:center;">
+    <div class="search-div">
         <form action="search.php" method="post" name="searchpim" >
             <label for="fname">Search Again: </label>
-            <input type="text" id="search-field" name="search-term" placeholder="Type in SKU or Product Name"></input>
-            <input type="submit" value="Submit">
+            <input type="text" class="search-input" name="search-term" placeholder="Type in SKU or Product Name"></input>
+            <input type="submit" class="search-submit" value="Submit">
         </form>
-    </div>
-    <center><h2>Search results for <?php echo $searchterm; ?></h2></center>
-    <ul>
-
-<?php
-    
-    echo "<ul>";
-    $count = mysqli_num_rows($result);
-    if($count != 0)
-    {
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            if($row[sku] == $sku)
-            {
-                echo "<li><b>". $row[sku] ."</b> - ". $row[product_title] ." - [ <a href='https://pim.samsgroup.info/product.php?sku=".$row[sku]."'>View Product</a> ]</li>";
+    </div>    
+        <?php
+            $count = mysqli_num_rows($result);
+            if($count != 0){
+        ?>
+        <center><h2>Search results for <?php echo $searchterm; ?></h2></center>
+        <table class="sga-table">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Product Name</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+        <?php
+                while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+                    echo "<tr>";
+                        if($row[sku] == $sku){ echo "<td><b>". $row[sku] ."</b></td><td>". $row[product_title] ."</td><td>[ <a href='https://pim.samsgroup.info/product.php?sku=".$row[sku]."'>View Product</a> ]</td>"; }
+                        else{ echo "<td>". $row[sku] ."</td><td><b>". $row[product_title] ."</b></td><td>[ <a href='https://pim.samsgroup.info/product.php?sku=".$row[sku]."'>View Product</a> ]</td>"; }
+                        echo "</tr>";
+                }
+                echo "</tbody></table>";
             }
-            else{
-                echo "<li><b>". $row[product_title] ."</b> - ". $row[sku] ." - [ <a href='https://pim.samsgroup.info/product.php?sku=".$row[sku]."'>View Product</a> ]</li>";
-            }
-        }
-    }
-    else{
-        echo "<li>The query ". $searchterm . " returned no results.";
-    }
+            else{ echo "<br><br><center>The query ". $searchterm . " returned no results.</center>";}
+        ?>
+        
 
-?>
 
