@@ -3,13 +3,13 @@
 <script src="./js/myjquery.js" ></script>
 <!-- Navigation Drawer -->
 <div class="layout-drawer">
-    <div class="drawer-header drawer-header-cover" style="background-color: #e1e1e1; color: #000;">
+    <div class="drawer-header drawer-header-cover" style="background-color: #ae1930; color: #000;">
         <div class="drawer-user">
             <div class="drawer-avatar">
                 <img src="https://pim.samsgroup.info/sga-logo.jpg">
             </div>
             <div class="drawer-meta">
-                <span class="drawer-name"><a href="profile.php"> <i class="fa-solid fa-user"></i>  <?php echo $_SESSION["username"]; ?></a></span>
+                <span class="drawer-name"><a href="profile.php" style="color:#fff;"> <i class="fa-solid fa-user"></i>  <?php echo $_SESSION["username"]; ?></a></span>
                 <span class="drawer-email"></span>
             </div>
         </div>
@@ -84,7 +84,7 @@
 <a class="header-drawer-toggle">
         <i class="fa-solid fa-bars fa-xl menu-icon"></i><span>s</span>
     </a>
-    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" style="margin-left:2em; width:100px;"></a>
+    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" style="margin-left:4em; width:100px;"></a>
     <a class="header-search">
     <span>s</span><i class="fa-solid fa-search fa-xl menu-icon"></i>
     </a>

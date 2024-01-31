@@ -341,7 +341,7 @@ header a{ color:#fff}
     margin: 20px auto;
     font-size: 0.9em;
     font-family: sans-serif;
-    min-width: 400px;
+    min-width: 300px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   }
   .sga-table thead tr {
@@ -365,7 +365,13 @@ header a{ color:#fff}
   .sga-table tbody tr:hover {
     background-color: #dadada; 
   }
+  .mobile-only { display: none; }
 
+  @media screen and (max-width: 500px) { 
+    .mobile-only { display:block; }
+    .desktop-only { display:none; }
+    .container { padding: 20px; }
+  }
   /* Search Div */
   .search-div { width:100%; margin:50px auto; text-align:center; } 
   .search-input { width:400px; }
@@ -376,3 +382,6 @@ header a{ color:#fff}
     .login-container { width: 100%; padding:0 20px; } 
     .login-box { width: 100%;} 
   }
+  
+  /* Container */
+  .container { width: 100%; }
