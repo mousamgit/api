@@ -31,13 +31,14 @@ include ('connect.php');
     $collections_2 = $_POST['collections_2'];
     $sku = $_POST['sku'];
 
-    array_walk_recursive($description, function(&$value){
+    /*array_walk_recursive($description, function(&$value){
         $value = htmlspecialchars(trim($value)); // remove special characters
-    });
+    });*/
+    
 
     for ($i = 0; $i < count($sku); $i++)
     {
-
+        $description[$i] = htmlspecialchars($description[$i],ENT_QUOTES);
         //TEST - to see if description is the same // if not - log it
         $searchdesc = "SELECT sku,description from pim where sku = '$sku[$i]'";
         $resultdesc = mysqli_query($con,$searchdesc) or die(mysqli_error($con));
