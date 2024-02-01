@@ -1,6 +1,6 @@
 // channel.js
-import AddChannel from './components/channel/AddChannel.js';
-import ChannelList from './components/channel/ChannelList.js';
+import AddChannel from './AddChannel.js';
+import ChannelList from './ChannelList.js';
 
 const app = Vue.createApp({
     data() {
@@ -28,11 +28,7 @@ const app = Vue.createApp({
                 console.error('Error fetching channels:', error);
             }
         },
-        // handleChannelCreated(newChannel) {
-        //     // Implement logic to add the new channel to your data source
-        //     // For example, you can push it to the channels array
-        //     this.channels.push(newChannel);
-        // },
+
     },
 });
 

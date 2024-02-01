@@ -126,48 +126,77 @@ export default {
         },
     },
     template: `
-    <div class="container mt-3 text-end">
-    <a class="btn btn-success" @click="exportData">
-      <i class="fas fa-file-export"></i> Export
-    </a>
-    <a class="btn btn-primary" href="/channels/channel.php">
-      <i class="fas fa-arrow-left">Go Back</i> 
-    </a>
-<!--   <product-filter :filters="filters" :output_labels="output_labels" :heads="heads" @filters-applied="handleFiltersApplied"></product-filter>-->
-    <table class="table table-responsive mt-3">
-      <thead>
-        <tr>
-          <th>S.N</th>
-          <th v-for="(output_label, index) in output_labels" :key="index">{{ output_label }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(column, index) in columns" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td v-for="(headval, hindex) in headvals" :key="hindex">
-            <span v-if="headval.includes('image')">
-              <img :src="column[headval]" alt="Image" width="100" height="100">
-            </span>
-            <span v-else>
-            
-              {{ column[headval] }}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Pagination controls -->
-    <div class="mt-3">
-  <div class="btn-group" role="group" aria-label="Pagination">
-    <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
-    <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>
-    <button class="btn btn-primary" @click="nextPage" :disabled="columns.length < itemsPerPage">Next</button>
-  </div>
-  <div class="text-muted mt-2">
-    Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + columns.length }} of {{ total_records }} records
+    <div class="ml-10 mr-10 mb-10 mt-5">
+  <div class="card">
+    <div class="card-header bg-light">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="entity-info d-flex align-items-center">
+          <div class="logo"></div>
+          <div class="entity-name ml-2">{{channel_name}}</div>
+        </div>
+        <div class="entity-actions">
+          <button class="btn btn-outline-primary me-2" data-test-id="process-start">Process now</button>
+          <button class="btn btn-primary" data-test-id="preview-channel">Preview</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="nav nav-tabs" id="myTabs">
+        <li class="nav-item">
+          <a class="nav-link active" id="instructions-tab" data-bs-toggle="tab" href="#instructions">Instructions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="products-tab" data-bs-toggle="tab" href="#products">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="attributes-tab" data-bs-toggle="tab" href="#attributes">Attributes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#settings">Settings</a>
+        </li>
+      </ul>
+      <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="instructions">
+          <div class=" mt-5">
+            <div class="tab-container active mt-32">
+              <h2>Welcome to {{channel_name}} Channel!</h2>
+              <p class="emphasis secondary mt-32 mb-16">How to set up your channel:</p>
+              <div class="flex-row">
+                <p class="mb-50">In the "Attributes" tab, choose the attributes you want to include in this channel's feed. There you can create transformations to customize your content export.</p>
+              </div>
+              <div class="flex-row">
+                <p class="mb-50">Go to the "Products tab" to add a product list. This defines which items you want to include in this feed.</p>
+              </div>
+              <div class="flex-row">
+                
+                <p class="mb-50">In the "Format tab", you will be able to order your columns.</p>
+              </div>
+              <div class="flex-row">
+               
+                <p class="mb-50">In "Settings" you can schedule your feed updates and set up the export file type.</p>
+              </div>
+              <div class="flex-row">
+                
+                <p class="mb-50">Once you're ready, You can export the channels</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="products">
+          <h2>Welcome to Products</h2>
+          <!-- Add tab content for Products -->
+        </div>
+        <div class="tab-pane fade" id="attributes">
+          <h2>Welcome to Attributes</h2>
+          <!-- Add tab content for Attributes -->
+        </div>
+        <div class="tab-pane fade" id="settings">
+          <h2>Welcome to Settings</h2>
+          <!-- Add tab content for Settings -->
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-  </div>
   `,
 };
