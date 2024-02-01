@@ -79,7 +79,7 @@
 
            fclose($file);
 
-           echo $count." products update";
+           echo $count." product update";
      }
   }
 

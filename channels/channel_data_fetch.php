@@ -1,5 +1,7 @@
 <?php
-require_once('connect_mousam.php');
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+require_once('../connect_mousam.php');
 
 $channels = [];
 $channel_attribute = [];

@@ -9,8 +9,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+    <style >
+        #app{
+            margin-top: 3% !important;
+        }
+        .modal-fullpage {
+            width: 100% !important;
+            max-width: 100vw !important;
+            margin: 0;
+        }
+    </style>
 
 </head>
 <body>
@@ -20,13 +28,15 @@
 <!-- Your HTML content here -->
 <div id="app">
 
-    <!-- Attribute List Component -->
-    <attribute-list :attributes="attributes"></attribute-list>
+    <!-- Channel List Component -->
+    <channel-list :channels="channels"></channel-list>
 
 </div>
 
 <!-- Include your main JavaScript file -->
-<script type="module" src="js/attribute.js" defer></script>
+<script type="module" src="../js/components/channel/channel.js" defer></script>
+
+
 
 </body>
 </html>

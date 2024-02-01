@@ -368,43 +368,12 @@ export default {
 
   },
   template: `
-<style scoped xmlns="http://www.w3.org/1999/html">  /* Style for autocomplete suggestions */
-  .autocomplete-suggestions {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    position: absolute;
-    background-color: #fff;
-    z-index: 1000;
-    max-height: 150px;
-    overflow-y: auto;
-  }
 
-  .autocomplete-suggestions li {
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-
-  .autocomplete-suggestions li:hover {
-    background-color: green;
-  }
-</style>
-<div class="container mt-5">
+<div class="container mt-300">
     <div class="row">
-      <div class="col-md-9">
-        <h2 class="mb-4">Channel List</h2>
-      </div>
-      <div class="col-md-3 text-end">
-        <button type="button" @click="editChannel(channel={})" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addChannelModal">
-          Add Channel
-        </button>
-      </div>
-    </div>
-
+    <div class="container mt-5">
     <div class="modal fade" id="addChannelModal" tabindex="-1" aria-labelledby="addChannelModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullpage">
         <div class="modal-content" style="height: 100vh;">
           <div class="modal-header">
             <h5 class="modal-title" id="addChannelModalLabel">Channels</h5>
@@ -420,74 +389,7 @@ export default {
                   <input type="text" id="channelName" v-model="channelName" class="form-control"  required>
                 </div>
                 </div>
-              <div class="container mt-3">
-                <div class="border p-3 rounded">
-                <fieldset>
-                    <legend> Add Condition </legend>
-                    <hr>
                     
-                        <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
-                        <div class="row mb-3">
-                            <div class="col-md-5">
-                            <label for="attribute" class="form-label">Attribute Name:</label>
-                            <div class="mb-3"> 
-                            <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
-                            <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
-                            {{ column.column_name }}
-                            </option>
-                            </select>
-                            </div>
-                        </div>
-                    <div class="col-md-5">
-                    <label for="attribute" class="form-label">Attribute Condition:</label>
-                    <div class="mb-3">
-                  
-                     <template v-if="cAttribute.data_type == 'varchar'">
-                     <select v-model="cAttribute.filter_type" id="filter-type" class="form-select" >
-                        <option value="includes">Includes</option>
-                        <option value="=">equals</option>
-                        <option value="IS NOT NULL">Is Not Empty</option>
-                     </select>
-                    <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == 'includes'" >
-                     <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
-                     <ul v-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
-                        <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                         {{ value }}
-                        </li>
-                      </ul>
-                    </template>
-                    
-                    </template>
-                    
-                    <template v-else>
-                        <div class="row">
-                    <select v-model="cAttribute.filter_type" id="filter-type" class="form-select">
-                        <option value="between">Range</option>
-                        <option value="IS NOT NULL">IS NOT EMPTY</option>
-                     </select>
-                    <template v-if="cAttribute.filter_type == 'between'">
-                        <div class="col-md-6">
-                        <input type="text" v-model="cAttribute.rangeFrom" class="form-control" placeholder="From" required>
-                        </div>
-                        <div class="col-md-6">
-                        <input type="text" v-model="cAttribute.rangeTo" class="form-control" placeholder="To" required>
-                        </div>
-                        </div>
-                     </template>
-                    </div>
-                    </div>
-                    <div class="col-md-2">
-                    <div class="mb-3">
-                    
-                    <button type="button" @click="addChannelCondition" class="btn btn-success" v-if="index === channelAttribute.length - 1">+</button>
-                    <button type="button" @click="removeChannelCondition(index,cAttribute.id)" class="btn btn-danger" v-if="channelAttribute.length > 1">-</button>
-                    </div>
-                </div>
-               </div>
-            </div>
-            </fieldset>   
-                </div>
-               </div>         
             <button type="submit" class="btn btn-primary mt-3">Save Channel</button>
             </form>
           </div>
@@ -495,120 +397,94 @@ export default {
       </div>
     </div>
   </div>
-  <div class="modal" id="addAttributeModal" tabindex="-1" aria-labelledby="addAttributeModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Add Attribute</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Form for Adding Attributes -->
-                            <form @submit.prevent="submitAttributeForm">
-                            <div v-for="(attribute, index) in newAttribute" :key="index" class="row mb-3">
-                                    <div class="col-md-2">
-                                        <div class="mb-3">
-                                        <label for=""> Attribute Type </abel>           
-                                        </div>
-                                        <div class="mb-3">
-                                           <select v-model="attribute.attribute_type" class="form-control" >
-                                             <option v-for="att in attributeType" :key="att.att_type" :value="att.att_type">{{ att.att_type }}</option>
-                                           </select> 
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-3">
-                                         <div class="mb-3">
-                                            <label for=""> Output Label </abel>           
-                                        </div>
-                                        <div class="mb-3">                                         
-                                            <input type="text" v-model="attribute.output_label" placeholder="Output Label" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <template v-if="attribute.attribute_type == 'Default'">
-                                    <div class="col-md-5">
-                                    <div class="mb-3">
-                                        <label for=""> Attribute Name </abel>          
-                                    </div>
-                                        <div class="mb-3"> 
-                                         <select v-model="attribute.attribute_name" class="form-control" required>
-                                            <option v-for="column in columns" :key="column.column_name" :value="column.column_name">{{ column.column_name }}</option>
-                                          </select>                                         
-                                         </div>
-                                    </div>
-                                    </template>
-                                    <template v-else>
-                                     <div class="col-md-5">
-                                        <div class="mb-3">
-                                        <label for=""> Filter Logic </abel>           
-                                        </div>
-                                        <div class="mb-3" >
-                                          <textarea v-model="attribute.filter_logic" class="form-control" placeholder="Enter your computational logic here...">
-                                          </textarea> 
-                                        </div>
-                                    </div>
-                                    </template>
-                                    
-                                    <div class="col-md-2">
-                                       <div class="mb-3">
-                                        <button type="button" @click.prevent="addAttributeRow" class="btn btn-success" v-if="index === newAttribute.length - 1">+</button>
-                                        <button type="button" @click.prevent="removeAttributeRow(index,attribute.id)"  v-if="newAttribute.length > 1"  class="btn btn-danger">-</button>
-                                        </div>
-                                    </div>
-                                    
-                            </div>
-                                
-                                <button type="submit" class="btn btn-primary">Save Attributes</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-12 mt-15">
+        <div class="row">
+            <div class="col-md-2"> <h2 class="no-margin">Channels</h2></div>
+            
+        </div>    
+            <div class="row">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search by name">
             </div>
-    <div class="container mt-3">
-      <table class="table mt-3">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Last Time Proceed</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <!--  table body -->
-        <tbody>
-          <tr v-for="channel in channels" :key="channel.id">
-            <td>{{ channel.id }}</td>
-            <td>{{ channel.name }}</td>
-            <td>{{ channel.type }}</td>
-            <td>{{ channel.status }}</td>
-            <td>{{ channel.last_time_proceed }}</td>
-            <td>
-            <a @click="editChannel(channel)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addChannelModal">
-            <i class="fas fa-edit"></i> Edit
-            </a>
-            <a class="btn btn-primary" @click="editAttribute(channel.id)" data-bs-toggle="modal" data-bs-target="#addAttributeModal">
-            <i class="fas fa-edit"></i> Add Attributes</a>
+        </div>
 
-           
-            <a class="btn btn-success" :href="'/channel_attribute.php?channel_id=' + channel.id">
-            <i class="fas fa-file-export"></i> Attributes List
-            </a>
-            
-            <a class="btn btn-success" :href="'/channel_attribute_export.php?channel_id=' + channel.id">
-            <i class="fas fa-file-export"></i> Export
-            </a>
-            
-             <a class="btn btn-danger" @click="deleteChannel(channel)">
-            <i class="fas fa-trash-alt" ></i> Delete
-            </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-     
+        <div class="col-md-3">
+            <select class="form-control">
+                <option>All</option>
+                <option>CSV</option>
+                <option>XML</option>
+            </select>
+        </div>
+
+        <div class="col-md-5 d-flex justify-content-end">
+            <button class="btn btn-primary btn-block" @click="editChannel(channel={})" data-bs-toggle="modal" data-bs-target="#addChannelModal">Add Channel</button>
+        </div>
     </div>
+            <!-- Bootstrap Table -->
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th scope="col"><input type="checkbox"></th>
+                        <th scope="col">NAME</th>
+                        <th scope="col">TYPE</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">LAST TIME PROCESSED</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    <tr v-for="channel in channels" :key="channel.id">
+                        <td><input type="checkbox"></td>
+                        <td><a :href="'/channel_details.php?id=' + channel.id">{{channel.name}}</a></td>
+                        <td>{{channel.type}}</td>
+                        <td><span class="">Active</span></td>
+                        <td>{{channel.last_time_proceed}}</td>
+                        <td> <a class="btn btn-danger" @click="deleteChannel(channel)">
+                                <i class="fas fa-trash-alt" ></i>
+                             </a>
+                        </td>
+                    </tr>
+                    <!-- Add other rows as needed -->
+                </tbody>
+            </table>
+
+            <!-- Bootstrap Pagination -->
+<!--            <nav aria-label="Page navigation">-->
+<!--                <ul class="pagination mt-3">-->
+<!--                    <li class="page-item disabled">-->
+<!--                        <a class="page-link" href="#" aria-label="Previous">-->
+<!--                            <span aria-hidden="true">&laquo;</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="page-item active"><span class="page-link">1</span></li>-->
+<!--                    &lt;!&ndash; Add other pagination items as needed &ndash;&gt;-->
+<!--                    <li class="page-item disabled">-->
+<!--                        <a class="page-link" href="#" aria-label="Next">-->
+<!--                            <span aria-hidden="true">&raquo;</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </nav>-->
+
+            <!-- Bootstrap Dropdown for Results per page -->
+<!--            <div class="ml-2">-->
+<!--                <div class="dropdown">-->
+<!--                    <button class="btn btn-secondary dropdown-toggle" type="button" id="resultsPerPageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                        Results per page-->
+<!--                    </button>-->
+<!--                    <div class="dropdown-menu" aria-labelledby="resultsPerPageDropdown">-->
+<!--                        <a class="dropdown-item" href="#">25</a>-->
+<!--                        &lt;!&ndash; Add other dropdown items as needed &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    </div>
+    
+</div>
   `,
 
 };
