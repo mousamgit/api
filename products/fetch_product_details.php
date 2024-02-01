@@ -18,8 +18,10 @@ parse_str($urlParts['query'] ?? '', $queryParameters);
 $productId = $queryParameters['id'] ?? 2;
 
 
+
 $products = [];
 $product_filter = [];
+$product_values = [];
 
 $product = $con->query("SELECT * FROM products where id=".$productId);
 
@@ -30,11 +32,11 @@ if ($product->num_rows > 0) {
     }
 }
 
-$product_filter = $con->query("SELECT * FROM product_filter where product_id=".$productId);
+$product_filter_q = $con->query("SELECT * FROM product_filter where product_id=".$productId);
 
 
-if ($product_filter->num_rows > 0) {
-    while ($row = $product_filter->fetch_assoc()) {
+if ($product_filter_q->num_rows > 0) {
+    while ($row = $product_filter_q->fetch_assoc()) {
         $product_filter[] = $row;
     }
 }
@@ -46,15 +48,15 @@ if ($filter_condition->num_rows > 0) {
     }
 }
 
-$product_detail_querys = $con->query("SELECT distinct sku FROM pim " .$filter_where_value);
+$product_detail_querys = $con->query("SELECT distinct sku FROM pim " .$filter_where_value." limit 25");
 if ($product_detail_querys->num_rows > 0) {
     while ($row = $product_detail_querys->fetch_assoc()) {
-        $product_details[] = $row;
+        $product_values[] = $row;
     }
 }
 
 $con->close();
 
 header('Content-Type: application/json');
-echo json_encode(['products'=>$products,'product_details'=>$product_filter]);
+echo json_encode(['products'=>$products,'product_details'=>$product_filter,'product_values'=>$product_values]);
 ?>

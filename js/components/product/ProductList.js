@@ -170,7 +170,7 @@ export default {
                    
                     <tr v-for="product in products" :key="product.id">
                         <td><input type="checkbox"></td>
-                        <td><a :href="'/product/product_details.php?id=' + product.id">{{product.name}}</a></td>
+                        <td><a :href="'/products/product_details.php?id=' + product.id">{{product.name}}</a></td>
                         <td>{{product.type}}</td>
                        
                         <td>{{product.updated_at}}</td>

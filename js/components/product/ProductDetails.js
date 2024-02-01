@@ -5,7 +5,10 @@ export default {
             indexCheck:0,
             columns: [],
             attribute_values:[],
-            productId:0
+            productId:0,
+            products:[],
+            productDetails:[],
+            productValues:[]
         };
     },
     mounted() {
@@ -94,11 +97,18 @@ export default {
                 })
                     .then(response => response.json())
                     .then(data => {
-
+                        this.products = data.products;
+                        this.productDetails = data.product_details;
+                        this.productValues = data.product_values;
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
                     });
+        },
+        getCurrentDate() {
+            const today = new Date();
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+            return today.toLocaleDateString(undefined, options);
         },
         async fetchChannelAttributeFilter(channel_id=2){
             try {
@@ -109,8 +119,6 @@ export default {
 
                 if(data.length>0)
                 {
-
-
                     this.channelAttribute=data;
                 }
                 console.log('hello',this.channelAttribute)
@@ -121,7 +129,7 @@ export default {
         },
         async submitForm() {
             try {
-                const response = await fetch('save_prduct_filter.php', {
+                const response = await fetch('save_product_filter.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -134,15 +142,7 @@ export default {
                 const data = await response.json();
 
                 if (data.success) {
-                    console.log('Channel saved successfully!');
-                    // Emit an event to save the channel
-                    this.$emit('save-channel', {
-                        name: this.channelName,
-                    });
-                    // Close the modal after form submission
-                    this.showModal = false;
-                    // Reset the form and editing state
-                    this.resetForm();
+
                     location.reload();
                 } else {
                     console.error('Error saving channel:', data.error);
@@ -152,6 +152,14 @@ export default {
                 console.error('Error saving channel:', error);
             }
         },
+        getEmptyPrinted(value)
+        {
+           if(value == 'IS NOT NULL')
+           {
+               return 'IS NOT EMPTY';
+           }
+           return value;
+        }
 
 
     },
@@ -217,14 +225,14 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td scope="col">SKU</td>
-                        <td scope="col">THUMBNAIL</td>
-                        <td scope="col">LABEL</td>
-                        <td scope="col">CATEGORIES</td>
-                        <td scope="col">STATUS</td>
-                        <td scope="col">CREATED</td>
-                        <td scope="col">LAST MODIFIED</td>
+                    <tr v-for="(values,index) in productValues" :key="index">
+                        <td scope="col">{{values.sku}}</td>
+                        <td scope="col">-</td>
+                        <td scope="col">-</td>
+                        <td scope="col">test category</td>
+                        <td scope="col">Active</td>
+                        <td scope="col">{{getCurrentDate()}}</td>
+                        <td scope="col">{{getCurrentDate()}}</td>
                     </tr>
                     <!-- Add other rows as needed -->
                 </tbody>
@@ -246,10 +254,29 @@ export default {
                                 <div class="card-body">
                                    
                                     <div class="form-group selected-filters">
-                                       
-                                        <div class="row">
-                                           
+                                   
+                                      <div class="row" v-for="(productDet,index) in productDetails">
+                                        <div class="filter-clauses">
+                                            <div class="clause">
+                                                <div class="filter flex-row border-default card position-relative">
+                                                    <div class="flex-grow-1">
+                                                        <div style="margin: 3px;">
+                                                            <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> <br>
+                                                            <span class="text-default mt-5" v-if="productDet.filter_type !=''">&nbsp;{{getEmptyPrinted(productDet.filter_type)}}</span>
+                                                            <span class="text-default" v-if="productDet.range_to !=''">&nbsp; from {{productDet.range_from}} To {{productDet.range_to}}</span>
+                                                            <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
+                                                        </div>
+                                                        <div class="value text-ellipsis"  style="margin: 3px;">  </div>
+                                                    </div>
+                                                    <div class="delete-icon position-absolute top-0 end-0" data-test-id="delete">
+                                                        <a href="" class="btn btn-danger">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                       </div>
                                         <form @submit.prevent="submitForm">
                                         <div class="row">
                                             <!-- Bootstrap Form Group Component -->
