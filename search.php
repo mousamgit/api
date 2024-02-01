@@ -25,8 +25,7 @@
 
     <div class="search-div desktop-only">
         <form action="search.php" method="post" name="searchpim" >
-            <label for="fname">Search Again: </label><br>
-            <input type="text" class="search-input" name="search-term" placeholder="Type in SKU or Product Name"></input><br><br>
+            <input type="text" class="search-input" name="search-term" placeholder="Search another SKU or Product Name"></input>
             <input type="submit" class="search-submit" value="Submit">
         </form>
     </div>    
