@@ -1,46 +1,38 @@
-<section id="content3">
+<section id="content3" class="media-content">
     <p class="product-content">
-        <?php $image=false; ?>
-        <?php if($row[image1] != "") { ?>
-            <table class="product-table media">
-                <tr>
-                    <td><img src="<?php echo $row[image1]; $image=true; ?>"></td>
-                    <?php if($row[image2] != "") { ?><td><img src="<?php echo $row[image2]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image3] != "") { ?><td><img src="<?php echo $row[image3]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image4] != "") { ?><td><img src="<?php echo $row[image4]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image5] != "") { ?><td><img src="<?php echo $row[image5]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image6] != "") { ?><td><img src="<?php echo $row[image6]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[packaging_image] != "") { ?><td><img src="<?php echo $row[packaging_image]; ?>"></td><?php } ?>
-                </tr>
-                <tr>
-                    <td class="title">Main Product Image</td>
-                    <?php if($row[image2] != "") { ?><td class="title">Product Image 2</td><?php } ?>
-                    <?php if($row[image3] != "") { ?><td class="title">Product Image 3</td><?php } ?>
-                    <?php if($row[image4] != "") { ?><td class="title">Product Image 4</td><?php } ?>
-                    <?php if($row[image5] != "") { ?><td class="title">Product Image 5</td><?php } ?>
-                    <?php if($row[image6] != "") { ?><td class="title">Product Image 6</td><?php } ?>
-                    <?php if($row[packaging_image] != "") { ?><td class="title">Packaging</td><?php } ?>
-                </tr>
-            </table>
-        <?php } else { ?>
-            <table class="product-table media">
-                <tr>
-                    <?php if($row[image2] != "") { ?><td><img src="<?php echo $row[image2]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image3] != "") { ?><td><img src="<?php echo $row[image3]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image4] != "") { ?><td><img src="<?php echo $row[image4]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image5] != "") { ?><td><img src="<?php echo $row[image5]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[image6] != "") { ?><td><img src="<?php echo $row[image6]; $image=true; ?>"></td><?php } ?>
-                    <?php if($row[packaging_image] != "") { ?><td><img src="<?php echo $row[packaging_image]; ?>"></td><?php } ?>
-                </tr>
-                <tr>
-                    <?php if($row[image2] != "") { ?><td class="title">Product Image 2</td><?php } ?>
-                    <?php if($row[image3] != "") { ?><td class="title">Product Image 3</td><?php } ?>
-                    <?php if($row[image4] != "") { ?><td class="title">Product Image 4</td><?php } ?>
-                    <?php if($row[image5] != "") { ?><td class="title">Product Image 5</td><?php } ?>
-                    <?php if($row[image6] != "") { ?><td class="title">Product Image 6</td><?php } ?>
-                    <?php if($row[packaging_image] != "") { ?><td class="title">Packaging</td><?php } ?>
-                </tr>
-            </table>
-        <?php } if($image == false) { echo "No Media or Images"; } ?>
+        <div class="row">
+        <?php 
+        $image=false; 
+        $imagearray= array("image1", "image2", "image3", "image4", "image5", "image6", "packaging_image");
+        for ($i = 0; $i < count($imagearray); $i++) {
+            $imagename = $imagearray[$i];
+            if($row[$imagename] != ""){
+                $image=true;
+                echo '<div class="col-md-3"><div class="img-border"><img src="'.$row[$imagename].'"><aside class="title">Product '.$imagename.'</aside></div></div>';
+            }
+        }
+
+        ?>
+            <div id="sirv360" class="col-md-3 d-none" brand="<?php  echo $brand;  ?>" sku="<?php  echo $sku;  ?>">
+                <div class="img-border">
+                    <div class="sirv-container"></div>
+                        <div class="sirv-controls ">
+                        <a onclick="Sirv.instance('sirv-spin').play(-1); return false;" href="#" class="button flaticon-keyboard54" title="Left"></a>
+                        <a id="pause-button-sirv-spin" onclick="Sirv.instance('sirv-spin').pause(); return false;" href="#" class="button flaticon-pause44" title="Pause"></a>
+                        <a id="play-button-sirv-spin" onclick="Sirv.instance('sirv-spin').play(); return false;" href="#" class="button flaticon-play106" title="Play"></a>
+                        <a onclick="Sirv.instance('sirv-spin').play(1); return false;" href="#" class="button flaticon-keyboard53" title="Right"></a>
+                        <a onclick="Sirv.instance('sirv-spin').zoomIn(); return false;" href="#" class="button flaticon-round57" title="Zoom In"></a>
+                        <a onclick="Sirv.instance('sirv-spin').zoomOut(); return false;" href="#" class="button flaticon-round56" title="Zoom Out"></a>
+                        <a onclick="Sirv.instance('sirv-spin').fullscreen('sirv-spin'); return false;" href="#" class="button flaticon-move26" title="Full Screen"></a>
+                        <div class="clear"></div>
+                    </div>  
+                    <aside class="title">Spin animation</aside>   
+                </div>    
+            </div>  
+        </div>
+        <link rel="stylesheet" href="https://demo.sirv.com/sirv-controls/sirv-controls.css">
+        <script src="https://scripts.sirv.com/sirv.js"></script>
+
+      <div class="showing-noimg <?php if($image){ echo 'd-none';}?>">No Media or Images</div>
     </p>
 </section>

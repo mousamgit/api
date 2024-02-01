@@ -54,4 +54,27 @@ $(document).ready(function(){
         $('.header-search').show();
         $('.header-search-close').hide();
     });
+
+    //show 360 spin
+    brand = $('#sirv360').attr('brand');
+    sku = $('#sirv360').attr('sku');
+
+    if(brand == 'Pink Kimberley' || brand == 'Pink Kimberley Diamonds'){
+        spinsrc = "https://samsgroup.sirv.com/products/" + sku + "/" + sku + ".spin";
+      }
+      if(brand == 'Sapphire Dreams'){
+        spinsrc = "https://samsgroup.sirv.com/SD-Product/Sapphire%20Dreams%20Products/" + sku + "/" + sku + ".spin";
+      }       
+      $.ajax( spinsrc, {
+        statusCode: {
+          404: function() {
+
+            },
+          200: function() {
+              $('.sirv-container').append('<div class="Sirv" id="sirv-spin" data-src="'+spinsrc+'"></div>');
+              $('.showing-noimg').hide();
+              $('#sirv360').removeClass('d-none');
+          }
+        }
+      });
 });

@@ -1,5 +1,6 @@
 <?php
 require_once('connect_mousam.php');
+require_once('filter_logic_case_details.php');
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -20,11 +21,12 @@ $itemsPerPage = 10;
 $offset = ($page - 1) * $itemsPerPage;
 
 $heads = [];
+$headvals = [];
 $output_labels=[];
 $columns = [];
 
 // Fetching distinct attributes for the header
-$header = $con->query("SELECT DISTINCT output_label, attribute_name,(select name from channels where channels.id = channel_attributes.channel_id)channel_name FROM channel_attributes WHERE channel_id = $channelId");
+$header = $con->query("SELECT DISTINCT filter_logic, output_label, attribute_name,(select name from channels where channels.id = channel_attributes.channel_id)channel_name FROM channel_attributes WHERE channel_id = $channelId");
 
 $whereConditionq = $con->query("select filter_condition from channels where id =".$channelId."");
 
@@ -39,11 +41,26 @@ if ($whereConditionq->num_rows > 0) {
 $channel_name='';
 if ($header->num_rows > 0) {
     while ($row = $header->fetch_assoc()) {
-        array_push($heads, $row['attribute_name']);
-        array_push($output_labels, $row['output_label']);
+        if($row['attribute_name'] == '')
+        {
+            $column_variable = $row['filter_logic'];
+            array_push($heads, sumCase($column_variable));
+            array_push($headvals, sumCaseVal($column_variable));
+            array_push($output_labels, $row['output_label']);
+
+        }
+        else
+        {
+            array_push($heads, $row['attribute_name']);
+            array_push($headvals, $row['attribute_name']);
+            array_push($output_labels, $row['output_label']);
+        }
+
+
         $channel_name = $row['channel_name'];
     }
 }
+
 
 $heads = array_unique($heads);
 
@@ -102,6 +119,8 @@ if (!empty($data)) {
     // Count total records (without LIMIT)
     $totalRecords=0;
     $countQuery = $con->query("SELECT distinct ".implode(',',$heads)." FROM pim $whereConditionVal");
+
+
     if ($countQuery->num_rows > 0) {
         while ($row = $countQuery->fetch_assoc()) {
            $totalRecords +=1;
@@ -119,5 +138,5 @@ if (!empty($data)) {
 $con->close();
 
 header('Content-Type: application/json');
-echo json_encode(['heads'=>$heads,'total_records'=>$totalRecords,'output_labels' => $output_labels, 'columns' => $columns,'channel_name'=>$channel_name]);
+echo json_encode(['heads'=>$heads,'head_vals'=>$headvals,'total_records'=>$totalRecords,'output_labels' => $output_labels, 'columns' => $columns,'channel_name'=>$channel_name]);
 ?>
