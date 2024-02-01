@@ -72,7 +72,8 @@ $(document).ready(function(){
             },
           200: function() {
               $('.sirv-container').append('<div class="Sirv" id="sirv-spin" data-src="'+spinsrc+'"></div>');
-
+              $('.showing-noimg').hide();
+              $('#sirv360').removeClass('d-none');
           }
         }
       });

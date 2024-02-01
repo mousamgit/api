@@ -11,9 +11,9 @@
                 echo '<div class="col-md-3"><div class="img-border"><img src="'.$row[$imagename].'"><aside class="title">Product '.$imagename.'</aside></div></div>';
             }
         }
-        if($image == false) { echo "No Media or Images"; } 
+
         ?>
-            <div id="sirv360" class="col-md-3" brand="<?php  echo $brand;  ?>" sku="<?php  echo $sku;  ?>">
+            <div id="sirv360" class="col-md-3 d-none" brand="<?php  echo $brand;  ?>" sku="<?php  echo $sku;  ?>">
                 <div class="img-border">
                     <div class="sirv-container"></div>
                         <div class="sirv-controls ">
@@ -33,6 +33,6 @@
         <link rel="stylesheet" href="https://demo.sirv.com/sirv-controls/sirv-controls.css">
         <script src="https://scripts.sirv.com/sirv.js"></script>
 
-      
+      <div class="showing-noimg <?php if($image){ echo 'd-none';}?>">No Media or Images</div>
     </p>
 </section>
