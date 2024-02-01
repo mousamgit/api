@@ -368,7 +368,6 @@ export default {
 
   },
   template: `
-
 <div class="container mt-300">
     <div class="row">
     <div class="container mt-5">
@@ -435,7 +434,6 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                   
                     <tr v-for="channel in channels" :key="channel.id">
                         <td><input type="checkbox"></td>
                         <td><a :href="'/channel_details.php?id=' + channel.id">{{channel.name}}</a></td>

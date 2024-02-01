@@ -1,5 +1,4 @@
 export default {
-  props: ['isModalOpen', 'productName'],
   data() {
     return {
       products: [],
@@ -7,6 +6,8 @@ export default {
       isEditModalOpen: false,
       showModal: false,
       columns: [],
+      productId:0,
+      productName:''
     };
   },
   mounted() {
@@ -68,6 +69,33 @@ export default {
         console.error('Error deleting product:', error);
       }
     },
+    async submitForm() {
+      try {
+        const response = await fetch('save_product.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productName: this.productName,
+            productId:this.productId,
+          }),
+        });
+
+        const data = await response.json();
+
+
+        if (data.success == true) {
+
+          location.reload();
+        } else {
+          console.error('Error saving channel:', data.error);
+        }
+
+      } catch (error) {
+        console.error('Error saving channel:', error);
+      }
+    },
 
 
   },
@@ -76,31 +104,31 @@ export default {
 <div class="container mt-300">
     <div class="row">
     <div class="container mt-5">
-<!--    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">-->
-<!--      <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullpage">-->
-<!--        <div class="modal-content" style="height: 100vh;">-->
-<!--          <div class="modal-header">-->
-<!--            <h5 class="modal-title" id="addProductModalLabel">Products</h5>-->
-<!--            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--          </div>-->
-<!--          <div class="modal-body">-->
-<!--            <form @submit.prevent="submitForm">-->
-<!--              <div class="row">-->
-<!--                <div class="col-md-12">-->
-<!--                  <label for="productName" class="form-label">Product Name:</label>-->
-<!--                  &lt;!&ndash; Use 'productName' for v-model &ndash;&gt;-->
-<!--                  <input type="hidden" id="productId" v-model="productId" class="form-control" >-->
-<!--                  <input type="text" id="productName" v-model="productName" class="form-control"  required>-->
-<!--                </div>-->
-<!--                </div>-->
-<!--                    -->
-<!--            <button type="submit" class="btn btn-primary mt-3">Save Product</button>-->
-<!--            </form>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-  </div>
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-md modal-dialog-centered">
+        <div class="modal-content" >
+          <div class="modal-header">
+            <h5 class="modal-title" id="addProductModalLabel">Products</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="submitForm">
+              <div class="row">
+                <div class="col-md-12">
+                  <label for="productName" class="form-label">Product Name:</label>
+                  <!-- Use 'productName' for v-model -->
+                  <input type="hidden" id="productId" v-model="productId" class="form-control" >
+                  <input type="text" id="productName" v-model="productName" class="form-control"  required>
+                </div>
+                </div>
+                    
+            <button type="submit" class="btn btn-primary mt-3">Save Product</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
         <div class="col-12 mt-15">
         <div class="row">
             <div class="col-md-2"> <h2 class="no-margin">Products</h2></div>
@@ -117,13 +145,13 @@ export default {
         <div class="col-md-3">
             <select class="form-control">
                 <option>All</option>
-                <option>CSV</option>
-                <option>XML</option>
+                <option>Smart</option>
+                <option>Static</option>
             </select>
         </div>
 
         <div class="col-md-5 d-flex justify-content-end">
-            <button class="btn btn-primary btn-block" @click="editProduct(product={})" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+            <button class="btn btn-primary btn-block"  data-bs-toggle="modal" data-bs-target="#addProductModal">Create a list</button>
         </div>
     </div>
             <!-- Bootstrap Table -->
@@ -133,8 +161,8 @@ export default {
                         <th scope="col"><input type="checkbox"></th>
                         <th scope="col">NAME</th>
                         <th scope="col">TYPE</th>
-                        <th scope="col">STATUS</th>
-                        <th scope="col">LAST TIME PROCESSED</th>
+                        <th scope="col">LAST MODIFIED</th>
+                        <th scope="col">CREATED</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -144,8 +172,9 @@ export default {
                         <td><input type="checkbox"></td>
                         <td><a :href="'/product/product_details.php?id=' + product.id">{{product.name}}</a></td>
                         <td>{{product.type}}</td>
-                        <td><span class="">Active</span></td>
+                       
                         <td>{{product.updated_at}}</td>
+                        <td>{{product.created_at}}</td>
                         <td> <a class="btn btn-danger" @click="deleteProduct(product)">
                                 <i class="fas fa-trash-alt" ></i>
                              </a>

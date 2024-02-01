@@ -425,7 +425,6 @@ export default {
                 <fieldset>
                     <legend> Add Condition </legend>
                     <hr>
-                    
                         <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
                         <div class="row mb-3">
                             <div class="col-md-5">
