@@ -1,13 +1,13 @@
 <section id="content2">
     <p class="product-content">
       <div class='table-column'>
-        <table class='product-table'>
+        <table class='product-table producttable'>
           <?php 
             $col = mysqli_num_fields($result);
             $col = floor($col/2);
             $i = 0;
             foreach ($row as $colName => $val) { 
-              echo "<tr><td class='l'><strong>".$colName."</strong></td><td>".$row[$colName]."</td></tr>"; 
+              echo "<tr><td class='l-subtitle'><strong>".$colName."</strong></td></tr><tr><td>".$row[$colName]."</td></tr>"; 
               $i++;
               if ($i == $col)
               {

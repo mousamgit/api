@@ -34,10 +34,10 @@
     <h2>Product information for <?php echo $sku; ?></h2>
   </div>
   <div class="product">
-    <input id="tab1" type="radio" name="tabs" checked><label for="tab1">Quick Summary</label>
-    <input id="tab2" type="radio" name="tabs" ><label for="tab2">Information</label>
-    <input id="tab3" type="radio" name="tabs" ><label for="tab3">Media</label>
-    <input id="tab4" type="radio" name="tabs" ><label for="tab4">Log</label>
+    <input id="tab1" type="radio" name="tabs" checked><label for="tab1"><span>Quick Summary</span></label>
+    <input id="tab2" type="radio" name="tabs" ><label for="tab2"><span>Information</span></label>
+    <input id="tab3" type="radio" name="tabs" ><label for="tab3"><span>Media</span></label>
+    <input id="tab4" type="radio" name="tabs" ><label for="tab4"><span>Log</span></label>
     <?php 
             $logquery = " SELECT * from pimlog WHERE SKU = '".$sku."'";
             $logresult = mysqli_query($con, $logquery) or die(mysqli_error($con));
