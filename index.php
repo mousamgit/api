@@ -24,7 +24,7 @@ include 'login_checking.php';
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-    <div id="app">
+    <div id="app" class="pim-padding">
 <div class="filter-functions">
 <!-- <a class="show-filter" @click="showhidecols()">Column Filter</a>
 <a class="show-filter" @click="showhiderows()">Row Filter</a> -->
