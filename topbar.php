@@ -79,12 +79,12 @@
 </div>
 
 
-<header>
+<header class="pim-padding">
     <div class="header-menu">
 <a class="header-drawer-toggle">
         <i class="fa-solid fa-bars fa-xl menu-icon"></i><span>s</span>
     </a>
-    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" style="margin-left:4em; width:100px;"></a>
+    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" ></a>
     <a class="header-search">
     <span>s</span><i class="fa-solid fa-search fa-xl menu-icon"></i>
     </a>

@@ -33,7 +33,7 @@
   <div style="padding:20px; text-align:center;">
     <h2>Product information for <?php echo $sku; ?></h2>
   </div>
-  <div class="product">
+  <div class="product pim-padding">
     <input id="tab1" type="radio" name="tabs" checked><label for="tab1">Quick Summary</label>
     <input id="tab2" type="radio" name="tabs" ><label for="tab2">Information</label>
     <input id="tab3" type="radio" name="tabs" ><label for="tab3">Media</label>
