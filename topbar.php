@@ -6,7 +6,7 @@
     <div class="drawer-header drawer-header-cover" style="background-color: #ae1930; color: #000;">
         <div class="drawer-user">
             <div class="drawer-avatar">
-                <img src="https://pim.samsgroup.info/sga-logo.jpg">
+                <img src="https://pim.samsgroup.info/sga-logo.jpg" width=200px>
             </div>
             <div class="drawer-meta">
                 <span class="drawer-name"><a href="profile.php" style="color:#fff;"> <i class="fa-solid fa-user"></i>  <?php echo $_SESSION["username"]; ?></a></span>
