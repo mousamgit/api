@@ -136,7 +136,7 @@ function addtoLog($logsku, $logheader, $oldrecord, $newrecord,$username)
     $date = date("Y-m-d", $current);
     $time = date("G:i:s", $current);
 
-    $logsql = " INSERT into pimlog (date,time,sku,field,oldrecord,newrecord,user) VALUES ('$date','$time','$logsku','$logheader','$oldrecord','$newrecord','$username')";
-    $logresult = mysqli_query($con,$logsql) or die(mysqli_error($con)); 
+    // $logsql = " INSERT into pimlog (date,time,sku,field,oldrecord,newrecord,user) VALUES ('$date','$time','$logsku','$logheader','$oldrecord','$newrecord','$username')";
+    // $logresult = mysqli_query($con,$logsql) or die(mysqli_error($con)); 
 }
 ?>
