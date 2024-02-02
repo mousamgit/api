@@ -312,6 +312,9 @@ header a{ color:#fff}
   #sirv360 .sirv-controls {    position: absolute;    bottom: 80px;    width: 100%;    padding: 0 70px;}
   
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+  @media (max-width: 767px)  {
+    .pim-padding{padding:10px 20px;}
+  }
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
