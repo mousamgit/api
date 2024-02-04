@@ -74,7 +74,7 @@ body { font-family: 'Open Sans', sans-serif; }
 
   /* product page tabs */
   .product-content p { margin: 0 0 20px; line-height: 1.5; }
-  .product { min-width: 320px; padding: 20px; margin: 0 auto; background: #fff; }
+  .product { min-width: 320px; margin: 0 auto; background: #fff; }
   .product section { display: none; padding: 20px 0 0; border-top: 1px solid #ddd; }
   .product input { display: none; }
   .product label { display: inline-block; margin: 0 0 -1px; padding: 15px 25px; font-weight: 600; text-align: center; color: #bbb; border: 1px solid transparent; }

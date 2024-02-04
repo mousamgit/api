@@ -30,7 +30,7 @@
  
   ?>
 
-  <div style="padding:20px; text-align:center;">
+  <div class="pim-padding">
     <h2>Product information for <?php echo $sku; ?></h2>
   </div>
   <div class="product pim-padding">
