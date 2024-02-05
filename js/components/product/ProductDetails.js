@@ -15,17 +15,11 @@ export default {
             currentPage: 1,
             itemsPerPage: 10,
             totalRows:0,
-            columnValues:[]
+            columnValues:[],
+            showAttFilter:1
         };
     },
     mounted() {
-        // this.channelAttribute.push({
-        //     id:0,
-        //     attribute_name:'',
-        //     data_type: '',
-        //     attribute:'',
-        //     attribute_condition:'IS NOT NULL'
-        // });
         this.fetchAllColumns();
         this.fetchProducts();
     },
@@ -44,13 +38,10 @@ export default {
             try {
                 // Make an AJAX request to your PHP file to fetch attributes
                 const response = await fetch('../channels/fetch_all_pim_columns.php');
-
                 // Parse the JSON response
                 const data = await response.json();
-
                 // Update the attributes data
                 this.columns = data;
-
                 console.log(this.columns,'column_list');
             } catch (error) {
                 console.error('Error fetching attributes:', error);
@@ -80,11 +71,8 @@ export default {
 
                     // Parse the JSON response
                     const data = await response.json();
-
-
                     this.attribute_values = data;
                     this.indexCheck = index;
-
                 }
 
             } catch (error) {
@@ -96,16 +84,19 @@ export default {
             this.channelAttribute[index].attribute_condition = selectedValue;
             this.attribute_values = [];
         },
-        addChannelCondition(op_value) {
+        addChannelCondition(op_value,condition_type,previous_row) {
             this.channelAttribute.push({
                 id:0,
                 attribute_name:'',
                 data_type: '',
                 attribute:'',
                 attribute_condition:'IS NOT NULL',
-                operator:op_value
+                operator:op_value,
+                condition_type:condition_type,
+                previous_row:previous_row
             });
             this.showAttribute = 1;
+            this.showAttFilter = 0;
         },
         async fetchProducts() {
             const response = await fetch('fetch_product_details.php?page=' + this.currentPage, {
@@ -120,7 +111,6 @@ export default {
                         this.productValues = data.product_values;
                         this.totalRows = data.total_rows;
                         this.columnValues = data.column_values_row;
-
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
@@ -166,10 +156,9 @@ export default {
                 const data = await response.json();
 
                 if (data.success) {
-
                     location.reload();
                 } else {
-                    console.error('Error saving channel:', data.error);
+                    console.error('Error saving filters:', data.error);
                 }
 
             } catch (error) {
@@ -209,6 +198,7 @@ export default {
                 console.error('Error fetching product:', error);
             }
         },
+
         async deleteFilter(productDetId,productId) {
             try {
                 // Display a confirmation dialog
@@ -225,9 +215,7 @@ export default {
                             productDetId: productDetId
                         }),
                     });
-
                     const data = await response.json();
-
                     if (data.success)
                     {
                         console.log('Filters deleted successfully!');
@@ -297,7 +285,7 @@ export default {
             </div>
  
             <div class="col-md-8 d-flex justify-content-end">
-                <span class="pl-2" > Created By MS Feb1, 2024</span>
+                <span class="pl-2" > Created By MS Feb5, 2024</span>
             </div>
         </div>    
         <div class="row">
@@ -395,7 +383,7 @@ export default {
             <!-- Right column for the "+" button -->
             <div>
                 <!-- Conditionally show the button based on your Vue.js logic -->
-                <a class="sub-heading btn btn-primary" v-if="productDetails.length==0 && channelAttribute.length==0" @click="addChannelCondition('AND')">
+                <a class="sub-heading btn btn-primary" v-if="productDetails.length==0 && channelAttribute.length==0" @click="addChannelCondition('AND','normal',[])">
                     <i class="fa fa-plus"></i>
                 </a>
             </div>
@@ -414,7 +402,16 @@ export default {
                                     <div class="form-group selected-filters">
                                      
                                       <div class="row" v-for="(productDet,index) in productDetails" style="margin-bottom: 5px; !important">
-                                        <div class="filter-clauses">
+                                      <span class="" v-if="showAttFilter==1">
+                                        <span v-if="productDet.op_value == 'OR'">
+                                         <a  class="btn btn-link" @click="addChannelCondition('AND','middle',productDet)" data-test-id="and" >
+                                          <strong>AND</strong>
+                                         </a>
+                                        </span>
+                                        <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">----------{{productDet.op_value}}------------</span>
+                                        </span></center>
+                                        
+                                        <div class="filter-clauses" v-if="showAttFilter==1">
                                             <div class="clause">
                                                 <div class="filter flex-row border-default card position-relative">
                                                     <div class="flex-grow-1">
@@ -424,7 +421,7 @@ export default {
                                                             <span class="text-default" v-if="productDet.range_to !=''">&nbsp;  {{productDet.range_from}} to {{productDet.range_to}}</span>
                                                             <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
                                                         </div>
-                                                        <div class="value text-ellipsis">  </div>
+                                                       
                                                     </div>
                                                     <div class="delete-icon position-absolute top-0 end-0" data-test-id="delete" >
                                                         <a @click="deleteFilter(productDet.id,productDet.product_id)">
@@ -434,6 +431,7 @@ export default {
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                        </div>
                                         <form @submit.prevent="submitForm">
                                         <div class="row">
@@ -455,9 +453,7 @@ export default {
                                                         <div class="col-md-12" v-if="cAttribute.attribute!=''">
                                                        
                                                         <div class="mb-3">
-                                                      
-                                                         <template v-if="cAttribute.data_type == 'varchar'">
-                                                          
+                                                         <template v-if="cAttribute.data_type == 'varchar'">                            
                                                              <select v-model="cAttribute.filter_type" id="filter-type" class="form-control" >
                                                                 <option value="includes">includes</option>
                                                                 <option value="=">equal to</option>
@@ -505,7 +501,6 @@ export default {
                                                             </li>
                                                           </ul>
                                                         </template>
-                                                        
                                                         </div>
                                                     <div class="submit-form" v-if="cAttribute.attribute!=''">                                                 
                                                     <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
@@ -518,10 +513,10 @@ export default {
                                             </div>
                                                
                                                 <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
-                                                            <a  class="btn btn-link" @click="addChannelCondition('AND')" data-test-id="and" >
+                                                            <a  class="btn btn-link" @click="addChannelCondition('AND','normal',productDet=[])" data-test-id="and" >
                                                                 <strong>AND</strong>
                                                             </a>
-                                                            <a class="btn btn-link" @click="addChannelCondition('OR')" data-test-id="or" >
+                                                            <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or" >
                                                                 <strong>OR</strong>
                                                             </a>
                                                 </div>        

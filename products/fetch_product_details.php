@@ -62,8 +62,12 @@ $column_values = 'sku';
 $check_if_columns = $con->query("select attribute_name from product_filter where product_id =".$productId);
 if ($check_if_columns->num_rows > 0) {
     while ($row = $check_if_columns->fetch_assoc()) {
-        $column_values .= ','.$row['attribute_name'];
-        $column_values_row[] = $row['attribute_name'];
+        if(!in_array($row['attribute_name'], $column_values_row))
+        {
+            $column_values .= ','.$row['attribute_name'];
+            $column_values_row[] = $row['attribute_name'];
+        }
+
     }
 }
 
