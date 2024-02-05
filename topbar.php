@@ -6,7 +6,7 @@
     <div class="drawer-header drawer-header-cover" style="background-color: #ae1930; color: #000;">
         <div class="drawer-user">
             <div class="drawer-avatar">
-                <img src="https://pim.samsgroup.info/sga-logo.jpg">
+                <img src="https://pim.samsgroup.info/sga-logo.jpg" width=200px>
             </div>
             <div class="drawer-meta">
                 <span class="drawer-name"><a href="profile.php" style="color:#fff;"> <i class="fa-solid fa-user"></i>  <?php echo $_SESSION["username"]; ?></a></span>
@@ -79,12 +79,12 @@
 </div>
 
 
-<header>
+<header class="pim-padding">
     <div class="header-menu">
 <a class="header-drawer-toggle">
         <i class="fa-solid fa-bars fa-xl menu-icon"></i><span>s</span>
     </a>
-    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" style="margin-left:4em; width:100px;"></a>
+    <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" ></a>
     <a class="header-search">
     <span>s</span><i class="fa-solid fa-search fa-xl menu-icon"></i>
     </a>

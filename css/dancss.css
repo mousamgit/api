@@ -45,12 +45,17 @@ body { font-family: 'Open Sans', sans-serif; }
   .sga-table tbody tr:hover {
     background-color: #dadada; 
   }
+  .sga-table td input {
+    width: 100%;
+    padding: 20px;
+    font-size:12px;
+  }
   .mobile-only { display: none; }
 
   @media screen and (max-width: 500px) { 
     .mobile-only { display:block; }
     .desktop-only { display:none; }
-    .container { padding: 20px; }
+    .container { padding: 20px 10px; }
   }
   /* Search Div */
   .search-div { width:100%; margin:50px auto; text-align:center; } 
@@ -65,3 +70,38 @@ body { font-family: 'Open Sans', sans-serif; }
   
   /* Container */
   .container { width: 100%; }
+
+
+  /* product page tabs */
+  .product-content p { margin: 0 0 20px; line-height: 1.5; }
+  .product { min-width: 320px; margin: 0 auto; background: #fff; }
+  .product section { display: none; padding: 20px 0 0; border-top: 1px solid #ddd; }
+  .product input { display: none; }
+  .product label { display: inline-block; margin: 0 0 -1px; padding: 15px 25px; font-weight: 600; text-align: center; color: #bbb; border: 1px solid transparent; }
+  .product label:before { font-family: fontawesome; font-weight: normal; margin-right: 10px; }
+  .product label[for*='1']:before { content: '\f00b'; }
+  .product label[for*='2']:before { content: '\f05a'; }
+  .product label[for*='3']:before { content: '\f03e'; }
+  .product label[for*='4']:before { content: '\f02d'; }
+  .product label:hover { color: #888; cursor: pointer; }
+  .product input:checked + label { color: #555; border: 1px solid #ddd; border-top: 2px solid #DA203D; border-bottom: 1px solid #fff; }
+  #tab1:checked ~ #content1, #tab2:checked ~ #content2, #tab3:checked ~ #content3, #tab4:checked ~ #content4 { display: block; }
+
+  /* product page table */
+  .table-column { float:left; width:50%; padding: 5px; }
+  .product-table { display: table; min-width:400px; margin:50px auto; width:80%; }
+  .media { width: 100% !important; border-spacing: 2em 0; border-collapse: separate; }
+  .media td { text-align:center !important;}
+
+  .producttable { width: 80%; margin: 50px auto !important;}
+  .producttable thead tr { background-color: #303030 !important; font-weight:700; }
+  .producttable .l { border-right: 1px solid #dddddd; font-weight:700; width:35%; }
+  .producttable td { padding: 20px 25px;}
+  .producttable .empty { display: none; }
+  .producttable .table-subtitle { background-color:#f3f3f3; padding:10px 25px; border-bottom: 1px solid #dddddd;}
+
+  @media screen and (max-width: 500px) { 
+    .table-column { width:100%; display: block; }
+    .producttable { width: 100%; }
+    .product span { visibility:hidden; font-size:0px;}
+  }
