@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             // User is authenticated
             $_SESSION["username"] = $username;
-            header("Location: homepage.php");
+            header("Location: /");
             exit();
         } else {
             // Invalid credentials

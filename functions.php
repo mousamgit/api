@@ -129,10 +129,10 @@ function updateValue($db, $prkey,$keyvalue, $attribute, $value)
     // Close conection
     $con->close();
 }
-function addtoLog($logsku, $logheader, $oldrecord, $newrecord,$username)
+function addtoLog($logsku, $logheader, $newrecord,$username)
 {
     require('connect.php');
-    
+    $oldrecord = getValue('pim', 'sku', $logsku, $logheader);
     date_default_timezone_set("Australia/Sydney");
     $current = strtotime("now");
     $date = date("Y-m-d", $current);

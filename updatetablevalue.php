@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $value = $_POST['colValue'];
   $username = $_POST['username'];
   
-
+  addtoLog($sku, $colName, $value, $username);
   updateValue('pim','sku',$sku,$colName,$value);
-  addtoLog($sku, $colName, $oldvalue, $value, $username);
+
 
   header("Location: /");
   exit();

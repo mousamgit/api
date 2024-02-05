@@ -63,14 +63,8 @@ const myapp = Vue.createApp({
           },
         
           isediting(row, col) {
-            // Check if the current cell is being edited
-            
-            if(this.editingCell[0] == row && this.editingCell[1] == col){
-                return true;
-            }
-            else{
-                return false;
-            }
+            if(this.editingCell[0] == row && this.editingCell[1] == col){                return true;            }
+            else{                return false;            }
           },
         updateindex(index){            
             this.filterindex = index;
