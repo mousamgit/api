@@ -16,7 +16,8 @@ export default {
       attributeType:[],
       attribute_values:[],
       indexCheck:0,
-      thisRow:'Default'
+      thisRow:'Default',
+      channelNameSearch:''
     };
   },
   mounted() {
@@ -333,6 +334,26 @@ export default {
         console.error('Error deleting channel:', error);
       }
     },
+    async searchChannels(channelName){
+      try {
+        const response = await fetch('search_channel.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            channelName: this.channelNameSearch,
+          }),
+        });
+        const data = await response.json();
+
+        // Update the channel data
+        this.channels = data;
+
+      } catch (error) {
+        console.error('Error fetching channel:', error);
+      }
+    },
     async deleteAttribute(id,delete_url) {
 
       try {
@@ -405,7 +426,7 @@ export default {
         <div class="col-md-4">
             <div class="input-group">
                 <span class="input-group-text"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search by name">
+                <input type="text" class="form-control" v-model="channelNameSearch" placeholder="Search by name" @keyup="searchChannels(channelName)">
             </div>
         </div>
 
@@ -436,7 +457,7 @@ export default {
                 <tbody>
                     <tr v-for="channel in channels" :key="channel.id">
                         <td><input type="checkbox"></td>
-                        <td><a :href="'/channel_details.php?id=' + channel.id">{{channel.name}}</a></td>
+                        <td><a :href="'/channels/channel_details.php?id=' + channel.id">{{channel.name}}</a></td>
                         <td>{{channel.type}}</td>
                         <td><span class="">Active</span></td>
                         <td>{{channel.last_time_proceed}}</td>
