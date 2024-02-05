@@ -14,6 +14,14 @@
     #app{
         margin-top:20px;
     }
+    .filter:hover .delete-icon {
+        opacity: 1;
+    }
+    .delete-icon {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
 
 </style>
 <!-- Include Vue.js -->

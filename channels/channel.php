@@ -36,8 +36,6 @@
 <!-- Include your main JavaScript file -->
 <script type="module" src="../js/components/channel/channel.js" defer></script>
 
-
-
 </body>
 </html>
 

@@ -7,7 +7,8 @@ export default {
       showModal: false,
       columns: [],
       productId:0,
-      productName:''
+      productName:'',
+      productNameSearch:''
     };
   },
   mounted() {
@@ -32,12 +33,32 @@ export default {
         console.error('Error fetching product:', error);
       }
     },
+    async searchProducts(productName){
+      try {
+        const response = await fetch('search_product.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productName: this.productNameSearch,
+          }),
+        });
+        const data = await response.json();
+
+        // Update the product data
+        this.products = data;
+
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
+    },
 
 
     async deleteProduct(product) {
       try {
         // Display a confirmation dialog
-        const confirmed = window.confirm(`Are you sure you want to delete the product "${product.name}" and its linked attributes?`);
+        const confirmed = window.confirm(`Are you sure you want to delete the product "${product.name}" and its linked filters?`);
 
         if (confirmed) {
           const response = await fetch('delete_product.php', {
@@ -55,7 +76,7 @@ export default {
 
           if (data.success) {
             console.log('Product deleted successfully!');
-            this.resetForm();
+
             // Reload the page after successful deletion
             location.reload();
           } else {
@@ -101,14 +122,14 @@ export default {
   },
   template: `
 
-<div class="container mt-300">
+<div  style="padding-right: 48px;padding-bottom: 0px;padding-left: 48px;">
     <div class="row">
     <div class="container mt-5">
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-md modal-dialog-centered">
         <div class="modal-content" >
           <div class="modal-header">
-            <h5 class="modal-title" id="addProductModalLabel">Products</h5>
+            <h5 class="modal-title" id="addProductModalLabel">Product Lists</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -131,14 +152,14 @@ export default {
     </div>
         <div class="col-12 mt-15">
         <div class="row">
-            <div class="col-md-2"> <h2 class="no-margin">Products</h2></div>
+            <div class="col-md-2"> <h2 class="no-margin">Product List</h2></div>
             
         </div>    
             <div class="row">
         <div class="col-md-4">
             <div class="input-group">
                 <span class="input-group-text"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search by name">
+                <input type="text" class="form-control" v-model="productNameSearch" placeholder="Search by name" @keyup="searchProducts(productName)">
             </div>
         </div>
 
@@ -170,7 +191,7 @@ export default {
                    
                     <tr v-for="product in products" :key="product.id">
                         <td><input type="checkbox"></td>
-                        <td><a :href="'/product/product_details.php?id=' + product.id">{{product.name}}</a></td>
+                        <td><a :href="'/products/product_details.php?id=' + product.id">{{product.name}}</a></td>
                         <td>{{product.type}}</td>
                        
                         <td>{{product.updated_at}}</td>
