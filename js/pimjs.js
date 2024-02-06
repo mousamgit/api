@@ -20,6 +20,10 @@ const myapp = Vue.createApp({
         }
     },
 
+    mounted() {
+        // Add a click event listener to the document
+        document.addEventListener('click', this.handleClickOutside);
+      },
     methods: {
 
         showhidecols() {
@@ -125,6 +129,17 @@ const myapp = Vue.createApp({
             });
             window.location.replace(this.pimurl);
         },
+
+        handleClickOutside(event) {
+
+
+            const formElement = this.$el.querySelector('td');
+            // Check if the clicked element is not inside the form
+            if (formElement && !formElement.contains(event.target)) {
+              console.log('out');
+            }
+
+          },
     },
     watch: {
         filtertitle() {

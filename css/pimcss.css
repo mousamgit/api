@@ -314,6 +314,7 @@ header a{ color:#fff}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}
+    #search-form{padding:7px 20px;}
   }
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}

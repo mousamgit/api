@@ -1,6 +1,6 @@
 <?php $username = $_SESSION["username"]; $usertype = getValue('users','username', $username,'type'); ?>
 
-<script src="./js/myjquery.js" ></script>
+
 <!-- Navigation Drawer -->
 <div class="layout-drawer">
     <div class="drawer-header drawer-header-cover" style="background-color: #ae1930; color: #000;">
