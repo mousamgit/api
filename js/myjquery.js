@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-
+    spinsrc = '';
 
     var $document = $(document),
         $header = {
