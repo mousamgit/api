@@ -12,7 +12,7 @@
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
         <script>
-            $(function() {
+           $(function() {
                 $('#type').change(function(){
                     $('.task').hide();
                     $('#' + $(this).val()).show();
@@ -21,71 +21,126 @@
                 }
                  });
             });
-            $(function(){
-    
-                var more_fields = `
-                    <select name="jewellery-tasks[]" id="jewellery-task-1" required>
-                        <option value="" disabled selected>Select a task</option>
-                        <option value="plating">Plating (Rhodium/Gold)</option>
-                        <option value="reshank">Re-Shank</option>
-                        <option value="resize_under_3">Resize 1-3 Finger Sizes</option>
-                        <option value="resize_more_3">Resize more than 3+ Finger Sizes</option>
-                        <option value="set_stone">Set/Reset Stone</option>
-                    </select><br>
-                `;
-                var more_fields_w = `
-                    <select name="jewellery-tasks[]" id="jewellery-task-1" required>
-                        <option value="" disabled selected>Select a task</option>
-                        <option value="battery replacement">Battery Replacement</option>
-                        <option value="bracelet or strap replacement">Bracelet or Strap Replacement</option>
-                        <option value="new case">New Case</option>
-                        <option value="new crown">New Case & Band</option>
-                        <option value="new clasp">New Clasp</option>
-                        <option value="new crown">New Crown</option>
-                        <option value="new dial">New Dial</option>
-                        <option value="new glass">New Glass</option>
-                        <option value="new hands">New Hands</option>
-                        <option value="new pin screw band">New Pin or Screw for Band</option>
-                        <option value="new stem crown">New Stem & Crown</option>
-                        <option value="new movement">New Movement</option>
-                        <option value="pressure test">Pressure Test</option>
-                        <option value="overhaul">Overhaul</option>
-                        <option value="service">Service</option>
-                    </select><br>
-                `;
+            window.addEventListener("DOMContentLoaded", ()=>{
+                let i=1;
+                let template_j = `<div class="items-j"><select name="jewellery-tasks[]" id="jewellery-task" class="select-design" required> 
+                                    <option value="" disabled selected>Select a task</option>
+                                    <option value="plating">Plating (Rhodium/Gold)</option>
+                                    <option value="reshank">Re-Shank</option>
+                                    <option value="resize_under_3">Resize 1-3 Finger Sizes</option>
+                                    <option value="resize_more_3">Resize more than 3+ Finger Sizes</option>
+                                    <option value="set_stone">Set/Reset Stone</option>
+                                </select><button class="remove">X</button></div>`; 
+                let template_w = `<div class="items-w"><select name="watch-tasks[]" id="watch-task" class="select-design" required>
+                                    <option value="" disabled selected>Select a task</option>
+                                    <option value="battery replacement">Battery Replacement</option>
+                                    <option value="bracelet or strap replacement">Bracelet or Strap Replacement</option>
+                                    <option value="new case">New Case</option>
+                                    <option value="new crown">New Case & Band</option>
+                                    <option value="new clasp">New Clasp</option>
+                                    <option value="new crown">New Crown</option>
+                                    <option value="new dial">New Dial</option>
+                                    <option value="new glass">New Glass</option>
+                                    <option value="new hands">New Hands</option>
+                                    <option value="new pin screw band">New Pin or Screw for Band</option>
+                                    <option value="new stem crown">New Stem & Crown</option>
+                                    <option value="new movement">New Movement</option>
+                                    <option value="pressure test">Pressure Test</option>
+                                    <option value="overhaul">Overhaul</option>
+                                    <option value="service">Service</option>
+                                </select><button class="remove">X</button></div>`;
+                let add_j = document.getElementById("add-j");
+                let items_j = document.getElementById("item-container-j");
+                let add_w = document.getElementById("add-w");
+                let items_w = document.getElementById("item-container-w");
+            
+                add_j.addEventListener("click", ()=>{
+                    if(i >= 10){
+                        alert("Maximum Limit Reached");
+                    }else{
+                        ++i;
+                        items_j.innerHTML += template_j;
+                    }
+                });
+                add_w.addEventListener("click", ()=>{
+                    if(i >= 10){
+                        alert("Maximum Limit Reached");
+                    }else{
+                        ++i;
+                        items_w.innerHTML += template_w;
+                    }
+                });
+            
+                document.body.addEventListener("click", (e)=>{
+                    const target = e.target;
+                    if(target.classList.contains("remove")){
+                        target.parentNode.remove();
+                    }
+                });
+            })
 
-            $('#add-more-field-jewellery').on('click', (function (e) {
-                e.preventDefault();
-                $(".j-tasks").append(more_fields);
-            }));
-            $('#add-more-field-watch').on('click', (function (e) {
-                e.preventDefault();
-                $(".w-tasks").append(more_fields_w);
-            }));
-
-            });
         </script>
     </head>
     <body>
     <?php include 'topbar.php'; ?>
     <div class="pim-padding">
-        <form action="process_repairjob.php" method="post" enctype="multipart/form-data">
-            Repair Number: <input type="text" name="repair_number" id="repair_number" placeholder="Enter a Repair Number" required><br>
-            Customer Code: <input type="text" name="cust_code" id="cust_code" placeholder="Enter Customer Code" required><br>
-            Customer Name: <input type="text" name="cust_name" id="cust_name" placeholder="Enter Customer Name" ><br>
-            Contact Details: <input type="text" name="contact" id="contact" placeholder="Enter Contact Number or Email" ><br>
-            Repair Type: 
-                <select name="type" id="type" required>
-                    <option value="" disabled selected>Select an option</option>
-                    <option value="jewellery">Jewellery Repair</option>
-                    <option value="watch">Watch Repair</option>
-                </select><br>
-            Product Code: <input type="text" name="product" id="product" placeholder="Enter Product Code" required><br>
-            <div id="jewellery" class="task jewellery j-tasks">
-                Jewellery Repair Tasks <button id="add-more-field-jewellery">Add Task</button><br>
+        <form action="process_repairjob.php" class="form-design" method="post" enctype="multipart/form-data">
+            <div class="form-row header"> Add a Repair Job </div>
+            <div class="l-div">
+                <div class="form-row subheader">Job Details</div>
+                <div class="form-row">
+                    <div class="cell-l">Job Number:</div> 
+                    <div class="cell-r"><input type="text" name="repair_number" id="repair_number" placeholder="Enter a Repair Number *" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="cell-l">Customer Reference:</div> 
+                    <div class="cell-r"><input type="text" name="reference_number" id="reference_number" placeholder="Enter a Reference Number"></div>
+                </div>
+                <div class="form-row subheader" style="margin-top: 80px;"><span>Customer Details</span></div>
+                <div class="form-row">
+                    <div class="cell-l">Customer Code:</div> 
+                    <div class="cell-r"><input type="text" name="cust_code" id="cust_code" placeholder="Enter Customer Code *" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="cell-l">Customer Name:</div>
+                    <div class="cell-r"><input type="text" name="cust_name" id="cust_name" placeholder="Enter Customer Name" ></div>
+                </div>
+                <div class="form-row">
+                    <div class="cell-l"><label>Contact Details:</div>
+                    <div class="cell-r"><input type="text" name="contact" id="contact" placeholder="Enter Contact Number or Email" ></div>
+                </div>
+                <div class="form-row subheader" style="margin-top: 80px;"><span>Product Details</span></div>
+                <div class="form-row">
+                    <div class="cell-l">Product Code:</div>
+                    <div class="cell-r"><input type="text" name="product" id="product" placeholder="Enter Product Code *" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="cell-l">Images: </div>
+                    <div class="cell-r"><input type="file" name="files[]" id="files" class="file-input-large" multiple></div>
+                </div>
             </div>
-            <div id="watch" class="task watch w-tasks">
-                Watch Repair Tasks <button id="add-more-field-watch">Add Task</button><br>
+            <div class="r-div">
+                <div class="form-row">
+                    <div class="cell-l">Repair Type:</div>
+                    <div class="cell-r">
+                        <select name="type" id="type" required>
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="jewellery">Jewellery Repair</option>
+                            <option value="watch">Watch Repair</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="jewellery" class="task jewellery j-tasks">
+                    <div class="task-header">Jewellery Repair Tasks<button id="add-j"><i class="fa-solid fa-plus"></i></button></div>
+                    <div id="item-container-j"></div>
+                </div>
+                <div id="watch" class="task watch w-tasks">
+                    <div class="task-header">Watch Repair Tasks<button id="add-w"><i class="fa-solid fa-plus"></i></button></div>
+                    <div id="item-container-w"></div>
+                </div>
+                <div class="form-row">
+                    <button type="submit" id="submit" name="Submit" class="submit-btn">Submit</button>
+                </div>
             </div>
         </form>
     </div>

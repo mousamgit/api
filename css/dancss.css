@@ -105,3 +105,21 @@ body { font-family: 'Open Sans', sans-serif; }
     .producttable { width: 100%; }
     .product span { visibility:hidden; font-size:0px;}
   }
+
+  /* repair form */
+  .form-design { width: 80%; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); border-radius:5px; margin:0 auto; }
+  .form-design input, select { padding: 10px; width: 100%; border: 2px solid #D0D0D0; outline: 0; background-color:#f5f5f5; }
+  .form-design .j-tasks, .w-tasks { display: none; }
+  .form-design .form-row { display: block; margin-bottom:20px;}
+  .form-design .subheader { font-weight:700; font-size: 18px; border-bottom: 1px solid #333;}
+  .form-design .header { background-color: #ae1930; color: #ffffff; text-align: left; padding: 20px 25px; font-weight:700; font-size:28px;}
+  .form-design .cell-l { display: inline-block; width:30%; border-bottom:3px solid #fff; padding:10px 25px;  }
+  .form-design .cell-full { padding:10px 25px;  }
+  .form-design .cell-r { display: inline-block; width: 69%; }
+  .task-header { padding: 20px 25px; border-bottom:1px solid #333; margin-bottom: 30px; font-size: 20px; font-weight:700;}
+  .task button { background-color:#DA203D; padding: 5px; border-radius: 5px; color:#fff; border: 1px solid #ae1930; float:right;}
+  .form-design .l-div { width: 49%; float:left; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); padding:20px; }
+  .form-design .r-div { width: 49%; float:right; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); padding:20px; }
+  .select-design { padding: 10px; width: 90%; border: 0; border-bottom: 2px solid #333; outline: 0; background-color:#f5f5f5;}
+  .items-j, .items-w { margin-bottom:20px; }
+  .form-design .submit-btn { background-color: #ae1930; color: #ffffff; text-align: center; width:100%; font-weight:700; outline:0; border:0; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); padding: 20px 0px; font-size:22px; }
