@@ -67,7 +67,7 @@ include 'login_checking.php';
     echo '<tr>';
     foreach ($row as $colName => $val ) {
       $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-      if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
+      if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="https://pim.samsgroup.info/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
       elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
       else { 

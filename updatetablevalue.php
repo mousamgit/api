@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   updateValue('pim','sku',$sku,$colName,$value);
 
 
-  header("Location: /");
+  header("Location: https://pim.samsgroup.info/");
   exit();
 } else {
   // Handle invalid requests
