@@ -47,7 +47,6 @@ include 'login_checking.php';
 </div>
 
 <script>
-
 const callmyapp = myapp.mount('#app');
 </script>
 </body>

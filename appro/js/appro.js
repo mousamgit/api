@@ -25,18 +25,7 @@ const myapp = Vue.createApp({
 
             this.itemtotal ++;
         },
-        // updateindex(index){            
-        //     this.filterindex = index;
-        // },
-        // updatespec(value) {
-        //     this.itemcode = value;
-        // },
-        // updateprice(value) {
-        //     this.itemprice = value;
-        // },
-        // updatequantity(value){
-        //     this.itemquantity = value;
-        // },
+
     }
 });
 

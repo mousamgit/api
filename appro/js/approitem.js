@@ -1,3 +1,4 @@
+
 myapp.component('approitem', {
     props: {
         dataindex: {
@@ -9,6 +10,8 @@ myapp.component('approitem', {
             itemcode:'',
             itemprice:'',
             itemquantity:'',
+            searchQuery: '',
+            searchResults: [],
         };
     },
     mounted() {
@@ -21,6 +24,14 @@ myapp.component('approitem', {
   
 
         <div class="item-row" :key="dataindex">
+        <input type="text" v-model="searchQuery" @input="searchItems" required>
+        <div class="autofill">
+            <ul v-if="searchResults.length > 0">
+                <li v-for="result in searchResults" :key="result.id" @click="selectItem(result)">
+                    {{ result.sku }}
+                </li>
+            </ul>
+        </div>
         <label>Item Code:</label>
         <input type="text" name="items[][itemcode]" required>
         <label>Price:</label>
@@ -32,18 +43,19 @@ myapp.component('approitem', {
     `,
     methods: {
 
-        // updatespec(){
-        //     this.$emit('spec-changed', this.itemcode);
-        //     this.$emit('findindex', this);
-        // },
-        // updateprice(){
-        //     this.$emit('price-changed', this.itemprice);
-        //     this.$emit('findindex', this);
-        // },
-        // updatequantity(){
-        //     this.$emit('quantity-changed', this.itemquantity);
-        //     this.$emit('findindex', this);
-        // },
+        searchItems() {
+            axios.get('../searchsku.php', { params: { query: this.searchQuery } })
+                .then(response => {
+                    this.searchResults = response.data;
+                })
+                .catch(error => {
+                    console.error('Error searching items:', error);
+                });
+        },
+        selectItem(item) {
+            this.searchQuery = item.sku;
+            this.searchResults = []; // Clear search results
+        },
 
         removeItem() {
             // You can implement logic to remove the filter component
