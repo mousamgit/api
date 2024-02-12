@@ -12,6 +12,11 @@ myapp.component('approitem', {
             itemquantity:'',
             searchQuery: '',
             searchResults: [],
+            itemdetail: false,
+            price:0,
+            productname:'',
+            inputQuantity:0,
+            totalPrice:0,
         };
     },
     mounted() {
@@ -22,23 +27,22 @@ myapp.component('approitem', {
 
     template: /*html*/ `
   
-
-        <div class="item-row" :key="dataindex">
-        <input type="text" v-model="searchQuery" @input="searchItems" required>
-        <div class="autofill">
+    <div class="row item-row"  :key="dataindex">
+        <div class="cell">
+            <input type="text" v-model="searchQuery" @input="searchItems"  name="items[][itemcode]"  >
+            <div class="autofill">
             <ul v-if="searchResults.length > 0">
                 <li v-for="result in searchResults" :key="result.id" @click="selectItem(result)">
                     {{ result.sku }}
                 </li>
             </ul>
+            </div>
         </div>
-        <label>Item Code:</label>
-        <input type="text" name="items[][itemcode]" required>
-        <label>Price:</label>
-        <input type="text" name="items[][itemprice]" required>
-        <label>Quantity:</label>
-        <input type="text" name="items[][itemquantity]" required>
-        </div>
+        <div class="cell">{{ productname }}</div>
+        <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemprice]" v-model="this.price"  @input="calculateTotal"></div>
+        <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemquantity]" v-model="inputQuantity" @input="calculateTotal"></div>
+        <div class="cell">{{ totalPrice }}</div>
+    </div>
 
     `,
     methods: {
@@ -55,6 +59,9 @@ myapp.component('approitem', {
         selectItem(item) {
             this.searchQuery = item.sku;
             this.searchResults = []; // Clear search results
+            this.itemdetail = true;
+            this.price = item.wholesale_aud;
+            this.productname = item.product_title;
         },
 
         removeItem() {
@@ -63,6 +70,19 @@ myapp.component('approitem', {
             // this.$emit('findindex', this);
             // this.$emit('remove-filter');
             // console.log('index',this.dataindex);
+        },
+        calculateTotal: function() {
+            // Convert price and quantity to numbers
+            var inputprice = parseFloat(this.Price);
+            var quantity = parseFloat(this.inputQuantity);
+            
+            // Check if both price and quantity are valid numbers
+            if (!isNaN(inputprice) && !isNaN(quantity)) {
+                // Calculate total price
+                this.totalPrice = inputprice * quantity;
+            } else {
+                this.totalPrice = 0; // Reset total price if inputs are not valid numbers
+            }
         }
     }
 });
