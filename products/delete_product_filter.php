@@ -9,60 +9,31 @@ require_once('../connect_mousam.php');
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
 
+
 $deleteProductFilterQuery = "DELETE FROM product_filter WHERE id=" . $data['productDetId'];
-$filterCondition='where 1=1';
+
+$deleting_row = $con->query("select op_value,index_no from product_filter where id=".$data['productDetId']);
+
+if($deleting_row->num_rows >0)
+{
+    while ($d_value = $deleting_row->fetch_assoc()) {
+        $opvalue = $d_value['op_value'];$filterCondition='where 1=1';
+        $indexNo = $d_value['index_no'];
+    }
+    if($opvalue == 'OR')
+    {
+        $con->query("update product_filter set op_value ='OR' where product_id =". $data['productId']." and index_no > ".$indexNo." limit 1");
+    }
+}
 
 if ($con->query($deleteProductFilterQuery) === TRUE) {
-    $new_filter_data = $con->query("select * from product_filter where product_id =". $data['productId']);
-    if ($new_filter_data->num_rows > 1) {
-        while ($attribute_value = $new_filter_data->fetch_assoc()) {
-            if ($attribute_value["filter_type"] == "=") {
-                $filterCondition .= " ".$attribute_value['op_value'].' '.$attribute_value["attribute_name"].' = "'.$attribute_value['attribute_condition'].'"';
-            } elseif ($attribute_value["filter_type"] == "!=") {
-                $filterCondition .= " ".$attribute_value['op_value'].' '.$attribute_value["attribute_name"].' != "'.$attribute_value['attribute_condition'].'"';
-            }
-            elseif ($attribute_value["filter_type"] == ">") {
-                $filterCondition .= " ".$attribute_value['op_value'].' '.$attribute_value["attribute_name"].' > "'.$attribute_value['attribute_condition'].'"';
-            }
-            elseif ($attribute_value["filter_type"] == "<") {
-                $filterCondition .= " ".$attribute_value['op_value'].' '.$attribute_value["attribute_name"].' < "'.$attribute_value['attribute_condition'].'"';
-            }
-            elseif ($attribute_value["filter_type"] == "includes") {
-                $filterCondition .= " ".$attribute_value['op_value'].' '.$attribute_value["attribute_name"].' like "%'.$attribute_value['attribute_condition'].'%"';
-            } elseif ($attribute_value['filter_type'] == 'between') {
-                $filterCondition .= " ".$attribute_value['op_value']." ".$attribute_value['attribute_name']." between ".$attribute_value['range_from']." and ".$attribute_value['range_to']."";
-            } else {
-                $filterCondition .= " ".$attribute_value['op_value']." LENGTH(".$attribute_value['attribute_name'].") > 0";
-            }
+    $check_if_it_is_single_row = $con->query("select id,op_value from product_filter where product_id =". $data['productId']);
+    if($check_if_it_is_single_row->num_rows == 1)
+    {
+        while ($sing_row_data = $check_if_it_is_single_row->fetch_assoc()) {
+            $con->query("update product_filter set op_value ='AND' where id =" . $sing_row_data['id']);
         }
     }
-    elseif ($new_filter_data->num_rows ==1) {
-        $opval= 'AND';
-        while ($attribute_value = $new_filter_data->fetch_assoc()) {
-            $con->query("update product_filter set op_value =".$opval." where product_id=".$data['productId']);
-            if ($attribute_value["filter_type"] == "=") {
-                $filterCondition .= " ".$opval.' '.$attribute_value["attribute_name"].' = "'.$attribute_value['attribute_condition'].'"';
-            } elseif ($attribute_value["filter_type"] == "!=") {
-                $filterCondition .= " ".$opval.' '.$attribute_value["attribute_name"].' != "'.$attribute_value['attribute_condition'].'"';
-            }
-            elseif ($attribute_value["filter_type"] == ">") {
-                $filterCondition .= " ".$opval.' '.$attribute_value["attribute_name"].' > "'.$attribute_value['attribute_condition'].'"';
-            }
-            elseif ($attribute_value["filter_type"] == "<") {
-                $filterCondition .= " ".$opval.' '.$attribute_value["attribute_name"].' < "'.$attribute_value['attribute_condition'].'"';
-            }
-            elseif ($attribute_value["filter_type"] == "includes") {
-                $filterCondition .= " ".$opval.' '.$attribute_value["attribute_name"].' like "%'.$attribute_value['attribute_condition'].'%"';
-            } elseif ($attribute_value['filter_type'] == 'between') {
-                $filterCondition .= " ".$opval." ".$attribute_value['attribute_name']." between ".$attribute_value['range_from']." and ".$attribute_value['range_to']."";
-            } else {
-                $filterCondition .= " ".$opval." LENGTH(".$attribute_value['attribute_name'].") > 0";
-            }
-        }
-
-    }
-
-    $updateProduct = $con->query("update products set filter_condition='".$filterCondition."' where id =".$data['productId']);
     $success=true;
 } else {
     $success=false;

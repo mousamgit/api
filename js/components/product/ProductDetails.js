@@ -16,7 +16,8 @@ export default {
             itemsPerPage: 10,
             totalRows:0,
             columnValues:[],
-            showAttFilter:1
+            showAttFilter:1,
+            indexVal:-1
         };
     },
     mounted() {
@@ -199,8 +200,17 @@ export default {
             }
         },
 
-        async deleteFilter(productDetId,productId) {
+        async deleteFilter(productDetId,productId,indexVal) {
+
             try {
+                if(indexVal ==0)
+                {
+                    this.indexVal = productDetId;
+                }
+                else
+                {
+                    this.indexVal = -1;
+                }
                 // Display a confirmation dialog
                 const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
 
@@ -212,7 +222,8 @@ export default {
                         },
                         body: JSON.stringify({
                             productId: productId,
-                            productDetId: productDetId
+                            productDetId: productDetId,
+                            indexVal:this.indexVal
                         }),
                     });
                     const data = await response.json();
@@ -403,8 +414,10 @@ export default {
                                      
                                       <div class="row" v-for="(productDet,index) in productDetails" style="margin-bottom: 5px; !important">
                                       <span class="" v-if="showAttFilter==1">
-                                        <span v-if="productDet.op_value == 'OR'">
-                                         <a  class="btn btn-link" @click="addChannelCondition('AND','middle',productDet)" data-test-id="and" >
+                                         
+                                        <span v-if="productDet.op_value == 'OR' && productDet.id != productDetails[0].id">
+                                        
+                                         <a  class="btn btn-link" @click="addChannelCondition('AND','middle',productDetails[index-1])" data-test-id="and" >
                                           <strong>AND</strong>
                                          </a>
                                         </span>
@@ -424,7 +437,7 @@ export default {
                                                        
                                                     </div>
                                                     <div class="delete-icon position-absolute top-0 end-0" data-test-id="delete" >
-                                                        <a @click="deleteFilter(productDet.id,productDet.product_id)">
+                                                        <a @click="deleteFilter(productDet.id,productDet.product_id,index)">
                                                             <i class="btn btn-danger fas fa-trash-alt"></i>
                                                         </a>
                                                     </div>
@@ -450,7 +463,7 @@ export default {
                                                             </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-12" v-if="cAttribute.attribute!=''">
+                                                        <div class="col-md-12" v-if="cAttribute.attribute != ''">
                                                        
                                                         <div class="mb-3">
                                                          <template v-if="cAttribute.data_type == 'varchar'">                            
@@ -513,7 +526,7 @@ export default {
                                             </div>
                                                
                                                 <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
-                                                            <a  class="btn btn-link" @click="addChannelCondition('AND','normal',productDet=[])" data-test-id="and" >
+                                                            <a  class="btn btn-link" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and" >
                                                                 <strong>AND</strong>
                                                             </a>
                                                             <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or" >
