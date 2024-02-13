@@ -41,7 +41,7 @@ myapp.component('approitem', {
         <div class="cell">{{ productname }}</div>
         <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemprice]" v-model="this.price"  @input="calculateTotal"></div>
         <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemquantity]" v-model="inputQuantity" @input="calculateTotal"></div>
-        <div class="cell">{{ totalPrice }}</div>
+        <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemtotal]" :value="this.totalPrice" readonly></div>
     </div>
 
     `,
@@ -73,8 +73,9 @@ myapp.component('approitem', {
         },
         calculateTotal: function() {
             // Convert price and quantity to numbers
-            var inputprice = parseFloat(this.Price);
+            var inputprice = parseFloat(this.price);
             var quantity = parseFloat(this.inputQuantity);
+
             
             // Check if both price and quantity are valid numbers
             if (!isNaN(inputprice) && !isNaN(quantity)) {
@@ -83,6 +84,10 @@ myapp.component('approitem', {
             } else {
                 this.totalPrice = 0; // Reset total price if inputs are not valid numbers
             }
+            this.$emit('update-price', this.totalPrice);
+            this.$emit('update-qty', this.quantity);
+            this.$emit('update-index', this);
+
         }
     }
 });
