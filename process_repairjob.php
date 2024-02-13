@@ -79,13 +79,18 @@
             {
                 $tasks .= $val.",0 \n";
             }
+            if(!empty($job_number)){
+                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date') ";
+                $result = mysqli_query($con, $sql) or die(mysqli_error($con));
+                header("Location: https://pim.samsgroup.info/");
 
-            $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date') ";
-            $result = mysqli_query($con, $sql) or die(mysqli_error($con));
+            }
 
+
+            
             /*echo $job_number."<br>".$reference_number."<br>".$date."<br>".$cust_code."<br>".$cust_name."<br>".$contact."<br>".$product."<br>".$type."<br>Jewellery tasks: ".$jewellery_tasks."<br>"."<br>Watch tasks: ".$watch_tasks."<br>";*/
 
-
+            exit();
         ?>
     </body>
 </html>
