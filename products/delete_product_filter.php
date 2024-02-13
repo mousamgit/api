@@ -14,6 +14,7 @@ $deleteProductFilterQuery = "DELETE FROM product_filter WHERE id=" . $data['prod
 
 $deleting_row = $con->query("select op_value,index_no from product_filter where id=".$data['productDetId']);
 
+
 if($deleting_row->num_rows >0)
 {
     while ($d_value = $deleting_row->fetch_assoc()) {

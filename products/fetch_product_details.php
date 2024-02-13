@@ -1,132 +1,157 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-require_once('../connect_mousam.php');
 
+class ProductDetailHandler {
+    private $con;
+    private $productId;
+    private $itemsPerPage = 15;
 
+    public function __construct() {
+        // Error reporting
+        error_reporting(E_ALL);
+        ini_set('display_errors', '1');
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+        // Database connection
+        require_once('../connect_mousam.php');
+        $this->con = $con;
 
-// Getting the referring URL
-$currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+        // Getting the referring URL
+        $currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
-// parse_url to extract query parameters
-$urlParts = parse_url($currentUrl);
+        // parse_url to extract query parameters
+        $urlParts = parse_url($currentUrl);
+        parse_str($urlParts['query'] ?? '', $queryParameters);
 
-parse_str($urlParts['query'] ?? '', $queryParameters);
-
-// Extracting the channel_id parameter
-$productId = $queryParameters['id'] ?? 2;
-
-$page = $_GET['page'] ?? 1;
-$itemsPerPage = 15;
-$offset = ($page - 1) * $itemsPerPage;
-
-
-
-$products = [];
-$product_filter = [];
-$product_values = [];
-
-$product = $con->query("SELECT * FROM products where id=".$productId);
-
-
-if ($product->num_rows > 0) {
-    while ($row = $product->fetch_assoc()) {
-        $products[] = $row;
+        // Extracting the channel_id parameter
+        $this->productId = $queryParameters['id'] ?? 2;
     }
-}
 
-$product_filter_q = $con->query("SELECT * FROM product_filter where product_id=".$productId." order by index_no ASC");
+    public function getProductDetails() {
+        $products = $this->getProducts();
+        $productFilter = $this->getProductFilter();
+        $productValues = $this->getProductValues();
+        $totalRows = $this->getTotalRows();
+        $columnValuesRow = $this->getColumnValuesRow();
 
+        $this->con->close();
 
-if ($product_filter_q->num_rows > 0) {
-    while ($row = $product_filter_q->fetch_assoc()) {
-        $product_filter[] = $row;
+        header('Content-Type: application/json');
+        echo json_encode(['products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow]);
     }
-}
-$filter_fetch = $con->query("SELECT * FROM product_filter WHERE product_id=".$productId." ORDER BY index_no ASC");
-$filterConditions = array();
-$groupedConditions = array();
-$filterConditionCombined='';
-$where_value = '';
-if ($filter_fetch->num_rows > 0) {
-    $where_value = 'WHERE 1=1 AND';
-    while ($prev_attribute_value = $filter_fetch->fetch_assoc()) {
-        switch ($prev_attribute_value["filter_type"]) {
-            case "=":
-            case "!=":
-            case ">":
-            case "<":
-                $condition = $prev_attribute_value['attribute_name'] . ' ' . $prev_attribute_value["filter_type"] . ' "' . $prev_attribute_value['attribute_condition'] . '"';
-                break;
-            case "includes":
-                $condition = $prev_attribute_value['attribute_name'] . ' LIKE "%' . $prev_attribute_value['attribute_condition'] . '%"';
-                break;
-            case "between":
-                $condition = $prev_attribute_value['attribute_name'] . ' BETWEEN ' . $prev_attribute_value['range_from'] . ' AND ' . $prev_attribute_value['range_to'];
-                break;
-            default:
-                $condition = 'LENGTH(' . $prev_attribute_value['attribute_name'] . ') > 0';
-                break;
+
+    private function getProducts() {
+        $products = [];
+        $productQuery = $this->con->query("SELECT * FROM products where id=" . $this->productId);
+
+        if ($productQuery->num_rows > 0) {
+            while ($row = $productQuery->fetch_assoc()) {
+                $products[] = $row;
+            }
         }
 
-        if ($prev_attribute_value['op_value'] == 'OR') {
-            // If we encounter 'OR', group the conditions to the left and start a new grouping
-            $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
-            $groupedConditions = array($condition);
-        } else {
-            // Otherwise, add the condition to the current grouping
-            $groupedConditions[] = $condition;
-        }
+        return $products;
     }
 
-    // Add the last group of conditions
-    if (!empty($groupedConditions)) {
-        $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
-    }
+    private function getProductFilter() {
+        $productFilter = [];
+        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where product_id=" . $this->productId . " order by index_no ASC");
 
-    $filterCondition = implode(' OR ', $filterConditions);
-    $filterConditionCombined= $where_value.' '.$filterCondition;
-
-}
-if(empty($filterConditionCombined))
-{
-    $filterConditionCombined = 'where 1=1';
-}
-
-$column_values_row=['sku'];
-$column_values = 'sku';
-
-
-$check_if_columns = $con->query("select attribute_name from product_filter where product_id =".$productId);
-if ($check_if_columns->num_rows > 0) {
-    while ($row = $check_if_columns->fetch_assoc()) {
-        if(!in_array($row['attribute_name'], $column_values_row))
-        {
-            $column_values .= ','.$row['attribute_name'];
-            $column_values_row[] = $row['attribute_name'];
+        if ($productFilterQuery->num_rows > 0) {
+            while ($row = $productFilterQuery->fetch_assoc()) {
+                $productFilter[] = $row;
+            }
         }
 
+        return $productFilter;
+    }
+
+    private function getProductValues() {
+        $productValues = [];
+        $filterConditionCombined = $this->getFilterConditionCombined();
+        $columnValuesRow = $this->getColumnValuesRow();
+        $offset = (($_GET['page'] ?? 1) - 1) * $this->itemsPerPage;
+
+        $productDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != '' LIMIT $offset, $this->itemsPerPage");
+        if ($productDetailQuery->num_rows > 0) {
+            while ($row = $productDetailQuery->fetch_assoc()) {
+                $productValues[] = $row;
+            }
+        }
+
+        return $productValues;
+    }
+
+    private function getTotalRows() {
+        $totalRowsQuery = $this->con->query("select DISTINCT sku FROM pim " . $this->getFilterConditionCombined());
+        return $totalRowsQuery->num_rows;
+    }
+
+    private function getColumnValuesRow() {
+        $columnValuesRow = ['sku'];
+        $checkIfColumns = $this->con->query("select attribute_name from product_filter where product_id =" . $this->productId);
+
+        if ($checkIfColumns->num_rows > 0) {
+            while ($row = $checkIfColumns->fetch_assoc()) {
+                if (!in_array($row['attribute_name'], $columnValuesRow)) {
+                    $columnValuesRow[] = $row['attribute_name'];
+                }
+            }
+        }
+
+        return $columnValuesRow;
+    }
+
+    private function getFilterConditionCombined() {
+        $filterConditions = [];
+        $groupedConditions = [];
+        $filterConditionCombined = '';
+        $whereValue = 'WHERE 1=1 AND';
+        $filterFetch = $this->con->query("SELECT * FROM product_filter WHERE product_id=" . $this->productId . " ORDER BY index_no ASC");
+
+        if ($filterFetch->num_rows > 0) {
+            while ($prevAttributeValue = $filterFetch->fetch_assoc()) {
+                switch ($prevAttributeValue["filter_type"]) {
+                    case "=":
+                    case "!=":
+                    case ">":
+                    case "<":
+                        $condition = $prevAttributeValue['attribute_name'] . ' ' . $prevAttributeValue["filter_type"] . ' "' . $prevAttributeValue['attribute_condition'] . '"';
+                        break;
+                    case "includes":
+                        $condition = $prevAttributeValue['attribute_name'] . ' LIKE "%' . $prevAttributeValue['attribute_condition'] . '%"';
+                        break;
+                    case "between":
+                        $condition = $prevAttributeValue['attribute_name'] . ' BETWEEN ' . $prevAttributeValue['range_from'] . ' AND ' . $prevAttributeValue['range_to'];
+                        break;
+                    default:
+                        $condition = 'LENGTH(' . $prevAttributeValue['attribute_name'] . ') > 0';
+                        break;
+                }
+
+                if ($prevAttributeValue['op_value'] == 'OR') {
+                    $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
+                    $groupedConditions = [$condition];
+                } else {
+                    $groupedConditions[] = $condition;
+                }
+            }
+
+            if (!empty($groupedConditions)) {
+                $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
+            }
+
+            $filterCondition = implode(' OR ', $filterConditions);
+            $filterConditionCombined = $whereValue . ' ' . $filterCondition;
+        }
+
+        if (empty($filterConditionCombined)) {
+            $filterConditionCombined = 'WHERE 1=1';
+        }
+        $filterConditionCombined = str_replace("AND () OR", "AND", $filterConditionCombined);
+        return $filterConditionCombined;
     }
 }
-$product_detail_querys = $con->query("SELECT DISTINCT " .$column_values." FROM pim " .$filterConditionCombined." AND sku !='' LIMIT $offset,$itemsPerPage");
 
-$total_rows_q= $con->query("select DISTINCT sku FROM pim " .$filterConditionCombined);
+$productDetailHandler = new ProductDetailHandler();
+$productDetailHandler->getProductDetails();
 
-$total_rows=$total_rows_q->num_rows;
-
-
-if ($product_detail_querys->num_rows > 0) {
-    while ($row = $product_detail_querys->fetch_assoc()) {
-        $product_values[] = $row;
-    }
-}
-
-
-$con->close();
-
-header('Content-Type: application/json');
-echo json_encode(['products'=>$products,'product_details'=>$product_filter,'product_values'=>$product_values,'total_rows'=>$total_rows,'column_values_row'=>$column_values_row]);
 ?>
