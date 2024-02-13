@@ -18,7 +18,13 @@
             /* Posted Values to Variables */
             if(isset($_POST['repair_number'])) $repair_number=$_POST['repair_number'];
             if(isset($_POST['reference_number'])) $reference_number=$_POST['reference_number'];
-            if(isset($_POST['reference_number'])) $reference_number=$_POST['reference_number'];
+            if(isset($_POST['cust_code'])) $cust_code=$_POST['cust_code'];
+            if(isset($_POST['cust_name'])) $cust_name=$_POST['cust_name'];
+            if(isset($_POST['contact'])) $contact=$_POST['contact'];
+            if(isset($_POST['product'])) $product=$_POST['product'];
+            if(isset($_POST['type'])) $type=$_POST['type'];
+            if(isset($_POST['jewellery-tasks'])) $jewellery_tasks=$_POST['jewellery-tasks'];
+            if(isset($_POST['watch-tasks'])) $watch_tasks=$_POST['watch-tasks'];
 
             /* Check Files Uploaded */
             if(isset($_POST['Submit'])){ 
@@ -63,6 +69,7 @@
                 echo "<li>".$val."</li>";
             }
 
+            echo $repair_number."<br>".$reference_number."<br>".$cust_code."<br>".$cust_name."<br>".$contact."<br>".$product."<br>".$type."<br>Jewellery tasks: ".$jewellery_tasks."<br>"."<br>Watch tasks: ".$watch_tasks."<br>";
 
 
         ?>
