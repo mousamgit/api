@@ -16,8 +16,9 @@
         <?php include 'topbar.php'; ?>
         <?php
             /* Posted Values to Variables */
-            if(isset($_POST['repair_number'])) $repair_number=$_POST['repair_number'];
+            if(isset($_POST['job_number'])) $job_number=$_POST['job_number'];
             if(isset($_POST['reference_number'])) $reference_number=$_POST['reference_number'];
+            if(isset($_POST['due_date'])) $date=$_POST['due_date'];
             if(isset($_POST['cust_code'])) $cust_code=$_POST['cust_code'];
             if(isset($_POST['cust_name'])) $cust_name=$_POST['cust_name'];
             if(isset($_POST['contact'])) $contact=$_POST['contact'];
@@ -64,12 +65,25 @@
                     }
                 }
             }
+            $images = "";
             foreach ($uploaded_files as $key=>$val)
             {
-                echo "<li>".$val."</li>";
+                $images .= $val.",";
             }
 
-            echo $repair_number."<br>".$reference_number."<br>".$cust_code."<br>".$cust_name."<br>".$contact."<br>".$product."<br>".$type."<br>Jewellery tasks: ".$jewellery_tasks."<br>"."<br>Watch tasks: ".$watch_tasks."<br>";
+            $tasks = "";
+            if($type == "jewellery"){ $tasks1 = $jewellery_tasks; }
+            else { $tasks1 = $watch_tasks; }
+
+            foreach ($tasks1 as $key=>$val)
+            {
+                $tasks .= $val.",0 \n";
+            }
+
+            $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date') ";
+            $result = mysqli_query($con, $sql) or die(mysqli_error($con));
+
+            /*echo $job_number."<br>".$reference_number."<br>".$date."<br>".$cust_code."<br>".$cust_name."<br>".$contact."<br>".$product."<br>".$type."<br>Jewellery tasks: ".$jewellery_tasks."<br>"."<br>Watch tasks: ".$watch_tasks."<br>";*/
 
 
         ?>

@@ -12,7 +12,7 @@
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
         <script>
-           $(function() {
+            $(function() {
                 $('#type').change(function(){
                     $('.task').hide();
                     $('#' + $(this).val()).show();
@@ -21,64 +21,30 @@
                 }
                  });
             });
-            window.addEventListener("DOMContentLoaded", ()=>{
-                let i=1;
-                let template_j = `<div class="items-j"><select name="jewellery-tasks[]" id="jewellery-task" class="select-design" required> 
-                                    <option value="" disabled selected>Select a task</option>
-                                    <option value="plating">Plating (Rhodium/Gold)</option>
-                                    <option value="reshank">Re-Shank</option>
-                                    <option value="resize_under_3">Resize 1-3 Finger Sizes</option>
-                                    <option value="resize_more_3">Resize more than 3+ Finger Sizes</option>
-                                    <option value="set_stone">Set/Reset Stone</option>
-                                </select><button class="remove">X</button></div>`; 
-                let template_w = `<div class="items-w"><select name="watch-tasks[]" id="watch-task" class="select-design" required>
-                                    <option value="" disabled selected>Select a task</option>
-                                    <option value="battery replacement">Battery Replacement</option>
-                                    <option value="bracelet or strap replacement">Bracelet or Strap Replacement</option>
-                                    <option value="new case">New Case</option>
-                                    <option value="new crown">New Case & Band</option>
-                                    <option value="new clasp">New Clasp</option>
-                                    <option value="new crown">New Crown</option>
-                                    <option value="new dial">New Dial</option>
-                                    <option value="new glass">New Glass</option>
-                                    <option value="new hands">New Hands</option>
-                                    <option value="new pin screw band">New Pin or Screw for Band</option>
-                                    <option value="new stem crown">New Stem & Crown</option>
-                                    <option value="new movement">New Movement</option>
-                                    <option value="pressure test">Pressure Test</option>
-                                    <option value="overhaul">Overhaul</option>
-                                    <option value="service">Service</option>
-                                </select><button class="remove">X</button></div>`;
-                let add_j = document.getElementById("add-j");
-                let items_j = document.getElementById("item-container-j");
-                let add_w = document.getElementById("add-w");
-                let items_w = document.getElementById("item-container-w");
-            
-                add_j.addEventListener("click", ()=>{
-                    if(i >= 10){
-                        alert("Maximum Limit Reached");
-                    }else{
-                        ++i;
-                        items_j.innerHTML += template_j;
-                    }
+            $(document).ready(function(){
+                var addButton = $('.add_button'); //Add button selector for jewellery
+                var addButtonw = $('.add_buttonw'); //Add button selector for watches
+                var wrapper = $('.item-container-j'); //Input field wrapper for jewellery
+                var wrapperW = $('.item-container-w');
+                var fieldJ = '<div class="items-j"><select name="jewellery-tasks[]" id="jewellery-task" class="select-design" required><option value="" disabled selected>Select a task</option><option value="plating">Plating (Rhodium/Gold)</option><option value="reshank">Re-Shank</option><option value="resize_under_3">Resize 1-3 Finger Sizes</option><option value="resize_more_3">Resize more than 3+ Finger Sizes</option><option value="set_stone">Set/Reset Stone</option></select><button class="remove_button">X</button></div>'; //New input field html 
+                var fieldW = '<div class="items-w"><select name="watch-tasks[]" id="watch-task" class="select-design" required> <option value="" disabled selected>Select a task</option><option value="battery replacement">Battery Replacement</option><option value="bracelet or strap replacement">Bracelet or Strap Replacement</option><option value="new case">New Case</option><option value="new crown">New Case & Band</option><option value="new clasp">New Clasp</option><option value="new crown">New Crown</option><option value="new dial">New Dial</option><option value="new glass">New Glass</option><option value="new hands">New Hands</option><option value="new pin screw band">New Pin or Screw for Band</option><option value="new stem crown">New Stem & Crown</option><option value="new movement">New Movement</option><option value="pressure test">Pressure Test</option><option value="overhaul">Overhaul</option><option value="service">Service</option></select><button class="remove_button">X</button></div>';
+                
+                // Once add button is clicked
+                $(addButton).click(function(){ $(wrapper).append(fieldJ); //Add field html 
                 });
-                add_w.addEventListener("click", ()=>{
-                    if(i >= 10){
-                        alert("Maximum Limit Reached");
-                    }else{
-                        ++i;
-                        items_w.innerHTML += template_w;
-                    }
+                $(addButtonw).click(function(){ $(wrapperW).append(fieldW); //Add field html 
                 });
-            
-                document.body.addEventListener("click", (e)=>{
-                    const target = e.target;
-                    if(target.classList.contains("remove")){
-                        target.parentNode.remove();
-                    }
+                
+                // Once remove button is clicked
+                $(wrapper).on('click', '.remove_button', function(e){
+                    e.preventDefault();
+                    $(this).parent('div').remove(); //Remove field html
                 });
-            })
-
+                $(wrapperW).on('click', '.remove_button', function(e){
+                    e.preventDefault();
+                    $(this).parent('div').remove(); //Remove field html
+                });
+            });
         </script>
     </head>
     <body>
@@ -90,11 +56,15 @@
                 <div class="form-row subheader">Job Details</div>
                 <div class="form-row">
                     <div class="cell-l">Job Number:</div> 
-                    <div class="cell-r"><input type="text" name="repair_number" id="repair_number" placeholder="Enter a Repair Number *" required></div>
+                    <div class="cell-r"><input type="text" name="job_number" id="job_number" placeholder="Enter a Repair Number *" required></div>
                 </div>
                 <div class="form-row">
                     <div class="cell-l">Customer Reference:</div> 
                     <div class="cell-r"><input type="text" name="reference_number" id="reference_number" placeholder="Enter a Reference Number"></div>
+                </div>
+                <div class="form-row">
+                    <div class="cell-l">Due Date:</div> 
+                    <div class="cell-r"><input type="date" name="due_date" id="due_date" placeholder="DD/MM/YYYY *" required></div>
                 </div>
                 <div class="form-row subheader" style="margin-top: 80px;"><span>Customer Details</span></div>
                 <div class="form-row">
@@ -131,12 +101,12 @@
                     </div>
                 </div>
                 <div id="jewellery" class="task jewellery j-tasks">
-                    <div class="task-header">Jewellery Repair Tasks<button id="add-j"><i class="fa-solid fa-plus"></i></button></div>
-                    <div id="item-container-j"></div>
+                    <div class="task-header">Jewellery Repair Tasks<button class="add_button"><i class="fa-solid fa-plus"></i></button></div>
+                    <div id="item-container-j" class="item-container-j"></div>
                 </div>
                 <div id="watch" class="task watch w-tasks">
-                    <div class="task-header">Watch Repair Tasks<button id="add-w"><i class="fa-solid fa-plus"></i></button></div>
-                    <div id="item-container-w"></div>
+                    <div class="task-header">Watch Repair Tasks<button class="add_buttonw"><i class="fa-solid fa-plus"></i></button></div>
+                    <div id="item-container-w" class="item-container-w"></div>
                 </div>
                 <div class="form-row">
                     <button type="submit" id="submit" name="Submit" class="submit-btn">Submit</button>
