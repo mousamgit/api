@@ -7,7 +7,7 @@ require('connect.php');
 $searchQuery = $_GET['query'];
 
 // Prepare and execute SQL query to search for items in the database
-$sql = "SELECT sku FROM pim WHERE sku LIKE '%$searchQuery%'";
+$sql = "SELECT sku, wholesale_aud, product_title FROM pim WHERE sku LIKE '%$searchQuery%'";
 $result = $con->query($sql);
 
 // Store results in an array

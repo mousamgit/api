@@ -19,6 +19,24 @@ a{cursor: pointer; text-decoration: none;}
     color: #222;
     background-color: #fff;
 }
+.table {  display: table;  width: 100%;  border-collapse: collapse;  border-spacing: 0;}
+
+.row {  display: table-row;}
+
+.cell {  display: table-cell;  }
+
+.itemtable .firstrow {  font-weight: bold;  background-color: #f2f2f2;  color: #333;  border-bottom: 1px solid #ddd;}
+.itemtable .cell{padding: 12px;  border: 1px solid #ddd; width:20%;}
+
+.itemtable .cell:nth-child(odd) {  background-color: #f9f9f9;}
+
+.itemtable .cell:hover {  background-color: #f0f0f0;}
+
+.cell:first-child {  border-left: none;}
+
+.cell:last-child {  border-right: none;}
+
+.row:last-child .cell {  border-bottom: none;}
 
 .hidden{display: none;}
 .pim-padding{padding:10px 100px;}
@@ -310,7 +328,12 @@ header a{ color:#fff}
 
   #sirv360 .sirv-spin-container{ aspect-ratio: 1 / 1; height:unset!important;}
   #sirv360 .sirv-controls {    position: absolute;    bottom: 80px;    width: 100%;    padding: 0 70px;}
-  
+  .item-row{margin-bottom:20px;}
+  .item-row input{ margin-left:5px; margin-right:20px;}
+  .item-row .autofill{position: absolute;    background: #fff;  margin-left: 80px;     border-radius: 10px;    margin-top: 5px; box-shadow:0 0 10px -5px; padding:20px 0;}
+  .item-row .autofill ul{list-style: none; padding:0px;}
+  .item-row .autofill ul li{padding: 5px 20px; cursor: pointer;}
+  .item-row .autofill ul li:hover{background-color: #e1e1e1; }
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}
