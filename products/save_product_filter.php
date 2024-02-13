@@ -23,24 +23,19 @@ parse_str($urlParts['query'] ?? '', $queryParameters);
 $productId = $queryParameters['id'] ?? 2;
 
 
-            $filterCondition = "where 1=1";
-            $check_if_filter_exists = $con->query("select filter_condition from products where id =".$productId);
-            $op_value='AND';
+$filterCondition = "where 1=1";
+$check_if_filter_exists = $con->query("select filter_condition from products where id =".$productId);
+$op_value='AND';
 
-            if ($check_if_filter_exists->num_rows > 0) {
-                while ($row = $check_if_filter_exists->fetch_assoc()) {
-                    if($row['filter_condition'] != '')
-                    {
-                        $filterCondition = $row['filter_condition'];
-                    }
-                }
-            }
+if ($check_if_filter_exists->num_rows > 0) {
+ while ($row = $check_if_filter_exists->fetch_assoc()) {
+    if($row['filter_condition'] != '')
+      {
+       $filterCondition = $row['filter_condition'];
+      }
+    }
+ }
 
-//
-//         foreach ($data["attribute"] as $key => $attribute_value) {
-//
-//
-//        }
         $PfilterCondition='';
         foreach ($data["attribute"] as $key => $attribute_value) {
             $attribute_name = $attribute_value['attribute_name'];
@@ -58,11 +53,22 @@ $productId = $queryParameters['id'] ?? 2;
             } else {
                 $attribute_condition = '';
             }
-            $sql = "INSERT INTO product_filter (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`) 
-                VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type','$operator')";
+
+            $indexNo=1;
+            if(count($attribute_value['previous_row'])>0)
+            {
+            $indexNo = intval($attribute_value['previous_row']['index_no']) + 1;
+            }
+            $sql = "INSERT INTO product_filter (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`) 
+                VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type','$operator','$indexNo')";
 
             if($con->query($sql) == TRUE)
             {
+                if(!($attribute_value['condition_type'] =='group' || $attribute_value['condition_type'] =='normal')) {
+                    $update_product_filter = "update product_filter set index_no=index_no+1 where index_no>=" . $indexNo . " and id !=" . $con->insert_id;
+                    $con->query($update_product_filter);
+                }
+
                     if($attribute_value['condition_type'] == 'normal')
                     {
                         if ($attribute_value["filter_type"] == "=") {
@@ -86,76 +92,56 @@ $productId = $queryParameters['id'] ?? 2;
                             $filterCondition .= " ".$attribute_value['operator']." LENGTH(".$attribute_value['attribute_name'].") > 0";
                         }
                     }
-                    elseif ($attribute_value['condition_type'] == 'group')
+                    else
                     {
                     $insert_id=$con->insert_id;
                     $productId= $attribute_value['previous_row']['product_id'];
-                    $previous_filters = $con->query("select * from product_filter where product_id=".$productId." and id <".$insert_id);
-                    $next_filters_q = $con->query("select * from product_filter where product_id=".$productId." and id >=".$insert_id);
+                    $filters = $con->query("select * from product_filter where product_id=".$productId." order by index_no");
+                    if ($filters->num_rows > 0) {
+                        $first_and_iteration = true;
+                        $filterCondition ='where 1=1 ';
+                        while ($prev_attribute_value = $filters->fetch_assoc()) {
 
-                    if ($previous_filters->num_rows > 0) {
-                        $filterCondition ='where 1=1 AND (1=1';
-                        while ($prev_attribute_value = $previous_filters->fetch_assoc()) {
+                            if($prev_attribute_value['op_value'] == 'OR')
+                            {
+                                $operator_value = ') OR (1=1 AND';
+                            }
+                            else
+                            {
+                                if($first_and_iteration == true)
+                                {
+                                    $operator_value = 'AND  (1=1 AND';
+                                    $first_and_iteration=false;
+                                }
+                                else{
+                                    $operator_value = ' AND ';
+                                }
+
+
+                            }
                             if ($prev_attribute_value["filter_type"] == "=") {
-                                $filterCondition .= " ".$prev_attribute_value['op_value'].' '.$prev_attribute_value["attribute_name"].' = "'.$prev_attribute_value['attribute_condition'].'"';
+                                $filterCondition .= " ".$operator_value.' '.$prev_attribute_value["attribute_name"].' = "'.$prev_attribute_value['attribute_condition'].'"';
                             } elseif ($prev_attribute_value["filter_type"] == "!=") {
-                                $filterCondition .= " ".$prev_attribute_value['op_value'].' '.$prev_attribute_value["attribute_name"].' != "'.$prev_attribute_value['attribute_condition'].'"';
+                                $filterCondition .= " ".$operator_value.' '.$prev_attribute_value["attribute_name"].' != "'.$prev_attribute_value['attribute_condition'].'"';
                             }
                             elseif ($prev_attribute_value["filter_type"] == ">") {
-                                $filterCondition .= " ".$prev_attribute_value['op_value'].' '.$prev_attribute_value["attribute_name"].' > "'.$prev_attribute_value['attribute_condition'].'"';
+                                $filterCondition .= " ".$operator_value.' '.$prev_attribute_value["attribute_name"].' > "'.$prev_attribute_value['attribute_condition'].'"';
                             }
                             elseif ($prev_attribute_value["filter_type"] == "<") {
-                                $filterCondition .= " ".$prev_attribute_value['op_value'].' '.$prev_attribute_value["attribute_name"].' < "'.$prev_attribute_value['attribute_condition'].'"';
+                                $filterCondition .= " ".$operator_value.' '.$prev_attribute_value["attribute_name"].' < "'.$prev_attribute_value['attribute_condition'].'"';
                             }
                             elseif ($prev_attribute_value["filter_type"] == "includes") {
-                                $filterCondition .= " ".$prev_attribute_value['op_value'].' '.$prev_attribute_value["attribute_name"].' like "%'.$prev_attribute_value['attribute_condition'].'%"';
+                                $filterCondition .= " ".$operator_value.' '.$prev_attribute_value["attribute_name"].' like "%'.$prev_attribute_value['attribute_condition'].'%"';
                             } elseif ($prev_attribute_value['filter_type'] == 'between') {
-                                $filterCondition .= " ".$prev_attribute_value['op_value']." ".$prev_attribute_value['attribute_name']." between ".$prev_attribute_value['range_from']." and ".$prev_attribute_value['range_to']."";
+                                $filterCondition .= " ".$operator_value." ".$prev_attribute_value['attribute_name']." between ".$prev_attribute_value['range_from']." and ".$prev_attribute_value['range_to']."";
                             } else {
-                                $filterCondition .= " ".$prev_attribute_value['op_value']." LENGTH(".$prev_attribute_value['attribute_name'].") > 0";
+                                $filterCondition .= " ".$operator_value." LENGTH(".$prev_attribute_value['attribute_name'].") > 0";
                             }
                         }
                         $filterCondition.=') ';
                     }
-
-                        if ($next_filters_q->num_rows > 0) {
-                            $filterCondition .= $operator;
-                            $filterCondition .=' (1=1 ';
-                            while ($next_filters = $next_filters_q->fetch_assoc()) {
-                                $next_filters_operator=$next_filters['op_value'];
-                                if($next_filters['id']==$insert_id)
-                                {
-                                    $next_filters_operator = 'AND';
-                                }
-                                if ($next_filters["filter_type"] == "=") {
-                                    $filterCondition .= " ".$next_filters_operator.' '.$next_filters["attribute_name"].' = "'.$next_filters['attribute_condition'].'"';
-                                } elseif ($next_filters["filter_type"] == "!=") {
-                                    $filterCondition .= " ".$next_filters_operator.' '.$next_filters["attribute_name"].' != "'.$next_filters['attribute_condition'].'"';
-                                }
-                                elseif ($next_filters["filter_type"] == ">") {
-                                    $filterCondition .= " ".$next_filters_operator.' '.$next_filters["attribute_name"].' > "'.$next_filters['attribute_condition'].'"';
-                                }
-                                elseif ($next_filters["filter_type"] == "<") {
-                                    $filterCondition .= " ".$next_filters_operator.' '.$next_filters["attribute_name"].' < "'.$next_filters['attribute_condition'].'"';
-                                }
-                                elseif ($next_filters["filter_type"] == "includes") {
-                                    $filterCondition .= " ".$next_filters_operator.' '.$next_filters["attribute_name"].' like "%'.$next_filters['attribute_condition'].'%"';
-                                } elseif ($next_filters['filter_type'] == 'between') {
-                                    $filterCondition .= " ".$next_filters_operator." ".$next_filters['attribute_name']." between ".$next_filters['range_from']." and ".$next_filters['range_to']."";
-                                } else {
-                                    $filterCondition .= " ".$next_filters_operator." LENGTH(".$next_filters['attribute_name'].") > 0";
-                                }
-                            }
-                            $filterCondition.=') ';
-                        }
-                }
+                    }
             }
-
-
-//            if ($con->query($sql) === FALSE) {
-//                $success = false;
-//                break;
-//            }
 
         }
         $sql2 = "update products set filter_condition ='".$filterCondition."' where id =".$productId;

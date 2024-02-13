@@ -3,6 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 require_once('../connect_mousam.php');
 
+
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
@@ -36,7 +38,7 @@ if ($product->num_rows > 0) {
     }
 }
 
-$product_filter_q = $con->query("SELECT * FROM product_filter where product_id=".$productId);
+$product_filter_q = $con->query("SELECT * FROM product_filter where product_id=".$productId." order by index_no ASC");
 
 
 if ($product_filter_q->num_rows > 0) {
@@ -44,17 +46,56 @@ if ($product_filter_q->num_rows > 0) {
         $product_filter[] = $row;
     }
 }
-$filter_where_value='';
-$filter_condition = $con->query("SELECT filter_condition FROM products where id=".$productId);
-if ($filter_condition->num_rows > 0) {
-    while ($row = $filter_condition->fetch_assoc()) {
-        $filter_where_value = $row['filter_condition'];
+$filter_fetch = $con->query("SELECT * FROM product_filter WHERE product_id=".$productId." ORDER BY index_no ASC");
+$filterConditions = array();
+$groupedConditions = array();
+$filterConditionCombined='';
+$where_value = '';
+if ($filter_fetch->num_rows > 0) {
+    $where_value = 'WHERE 1=1 AND';
+    while ($prev_attribute_value = $filter_fetch->fetch_assoc()) {
+        switch ($prev_attribute_value["filter_type"]) {
+            case "=":
+            case "!=":
+            case ">":
+            case "<":
+                $condition = $prev_attribute_value['attribute_name'] . ' ' . $prev_attribute_value["filter_type"] . ' "' . $prev_attribute_value['attribute_condition'] . '"';
+                break;
+            case "includes":
+                $condition = $prev_attribute_value['attribute_name'] . ' LIKE "%' . $prev_attribute_value['attribute_condition'] . '%"';
+                break;
+            case "between":
+                $condition = $prev_attribute_value['attribute_name'] . ' BETWEEN ' . $prev_attribute_value['range_from'] . ' AND ' . $prev_attribute_value['range_to'];
+                break;
+            default:
+                $condition = 'LENGTH(' . $prev_attribute_value['attribute_name'] . ') > 0';
+                break;
+        }
+
+        if ($prev_attribute_value['op_value'] == 'OR') {
+            // If we encounter 'OR', group the conditions to the left and start a new grouping
+            $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
+            $groupedConditions = array($condition);
+        } else {
+            // Otherwise, add the condition to the current grouping
+            $groupedConditions[] = $condition;
+        }
     }
+
+    // Add the last group of conditions
+    if (!empty($groupedConditions)) {
+        $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
+    }
+
+    $filterCondition = implode(' OR ', $filterConditions);
+    $filterConditionCombined= $where_value.' '.$filterCondition;
+
 }
-if($filter_where_value == '')
+if(empty($filterConditionCombined))
 {
-    $filter_where_value = 'where 1=1';
+    $filterConditionCombined = 'where 1=1';
 }
+
 $column_values_row=['sku'];
 $column_values = 'sku';
 
@@ -70,11 +111,9 @@ if ($check_if_columns->num_rows > 0) {
 
     }
 }
+$product_detail_querys = $con->query("SELECT DISTINCT " .$column_values." FROM pim " .$filterConditionCombined." AND sku !='' LIMIT $offset,$itemsPerPage");
 
-$product_detail_querys = $con->query("SELECT DISTINCT " .$column_values." FROM pim " .$filter_where_value." AND sku !='' LIMIT $offset,$itemsPerPage");
-
-$total_rows_q= $con->query("select DISTINCT sku FROM pim " .$filter_where_value);
-
+$total_rows_q= $con->query("select DISTINCT sku FROM pim " .$filterConditionCombined);
 
 $total_rows=$total_rows_q->num_rows;
 
@@ -84,6 +123,7 @@ if ($product_detail_querys->num_rows > 0) {
         $product_values[] = $row;
     }
 }
+
 
 $con->close();
 

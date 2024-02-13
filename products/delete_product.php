@@ -28,8 +28,6 @@ if ($con->query($deleteProductQuery) === TRUE ) {
 }
 
 
-
-
 // Close the database connection
 $con->close();
 ?>
