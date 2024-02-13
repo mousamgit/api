@@ -45,7 +45,14 @@ include 'login_checking.php';
                 <div class="cell">Qty</div>
                 <div class="cell">Total</div>
             </div>
-            <approitem v-for="(item, index) in items" :key="index" ></approitem>
+            <approitem v-for="(item, index) in items" :key="index" @update-qty="updateqty" @update-price="updateprice" @update-index="updateindex"></approitem>
+            <div class="row">
+                <div class="cell">Total</div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"><input type="text" id="totalqty" name="totalqty"></div>
+                <div class="cell"><input type="text" id="totalprice" name="totalprice"></div>
+            </div>
 
         </div>
 

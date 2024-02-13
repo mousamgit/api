@@ -21,9 +21,9 @@ a{cursor: pointer; text-decoration: none;}
 }
 .table {  display: table;  width: 100%;  border-collapse: collapse;  border-spacing: 0;}
 
-.row {  display: table-row;}
+.table .row {  display: table-row;}
 
-.cell {  display: table-cell;  }
+.table .cell {  display: table-cell;  }
 
 .itemtable .firstrow {  font-weight: bold;  background-color: #f2f2f2;  color: #333;  border-bottom: 1px solid #ddd;}
 .itemtable .cell{padding: 12px;  border: 1px solid #ddd; width:20%;}
@@ -36,7 +36,7 @@ a{cursor: pointer; text-decoration: none;}
 
 .cell:last-child {  border-right: none;}
 
-.row:last-child .cell {  border-bottom: none;}
+.table .row:last-child .cell {  border-bottom: none;}
 
 .hidden{display: none;}
 .pim-padding{padding:10px 100px;}
