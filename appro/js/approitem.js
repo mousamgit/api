@@ -84,9 +84,10 @@ myapp.component('approitem', {
             } else {
                 this.totalPrice = 0; // Reset total price if inputs are not valid numbers
             }
-            this.$emit('update-price', this.totalPrice);
-            this.$emit('update-qty', this.quantity);
             this.$emit('update-index', this);
+            this.$emit('update-qty', quantity);
+            this.$emit('update-price', this.totalPrice);
+            
 
         }
     }

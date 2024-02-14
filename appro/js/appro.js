@@ -9,9 +9,6 @@ const myapp = Vue.createApp({
             itemcode:'',
             itemprice:0,
             itemquantity:0,
-            itemindex:'',
-            totalQuantity: 0,
-            totalPrice: 0,
         };
     },
     methods: {
@@ -23,32 +20,33 @@ const myapp = Vue.createApp({
             this.items.push(itemApp.component('approitem'));
             this.itemarray.push({ itemcode: this.itemcode, itemprice: this.itemprice, itemquantity: this.itemquantity });
             // console.log('item:'+ JSON.stringify(this.itemarray));
-        
+            
             itemApp.mount(); // Mount the component (this is required to create a new instance)
 
             this.itemtotal ++;
         },
+        updateindex(value){
+            this.itemindex  = value;
+            },
         updateqty(value){
-            this.itemquantity = value;
+            this.itemarray[this.itemindex].itemquantity = value;
+            // console.log('updateqty'+this.itemarray[this.itemindex].itemquantity+'index'+this.itemindex);
+            // console.log('updateitem:'+ JSON.stringify(this.itemarray));
         },
-        updateqty(value){
-            this.itemquantity = value;
-        },
-        updateqty(value){
-            this.itemquantity = value;
+        updateprice(value){
+            this.itemarray[this.itemindex].itemprice = value;
         },
 
     },
-    // watch:{
-    //     itemprice(){
-    //         this.filterarray.itemprice = this.itemprice;
-    //     },
-    //     itemquantity(){
-           
-    //         this.filterarray.itemquantity = this.itemquantity;
-    //         console.log('updateqty', this.filterarray.itemquantity);
-    //     },
-    // },
+    computed: {
+        totalQuantity() {
+            return this.itemarray.reduce((acc, item) => acc + parseInt(item.itemquantity), 0);
+        },
+        totalPrice() {
+            return this.itemarray.reduce((acc, item) => acc + parseInt(item.itemprice), 0);
+        },     
+      },
+
 
 });
 

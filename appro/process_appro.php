@@ -11,6 +11,8 @@ $orderNumber = $_POST['order_number'];
 $representation = $_POST['representation'];
 $dateEntered = $_POST['date_entered'];
 $dueDate = $_POST['due_date'];
+$totalQuantity = $_POST['total_quantity'];
+$totalPrice = $_POST['total_price'];
 
 // Process items
 $items = $_POST['items']; // This will be an array of item arrays
@@ -23,7 +25,7 @@ $serializedItems = serialize($items);
 // Execute your database insert query here, including the serialized items
 
 
-$approsql = " INSERT into appro (appro,customer,dateentered,datedue,ordernumber,representation,items) VALUES ('$approID','$customerName','$dateEntered','$dueDate','$orderNumber','$representation','$serializedItems')";
+$approsql = " INSERT into appro (appro,customer,dateentered,datedue,ordernumber,representation,items,totalquantity,totalprice) VALUES ('$approID','$customerName','$dateEntered','$dueDate','$orderNumber','$representation','$serializedItems','$totalQuantity','$totalPrice')";
 
 $approresult = mysqli_query($con,$approsql) or die(mysqli_error($con)); 
 echo "New record created successfully";
