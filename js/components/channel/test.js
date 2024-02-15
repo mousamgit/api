@@ -1,6 +1,6 @@
 <?php
 
-require_once('connect_mousam.php');
+require_once('connect.php');
 // Get the channel_id from the URL
 $channelId = isset($_GET['channel_id']) ? $_GET['channel_id'] : null;
 

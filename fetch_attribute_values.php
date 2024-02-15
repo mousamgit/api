@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 // save_channel.php
-require_once('connect_mousam.php');
+require_once('connect.php');
 
 $attribute_name = $_GET['attribute_name'];
 $attribute_condition = strtolower($_GET['attribute_condition']);
