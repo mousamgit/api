@@ -4,8 +4,14 @@
   $sku = $_GET['sku'];
   require ('connect.php');
 
-  $logquery = " SELECT * from pimlog ORDER BY `pimlog`.`date` DESC, `pimlog`.`time` DESC ";
-  $logresult = mysqli_query($con, $logquery) or die(mysqli_error($con));
+
+  $records_per_page = 100;
+  $baseQuery = " SELECT * from pimlog ORDER BY `pimlog`.`date` DESC, `pimlog`.`time` DESC ";
+  $logresult = getResult($baseQuery , $records_per_page);
+  $total_pages = getTotalPages($baseQuery , $records_per_page);
+
+//   $baseQuery = " SELECT * from pimlog ORDER BY `pimlog`.`date` DESC, `pimlog`.`time` DESC ";
+//   $logresult = mysqli_query($con, $logquery) or die(mysqli_error($con));
 ?>
 <html>
   <head>
@@ -46,6 +52,30 @@
                 ?>
         </tbody>
     </table>
+    <?php
+    // Pagination links
+echo '<div class="pagination">';
+// if(strpos($_SERVER['REQUEST_URI'], "?") !==  false){
+//     $pageurl = $_SERVER['REQUEST_URI'] . 'page=';
+// }
+// else{
+//   $pageurl = '?page=';
+// }
+
+for ($page = 1; $page <= $total_pages; $page++) {
+  $urlData ['page'] = $page;
+  $pageurl =  '?' . http_build_query($urlData);
+  
+  if($current_page == $page){
+    echo '<a class="active" href="' . $pageurl . '">' . $page . '</a>';
+  }
+  else{
+    echo '<a href="' . $pageurl . '">' . $page . '</a>';
+  }
+    
+}
+echo '</div>';
+?>
     </div>
     <script>
     $('#myTable').DataTable( {

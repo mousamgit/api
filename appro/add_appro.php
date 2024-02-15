@@ -1,6 +1,6 @@
 <?php
-include 'login_checking.php';
-    include 'functions.php';
+include '../login_checking.php';
+    include '../functions.php';
 
 
 
@@ -16,27 +16,60 @@ include 'login_checking.php';
     <title>add appro</title>
 </head>
 <body>
+<?php include '../topbar.php'; ?>
 <div id="app" class="pim-padding">
-<h1>Add Appro Form</h2>
-    <form action="process_appro.php" method="post">
-    
+    <div class="container">
+    <form action="process_appro.php" method="post" class="appro-form form-design">
+    <div class="form-row header">Add Appro Form </div>
+    <div class="wrapper-box">
+        <div class="row">
+            <div class="col-md-2 form-cell">
         <label for="customer_name">Customer Name:</label><br>
-        <input type="text" id="customer_name" name="customer_name" required><br><br>
-
-        <label for="appro_id">Appro ID:</label><br>
-        <input type="text" id="appro_id" name="appro_id" required><br><br>
         
+            </div>
+            <div class="col-md-4 form-cell"><input type="text" id="customer_name" name="customer_name" required></div>
+            <div class="col-md-2 form-cell">
+        <label for="appro_id">Appro ID:</label><br>
+       
+        </div>
+        <div class="col-md-4 form-cell"> <input type="text" id="appro_id" name="appro_id" required></div>
+            <div class="col-md-2 form-cell">
         <label for="order_number">Order Number:</label><br>
-        <input type="text" id="order_number" name="order_number" required><br><br>
-
+        
+        </div>
+        <div class="col-md-4 form-cell"><input type="text" id="order_number" name="order_number" required></div>
+        <div class="col-md-2 form-cell">
+        <label for="status">Status:</label><br>
+ 
+        </div>
+        <div class="col-md-4 form-cell">
+        <select id="status" name="status">
+            <option value="shipped">shipped</option>
+            <option value="completed">completed</option>
+        </select>
+        </div>    
+        <div class="col-md-2 form-cell">
         <label for="representation">representation:</label><br>
-        <input type="text" id="representation" name="representation" required><br><br>
-
+        
+        </div>
+        <div class="col-md-4 form-cell"><input type="text" id="representation" name="representation" required></div>    
+        <div class="col-md-2 form-cell">
         <label for="date_entered">Date Entered:</label><br>
-        <input type="date" id="date_entered" name="date_entered" required><br><br>
-
+        
+        </div>
+        <div class="col-md-4 form-cell"><input type="date" id="date_entered" name="date_entered" required></div>    
+        <div class="col-md-2 form-cell">
         <label for="due_date">Due Date:</label><br>
-        <input type="date" id="due_date" name="due_date" required><br><br>
+        
+            </div>
+           
+            <div class="col-md-4 form-cell"> <input type="date" id="due_date" name="due_date" required></div>  
+            <div class="col-md-6">
+        <label for="notes">Notes:</label><br>
+        <textarea type="date" id="notes" name="notes" col="5"></textarea>
+            </div>
+        </div>
+    </div>
         <div class="table itemtable">
             <div class="row firstrow">
                 <div class="cell">Sku</div>
@@ -50,8 +83,8 @@ include 'login_checking.php';
                 <div class="cell">Total</div>
                 <div class="cell"></div>
                 <div class="cell"></div>
-                <div class="cell"><input type="text" id="total_quantity" name="totalQuantity" :value="totalQuantity" readonly> </div>
-                <div class="cell"><input type="text" id="total_price" name="totalPrice"  :value="totalPrice"  readonly></div>
+                <div class="cell"><input type="text" id="total_quantity" name="total_quantity" :value="totalQuantity" readonly> </div>
+                <div class="cell"><input type="text" id="total_price" name="total_price"  :value="totalPrice"  readonly></div>
             </div>
 
         </div>
@@ -68,7 +101,7 @@ include 'login_checking.php';
 
 </form>
 </div>
-
+</div>
 <script>
 const callmyapp = myapp.mount('#app');
 </script>

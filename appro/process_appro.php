@@ -8,11 +8,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $customerName = $_POST['customer_name'];
 $approID = $_POST['appro_id'];
 $orderNumber = $_POST['order_number'];
+$status = $_POST['status'];
 $representation = $_POST['representation'];
 $dateEntered = $_POST['date_entered'];
 $dueDate = $_POST['due_date'];
 $totalQuantity = $_POST['total_quantity'];
 $totalPrice = $_POST['total_price'];
+$notes = $_POST['notes'];
 
 // Process items
 $items = $_POST['items']; // This will be an array of item arrays
@@ -25,10 +27,12 @@ $serializedItems = serialize($items);
 // Execute your database insert query here, including the serialized items
 
 
-$approsql = " INSERT into appro (appro,customer,dateentered,datedue,ordernumber,representation,items,totalquantity,totalprice) VALUES ('$approID','$customerName','$dateEntered','$dueDate','$orderNumber','$representation','$serializedItems','$totalQuantity','$totalPrice')";
+$approsql = " INSERT into appro (appro,customer,itemstatus,dateentered,datedue,ordernumber,representation,items,totalquantity,totalprice,notes) VALUES ('$approID','$customerName','$status','$dateEntered','$dueDate','$orderNumber','$representation','$serializedItems','$totalQuantity','$totalPrice','$notes')";
 
 $approresult = mysqli_query($con,$approsql) or die(mysqli_error($con)); 
 echo "New record created successfully";
+header("Location: https://pim.samsgroup.info/appro/appro_list.php");
+exit();
 
 }
 else{

@@ -26,6 +26,8 @@
             if(isset($_POST['type'])) $type=$_POST['type'];
             if(isset($_POST['jewellery-tasks'])) $jewellery_tasks=$_POST['jewellery-tasks'];
             if(isset($_POST['watch-tasks'])) $watch_tasks=$_POST['watch-tasks'];
+            if(isset($_POST['taskprice'])) $taskprice=$_POST['taskprice'];
+            if(isset($_POST['notes'])) $notes=$_POST['notes'];
 
             /* Check Files Uploaded */
             if(isset($_POST['Submit'])){ 
@@ -37,8 +39,10 @@
             if(!empty($fileNames)){ 
                 foreach($_FILES['files']['name'] as $key=>$val){ 
                     // File upload path 
-                    $fileName = basename($_FILES['files']['name'][$key]); 
-                    $targetFilePath = $targetDir . $fileName;
+                    $fileName = basename($_FILES['files']['name'][$key]);
+                    date_default_timezone_set("Australia/Sydney");
+                    $imageDate = date("Y-m-d-H-i-s"); 
+                    $targetFilePath = $targetDir . $job_number."-".$cust_code."-".$imageDate."-".$fileName;
                     $fileSize = $_FILES["files"]["tmp_name"][$key];
         
                     // Check whether file type is valid 
@@ -48,7 +52,7 @@
                         if(in_array($fileType, $allowTypes)){ 
                             // Upload file to server 
                             move_uploaded_file($_FILES["files"]["tmp_name"][$key], $targetFilePath);
-                            $uploaded_files[] = $fileName;
+                            $uploaded_files[] = $targetFilePath;
                             $success++;
                             $count++;
                         }
@@ -75,22 +79,37 @@
             if($type == "jewellery"){ $tasks1 = $jewellery_tasks; }
             else { $tasks1 = $watch_tasks; }
 
-            foreach ($tasks1 as $key=>$val)
+            for ($i = 0; $i < count($tasks1); $i++)
             {
-                $tasks .= $val.",0 \n";
+                $tasks .= $tasks1[$i].",".$taskprice[$i]."-";
             }
+
             if(!empty($job_number)){
-                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date') ";
+                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date, status, notes) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date' , 'created', '$notes') ";
                 $result = mysqli_query($con, $sql) or die(mysqli_error($con));
-                header("Location: https://pim.samsgroup.info/");
-
             }
-
-
-            
-            /*echo $job_number."<br>".$reference_number."<br>".$date."<br>".$cust_code."<br>".$cust_name."<br>".$contact."<br>".$product."<br>".$type."<br>Jewellery tasks: ".$jewellery_tasks."<br>"."<br>Watch tasks: ".$watch_tasks."<br>";*/
-
-            exit();
         ?>
+        <div class="pim-padding">
+            <div style="float:left; width:49%;"><a href="https://pim.samsgroup.info/repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div>
+            <?php 
+                $quickLookup = "SELECT id from repairs where job_number='".$job_number."' and cust_code='".$cust_code."' and cust_name='".$cust_name."' and cust_ref='".$reference_number."' ";
+                $quickResult = mysqli_query($con, $quickLookup) or die(mysqli_error($con));
+                        while ($row = mysqli_fetch_assoc($quickResult)){
+                            echo '<div style="float:right; width:49%; text-align:right;"><a href="https://pim.samsgroup.info/view_repair.php?id='.$row[id].'">View Added Repair Job'.$job_number.' <i class="fa-solid fa-right-long"></i></a></div>';
+                        }
+            ?>
+            
+            <table class="sga-table producttable">
+            <thead><tr><td colspan="1000"><h2>Repair added successfully!</h2></td></tr></thead>
+            <tbody>
+            <tr><td class="l"> Job Number: </td> <td><b><?php echo $job_number; ?></b></td></tr>
+            <tr><td class="l"> Customer Code: </td> <td><?php echo $cust_code; ?></td></tr>
+            <tr><td class="l"> Contact: </td> <td><?php echo $contact; ?></td></tr>
+            <tr><td class="l"> Reference: </td> <td><?php echo $reference_number; ?></td></tr>
+            <tr><td class="l"> Type: </td> <td><?php echo $type; ?></td></tr>
+            </tbody>
+            </table>
+        </div>
+        <?php exit(); ?>
     </body>
 </html>
