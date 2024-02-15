@@ -70,6 +70,13 @@
             echo '<a class="drawer-list-item"  href="/export-data"><span>Export Data for Stockists</span></a> ';
             echo '<a class="drawer-list-item"  href="/stockist-images"><span>Grab Images for Stockists</span></a>';
             echo '</nav> </nav>';
+
+            echo '<nav class="drawer-navigation drawer-border">';
+            echo '<button class="drawer-dropdown-toggle" data-target="#drawer-dropdown-sales"><span>Repair Centre</span><i class="fa-solid fa-caret-down"></i></button>';
+            echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-sales">';
+            echo '<a class="drawer-list-item"  href="/add_repairjob.php"><span>Add a Repair</span></a> ';
+            echo '<a class="drawer-list-item"  href="/repairs.php"><span>Repair Log</span></a>';
+            echo '</nav> </nav>';
         }
         ?>
 
