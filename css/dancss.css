@@ -130,3 +130,8 @@ body { font-family: 'Open Sans', sans-serif; }
   .l-input { width: 70% !important; display:inline-block; border: 0 !important; border-bottom: 2px solid #333 !important; outline: 0 !important; background-color:#f5f5f5 !important; }
   .r-input { width: 20% !important; margin-left:10px; display:inline-block;}
   .remove_button { display:inline-block !important; float:none !important; margin-left:10px !important; }
+
+  @media screen and (max-width: 500px) { 
+    .form-design .l-div { display:block; float: none; width: 100%; }
+    .form-design .r-div { display:block; float: none; width: 100%; }
+  }
