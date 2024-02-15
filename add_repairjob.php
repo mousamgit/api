@@ -50,6 +50,7 @@
     <?php include 'topbar.php'; ?>
     <div class="pim-padding">
         <form action="process_repairjob.php" class="form-design" method="post" enctype="multipart/form-data">
+        <div><a href="https://pim.samsgroup.info/repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div><br>
             <div class="form-row header"> Add a Repair Job </div>
             <div class="l-div">
             <div class="wrapper-box">
@@ -102,17 +103,17 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="cell-l">Notes:</div>
+                    <div class="cell-r"><input type="text" name="notes" id="notes" placeholder="Extra comments or notes"></div>
+                </div>
                 <div id="jewellery" class="task jewellery j-tasks">
                     <div class="task-header">Jewellery Repair Tasks<button class="add_button"><i class="fa-solid fa-plus"></i></button></div>
                     <div id="item-container-j" class="item-container-j"></div>
                 </div>
                 <div id="watch" class="task watch w-tasks">
-                    <div class="task-header">Watch Repair Tasks<button class="add_buttonw"><i class="fa-solid fa-plus"></i></button></div>
+                    <div class="task-header">Watch Repair Tasks<button class="task_button"><i class="fa-solid fa-plus"></i></button></div>
                     <div id="item-container-w" class="item-container-w"></div>
-                </div>
-                <div class="form-row">
-                    <div class="cell-l">Notes:</div>
-                    <div class="cell-r"><input type="text" name="notes" id="notes" placeholder="Extra comments or notes"></div>
                 </div>
                 <div class="form-row">
                     <button type="submit" id="submit" name="Submit" class="submit-btn">Submit</button>

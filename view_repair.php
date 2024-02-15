@@ -12,15 +12,11 @@
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
         <script>
-            /*$(function() {
-                $('#type').change(function(){
-                    $('.task').hide();
-                    $('#' + $(this).val()).show();
-                if($(this).val() == 'all') {
-                    $('.task').show();
-                }
-                 });
-            });*/
+            $(function() {
+                $('.delete_button').click(function() {
+                    return window.confirm("Are you sure you'd like to delete this repair?");
+                });
+            });
             $(document).ready(function(){
                 var addButton = $('.add_button'); //Add button selector for jewellery
                 var addButtonw = $('.add_buttonw'); //Add button selector for watches
@@ -57,6 +53,10 @@
 
     <div class="pim-padding">
         <form action="update_repairjob.php" class="form-design" method="post" enctype="multipart/form-data">
+        <div style="float:left; width:50%;"><a href="https://pim.samsgroup.info/repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div>
+        <div style="float:right; text-align: right; width: 49%"><a class="delete_button" href="/delete_repair.php?id=<?php echo $id; ?>"><i class="fa-solid fa-trash"></i> Delete this Repair</a></div><br>
+        
+        <br>
             <div class="form-row header"> Repair Job <?php echo $row[job_number]; ?></div>
             <div class="l-div">
             <div class="wrapper-box">
@@ -102,13 +102,16 @@
                     <?php 
                         $img = rtrim($row[images],",");
                         $images = explode(",",$img); 
-                        foreach ($images as $key=>$val)
+                        if (!empty($img) )
                         {
-                            echo '<div class="cell-l">Image:</div>';
-                            echo '<div class="cell-r">';
-                            echo "<img src='https://pim.samsgroup.info/" . $val . "' width=200px><br>";
-                            echo "<input type='checkbox' id='files[]' name='files[]' value='" . $val . "' style='width:20px;' checked> <label for='files[]'>Keep Image</label>";
-                            echo '</div>';
+                            foreach ($images as $key=>$val)
+                            {
+                                echo '<div class="cell-l">Image:</div>';
+                                echo '<div class="cell-r">';
+                                echo "<img src='https://pim.samsgroup.info/" . $val . "' width=200px><br>";
+                                echo "<input type='checkbox' id='files[]' name='files[]' value='" . $val . "' style='width:20px;' checked> <label for='files[]'>Keep Image</label>";
+                                echo '</div>';
+                            }
                         }
                     ?>
                </div>     
@@ -187,7 +190,7 @@
                         echo '<div id="item-container-j" class="item-container-j" >';
                         for ($i = 0; $i < count($tasklist); $i++)
                         {
-                            echo "<div class='items-j'><input type='text' class='l-input' id='jewellery-tasks[]' name='jewellery-tasks[]' value='".$tasks[$i][0]."' disabled='disabled' readonly><input type='text' class='r-input' id='taskprice[]' name='taskprice[]' value='".$tasks[$i][1]."'><button class='remove_button'><i class='fa-solid fa-x'></i></button></div>";
+                            echo "<div class='items-j'><div class='l-input' style='padding:10px;'>".$tasks[$i][0]."<input type='hidden' id='jewellery-tasks[]' name='jewellery-tasks[]' value='".$tasks[$i][0]."'></div><input type='text' class='r-input' id='taskprice[]' name='taskprice[]' value='".$tasks[$i][1]."'><button class='remove_button'><i class='fa-solid fa-x'></i></button></div>";
                         }
                         echo '</div></div>';
                     }
@@ -198,13 +201,15 @@
                         echo '<div id="item-container-w" class="item-container-w">';
                         for ($i = 0; $i < count($tasklist); $i++)
                         {
-                            echo "<div class='items-w'><input type='text' class='l-input' id='watch-tasks[]' name='watch-tasks[]' value='".$tasks[$i][0]."' disabled='disabled' readonly><input type='text' class='r-input' id='taskprice[]' name='taskprice[]' value='".$tasks[$i][1]."'><button class='remove_button'><i class='fa-solid fa-x'></i></button></div>";
+                            echo "<div class='items-w'><div class='l-input' style='padding:10px;'>".$tasks[$i][0]."<input type='hidden' class='l-input' id='watch-tasks[]' name='watch-tasks[]' value='".$tasks[$i][0]."'></div><input type='text' class='r-input' id='taskprice[]' name='taskprice[]' value='".$tasks[$i][1]."'><button class='remove_button'><i class='fa-solid fa-x'></i></button></div>";
                         }
                         echo '</div></div>';
                     }
                 ?>
                 </div>
                 <div class="form-row">
+                    <input type="hidden" id="id" name="id" value="<?php echo $id;?>">
+                    <input type="hidden" id="type" name="type" value="<?php echo $row[repair_type];?>">
                     <button type="submit" id="submit" name="Submit" class="submit-btn">Update Repair</button>
                 </div>
             </div>
@@ -222,7 +227,7 @@
                 </thead>
                 <tbody>
                     <?php
-                        $query = "SELECT * from repairs_log where id='".$id."' ORDER BY `repairs_log`.`date` ASC";
+                        $query = "SELECT * from repairs_log where id='".$id."' ORDER BY `repairs_log`.`date` DESC";
                         $result = mysqli_query($con, $query) or die(mysqli_error($con));
                         while ($row = mysqli_fetch_assoc($result)){
                             echo "<tr>";
