@@ -25,9 +25,9 @@ $result = $con->query($sql);
 // Check if there are records in the result set
 if ($result->num_rows > 0) {
     // Output data of each row
-    echo '<table><tr><th>Appro ID</th><th>Customer Name</th><th>Order Number</th><th>Date Entered</th><th>Due Date</th><th>total Quantity</th><th>Total Price</th></tr>';
+    echo '<table class="appro-list"><tr><th>Appro ID</th><th>Customer Name</th><th>Order Number</th><th>status</th><th>Date Entered</th><th>Due Date</th><th>total Quantity</th><th>Total Price</th></tr>';
     while($row = $result->fetch_assoc()) {
-        echo '<tr><td><a href="/appro/appro.php?id='.$row["appro"].'">' . $row["appro"]. '</a></td><td>' . $row["customer"]. '</td><td>' . $row["ordernumber"]. '</td><td>' . $row["dateentered"]. '</td><td>' . $row["datedue"]. '</td><td>' . $row["totalquantity"]. '</td><td>' . $row["totalprice"]. '</td></tr>';
+        echo '<tr><td><a href="/appro/appro.php?id='.$row["appro"].'">' . $row["appro"]. '</a></td><td>' . $row["customer"]. '</td><td>' . $row["ordernumber"]. '</td><td>' . $row["itemstatus"]. '</td><td>' . $row["dateentered"]. '</td><td>' . $row["datedue"]. '</td><td>' . $row["totalquantity"]. '</td><td>' . $row["totalprice"]. '</td></tr>';
     }
     echo '</table>';
 } else {
