@@ -11,7 +11,7 @@ myapp.component('approitem', {
             itemprice:'',
             itemquantity:'',
             searchQuery: '',
-            searchResults: [],
+            searchSku: [],
             itemdetail: false,
             price:0,
             productname:'',
@@ -29,10 +29,10 @@ myapp.component('approitem', {
   
     <div class="row item-row"  :key="dataindex">
         <div class="cell">
-            <input type="text" v-model="searchQuery" @input="searchItems"  name="items[][itemcode]"  >
+            <input type="text" v-model="searchQuery" @input="searchItems"  name="items[][itemcode]"  autocomplete="off"  >
             <div class="autofill">
-            <ul v-if="searchResults.length > 0">
-                <li v-for="result in searchResults" :key="result.id" @click="selectItem(result)">
+            <ul v-if="searchSku.length > 0">
+                <li v-for="result in searchSku" :key="result.id" @click="selectItem(result)">
                     {{ result.sku }}
                 </li>
             </ul>
@@ -50,7 +50,8 @@ myapp.component('approitem', {
         searchItems() {
             axios.get('../searchsku.php', { params: { query: this.searchQuery } })
                 .then(response => {
-                    this.searchResults = response.data;
+                    this.searchSku = response.data;
+                    console.log(this.searchSku);
                 })
                 .catch(error => {
                     console.error('Error searching items:', error);
@@ -58,7 +59,7 @@ myapp.component('approitem', {
         },
         selectItem(item) {
             this.searchQuery = item.sku;
-            this.searchResults = []; // Clear search results
+            this.searchSku = []; // Clear search results
             this.itemdetail = true;
             this.price = item.wholesale_aud;
             this.productname = item.product_title;

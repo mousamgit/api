@@ -6,7 +6,7 @@ require('connect.php');
 $searchQuery = $_GET['query'];
 
 // Prepare and execute SQL query to search for items in the database
-$sql = "SELECT sku, wholesale_aud, product_title FROM pim WHERE sku LIKE '%$searchQuery%'";
+$sql = "SELECT CONCAT(code, ' - ', company) AS customer   FROM customer WHERE CONCAT(code, ' - ', company) LIKE '%$searchQuery%'";
 
 $searchResults = searchdata($sql);
 

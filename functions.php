@@ -142,4 +142,24 @@ function addtoLog($logsku, $logheader, $newrecord,$username)
     $logsql = " INSERT into pimlog (date,time,sku,field,oldrecord,newrecord,user) VALUES ('$date','$time','$logsku','$logheader','$oldrecord','$newrecord','$username')";
     $logresult = mysqli_query($con,$logsql) or die(mysqli_error($con)); 
 }
+function searchdata($sql){
+    require('connect.php');
+
+    $result = $con->query($sql);
+
+    // Store results in an array
+    $searchResults = array();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Append each row to the search results array
+            $searchResults[] = $row;
+        }
+    }
+    return $searchResults;
+    // Close database connection
+    $con->close();
+
+
+
+}
 ?>

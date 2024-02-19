@@ -24,22 +24,32 @@ include '../login_checking.php';
     <div class="wrapper-box">
         <div class="row">
             <div class="col-md-2 form-cell">
-        <label for="customer_name">Customer Name:</label><br>
+        <label for="customer_name">Customer Name:</label>
         
             </div>
-            <div class="col-md-4 form-cell"><input type="text" id="customer_name" name="customer_name" required></div>
+            <div class="col-md-10 form-cell">
+                <input type="text" id="customer_name" name="customer_name" @input="searchname"  autocomplete="off" v-model="customername" required>
+                <div class="autofill">
+                <ul v-if="searchCustomer.length > 0">
+                    <li v-for="result in searchCustomer" :key="result.id" @click="selectCustomer(result)">
+                        {{ result.customer }}
+                    </li>
+                </ul>
+                </div>
+        </div>
+
             <div class="col-md-2 form-cell">
-        <label for="appro_id">Appro ID:</label><br>
+        <label for="appro_id">Appro ID:</label>
        
         </div>
         <div class="col-md-4 form-cell"> <input type="text" id="appro_id" name="appro_id" required></div>
             <div class="col-md-2 form-cell">
-        <label for="order_number">Order Number:</label><br>
+        <label for="order_number">Order Number:</label>
         
         </div>
         <div class="col-md-4 form-cell"><input type="text" id="order_number" name="order_number" required></div>
         <div class="col-md-2 form-cell">
-        <label for="status">Status:</label><br>
+        <label for="status">Status:</label>
  
         </div>
         <div class="col-md-4 form-cell">
@@ -49,27 +59,32 @@ include '../login_checking.php';
         </select>
         </div>    
         <div class="col-md-2 form-cell">
-        <label for="representation">representation:</label><br>
+        <label for="representation">representation:</label>
         
         </div>
         <div class="col-md-4 form-cell"><input type="text" id="representation" name="representation" required></div>    
         <div class="col-md-2 form-cell">
-        <label for="date_entered">Date Entered:</label><br>
+        <label for="date_entered">Date Entered:</label>
         
         </div>
-        <div class="col-md-4 form-cell"><input type="date" id="date_entered" name="date_entered" required></div>    
+        <div class="col-md-4 form-cell"><input type="date" id="date_entered" name="date_entered" required></div> 
+
         <div class="col-md-2 form-cell">
-        <label for="due_date">Due Date:</label><br>
+        <label for="due_date">Due Date:</label>
         
             </div>
            
             <div class="col-md-4 form-cell"> <input type="date" id="due_date" name="due_date" required></div>  
-            <div class="col-md-6">
-        <label for="notes">Notes:</label><br>
+            </div>
+<div class="row">   
+<div class="col-md-2 form-cell">  <label for="notes">Notes:</label></div>
+            <div class="col-md-10 form-cell">
+       
         <textarea type="date" id="notes" name="notes" col="5"></textarea>
             </div>
         </div>
     </div>
+    <div class="wrapper-box mt-3 mb-3">
         <div class="table itemtable">
             <div class="row firstrow">
                 <div class="cell">Sku</div>
@@ -88,13 +103,14 @@ include '../login_checking.php';
             </div>
 
         </div>
-
+        <a class="btn add-item" @click="additem()">Add item</a>
+    </div>
 
             
 
         
-        <a class="btn add-item" @click="additem()">Add item</a>
-        <input type="submit" value="Submit">
+        
+        <input type="submit" class="submit-btn" value="Submit">
         
     </form>
 
