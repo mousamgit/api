@@ -3,7 +3,7 @@
 class ProductDetailHandler {
     public $con;
     public $productId;
-    public $itemsPerPage = 15;
+    public $itemsPerPage = 10;
 
     public function __construct() {
         // Error reporting
@@ -53,7 +53,7 @@ class ProductDetailHandler {
 
     public function getProductFilter() {
         $productFilter = [];
-        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where product_id=" . $this->productId . " order by index_no ASC");
+        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where status=1 and product_id=" . $this->productId . " and user_name = ".$_SESSION['username']." order by index_no ASC");
 
         if ($productFilterQuery->num_rows > 0) {
             while ($row = $productFilterQuery->fetch_assoc()) {
@@ -76,7 +76,6 @@ class ProductDetailHandler {
                 $productValues[] = $row;
             }
         }
-
         return $productValues;
     }
 
@@ -87,15 +86,6 @@ class ProductDetailHandler {
 
     public function getColumnValuesRow() {
         $columnValuesRow = ['sku'];
-        $checkIfColumns = $this->con->query("select attribute_name from product_filter where product_id =" . $this->productId);
-
-        if ($checkIfColumns->num_rows > 0) {
-            while ($row = $checkIfColumns->fetch_assoc()) {
-                if (!in_array($row['attribute_name'], $columnValuesRow)) {
-                    $columnValuesRow[] = $row['attribute_name'];
-                }
-            }
-        }
 
         $userColumns = $this->con->query("select columns from users where username ='".$_SESSION["username"]."'");
         $columnValuesRowCustomer='';
@@ -113,6 +103,15 @@ class ProductDetailHandler {
                $columnValuesRow[] = $cval;
            }
        }
+        $checkIfColumns = $this->con->query("select attribute_name from product_filter where status=1 and product_id =" . $this->productId. " and user_name ='".$_SESSION["username"]."'");
+
+        if ($checkIfColumns->num_rows > 0) {
+            while ($row = $checkIfColumns->fetch_assoc()) {
+                if (!in_array($row['attribute_name'], $columnValuesRow)) {
+                    $columnValuesRow[] = $row['attribute_name'];
+                }
+            }
+        }
 
        return $columnValuesRow;
     }
@@ -122,7 +121,7 @@ class ProductDetailHandler {
         $groupedConditions = [];
         $filterConditionCombined = '';
         $whereValue = 'WHERE 1=1 AND';
-        $filterFetch = $this->con->query("SELECT * FROM product_filter WHERE product_id=" . $this->productId . " ORDER BY index_no ASC");
+        $filterFetch = $this->con->query("SELECT * FROM product_filter WHERE status=1 and product_id=" . $this->productId . " and user_name='".$_SESSION['username']."' ORDER BY index_no ASC");
 
         if ($filterFetch->num_rows > 0) {
             while ($prevAttributeValue = $filterFetch->fetch_assoc()) {

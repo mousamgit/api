@@ -5,6 +5,7 @@ ini_set('display_errors', '1');
 
 // Include your database connection logic here
 require_once('./connect.php');
+require_once('./login_checking.php');
 
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
@@ -23,7 +24,7 @@ if($deleting_row->num_rows >0)
     }
     if($opvalue == 'OR')
     {
-        $con->query("update product_filter set op_value ='OR' where product_id =". $data['productId']." and index_no > ".$indexNo." limit 1");
+        $con->query("update product_filter set op_value ='OR' where product_id =". $data['productId']." and user_name= '".$_SESSION['username']."' and index_no > ".$indexNo." limit 1");
     }
 }
 

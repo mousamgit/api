@@ -18,7 +18,8 @@ $records_per_page = 10;
 $baseQuery = getQuery('pim');
 $result = $productDetails;
 $column_values_row = $productDetailHandler->getColumnValuesRow();
-$total_pages = getTotalPages($baseQuery , $records_per_page);
+$total_rows = $productDetailHandler->getTotalRows();
+$total_pages = $total_rows/10;
 $usercol = getValue('users', 'username', $username, 'columns');
 $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 ?>
@@ -41,12 +42,13 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
     <div class="col-md-9">
 
         <div id="app">
-
+            <a class="btn btn-primary" onclick="controlFilters()">Show Saved Filters</a>
             <?php
             echo '<table id=myTable class=display><thead><tr>';
 
-            foreach ($column_values_row as $colName => $column_values) {
-                echo '<th>'.mb_convert_case(str_replace("_"," ",$column_values), MB_CASE_TITLE).'</th>';
+            foreach ($column_values_row as $ckey => $colName) {
+//                $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+                echo '<th>'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</th>';
             } // show column headers
             echo '</tr></thead><tbody>';
             foreach ($result as $rkey=>$row)
@@ -55,11 +57,11 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
             foreach ($column_values_row as $ckey=>$colName)
             {
                 $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
-                    if( $colName == "sku" ){ echo '<td col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="https://pim.samsgroup.info/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
+                    if( $colName == "sku" ){ echo '<td col="'.$colName.'" ><a href="https://pim.samsgroup.info/product.php?sku='.$row[$colName].'">'.$row[$colName].'</a></td>';}
                     elseif (strpos($colName, "image") !==  false  && $row[$colName] != "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }"><a href="'.$row[$colName].'" target=_blank><image src="'.$row[$colName].'" width=150px></a></td>';}
                     elseif (strpos($colName, "image") !==  false  && $row[$colName] == "" ){ echo '<td class="img-cell" col="'.$colName.'"  :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }" align=center>No Image</td>';}
                     else {
-                        echo '<td class="tabledata" row="' . $row['sku'] . '" col="'.$colName.'" :class="{ hidden: !activeColumns.includes(\'' . $escapedColName . '\') }">';
+                        echo '<td class="tabledata" row="' . $row['sku'] . '" col="'.$colName.'" >';
                         echo '<form class="editform"  v-if="isediting(\'' . $row['sku']. '\', \'' . $colName . '\')"  action="updatetablevalue.php" method="post">';
                         echo '<input type="hidden" name="username" value="' . $username . '">';
                         echo '<input type="hidden" name="sku" value="' . $row['sku'] . '">';
@@ -75,30 +77,46 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
                 echo '</tr>';
             }
             echo '</tbody></table>';
-            // Pagination links
-            echo '<div class="pagination">';
-            // if(strpos($_SERVER['REQUEST_URI'], "?") !==  false){
-            //     $pageurl = $_SERVER['REQUEST_URI'] . 'page=';
-            // }
-            // else{
-            //   $pageurl = '?page=';
-            // }
 
-            for ($page = 1; $page <= $total_pages; $page++) {
-                $urlData ['page'] = $page;
-                $pageurl =  '?' . http_build_query($urlData);
-
-                if($current_page == $page){
-                    echo '<a class="active" href="' . $pageurl . '">' . $page . '</a>';
-                }
-                else{
-                    echo '<a href="' . $pageurl . '">' . $page . '</a>';
-                }
-
-            }
-            echo '</div>';
             ?>
-            ?>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php
+                    // Calculate the range of entries being displayed
+                    $start_entry = min(($current_page - 1) * $records_per_page + 1, $total_rows);
+                    $end_entry = min($current_page * $records_per_page, $total_rows);
+                    ?>
+                    <p>Showing <?php echo $start_entry; ?>-<?php echo $end_entry; ?> of <?php echo $total_rows; ?> entries</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <div class="mt-3">
+                        <div class="btn-group" role="group" aria-label="Pagination">
+                            <a class="btn btn-primary <?php echo $current_page <= 1 ? 'disabled' : ''; ?>" href="?page=<?php echo $current_page - 1; ?>" <?php echo $current_page <= 1 ? 'tabindex="-1" aria-disabled="true"' : ''; ?>>Prev</a>
+                            <?php
+                            // Calculate the range of page numbers to display
+                            $start_page = max(1, $current_page - 2);
+                            $end_page = min($start_page + 4, $total_pages);
+
+                            // If not enough pages to fill the range, adjust the start page
+                            if ($end_page - $start_page < 4) {
+                                $start_page = max(1, $end_page - 4);
+                            }
+                            ?>
+
+                            <?php for ($page = $start_page; $page <= $end_page; $page++) : ?>
+                                <a class="btn btn-success ml-2 mr-2 <?php echo $page == $current_page ? 'active' : ''; ?>" href="?page=<?php echo $page; ?>"><?php echo $page; ?></a>
+                            <?php endfor; ?>
+                            <a class="btn btn-primary <?php echo $current_page >= ceil($total_rows / $records_per_page) ? 'disabled' : ''; ?>" href="?page=<?php echo $current_page + 1; ?>" <?php echo $current_page >= ceil($total_pages / $records_per_page) ? 'tabindex="-1" aria-disabled="true"' : ''; ?>>Next</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
 
         </div>
     </div>
@@ -111,8 +129,28 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 </div>
     <script>
         var usercol = [<?php echo $usercol; ?>];
-        console.log(usercol)
+        console.log(usercol);
         const callmyapp = myapp.mount('#app');
+
+        function controlFilters() {
+            var dataToSend = {
+               'status':1
+            };
+            $.ajax({
+                type: 'POST',
+                url: 'control_user_filters.php',
+                data: dataToSend,
+                success: function(response) {
+
+                    console.log('Database updated successfully');
+                },
+                error: function(xhr, status, error) {
+
+                    console.error('Error updating database:', error);
+                }
+            });
+        }
+
     </script>
     <script type="module" src="./js/components/product/product_filters.js" defer></script>
 </body>
