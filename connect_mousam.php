@@ -1,9 +1,9 @@
 <?php
 
 $host = "localhost";
-$user = "u288902296_mousam";
-$pass = "Mousam999";
-$name = "u288902296_mousam";
+$user = "u288902296_admin";
+$pass = "!RudySooDan1234!";
+$name = "u288902296_pim";
 
 // Create connection
 $con = mysqli_connect($host, $user, $pass, $name);

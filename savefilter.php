@@ -11,10 +11,12 @@ if (strpos($geturl, 'filter=') !== false) {
     $newfilter = valuefromString($geturl, 'filter=', 1);
     $updatedfilter = $filters.$newfilter.',';
 }
+
 if(strpos($geturl, 'remove=') !== false) {
     $removefilter = valuefromString($geturl, 'remove=', 1).',';
     $updatedfilter = str_replace($removefilter, '', $filters) ;
 }
+echo $updatedfilter; die;
 updateValue('users','username',$username,'filters',$updatedfilter);
 
 
@@ -22,4 +24,4 @@ updateValue('users','username',$username,'filters',$updatedfilter);
 
 <script type="text/javascript">
    window.location = '/profile.php'
-  </script>
+</script>

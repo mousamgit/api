@@ -1,5 +1,5 @@
 <?php
-require_once('connect_mousam.php');
+require_once('connect.php');
 
 
 // Extract channel data

@@ -13,8 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   addtoLog($sku, $colName, $value, $username);
   updateValue('pim','sku',$sku,$colName,$value);
 
-
-  header("Location: https://pim.samsgroup.info/");
+  header("Location: /");
   exit();
 } else {
   // Handle invalid requests

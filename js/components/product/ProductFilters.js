@@ -54,7 +54,7 @@ export default {
             try {
                 if(attributeCondition.length>2) {
                     // Make an AJAX request to your PHP file to fetch attributes
-                    const response = await fetch('../fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
+                    const response = await fetch('./fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
 
                     // Parse the JSON response
                     const data = await response.json();
@@ -101,7 +101,7 @@ export default {
                 const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
 
                 if (confirmed) {
-                    const response = await fetch('../products/delete_product_filter.php', {
+                    const response = await fetch('./products/delete_product_filter.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ export default {
         async fetchAllColumns() {
             try {
                 // Make an AJAX request to your PHP file to fetch attributes
-                const response = await fetch('../channels/fetch_all_pim_columns.php');
+                const response = await fetch('./channels/fetch_all_pim_columns.php');
                 // Parse the JSON response
                 const data = await response.json();
                 // Update the attributes data
@@ -178,7 +178,7 @@ export default {
 
     },
     template: `
-<div v-if="showFilters==9" class="col-md-3 bg-light" style="min-height: 100vh">
+<div class="col-md-12 bg-light" style="min-height: 100vh">
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading" >FILTERS</span>

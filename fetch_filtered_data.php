@@ -1,9 +1,9 @@
 <?php
 
 class ProductDetailHandler {
-    private $con;
-    private $productId;
-    private $itemsPerPage = 15;
+    public $con;
+    public $productId;
+    public $itemsPerPage = 15;
 
     public function __construct() {
         // Error reporting
@@ -11,7 +11,7 @@ class ProductDetailHandler {
         ini_set('display_errors', '1');
 
         // Database connection
-        require_once('../connect.php');
+        require_once('./connect.php');
         $this->con = $con;
 
         // Getting the referring URL
@@ -38,7 +38,7 @@ class ProductDetailHandler {
         echo json_encode(['products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow]);
     }
 
-    private function getProducts() {
+    public function getProducts() {
         $products = [];
         $productQuery = $this->con->query("SELECT * FROM products where id=" . $this->productId);
 
@@ -51,7 +51,7 @@ class ProductDetailHandler {
         return $products;
     }
 
-    private function getProductFilter() {
+    public function getProductFilter() {
         $productFilter = [];
         $productFilterQuery = $this->con->query("SELECT * FROM product_filter where product_id=" . $this->productId . " order by index_no ASC");
 
@@ -64,7 +64,7 @@ class ProductDetailHandler {
         return $productFilter;
     }
 
-    private function getProductValues() {
+    public function getProductValues() {
         $productValues = [];
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
@@ -80,12 +80,12 @@ class ProductDetailHandler {
         return $productValues;
     }
 
-    private function getTotalRows() {
+    public function getTotalRows() {
         $totalRowsQuery = $this->con->query("select DISTINCT sku FROM pim " . $this->getFilterConditionCombined());
         return $totalRowsQuery->num_rows;
     }
 
-    private function getColumnValuesRow() {
+    public function getColumnValuesRow() {
         $columnValuesRow = ['sku'];
         $checkIfColumns = $this->con->query("select attribute_name from product_filter where product_id =" . $this->productId);
 
@@ -96,10 +96,28 @@ class ProductDetailHandler {
                 }
             }
         }
-        return $columnValuesRow;
+
+        $userColumns = $this->con->query("select columns from users where username ='".$_SESSION["username"]."'");
+        $columnValuesRowCustomer='';
+        if ($userColumns->num_rows > 0) {
+            while ($row = $userColumns->fetch_assoc()) {
+                    $columnValuesRowCustomer = str_replace('"','',$row['columns']);
+            }
+            $columnValuesRowCustomer = explode(",",$columnValuesRowCustomer);
+
+        }
+       foreach ($columnValuesRowCustomer as $key =>$cval)
+       {
+           if(!in_array($cval,$columnValuesRow))
+           {
+               $columnValuesRow[] = $cval;
+           }
+       }
+
+       return $columnValuesRow;
     }
 
-    private function getFilterConditionCombined() {
+    public function getFilterConditionCombined() {
         $filterConditions = [];
         $groupedConditions = [];
         $filterConditionCombined = '';
@@ -150,7 +168,5 @@ class ProductDetailHandler {
     }
 }
 
-$productDetailHandler = new ProductDetailHandler();
-$productDetailHandler->getProductDetails();
 
 ?>

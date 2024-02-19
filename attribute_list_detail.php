@@ -1,5 +1,5 @@
 <?php
-require_once('connect_mousam.php');
+require_once('connect.php');
 require_once('filter_logic_case_details.php');
 
 error_reporting(E_ALL);

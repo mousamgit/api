@@ -7,20 +7,9 @@ const app = Vue.createApp({
         };
     },
     mounted() {
-        // Fetch data when the component is mounted
-        // this.fetchProducts();
-
     },
     methods: {
-        // async fetchProducts() {
-        //     try {
-        //         const response = await fetch('attribute_data_fetch.php');
-        //         const data = await response.json();
-        //         this.attributes = data;
-        //     } catch (error) {
-        //         console.error('Error fetching attributes:', error);
-        //     }
-        // },
+
     },
 });
 

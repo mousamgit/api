@@ -3,7 +3,7 @@
         ini_set('display_errors', '1');
 
         //  database connection
-        require_once('../connect.php');
+        require_once('./connect.php');
 
         // Get the POST data from the Vue.js application
         $data = json_decode(file_get_contents("php://input"), true);
@@ -19,7 +19,7 @@
         parse_str($urlParts['query'] ?? '', $queryParameters);
 
 
-        // Extracting the channel_id parameter
+        // Extracting the p_id parameter
         $productId = $queryParameters['id'] ?? 0;
 
         $op_value='AND';
@@ -54,7 +54,6 @@
                     $update_product_filter = "update product_filter set index_no=index_no+1 where index_no>=" . $indexNo . " and id !=" . $con->insert_id;
                     $con->query($update_product_filter);
                 }
-
                 $success = true;
             }
         }
