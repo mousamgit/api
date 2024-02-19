@@ -28,17 +28,23 @@ jQuery(document).ready(function ($) {
  
     });
 });
+$(function() {
+                $('.delete_button').click(function() {
+                    return window.confirm("Are you sure you'd like to delete this image?");
+                });
+            });
   </script>
 </head>
 <body>
 <?php include 'topbar.php'; ?>
 
-<h2>Approve Uploaded Images</h2>
+<center><h2>Approve Uploaded Images</h2></center>
 
 <div class="main-box">
 <form action="approve_temp_images.php" method="post" name="approve_images" enctype="multipart/form-data">
 
-    <table>
+    <table class="sga-table producttable" >
+        <thead>
         <tr>
             <th>SKU</th>
             <th>Image 1</th>
@@ -49,6 +55,8 @@ jQuery(document).ready(function ($) {
             <th>Image 6</th>
             <th>Approve All <input type="checkbox" value="" name="check[]" id="selectall" class="selectall"></th>
         </tr>
+        </thead>
+        <tbody>
             <?php
                 include ('connect.php');
 
@@ -131,6 +139,7 @@ jQuery(document).ready(function ($) {
                             echo "<td><label for ='".$value."'>
                                 <div style='display:table-cell; vertical-align:middle; padding-right:20px;'> <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' id='".$value."' class='".$keys[$i]."' /> </div>
                                 <div class='image-box' style='display:table-cell; vertical-align:middle;'><img src='https://pim.samsgroup.info/temp-images/".$value."'></div>
+                                <div style='text-align:center; width:100%; font-size:10px; margin-top:10px;'><a href='/delete_tempimage.php?id=".$value."' class='delete_button' style='color:red;'><i class='fa-solid fa-trash-can'></i> Delete this image</a></div>
                                 </label>
                                 </td>";
                         }
@@ -144,9 +153,10 @@ jQuery(document).ready(function ($) {
                 }
                 
             ?>
+        </tbody>
     </table>
     <br>
-    <button type="submit" id="submit" name="submit" class="btn btn-primary button-loading" data-loading-text="Loading...">Submit Approved Images</button>
+    <center><button type="submit" id="submit" name="submit" class="btn btn-primary button-loading" data-loading-text="Loading...">Submit Approved Images</button></center>
     </form>
 </div>
 </body>
