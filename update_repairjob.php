@@ -19,6 +19,7 @@
     if(isset($_POST['status'])) $status=$_POST['status'];
     if(isset($_POST['tracking'])) $tracking=$_POST['tracking'];
     if(isset($_POST['files'])) $uploaded_files=$_POST['files'];
+    if(isset($_POST['user'])) $user=$_POST['user'];
 
     /* Check Files Uploaded */
     if(isset($_POST['Submit'])){ 
@@ -72,6 +73,34 @@
     for ($i = 0; $i < count($tasks1); $i++)
     {
         $tasks .= $tasks1[$i].",".$taskprice[$i]."-";
+    }
+
+    $checksql = "SELECT * from repairs where id = '$id' ";
+    $checkresult = mysqli_query($con, $checksql) or die(mysqli_error($con));
+
+    while($rowcheck = mysqli_fetch_assoc($checkresult)){ 
+
+        if ($rowcheck[status] != $status)
+        {
+            $logsql = "INSERT into repairs_log (id, job_number, user, notes) VALUES ('$id', '$job_number', '$user', 'Updated Status: $rowcheck[status] -> $status')";
+            $logresult = mysqli_query($con, $logsql) or die(mysqli_error($con));
+        }
+        if ($rowcheck[tracking] != $tracking)
+        {
+            $logsql = "INSERT into repairs_log (id, job_number, user, notes) VALUES ('$id', '$job_number', '$user', 'Added tracking number: $tracking')";
+            $logresult = mysqli_query($con, $logsql) or die(mysqli_error($con));
+        }
+        if ($rowcheck[notes] != $notes)
+        {
+            $logsql = "INSERT into repairs_log (id, job_number, user, notes) VALUES ('$id', '$job_number', '$user', 'Changed customer note: $notes, Old note: $rowcheck[notes]')";
+            $logresult = mysqli_query($con, $logsql) or die(mysqli_error($con));
+        }
+        if ($rowcheck[due_date] != $date)
+        {
+            $logsql = "INSERT into repairs_log (id, job_number, user, notes) VALUES ('$id', '$job_number', '$user', 'Changed due date: $rowcheck[due_date] -> $date')";
+            $logresult = mysqli_query($con, $logsql) or die(mysqli_error($con));
+        }
+
     }
 
     if(!empty($id)){

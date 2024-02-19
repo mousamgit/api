@@ -67,8 +67,8 @@
                     <?php $jobnumber = $row[job_number]; ?>
                 </div>
                 <div class="form-row">
-                    <div class="cell-l">Customer Reference:</div> 
-                    <div class="cell-r"><input type="text" name="reference_number" id="reference_number" value="<?php echo $row[cust_ref]; ?>"></div>
+                    <div class="cell-l">Created by:</div> 
+                    <div class="cell-r"><?php echo $row[team_member]; ?></div>
                 </div>
                 <div class="form-row">
                     <div class="cell-l">Date Added:</div> 
@@ -86,6 +86,10 @@
                 <div class="form-row">
                     <div class="cell-l">Customer Name:</div>
                     <div class="cell-r"><input type="text" name="cust_name" id="cust_name" value="<?php echo $row[cust_name]; ?>"></div>
+                </div>
+                <div class="form-row">
+                    <div class="cell-l">Customer Reference:</div> 
+                    <div class="cell-r"><input type="text" name="reference_number" id="reference_number" value="<?php echo $row[cust_ref]; ?>"></div>
                 </div>
                 <div class="form-row">
                     <div class="cell-l"><label>Contact Details:</div>
@@ -108,7 +112,7 @@
                             {
                                 echo '<div class="cell-l">Image:</div>';
                                 echo '<div class="cell-r">';
-                                echo "<img src='https://pim.samsgroup.info/" . $val . "' width=200px><br>";
+                                echo "<img src='https://pim.samsgroup.info/" . $val . "'><br>";
                                 echo "<input type='checkbox' id='files[]' name='files[]' value='" . $val . "' style='width:20px;' checked> <label for='files[]'>Keep Image</label>";
                                 echo '</div>';
                             }
@@ -210,6 +214,7 @@
                 <div class="form-row">
                     <input type="hidden" id="id" name="id" value="<?php echo $id;?>">
                     <input type="hidden" id="type" name="type" value="<?php echo $row[repair_type];?>">
+                    <input type="hidden" id="user" name="user" value="<?php echo $username;?>">
                     <button type="submit" id="submit" name="Submit" class="submit-btn">Update Repair</button>
                 </div>
             </div>
