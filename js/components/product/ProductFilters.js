@@ -8,7 +8,9 @@ export default {
             attribute_values:[],
             showAttribute:0,
             showAttFilter:1,
-            indexVal:-1
+            indexVal:-1,
+            showAttributeMid:0,
+            op_show_value:'AND'
         };
     },
     mounted() {
@@ -73,7 +75,10 @@ export default {
         },
 
         addChannelCondition(op_value,condition_type,previous_row) {
-            this.channelAttribute.push({
+
+            this.op_show_value =  op_value;
+            this.showAttributeMid = previous_row['id'];
+            this.channelAttribute=[{
                 id:0,
                 attribute_name:'',
                 data_type: '',
@@ -82,9 +87,15 @@ export default {
                 operator:op_value,
                 condition_type:condition_type,
                 previous_row:previous_row
-            });
+            }];
             this.showAttribute = 1;
-            this.showAttFilter = 0;
+            this.showAttFilter = 1;
+
+
+        },
+        refreshAttributeAgain()
+        {
+            location.reload();
         },
         async deleteFilter(productDetId,productId,indexVal) {
 
@@ -116,7 +127,9 @@ export default {
                     if (data.success)
                     {
                         console.log('Filters deleted successfully!');
-                        location.reload();
+
+                        var urlWithoutParams = window.location.origin + window.location.pathname;
+                        window.location.href = urlWithoutParams;
                     }
                     else
                     {
@@ -144,7 +157,9 @@ export default {
                 const data = await response.json();
 
                 if (data.success) {
-                    location.reload();
+
+                    var urlWithoutParams = window.location.origin + window.location.pathname;
+                    window.location.href = urlWithoutParams;
                 } else {
                     console.error('Error saving filters:', data.error);
                 }
@@ -174,6 +189,31 @@ export default {
                 console.error('Error fetching attributes:', error);
             }
         },
+        async updateStatus(value) {
+            try {
+                const response = await fetch('update_filter_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        value:value
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+
+                    var urlWithoutParams = window.location.origin + window.location.pathname;
+                    window.location.href = urlWithoutParams;
+                } else {
+                    console.error('Error updating status:', data.error);
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        },
 
 
     },
@@ -184,11 +224,11 @@ export default {
             <span class="sub-heading" >FILTERS</span>
         </div>
         <hr>
-            <div class="flex-row vcenter filter-header">
+            <div class="flex-row vcenter filter-header" v-if="productDetails.length==0 && channelAttribute.length==0">
                 <div class="row">
                     <!-- Container for both Attributes and "+" button -->
                     <div class="col-md-12">
-                        <div class="d-flex justify-content-between align-items-center p-3 border">
+                        <div class="d-flex justify-content-between align-items-center p-3 border" >
                             <!-- Left column for Attributes -->
                             <div>
                                 <span>Attributes</span>
@@ -197,7 +237,7 @@ export default {
                             <!-- Right column for the "+" button -->
                             <div>
 
-                                <a class="sub-heading btn btn-primary" v-if="productDetails.length==0 && channelAttribute.length==0" @click="addChannelCondition('AND','normal',[])">
+                                <a class="sub-heading btn btn-primary"  @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
                         </div>
@@ -217,13 +257,129 @@ export default {
 
                                 <div class="row" v-for="(productDet,index) in productDetails" style="margin-bottom: 5px; !important">
                                       <span class="" v-if="showAttFilter==1">
-                                         
+                                        
                                         <span v-if="productDet.op_value == 'OR' && productDet.id != productDetails[0].id">
                                         
                                          <a  class="btn btn-link" @click="addChannelCondition('AND','middle',productDetails[index-1])" data-test-id="and" >
                                           <strong>AND</strong>
+                                          
                                          </a>
                                         </span>
+                                        
+                                        <div v-if="productDet.op_value== 'OR' && productDet.id != productDetails[0].id && showAttributeMid==productDetails[index-1].id">
+<!--                                         {{showAttributeMid}} '=' {{productDetails[index-1].id}}-->
+
+                                          <form @submit.prevent="submitForm">
+                                          
+                                            <span>----- {{op_show_value}} -------</span>
+                                                <div class="row">
+                                                    <!-- Bootstrap Form Group Component -->
+                                                    <div class="form-group filter-clauses" style="max-height: 90vh; overflow-y: auto;">
+                                                        <fieldset>
+                                                            <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-12" v-if="showAttribute==1">
+<!--                                                                    <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>-->
+                                                                    <div class="col-md-12 position-relative">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
+                                                <label class="delete-icon" style=" position: absolute;top: -10px;  right: 0;">
+                                                    <a @click="refreshAttributeAgain">
+                                                        <i class="btn btn-danger fas fa-trash-alt"></i>
+                                                    </a>
+                                                </label>
+                                            </div>
+                                            </div>
+                                                                    <div class="mb-3">
+                                                                        <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
+                                                                        <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
+                                                                        {{ column.column_name }}
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                    </div>
+                                                    <div class="col-md-12" v-if="cAttribute.attribute != ''">
+                        
+                                                        <div class="mb-3">
+                                                            <template v-if="cAttribute.data_type == 'varchar'">
+                                                                <select v-model="cAttribute.filter_type" id="filter-type" class="form-control" >
+                                                                    <option value="includes">includes</option>
+                                                                    <option value="=">equal to</option>
+                                                                    <option value="!=">not equal to</option>
+                                                                    <option value="IS NOT NULL">is not empty</option>
+                                                                </select>
+                                                                <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == 'includes'" >
+                                                                    <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                                                                    <ul v-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
+                                                                        <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
+                                                                        {{ value }}
+                                                                    </li>
+                                                                </ul>
+                                                            </template>
+                        
+                                                        </template>
+                        
+                                                        <template v-if="cAttribute.data_type != 'varchar'">
+                        
+                                                            <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
+                                                                <option value="=">equal to</option>
+                                                                <option value="!=">not equal to</option>
+                                                                <option value=">">is greater than</option>
+                                                                <option value="<">is less than</option>
+                                                                <option value="between">range</option>
+                                                                <option value="IS NOT NULL">is not empty</option>
+                                                            </select>
+                                                            <template v-if="cAttribute.filter_type == 'between'">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <input type="text" v-model="cAttribute.rangeFrom" class="form-control" placeholder="From" required>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <input type="text" v-model="cAttribute.rangeTo" class="form-control" placeholder="To" required>
+                                                                    </div>
+                                                                </div>
+                                                    </div>
+                                                </template>
+                        
+                                                <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == '>' || cAttribute.filter_type == '<')" >
+                                                    <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                                                    <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
+                                                        <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
+                                                        {{ value }}
+                                                    </li>
+                                                </ul>
+                                            </template>
+                                        </div>
+                                        <div class="submit-form" v-if="cAttribute.attribute!=''">
+                                            <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
+                                        </div>
+                                       
+                                    </div>
+                        
+                                    <div class="submit-form">
+                        
+                                    </div>
+                                </div>
+                        
+                                <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
+                                    <a  class="btn btn-link" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and" >
+                                    <strong>AND</strong>
+                                </a>
+                                <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or" >
+                                <strong>OR</strong>
+                            </a>
+                        </div>
+                        
+                        
+                               
+                                
+                        
+                        </fieldset>
+                        
+                        </div>
+                        </div>
+                        </form>
+                                        </div>
                                     <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">----------{{productDet.op_value}}------------</span>
                                     </span></center>
 
@@ -247,100 +403,121 @@ export default {
                                     </div>
                                 </div>
                             </div>
+                            
 
                         </div>
-                        <form @submit.prevent="submitForm">
-                        <div class="row">
-                            <!-- Bootstrap Form Group Component -->
-                            <div class="form-group filter-clauses" style="max-height: 90vh; overflow-y: auto;">
-                                <fieldset>
-                                    <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
-                                    <div class="row mb-3">
-                                        <div class="col-md-12" v-if="showAttribute==1">
-                                            <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
-                                            <div class="mb-3">
-                                                <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
-                                                <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
-                                                {{ column.column_name }}
-                                            </option>
-                                        </select>
-                                    </div>
-                            </div>
-                            <div class="col-md-12" v-if="cAttribute.attribute != ''">
-
-                                <div class="mb-3">
-                                    <template v-if="cAttribute.data_type == 'varchar'">
-                                        <select v-model="cAttribute.filter_type" id="filter-type" class="form-control" >
-                                            <option value="includes">includes</option>
-                                            <option value="=">equal to</option>
-                                            <option value="!=">not equal to</option>
-                                            <option value="IS NOT NULL">is not empty</option>
-                                        </select>
-                                        <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == 'includes'" >
-                                            <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
-                                            <ul v-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
-                                                <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                                                {{ value }}
-                                            </li>
-                                        </ul>
-                                    </template>
-
-                                </template>
-
-                                <template v-if="cAttribute.data_type != 'varchar'">
-
-                                    <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
-                                        <option value="=">equal to</option>
-                                        <option value="!=">not equal to</option>
-                                        <option value=">">is greater than</option>
-                                        <option value="<">is less than</option>
-                                        <option value="between">range</option>
-                                        <option value="IS NOT NULL">is not empty</option>
-                                    </select>
-                                    <template v-if="cAttribute.filter_type == 'between'">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input type="text" v-model="cAttribute.rangeFrom" class="form-control" placeholder="From" required>
+                        
+                          <div > 
+                            
+                            <div class="row">
+                                <!-- Bootstrap Form Group Component -->
+                                
+                                <div class="form-group filter-clauses" style="max-height: 90vh; overflow-y: auto;">
+                                    <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
+                                    <form @submit.prevent="submitForm" >
+                                        <span v-if="productDetails.length>0">----- {{op_show_value}} -------</span>
+                                        <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
+                                        <div class="row mb-3">
+                                            <div class="col-md-12" v-if="showAttribute==1">
+                                               
+                                            <div class="col-md-12 position-relative">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
+                                                <label class="delete-icon" style=" position: absolute;top: -10px;  right: 0;">
+                                                    <a @click="refreshAttributeAgain">
+                                                        <i class="btn btn-danger fas fa-trash-alt"></i>
+                                                    </a>
+                                                </label>
                                             </div>
-                                            <div class="col-md-6">
-                                                <input type="text" v-model="cAttribute.rangeTo" class="form-control" placeholder="To" required>
+                                            </div>
+
+                                               
+                                                <div class="mb-3">
+                                                    <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
+                                                    <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
+                                                    {{ column.column_name }}
+                                                   </option>
+                                                  </select>
+                                                 
+                                                
+                                            </div>
+                                            <div class="col-md-12" v-if="cAttribute.attribute != ''">
+    
+                                           <div class="mb-3">
+                                                <template v-if="cAttribute.data_type == 'varchar'">
+                                                    <select v-model="cAttribute.filter_type" id="filter-type" class="form-control" >
+                                                        <option value="includes">includes</option>
+                                                        <option value="=">equal to</option>
+                                                        <option value="!=">not equal to</option>
+                                                        <option value="IS NOT NULL">is not empty</option>
+                                                    </select>
+                                                    <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == 'includes'" >
+                                                        <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                                                        <ul v-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
+                                                            <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
+                                                            {{ value }}
+                                                        </li>
+                                                    </ul>
+                                                    </template>
+            
+                                                </template>
+            
+                                               <template v-if="cAttribute.data_type != 'varchar'">
+            
+                                                <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
+                                                    <option value="=">equal to</option>
+                                                    <option value="!=">not equal to</option>
+                                                    <option value=">">is greater than</option>
+                                                    <option value="<">is less than</option>
+                                                    <option value="between">range</option>
+                                                    <option value="IS NOT NULL">is not empty</option>
+                                                </select>
+                                                <template v-if="cAttribute.filter_type == 'between'">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <input type="text" v-model="cAttribute.rangeFrom" class="form-control" placeholder="From" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="text" v-model="cAttribute.rangeTo" class="form-control" placeholder="To" required>
+                                                        </div>
+                                                    </div>
+                                            </template>
+            
+                                            <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == '>' || cAttribute.filter_type == '<')" >
+                                                <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                                                <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
+                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
+                                                    {{ value }}
+                                                </li>
+                                                </ul>
+                                            </template>
+                            </div>
+                                                <div class="submit-form" v-if="cAttribute.attribute!=''">
+                                                    <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
+                                                </div> 
                                             </div>
                                         </div>
-                            </div>
-                        </template>
-
-                        <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == '>' || cAttribute.filter_type == '<')" >
-                            <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
-                            <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                                {{ value }}
-                            </li>
-                        </ul>
-                    </template>
-                </div>
-                <div class="submit-form" v-if="cAttribute.attribute!=''">
-                    <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
-                </div>
-            </div>
-
-            <div class="submit-form">
-
-            </div>
-        </div>
-
-        <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
-            <a  class="btn btn-link" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and" >
-            <strong>AND</strong>
-        </a>
-        <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or" >
-        <strong>OR</strong>
-    </a>
-</div>
-
-</fieldset>
-</div>
-</div>
-</form>
+                                     </form>
+                                     </fieldset>
+            
+                                    <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
+                                        <a  class="btn btn-link" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and" >
+                                            <strong>AND</strong>
+                                        </a>
+                                        <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or" >
+                                        <strong>OR</strong>
+                                        </a>
+                                    </div>
+  
+   
+      <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
+               <a  class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
+                <a  class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
+      </div>
+    </div>
+    </div>
+    
+    </div>
 </div>
 </div>
 </div>

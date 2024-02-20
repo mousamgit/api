@@ -12,6 +12,7 @@ class ProductDetailHandler {
 
         // Database connection
         require_once('../connect.php');
+        require_once('../login_checking.php');
         $this->con = $con;
 
         // Getting the referring URL
@@ -47,13 +48,12 @@ class ProductDetailHandler {
                 $products[] = $row;
             }
         }
-
         return $products;
     }
 
     private function getProductFilter() {
         $productFilter = [];
-        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where product_id=" . $this->productId . " order by index_no ASC");
+        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where status=1 and product_id=" . $this->productId . " and user_name = '".$_SESSION['username']."' order by index_no ASC");
 
         if ($productFilterQuery->num_rows > 0) {
             while ($row = $productFilterQuery->fetch_assoc()) {
@@ -86,8 +86,9 @@ class ProductDetailHandler {
     }
 
     private function getColumnValuesRow() {
+
         $columnValuesRow = ['sku'];
-        $checkIfColumns = $this->con->query("select attribute_name from product_filter where product_id =" . $this->productId);
+        $checkIfColumns = $this->con->query("select attribute_name from product_filter where status=1 and product_id =" . $this->productId. " and user_name ='".$_SESSION["username"]."'");
 
         if ($checkIfColumns->num_rows > 0) {
             while ($row = $checkIfColumns->fetch_assoc()) {
@@ -104,7 +105,7 @@ class ProductDetailHandler {
         $groupedConditions = [];
         $filterConditionCombined = '';
         $whereValue = 'WHERE 1=1 AND';
-        $filterFetch = $this->con->query("SELECT * FROM product_filter WHERE product_id=" . $this->productId . " ORDER BY index_no ASC");
+        $filterFetch = $this->con->query("SELECT * FROM product_filter WHERE status =1 and user_name = '".$_SESSION['username']."' and product_id=" . $this->productId . " ORDER BY index_no ASC");
 
         if ($filterFetch->num_rows > 0) {
             while ($prevAttributeValue = $filterFetch->fetch_assoc()) {

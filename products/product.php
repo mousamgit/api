@@ -28,7 +28,7 @@
 <!-- Your HTML content here -->
 <div id="app">
 
-    <!-- Channel List Component -->
+    <!-- Product List Component -->
     <product-list :products="products"></product-list>
 
 </div>

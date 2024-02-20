@@ -35,10 +35,10 @@
         <tbody>
                 <?php 
                     while ($row = mysqli_fetch_assoc($result)){
-                        echo "<tr>";
+                        echo "<tr class='clickable-row' data-href='https://pim.samsgroup.info/view_repair.php?id=".$row[id]."'>";
                         echo "<td>".$row[added_date]."</td>";
                         if ($row[repair_type] == "watch") { echo "<td bgcolor='#b58946'>".$row[repair_type]."</td>"; } else { echo "<td bgcolor='#E4DDFF'>".$row[repair_type]."</td>"; }
-                        echo "<td><a href='https://pim.samsgroup.info/view_repair.php?id=".$row[id]."'>".$row[job_number]."</a></td>";
+                        echo "<td>".$row[job_number]."</a></td>";
                         echo "<td>".$row[cust_code]."</td>";
                         echo "<td>".$row[due_date]."</td>";
                         echo "<td>".$row[team_member]."</td>";
@@ -54,5 +54,11 @@
     $('#myTable').DataTable( {
     order: [[0, 'desc']]
 } );
+
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
     </script>
 </html>

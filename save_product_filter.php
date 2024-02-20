@@ -4,6 +4,9 @@
 
         //  database connection
         require_once('./connect.php');
+        require_once('./login_checking.php');
+
+
 
         // Get the POST data from the Vue.js application
         $data = json_decode(file_get_contents("php://input"), true);
@@ -33,6 +36,7 @@
             $range_from = '';
             $range_to = '';
             $attribute_condition = '';
+            $user_name = $_SESSION["username"];
             if ($attribute_value["filter_type"] == "=" || $attribute_value["filter_type"] == "!=" || $attribute_value["filter_type"] == ">" || $attribute_value["filter_type"] == "<" || $attribute_value["filter_type"] == "includes") {
                 $attribute_condition = $attribute_value['attribute_condition'];
             } elseif ($attribute_value['filter_type'] == 'between') {
@@ -46,8 +50,8 @@
             if (count($attribute_value['previous_row']) > 0) {
                 $indexNo = intval($attribute_value['previous_row']['index_no']) + 1;
             }
-            $sql = "INSERT INTO product_filter (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`) 
-                VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type','$operator','$indexNo')";
+            $sql = "INSERT INTO product_filter (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`,`user_name`) 
+                VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type','$operator','$indexNo','$user_name')";
 
             if ($con->query($sql) == TRUE) {
                 if (!($attribute_value['condition_type'] == 'group' || $attribute_value['condition_type'] == 'normal')) {
