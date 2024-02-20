@@ -11,7 +11,7 @@ require_once('../login_checking.php');
 $data = json_decode(file_get_contents("php://input"), true);
 
 
-$deleteProductFilterQuery = "DELETE FROM product_filter WHERE id=" . $data['productDetId'];
+$deleteProductFilterQuery = "update product_filter set status=0 WHERE id=" . $data['productDetId'];
 
 $deleting_row = $con->query("select op_value,index_no from product_filter where id=".$data['productDetId']);
 
@@ -19,17 +19,17 @@ $deleting_row = $con->query("select op_value,index_no from product_filter where 
 if($deleting_row->num_rows >0)
 {
     while ($d_value = $deleting_row->fetch_assoc()) {
-        $opvalue = $d_value['op_value'];$filterCondition='where 1=1';
+        $opvalue = $d_value['op_value']; $filterCondition='where 1=1';
         $indexNo = $d_value['index_no'];
     }
     if($opvalue == 'OR')
     {
-        $con->query("update product_filter set op_value ='OR' where product_id =". $data['productId']." and user_name= '".$_SESSION['username']."' and index_no > ".$indexNo." limit 1");
+        $con->query("update product_filter set op_value ='OR' where product_id =". $data['productId']." and status=1 and user_name= '".$_SESSION['username']."' and index_no > ".$indexNo." limit 1");
     }
 }
 
 if ($con->query($deleteProductFilterQuery) === TRUE) {
-    $check_if_it_is_single_row = $con->query("select id,op_value from product_filter where product_id =". $data['productId']);
+    $check_if_it_is_single_row = $con->query("select id,op_value from product_filter where product_id =". $data['productId']." and status =1 and user_name = '".$_SESSION['username']."'");
     if($check_if_it_is_single_row->num_rows == 1)
     {
         while ($sing_row_data = $check_if_it_is_single_row->fetch_assoc()) {

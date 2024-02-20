@@ -11,7 +11,7 @@ require_once('fetch_filtered_data.php');
 $productDetailHandler = new ProductDetailHandler();
 
 $productDetails = $productDetailHandler->getProductValues();
-
+$filters = getFilters();
 $urlData = $_GET;
 $username = $_SESSION["username"];
 $records_per_page = 10;
@@ -21,6 +21,7 @@ $column_values_row = $productDetailHandler->getColumnValuesRow();
 $total_rows = $productDetailHandler->getTotalRows();
 $total_pages = $total_rows/10;
 $usercol = getValue('users', 'username', $username, 'columns');
+
 $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 ?>
 <!DOCTYPE html>
@@ -35,6 +36,30 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
     <script type="module" src="./js/components/product/ProductFilters.js" ></script>
 
     <title>Homepage</title>
+    <style>
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            max-width: 300px; /* Adjust width as needed */
+        }
+
+        .tooltip-container:hover .tooltip-content {
+            display: block;
+        }
+
+    </style>
 </head>
 <body>
 <?php include 'topbar.php'; ?>
@@ -42,8 +67,22 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
     <div class="col-md-9">
 
         <div id="app">
-            <a class="btn btn-primary" onclick="controlFilters()">Show Saved Filters</a>
             <?php
+            foreach ($filters as $fkey=>$fvalue) {
+            $fname = 'controlFilters('.$fvalue.')';
+            ?>
+            <div class="tooltip-container">
+                <button class="btn btn-primary" onclick="<?php echo $fname; ?>">
+                    Show Saved Filters <?php echo $fkey+1; ?>
+                </button>
+                <div class="tooltip-content">
+                    <!-- Your filtered data goes here -->
+                    <?php echo htmlspecialchars(json_encode(getFilterValueHover($fvalue)), ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            </div>
+            <?php
+}
+
             echo '<table id=myTable class=display><thead><tr>';
 
             foreach ($column_values_row as $ckey => $colName) {
@@ -132,17 +171,17 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
         console.log(usercol);
         const callmyapp = myapp.mount('#app');
 
-        function controlFilters() {
+        function controlFilters(filter_no) {
             var dataToSend = {
-               'status':1
+               'filter_no':filter_no
             };
             $.ajax({
                 type: 'POST',
                 url: 'control_user_filters.php',
                 data: dataToSend,
                 success: function(response) {
-
                     console.log('Database updated successfully');
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
 
@@ -150,6 +189,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
                 }
             });
         }
+
 
     </script>
     <script type="module" src="./js/components/product/product_filters.js" defer></script>

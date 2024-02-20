@@ -1,4 +1,5 @@
 <?php
+//require('./connect.php');
 function valuefromString($string, $symbol, $element){
     $keyParts = explode($symbol, $string);
     return $keyParts[$element];
@@ -81,6 +82,72 @@ function getTotalPages($baseQuery , $records_per_page){
     $total_rows = mysqli_num_rows($totalRowsResult); 
     $total_pages = ceil($total_rows / $records_per_page);
     return $total_pages;
+}
+
+function getFilters()
+{
+    require('connect.php');
+    $filter_ids =[];
+    $user_id = getValue('users', 'username', $_SESSION['username'], 'id');
+
+    $query="select id from user_filters where user_id=".$user_id;
+//    echo $query; die;
+    $filters=$con->query($query);
+    if($filters->num_rows>0)
+    {
+        while($row=$filters->fetch_assoc())
+        {
+            $filter_ids[]=$row['id'];
+        }
+    }
+    return $filter_ids;
+}
+function getFilterValueHover($filter_no)
+{
+    require('connect.php');
+    $user_name =$_SESSION['username'];
+
+    $query="select * from user_filter_details where user_name='".$user_name."' and filter_no =".$filter_no;
+
+    $filters=$con->query($query);
+
+    if($filters->num_rows>0)
+    {
+        while ($prevAttributeValue = $filters->fetch_assoc()) {
+            switch ($prevAttributeValue["filter_type"]) {
+                case "=":
+                case "!=":
+                case ">":
+                case "<":
+                    $condition = $prevAttributeValue['attribute_name'] . ' ' . $prevAttributeValue["filter_type"] . ' "' . $prevAttributeValue['attribute_condition'] . '"';
+                    break;
+                case "includes":
+                    $condition = $prevAttributeValue['attribute_name'] . ' LIKE "%' . $prevAttributeValue['attribute_condition'] . '%"';
+                    break;
+                case "between":
+                    $condition = $prevAttributeValue['attribute_name'] . ' BETWEEN ' . $prevAttributeValue['range_from'] . ' AND ' . $prevAttributeValue['range_to'];
+                    break;
+                default:
+                    $condition = $prevAttributeValue['attribute_name'].' IS NOT EMPTY';
+                    break;
+            }
+
+            if ($prevAttributeValue['op_value'] == 'OR') {
+                $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
+                $groupedConditions = [$condition];
+            } else {
+                $groupedConditions[] = $condition;
+            }
+
+        }
+        if (!empty($groupedConditions)) {
+            $filterConditions[] = '(' . implode(' AND ', $groupedConditions) . ')';
+        }
+
+        $filterCondition = implode(' OR ', $filterConditions);
+
+    }
+    return $filterCondition;
 }
 
 function getValue($db, $prkey, $keyvalue, $attribute) {

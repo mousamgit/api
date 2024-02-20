@@ -2,7 +2,7 @@
 
 $host = "localhost";
 $user = "u288902296_admin";
-$pass = "!RudySooDan1234!";
+$pass = "!RudySooDan1234";
 $name = "u288902296_pim";
 
 // Create connection
