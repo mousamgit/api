@@ -8,8 +8,8 @@ include '../login_checking.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
     <?php include '../header.php'; ?>
     <script src="./js/appro.js" ></script>
     <script src="./js/approitem.js" ></script>

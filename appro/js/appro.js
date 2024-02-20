@@ -1,7 +1,7 @@
 const myapp = Vue.createApp({
     data() {
         return {
-
+            fieldediting:'',
             items: [],  
             itemarray: [],
             itemindex: 0,
@@ -14,8 +14,14 @@ const myapp = Vue.createApp({
         };
     },
     methods: {
+        editdata(field) {
+            this.fieldediting = field;
+          },
+        isediting(field) {
+            if(this.fieldediting == field){                return true;            }
+            else{                return false;            }
+          },
         searchname() {
-
             axios.get('../searchcustomer.php', { params: { query: this.customername } })
                 .then(response => {
                     this.searchCustomer = response.data;
@@ -59,7 +65,7 @@ const myapp = Vue.createApp({
             return this.itemarray.reduce((acc, item) => acc + parseInt(item.itemquantity), 0);
         },
         totalPrice() {
-            return this.itemarray.reduce((acc, item) => acc + parseInt(item.itemprice), 0);
+            return this.itemarray.reduce((acc, item) => acc + parseFloat(item.itemprice), 0);
         },     
       },
 
