@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   
   addtoLog($sku, $colName, $value, $username);
   updateValue('pim','sku',$sku,$colName,$value);
-
+  
   header("Location: /");
   exit();
 } else {

@@ -1,6 +1,6 @@
 <?php
 
-include 'functions.php';
+include '../functions.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -9,12 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $oldvalue = $_POST['oldValue'];
   $value = $_POST['newValue'];
   $username = $_POST['username'];
-  echo $id.$colName.$value;
+
 //   addtoLog($sku, $colName, $value, $username);
-  updateValue('appro','appro','app003','customer','test');
+  updateValue('appro','id',$id,$colName,$value);
 
   
-  // header("Location: /");
+   header("Location: https://pim.samsgroup.info/appro/appro.php?id=$id");
   exit();
 } else {
   // Handle invalid requests

@@ -19,7 +19,11 @@ include '../functions.php';
 $appro = getValue('appro', 'id', $approid, 'appro');
 $customer = getValue('appro', 'id', $approid, 'customer');
 $order = getValue('appro', 'id', $approid, 'ordernumber');
-$itemstatus = getValue('appro', 'id', $approid, 'itemstatus')
+$itemstatus = getValue('appro', 'id', $approid, 'itemstatus');
+$dateentered  = getValue('appro', 'id', $approid, 'dateentered');
+$datedue = getValue('appro', 'id', $approid, 'datedue');
+$representation = getValue('appro', 'id', $approid, 'representation');
+$notes = getValue('appro', 'id', $approid, 'notes');
 ?>
 <div  id="app"  class="pim-padding">
     
@@ -67,10 +71,46 @@ $itemstatus = getValue('appro', 'id', $approid, 'itemstatus')
             <button type="submit" >Save</button></form>
             <a class="editfield" v-else @click="editdata('itemstatus')" ><?php echo $itemstatus ?><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>     
         </div>
-        <div class="col-md-4">Date Entered: <?php echo getValue('appro', 'id', $approid, 'dateentered') ?></div>
-        <div class="col-md-4">Date Due: <?php echo getValue('appro', 'id', $approid, 'datedue') ?></div>
-        <div class="col-md-4">Representation: <?php echo getValue('appro', 'id', $approid, 'representation') ?></div>
-        <div class="col-md-12">Notes: <?php echo getValue('appro', 'id', $approid, 'notes') ?></div>
+        <div class="col-md-4">Date Entered:
+            <form class="editform"  v-if="isediting('dateentered')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="colName" value="dateentered">
+            <input type="hidden" name="oldValue" value="<?php echo $dateentered ?>">
+            <input name="newValue" type="date" value="<?php echo $dateentered ?>">
+            <button type="submit" >Save</button></form>
+            <a class="editfield" v-else @click="editdata('dateentered')" ><?php echo $dateentered ?><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>   
+        </div>
+        <div class="col-md-4">Date Due: 
+            <form class="editform"  v-if="isediting('datedue')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="colName" value="datedue">
+            <input type="hidden" name="oldValue" value="<?php echo $datedue ?>">
+            <input name="newValue" type="date" value="<?php echo $datedue ?>">
+            <button type="submit" >Save</button></form>
+            <a class="editfield" v-else @click="editdata('datedue')" ><?php echo $datedue ?><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>   
+        </div>
+        <div class="col-md-4">Representation: 
+            <form class="editform"  v-if="isediting('representation')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="colName" value="representation">
+            <input type="hidden" name="oldValue" value="<?php echo $representation ?>">
+            <input name="newValue" type="text" value="<?php echo $representation ?>">
+            <button type="submit" >Save</button></form>
+            <a class="editfield" v-else @click="editdata('representation')" ><?php echo $representation ?><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>   
+        </div>
+        <div class="col-md-12">Notes: 
+            <form class="editform"  v-if="isediting('notes')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="colName" value="notes">
+            <input type="hidden" name="oldValue" value="<?php echo $notes ?>">
+            <input name="newValue" type="text" value="<?php echo $notes ?>">
+            <button type="submit" >Save</button></form>
+            <a class="editfield" v-else @click="editdata('notes')" ><?php echo $notes ?><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>   
+        </div>
     </div>
     <h2>Items:</h2>
 
@@ -78,7 +118,6 @@ $itemstatus = getValue('appro', 'id', $approid, 'itemstatus')
     <div class="table itemtable">
             <div class="row firstrow">
                 <div class="cell">Sku</div>
-
                 <div class="cell">Price</div>
                 <div class="cell">Qty</div>
                 <div class="cell">Total</div>
