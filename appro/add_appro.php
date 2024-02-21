@@ -80,7 +80,7 @@ include '../login_checking.php';
 <div class="col-md-2 form-cell">  <label for="notes">Notes:</label></div>
             <div class="col-md-10 form-cell">
        
-        <textarea type="date" id="notes" name="notes" col="5"></textarea>
+        <textarea id="notes" name="notes" col="5"></textarea>
             </div>
         </div>
     </div>

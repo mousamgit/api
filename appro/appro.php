@@ -1,6 +1,7 @@
 <?php
 include '../login_checking.php';
 include '../functions.php';
+require('../connect.php');
     $approid = $_GET['id'];
     $username = $_SESSION["username"];
 
@@ -162,7 +163,29 @@ if ($items !== false && is_array($items)) {
 
         </div>
         <div class="comment-container">
+            <?php
 
+  $records_per_page = 100;
+  $baseQuery = " SELECT * from approcomment WHERE  `approid`=$approid ORDER BY `approcomment`.`date` DESC, `approcomment`.`time` DESC ";
+  $commentresult = getResult($baseQuery , $records_per_page);
+  $total_pages = getTotalPages($baseQuery , $records_per_page);
+
+
+  while ($commentrow = mysqli_fetch_assoc($commentresult)){
+
+    echo "<div>".$commentrow[date]."</div>";
+    echo "<div>".$commentrow[time]."</div>";
+    echo "<div>".$commentrow[user]."</div>";
+    echo "<div>".$commentrow[comment]."</div>";
+
+}
+            ?>
+        <form   action="add_comments.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <textarea id="comment" name="comment" col="5"></textarea>
+            <button type="submit" >Save</button></form>
+        </form>
             
         </div>
 </div>
