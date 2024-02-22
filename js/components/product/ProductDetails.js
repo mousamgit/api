@@ -29,7 +29,9 @@ export default {
     },
     methods: {
         nextPage() {
+
             this.currentPage++;
+            alert(this.currentPage)
             this.fetchProducts();
         },
         prevPage() {
@@ -339,7 +341,7 @@ export default {
 <div class="btn-group" role="group" aria-label="Pagination">
     <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
     <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>
-    <button class="btn btn-primary" @click="nextPage" :disabled="productValues.length < itemsPerPage">Next</button>
+    <button class="btn btn-primary" @click="nextPage()" :disabled="productValues.length < itemsPerPage">Next</button>
   </div>
 <div class="text-muted mt-2">
     Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} of {{totalRows}} records

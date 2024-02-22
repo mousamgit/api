@@ -1,9 +1,9 @@
 <?php
 
 class ProductDetailHandler {
-    public $con;
-    public $productId;
-    public $itemsPerPage = 10;
+    private $con;
+    private $productId;
+    private $itemsPerPage = 10;
 
     public function __construct() {
         // Error reporting
@@ -12,6 +12,7 @@ class ProductDetailHandler {
 
         // Database connection
         require_once('./connect.php');
+        require_once('./login_checking.php');
         $this->con = $con;
 
         // Getting the referring URL
@@ -32,13 +33,15 @@ class ProductDetailHandler {
         $totalRows = $this->getTotalRows();
         $columnValuesRow = $this->getColumnValuesRow();
 
+        $filterIds = $this->getFilters();
+
         $this->con->close();
 
         header('Content-Type: application/json');
-        echo json_encode(['products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow]);
+        echo json_encode(['products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_ids'=>$filterIds]);
     }
 
-    public function getProducts() {
+    private function getProducts() {
         $products = [];
         $productQuery = $this->con->query("SELECT * FROM products where id=" . $this->productId);
 
@@ -51,9 +54,10 @@ class ProductDetailHandler {
         return $products;
     }
 
-    public function getProductFilter() {
+    private function getProductFilter() {
         $productFilter = [];
-        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where status=1 and product_id=" . $this->productId . " and user_name = ".$_SESSION['username']." order by index_no ASC");
+
+        $productFilterQuery = $this->con->query("SELECT * FROM product_filter where status=1 and product_id=" . $this->productId . " and user_name = '".$_SESSION['username']."' order by index_no ASC");
 
         if ($productFilterQuery->num_rows > 0) {
             while ($row = $productFilterQuery->fetch_assoc()) {
@@ -64,7 +68,7 @@ class ProductDetailHandler {
         return $productFilter;
     }
 
-    public function getProductValues() {
+    private function getProductValues() {
         $productValues = [];
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
@@ -79,30 +83,31 @@ class ProductDetailHandler {
         return $productValues;
     }
 
-    public function getTotalRows() {
+    private function getTotalRows() {
         $totalRowsQuery = $this->con->query("select DISTINCT sku FROM pim " . $this->getFilterConditionCombined());
         return $totalRowsQuery->num_rows;
     }
 
-    public function getColumnValuesRow() {
+    private function getColumnValuesRow() {
+
         $columnValuesRow = ['sku'];
 
         $userColumns = $this->con->query("select columns from users where username ='".$_SESSION["username"]."'");
         $columnValuesRowCustomer='';
         if ($userColumns->num_rows > 0) {
             while ($row = $userColumns->fetch_assoc()) {
-                    $columnValuesRowCustomer = str_replace('"','',$row['columns']);
+                $columnValuesRowCustomer = str_replace('"','',$row['columns']);
             }
             $columnValuesRowCustomer = explode(",",$columnValuesRowCustomer);
 
         }
-       foreach ($columnValuesRowCustomer as $key =>$cval)
-       {
-           if(!in_array($cval,$columnValuesRow))
-           {
-               $columnValuesRow[] = $cval;
-           }
-       }
+        foreach ($columnValuesRowCustomer as $key =>$cval)
+        {
+            if(!in_array($cval,$columnValuesRow))
+            {
+                $columnValuesRow[] = $cval;
+            }
+        }
         $checkIfColumns = $this->con->query("select attribute_name from product_filter where status=1 and product_id =" . $this->productId. " and user_name ='".$_SESSION["username"]."'");
 
         if ($checkIfColumns->num_rows > 0) {
@@ -113,7 +118,25 @@ class ProductDetailHandler {
             }
         }
 
-       return $columnValuesRow;
+        return $columnValuesRow;
+    }
+    function getFilters()
+    {
+        require('./functions.php');
+        require('./connect.php');
+        $filter_ids =[];
+        $user_id = getValue('users', 'username', $_SESSION['username'], 'id');
+
+        $query="select id from user_filters where user_id=".$user_id;
+        $filters=$con->query($query);
+        if($filters->num_rows>0)
+        {
+            while($row=$filters->fetch_assoc())
+            {
+                $filter_ids[]=$row['id'];
+            }
+        }
+        return $filter_ids;
     }
 
     public function getFilterConditionCombined() {
@@ -167,5 +190,7 @@ class ProductDetailHandler {
     }
 }
 
+$productDetailHandler = new ProductDetailHandler();
+$productDetailHandler->getProductDetails();
 
 ?>

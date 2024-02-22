@@ -34,7 +34,7 @@ const app = Vue.createApp({
         },
     },
     template: `
-<product-filters :productDetails=productDetails :showFilters=showFilters></product-filters>
+ <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="fetchProducts"></product-filters>
 `,
 });
 

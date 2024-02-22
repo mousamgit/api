@@ -14,7 +14,6 @@ export default {
         };
     },
     mounted() {
-
         this.fetchAllColumns();
     },
     methods: {
@@ -75,7 +74,6 @@ export default {
         },
 
         addChannelCondition(op_value,condition_type,previous_row) {
-
             this.op_show_value =  op_value;
             this.showAttributeMid = previous_row['id'];
             this.channelAttribute=[{
@@ -90,12 +88,11 @@ export default {
             }];
             this.showAttribute = 1;
             this.showAttFilter = 1;
-
-
         },
         refreshAttributeAgain()
         {
-            location.reload();
+            this.initializeData()
+            this.$emit('filters-updated') ;
         },
         async deleteFilter(productDetId,productId,indexVal) {
 
@@ -127,9 +124,8 @@ export default {
                     if (data.success)
                     {
                         console.log('Filters deleted successfully!');
-
-                        var urlWithoutParams = window.location.origin + window.location.pathname;
-                        window.location.href = urlWithoutParams;
+                        this.initializeData()
+                        this.$emit('filters-updated') ;
                     }
                     else
                     {
@@ -157,9 +153,8 @@ export default {
                 const data = await response.json();
 
                 if (data.success) {
-
-                    var urlWithoutParams = window.location.origin + window.location.pathname;
-                    window.location.href = urlWithoutParams;
+                    this.initializeData()
+                    this.$emit('filters-updated') ;
                 } else {
                     console.error('Error saving filters:', data.error);
                 }
@@ -184,12 +179,13 @@ export default {
                 const data = await response.json();
                 // Update the attributes data
                 this.columns = data;
-                console.log(this.columns,'column_list');
+
             } catch (error) {
                 console.error('Error fetching attributes:', error);
             }
         },
         async updateStatus(value) {
+
             try {
                 const response = await fetch('update_filter_status.php', {
                     method: 'POST',
@@ -204,9 +200,8 @@ export default {
                 const data = await response.json();
 
                 if (data.success) {
-
-                    var urlWithoutParams = window.location.origin + window.location.pathname;
-                    window.location.href = urlWithoutParams;
+                    this.initializeData()
+                    this.$emit('filters-updated') ;
                 } else {
                     console.error('Error updating status:', data.error);
                 }
@@ -214,11 +209,23 @@ export default {
                 console.error('Error updating status:', error);
             }
         },
+        initializeData()
+        {
+            this.channelAttribute=[],
+            this.indexCheck=0,
+            this.columns=[],
+            this.attribute_values=[],
+            this.showAttribute=0,
+            this.showAttFilter=1,
+            this.indexVal=-1,
+            this.showAttributeMid=0,
+            this.op_show_value='AND'
+            this.fetchAllColumns();
+        }
 
 
     },
-    template: `
-<div class="col-md-12 bg-light" style="min-height: 100vh">
+    template: `<div class="col-md-12 bg-light" style="min-height: 100vh">
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading" >FILTERS</span>

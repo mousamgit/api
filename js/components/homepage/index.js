@@ -1,28 +1,69 @@
+import ProductFilters from '../product/ProductFilters.js';
 
 const app = Vue.createApp({
-
     data() {
         return {
             productDetails: [],
+            productValues:[],
             showFilters: 9,
             isEditing:0,
-            username: 'mousam',
             rIndex:-1,
             cIndex:-1,
-            formData:{}
+            formData:{},
+            filters:[],
+            currentPage: 1,
+            itemsPerPage: 10,
+            totalRows:0,
+            filterList:[]
         };
     },
     mounted() {
+
         this.fetchProducts();
     },
+
     methods: {
+        changePage()
+        {
+            this.initializeData()
+            this.fetchProducts();
+        },
+        totalPages(totalRows,itemsPerPage){
+           return Math.ceil(totalRows / itemsPerPage);
+        },
+        initializePagination()
+        {
+           this.currentPage=1,
+           this.itemsPerPage= 10,
+           this.totalRows=0
+        },
+        initializeData()
+        {
+            this.showFilters= 9;
+            this.isEditing=0;
+            this.rIndex=-1;
+            this.cIndex=-1;
+            this.formData={}
+        },
+        nextPage() {
+            this.initializeData();
+            this.currentPage++;
+            this.fetchProducts();
+        },
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.initializeData();
+                this.currentPage--;
+                this.fetchProducts();
+            }
+        },
         async  controlFilters(filter_no) {
             const dataToSend = {
                 filter_no: filter_no
             };
 
             try {
-                const response = await fetch('../control_user_filters.php', {
+                const response = await fetch('./control_user_filters.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -33,9 +74,11 @@ const app = Vue.createApp({
                 if (!response.ok) {
                     throw new Error('Failed to update database');
                 }
-
+                this.initializeData();
+                this.initializePagination();
+                this.fetchProducts();
                 console.log('Database updated successfully');
-                location.reload();
+                
             } catch (error) {
                 console.error('Error updating database:', error);
             }
@@ -44,13 +87,7 @@ const app = Vue.createApp({
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
         async fetchProducts() {
-                this.productDetails= [];
-                this.showFilters= 9;
-                this.isEditing=0;
-                this.rIndex=-1;
-                this.cIndex=-1;
-                this.formData={}
-            const response = await fetch('products/fetch_product_details.php?page=1', {
+            const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,6 +99,7 @@ const app = Vue.createApp({
                     this.productValues = data.product_values;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
+                    this.filters = data.filter_ids;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -76,7 +114,37 @@ const app = Vue.createApp({
           this.formData.editedValue = editedValue;
           this.formData.sku = sku;
           this.formData.colName = colName;
+            setTimeout(() => {
+                document.getElementById('editInput').focus();
+            }, 0);
 
+        },
+        async  getTooltipDetails(filter_no) {
+            const dataToSend = {
+                filter_no: filter_no
+            };
+
+            try {
+                const response = await fetch('./fetch_tooltip_details.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                })
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tooltip details');
+                }
+
+                const data = await response.json();
+                console.log('list', data);
+                this.filterList = data;
+
+
+            } catch (error) {
+                console.error('Error updating database:', error);
+            }
         },
         async saveEdit() {
 
@@ -90,72 +158,131 @@ const app = Vue.createApp({
                         formData:this.formData
                     }),
                 });
-
                 if (!response.ok) {
-
                     throw new Error('Failed to update database');
                 }
-                console.log(response)
-                this.fetchProducts();
+                if (this.rIndex !== -1 && this.cIndex !== -1) {
+                    console.log(this.formData.editedValue)
+                    this.productValues[this.rIndex][this.columnValues[this.cIndex]] = this.formData.editedValue;
+                }
+                this.initializeData();
                 console.log('Database updated successfully');
-                // location.reload();
             } catch (error) {
                 console.error('Error updating database:', error);
             }
         },
         cancelEdit() {
-            this.editingCell = null;
+            this.initializeData();
+            this.fetchProducts();
         },
+        handleFiltersUpdated() {
+            console.log('Filters updated event received in parent component');
+            this.initializeData();
+            this.initializePagination();
+            this.fetchProducts().then(() => {
+
+                console.log('Products fetched successfully');
+            }).catch(error => {
+                console.error('Error fetching products:', error);
+            });
+        }
     },
     template: `<div>
-      <!-- Show Saved Filters -->
-      <div v-for="(fvalue, fkey) in productDetails" class="tooltip-container">
-        <button class="btn btn-primary" >
-          Show Saved Filters {{ fkey + 1 }}
-        </button>
-        <div class="tooltip-content">
-          <!-- Your filtered data goes here -->
-          
+      <div class="row">
+        <div class="col-md-9">        
+          <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
+            <button class="btn btn-primary" @click="controlFilters(fvalue)">
+              Show Saved Filters {{ fkey + 1 }}
+            </button>
+            <div class="tooltip-content">
+            
+             <div v-for="(value,index) in filterList">
+             <template v-if="index==0">
+             <p>
+             <span>{{ value.attribute_name }}</span> 
+             <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+             <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+             </p>
+             </template>
+             <template v-else>
+             <p>
+            <strong>{{ value.op_value }}</strong>
+             </p>
+             <p>
+             <span>{{ value.attribute_name }}</span> 
+             <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+             <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+             </p>
+             </template>
+             </div>
+            </div>
+          </div>
+         
+          <table id="myTable" class="table table-responsive display">
+            <thead>
+              <tr>
+                <th v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+              </tr>
+            </thead>
+            <tbody>
+            
+              <tr v-for="(row,rowIndex) in productValues">
+               <template v-for="(colName,colIndex) in columnValues">
+               <td>              
+                <div v-if="rIndex==rowIndex && colIndex==cIndex">
+                <input type="hidden" v-model="formData.sku" value="row['sku']">
+                <input type="hidden" v-model="formData.columnName" value="colName">
+                <input type="hidden" v-model="formData.oldValue" value="row[colName]">
+                <input id="editInput" type="text" v-model="formData.editedValue" value="row['colName']" @keydown.tab.prevent="saveEdit()" @mouseleave="saveEdit()" @keyup.enter="saveEdit()">
+                </div>
+                <div v-else>
+                <template v-if="colName == 'sku'">
+                 {{ row['sku'] }} 
+                </template>
+                <template v-else-if="colName.includes('imag')">
+                 <img src="row[colName]" alt="No Image">
+                </template>
+                <template v-else>
+                <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
+                    {{ row[colName] }} <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                </a>
+                </div>
+                </template>
+                </td>
+                </template>
+              </tr>
+            </tbody>
+          </table>
+           <div class="mt-3">
+                <div class="btn-group" role="group" aria-label="Pagination">
+                <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
+<!--                <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>-->
+                <select v-model="currentPage" @change="changePage" class="page-dropdown">
+                    <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
+                    <template v-if="currentPage==index+1">                 
+                    <option :value="index+1" selected>Page {{ index +1 }}</option>
+                    </template>
+                    
+                    <template v-else>
+                    <option :value="index+1">Page {{ index +1 }}</option>
+                    </template>
+                    
+                </select>
+
+                <button class="btn btn-primary" @click="nextPage" :disabled="productValues.length < itemsPerPage">Next</button>
+              </div>
+              <div class="text-muted mt-2">
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} of {{totalRows}} records
+              </div>
+        </div>
+        </div>
+       
+        <div class="col-md-3">
+            <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
         </div>
       </div>
-      
-      <!-- Table -->
-      <table id="myTable" class="display">
-        <thead>
-          <tr>
-            <th v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row,rowIndex) in productValues">
-           <template v-for="(colName,colIndex) in columnValues">
-           <td>
-          
-            <div v-if="rIndex==rowIndex && colIndex==cIndex">
-            <input type="hidden" v-model="formData.sku" value="row['sku']">
-            <input type="hidden" v-model="formData.columnName" value="colName">
-            <input type="hidden" v-model="formData.oldValue" value="row[colName]">
-            <input type="text" v-model="formData.editedValue" value="row['colName']">
-            <button @click="saveEdit()">Update</button>
-            <button @click="cancelEdit">Cancel</button>
-            </div>
-            <template v-if="colName == 'sku'">
-             {{ row[colName] }} 
-            </template>
-            <template v-else>
-            
-            <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
-                {{ row[colName] }} <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-            </a>
-            </template>
-            </td>
-            </template>
-          </tr>
-        </tbody>
-      </table>
-      
-    </div>`,
+    </div>
+`,
 });
-
-
 app.mount('#index');
+app.component('product-filters', ProductFilters);

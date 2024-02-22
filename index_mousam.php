@@ -4,25 +4,6 @@ ini_set('display_errors', '1');
 include 'login_checking.php';
 include 'functions.php';
 
-// Include the ProductDetailHandler class
-require_once('fetch_filtered_data.php');
-
-// Create an instance of the ProductDetailHandler class
-$productDetailHandler = new ProductDetailHandler();
-
-$productDetails = $productDetailHandler->getProductValues();
-$filters = getFilters();
-$urlData = $_GET;
-$username = $_SESSION["username"];
-$records_per_page = 10;
-$baseQuery = getQuery('pim');
-$result = $productDetails;
-$column_values_row = $productDetailHandler->getColumnValuesRow();
-$total_rows = $productDetailHandler->getTotalRows();
-$total_pages = $total_rows/10;
-$usercol = getValue('users', 'username', $username, 'columns');
-
-$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,39 +45,13 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 <body>
 <?php include 'topbar.php'; ?>
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-12">
         <div id="index">
           <index></index>
         </div>
     </div>
-    <div class="col-md-3">
 
-        <div id="filter">
-            <product-filters></product-filters>
-        </div>
-    </div>
 </div>
-    <script>
-        function controlFilters(filter_no) {
-            var dataToSend = {
-               'filter_no':filter_no
-            };
-            $.ajax({
-                type: 'POST',
-                url: 'control_user_filters.php',
-                data: dataToSend,
-                success: function(response) {
-                    console.log('Database updated successfully');
-                    location.reload();
-                },
-                error: function(xhr, status, error) {
-
-                    console.error('Error updating database:', error);
-                }
-            });
-        }
-    </script>
     <script type="module" src="./js/components/homepage/index.js" defer></script>
-    <script type="module" src="./js/components/product/product_filters.js" defer></script>
 </body>
 </html>
