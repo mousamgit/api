@@ -14,6 +14,9 @@ const myapp = Vue.createApp({
         };
     },
     methods: {
+        calculateTotal(price, qty) {
+            return price * qty;
+          },
         editdata(field) {
             this.fieldediting = field;
           },

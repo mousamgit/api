@@ -340,6 +340,16 @@ header a{ color:#fff}
   .itemtable .cell{padding:0;  border: 1px solid #ddd; width:20%;}
   .itemtable .cell input{border:0; margin:0;}
   .itemtable .cell:nth-child(odd) {  background-color: #f9f9f9;}
+  .editfield, .editform{display: inline;}
+
+  .comment-box{background-color: #efefef; margin-bottom:15px}
+  .comment-header{background-color: #e1e1e1; padding:10px 20px; float: left; width:100%;}
+  .comment-user{float:left;}
+  .comment-date{float:right;}
+  .comment-content{padding: 60px 20px 10px;}
+  .comment-form{width:100%;}
+  .comment-form textarea{width:100%;}
+  .comment-form button{margin-right:15px;}
 
 .itemtable .cell:hover {  background-color: #f0f0f0;}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */

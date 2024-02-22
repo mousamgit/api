@@ -21,7 +21,19 @@ $items = $_POST['items']; // This will be an array of item arrays
 
 // Serialize the items array
 $serializedItems = serialize($items);
+echo $serializedItems ;
 
+for ($i = 0; $i < count($items); $i += 4) {
+    $itemcode = $items[$i]['itemcode'];
+    $itemprice = $items[$i + 1]['itemprice'];
+    $itemquantity = $items[$i + 2]['itemquantity'];
+    $itemtotal = $items[$i + 3]['itemtotal'];
+
+    $itemsql = "INSERT INTO approitems (itemcode, itemprice, itemquantity, approid)
+            VALUES ('$itemcode', '$itemprice', '$itemquantity', '$approID')";
+
+    $itemresult = mysqli_query($con,$itemsql) or die(mysqli_error($con)); 
+}
 
 // Now you can insert $customerName, $approID, $orderNumber, $dateEntered, $dueDate, and $serializedItems into your database
 // Execute your database insert query here, including the serialized items
@@ -31,7 +43,7 @@ $approsql = " INSERT into appro (appro,customer,itemstatus,dateentered,datedue,o
 
 $approresult = mysqli_query($con,$approsql) or die(mysqli_error($con)); 
 echo "New record created successfully";
-header("Location: https://pim.samsgroup.info/appro/appro_list.php");
+// header("Location: https://pim.samsgroup.info/appro/appro_list.php");
 exit();
 
 }
