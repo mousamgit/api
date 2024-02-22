@@ -44,6 +44,12 @@ const app = Vue.createApp({
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
         async fetchProducts() {
+                this.productDetails= [];
+                this.showFilters= 9;
+                this.isEditing=0;
+                this.rIndex=-1;
+                this.cIndex=-1;
+                this.formData={}
             const response = await fetch('products/fetch_product_details.php?page=1', {
                 method: 'POST',
                 headers: {
@@ -61,31 +67,41 @@ const app = Vue.createApp({
                     console.error('Error fetching data:', error);
                 });
         },
-        changeEditValue(rowIndex,columnIndex,oldValue,editedValue)
+        changeEditValue(rowIndex,columnIndex,oldValue,editedValue,sku,colName)
         {
+          this.isEditing = 1;
           this.rIndex = rowIndex;
           this.cIndex = columnIndex;
           this.formData.oldValue = oldValue;
           this.formData.editedValue = editedValue;
+          this.formData.sku = sku;
+          this.formData.colName = colName;
 
         },
-        async saveEdit(sku, colName,oldValue,editedValue) {
-            const response = await fetch('updatetablevalue.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then(response => response.json())
-                .then(data => {
-                    this.products = data.products;
-                    this.productDetails = data.product_details;
-                    this.productValues = data.product_values;
-                    this.totalRows = data.total_rows;
-                    this.columnValues = data.column_values_row;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
+        async saveEdit() {
+
+            try {
+                const response = await fetch('./updatetablevalue.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        formData:this.formData
+                    }),
                 });
+
+                if (!response.ok) {
+
+                    throw new Error('Failed to update database');
+                }
+                console.log(response)
+                this.fetchProducts();
+                console.log('Database updated successfully');
+                // location.reload();
+            } catch (error) {
+                console.error('Error updating database:', error);
+            }
         },
         cancelEdit() {
             this.editingCell = null;
@@ -116,14 +132,22 @@ const app = Vue.createApp({
            <td>
           
             <div v-if="rIndex==rowIndex && colIndex==cIndex">
+            <input type="hidden" v-model="formData.sku" value="row['sku']">
+            <input type="hidden" v-model="formData.columnName" value="colName">
             <input type="hidden" v-model="formData.oldValue" value="row[colName]">
             <input type="text" v-model="formData.editedValue" value="row['colName']">
-            <button @click="saveEdit(row['sku'], colName,formData.oldValue,formData.editedValue)">Update</button>
+            <button @click="saveEdit()">Update</button>
             <button @click="cancelEdit">Cancel</button>
             </div>
-            <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName])">
+            <template v-if="colName == 'sku'">
+             {{ row[colName] }} 
+            </template>
+            <template v-else>
+            
+            <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
                 {{ row[colName] }} <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </a>
+            </template>
             </td>
             </template>
           </tr>
