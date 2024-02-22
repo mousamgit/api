@@ -33,7 +33,9 @@ const app = Vue.createApp({
                 });
         },
     },
-    template: `<product-filters :productDetails=productDetails :showFilters=showFilters></product-filters>`,
+    template: `
+<product-filters :productDetails=productDetails :showFilters=showFilters></product-filters>
+`,
 });
 
 app.component('product-filters', ProductFilters);
