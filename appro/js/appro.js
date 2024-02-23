@@ -1,7 +1,7 @@
 const myapp = Vue.createApp({
     data() {
         return {
-            fieldediting:'',
+            editingCell: [],
             items: [],  
             itemarray: [],
             itemindex: 0,
@@ -11,17 +11,32 @@ const myapp = Vue.createApp({
             itemquantity:0,
             searchCustomer:[],
             customername: '',
+            totals: [],
+            quantitytotals:[],
         };
     },
     methods: {
-        calculateTotal(price, qty) {
-            return price * qty;
+          calculateTotal(quantity, price) {
+            const qty = Number(quantity);
+            const total = price * quantity;
+            this.totals.push(total);
+            this.quantitytotals.push(qty);
+            return total;
           },
-        editdata(field) {
-            this.fieldediting = field;
+          calculateSum() {
+            return this.totals.reduce((acc, cur) => acc + cur, 0);
           },
-        isediting(field) {
-            if(this.fieldediting == field){                return true;            }
+          calculateQty() {
+            return this.quantitytotals.reduce((acc, cur) => acc + cur, 0);
+          },
+
+          editdata(row, col) {
+            // Set the editingCell to the combination of colName and row
+            this.editingCell = [row,col];
+          },
+        
+          isediting(row, col) {
+            if(this.editingCell[0] == row && this.editingCell[1] == col){                return true;            }
             else{                return false;            }
           },
         searchname() {

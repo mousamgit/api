@@ -27,40 +27,33 @@ $representation = getValue('appro', 'id', $approid, 'representation');
 $notes = getValue('appro', 'id', $approid, 'notes');
 ?>
 <div  id="app"  class="container">
-    
+    <a href="./appro_list.php">back to appro list</a>
     <div class="row">
         <div class="col-md-4">Appro ID: 
-            <form class="editform"  v-if="isediting('appro')"  action="update_appro.php" method="post">
-            <input type="hidden" name="username" value="<?php echo $username ?>">
-            <input type="hidden" name="id" value="<?php echo $approid ?>">
-            <input type="hidden" name="colName" value="appro">
-            <input type="hidden" name="oldValue" value="<?php echo $appro ?>">
-            <input name="newValue" type="text" value="<?php echo $appro ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $appro ?><a  @click="editdata('appro')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>    
+            <div class="editfield"><?php echo $appro ?></div>    
         </div>
         <div class="col-md-4">Customer: 
-            <form class="editform"  v-if="isediting('customer')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','customer')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="customer">
             <input type="hidden" name="oldValue" value="<?php echo $customer ?>">
             <input name="newValue" type="text" value="<?php echo $customer ?>">
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $customer ?><a  @click="editdata('customer')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>            
+            <div class="editfield" v-else ><?php echo $customer ?><a  @click="editdata('a','customer')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>            
         </div>
         <div class="col-md-4">Order Number: 
-            <form class="editform"  v-if="isediting('order')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','order')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="order">
             <input type="hidden" name="oldValue" value="<?php echo $order ?>">
             <input name="newValue" type="text" value="<?php echo $order ?>">
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $order ?><a  @click="editdata('order')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>         
+            <div class="editfield" v-else ><?php echo $order ?><a  @click="editdata('a','order')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>         
         </div>
         <div class="col-md-4">Status: 
-            <form class="editform"  v-if="isediting('itemstatus')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','itemstatus')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="itemstatus">
@@ -70,47 +63,47 @@ $notes = getValue('appro', 'id', $approid, 'notes');
                 <option value="completed">completed</option>
             </select>
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $itemstatus ?><a  @click="editdata('itemstatus')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>     
+            <div class="editfield" v-else ><?php echo $itemstatus ?><a  @click="editdata('a','itemstatus')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>     
         </div>
         <div class="col-md-4">Date Entered:
-            <form class="editform"  v-if="isediting('dateentered')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','dateentered')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="dateentered">
             <input type="hidden" name="oldValue" value="<?php echo $dateentered ?>">
             <input name="newValue" type="date" value="<?php echo $dateentered ?>">
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $dateentered ?><a  @click="editdata('dateentered')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <div class="editfield" v-else ><?php echo $dateentered ?><a  @click="editdata('a','dateentered')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
         </div>
         <div class="col-md-4">Date Due: 
-            <form class="editform"  v-if="isediting('datedue')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','datedue')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="datedue">
             <input type="hidden" name="oldValue" value="<?php echo $datedue ?>">
             <input name="newValue" type="date" value="<?php echo $datedue ?>">
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $datedue ?><a  @click="editdata('datedue')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <div class="editfield" v-else ><?php echo $datedue ?><a  @click="editdata('a','datedue')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
         </div>
         <div class="col-md-4">Representation: 
-            <form class="editform"  v-if="isediting('representation')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','representation')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="representation">
             <input type="hidden" name="oldValue" value="<?php echo $representation ?>">
             <input name="newValue" type="text" value="<?php echo $representation ?>">
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else><?php echo $representation ?><a  @click="editdata('representation')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <div class="editfield" v-else><?php echo $representation ?><a  @click="editdata('a','representation')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
         </div>
         <div class="col-md-12">Notes: 
-            <form class="editform"  v-if="isediting('notes')"  action="update_appro.php" method="post">
+            <form class="editform"  v-if="isediting('a','notes')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="notes">
             <input type="hidden" name="oldValue" value="<?php echo $notes ?>">
             <input name="newValue" type="text" value="<?php echo $notes ?>">
             <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $notes ?><a  @click="editdata('notes')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <div class="editfield" v-else ><?php echo $notes ?><a  @click="editdata('a','notes')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
         </div>
     </div>
 
@@ -119,77 +112,59 @@ $notes = getValue('appro', 'id', $approid, 'notes');
                 <div class="cell">Sku</div>
                 <div class="cell">Price</div>
                 <div class="cell">Qty</div>
-                <div class="cell">Total <a  @click="editdata('items')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>
+                <div class="cell">Total</div>
             </div>
 
             <?php
 
-$records_per_page = 100;
-$itemQuery = " SELECT * from approitems WHERE  `approid`= $appro ";
-$itemresult = getResult($itemQuery , $records_per_page);
+    $records_per_page = 100;
+    $itemQuery = " SELECT * from approitems WHERE  `approid`= '$appro'";
+    $itemresult = getResult($itemQuery , $records_per_page);
+    ?>
 
 
+<?php
 
-while ($itemrow = mysqli_fetch_assoc($itemresult)){
+    for ($i = 0; $itemrow = mysqli_fetch_assoc($itemresult); $i++) :
+    ?>
+    <div class="row">
+        <div class="cell"><?php echo $itemrow[itemcode] ?></div>
+        <div class="cell">
+            <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="itemid" value="<?php echo $itemrow[id]; ?>">
+            <input type="hidden" name="colName" value="itemprice">
+            <input type="hidden" name="oldValue" value="<?php echo $itemrow[itemprice] ?>">
+            <input name="newValue" type="text" value="<?php echo $itemrow[itemprice] ?>">
+            <button type="submit" >Save</button></form>
+            <div class="editfield" v-else ><?php echo $itemrow[itemprice] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>
+        </div>
+        <div class="cell">
+            <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="itemid" value="<?php echo $itemrow[id]; ?>">
+            <input type="hidden" name="colName" value="itemquantity">
+            <input type="hidden" name="oldValue" value="<?php echo $itemrow[itemquantity] ?>">
+            <input name="newValue" type="text" value="<?php echo $itemrow[itemquantity] ?>">
+            <button type="submit" >Save</button></form>
+            <div class="editfield" v-else ><?php echo $itemrow[itemquantity] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>
+        </div>
+        <div class="cell">{{ calculateTotal('<?php echo $itemrow[itemquantity] ?>','<?php echo $itemrow[itemprice] ?>') }}</div>
+    </div>    
 
-  echo '<div class="row">';
+  <?php endfor; ?>
 
-  echo '<div class="cell">'.$itemrow[itemcode].'</div>';
-  echo '<div class="cell">'.$itemrow[itemprice].'</div>';
-  echo '<div class="cell">'.$itemrow[itemquantity].'</div>';
-  echo '<div class="cell">{{ calculateTotal('.$itemrow[itemprice].','.$itemrow[itemquantity].') }}</div>';
-  echo '</div>';
-
-}
-          ?>
-
-</div>
+  <div class="row firstrow">
+                <div class="cell">Total</div>
+                <div class="cell"></div>
+                <div class="cell">{{ calculateQty() }}</div>
+                <div class="cell">{{ calculateSum() }}</div>
+  </div>
 
     
-    <div class="table itemtable">
-            <div class="row firstrow">
-                <div class="cell">Sku</div>
-                <div class="cell">Price</div>
-                <div class="cell">Qty</div>
-                <div class="cell">Total <a  @click="editdata('items')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>
-            </div>
-            
-            <?php 
-    $serializedItems = getValue('appro', 'id', $approid, 'items');
-
-$items = unserialize($serializedItems);
-
-// Check if the deserialization was successful
-if ($items !== false && is_array($items)) {
-    $itemindex = 0;
-    echo '<div class="row">';
-    foreach ($items as $item) {
-
-        foreach ($item as $field => $value) {
-            if ($field == 'itemcode' && $itemindex != 0) {
-                echo '</div><div class="row"><div class="cell">'.$value.'</div>';
-            }
-            else{
-                echo '<div class="cell">'.$value.'</div>';
-            }
-            $itemindex ++;
-        }
-        
-    }
-    echo '</div>';
-} else {
-    echo "Error: Unable to unserialize items data.";
-}
-
-    ?>
-            
-            <div class="row">
-                <div class="cell">Total</div>
-
-                <div class="cell"></div>
-                <div class="cell"><?php echo getValue('appro', 'appro', $approid, 'totalquantity') ?></div>
-                <div class="cell"><?php echo getValue('appro', 'appro', $approid, 'totalprice') ?></div>
-            </div>
+   
 
         </div>
         <div class="comment-container">

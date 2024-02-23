@@ -9,12 +9,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $oldvalue = $_POST['oldValue'];
   $value = $_POST['newValue'];
   $username = $_POST['username'];
+  $itemid =  $_POST['itemid'];
 
 //   addtoLog($sku, $colName, $value, $username);
-  updateValue('appro','id',$id,$colName,$value);
+
+  if($itemid == ''){
+    updateValue('appro','id',$id,$colName,$value);
+  }
+  else{
+    updateValue('approitems','id',$itemid,$colName,$value);
+  }
+
 
   
-   header("Location: https://pim.samsgroup.info/appro/appro.php?id=$id");
+  header("Location: https://pim.samsgroup.info/appro/appro.php?id=$id");
   exit();
 } else {
   // Handle invalid requests

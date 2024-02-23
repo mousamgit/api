@@ -81,7 +81,7 @@
         ?>
 
     <nav class="drawer-navigation">
-        <a href="logout.php"  class="drawer-list-item drawer-icon-right" ><span>Log out</span></a>
+        <a href="https://pim.samsgroup.info/logout.php"  class="drawer-list-item drawer-icon-right" ><span>Log out</span></a>
     </nav>
 </div>
 

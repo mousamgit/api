@@ -44,15 +44,15 @@ header a{ color:#fff}
 .data_body{padding: 10px 50px;}
 
 .show-filter{margin-right: 50px;}
-#myTable{  width:100% !important;  margin-top: 50px; text-align: left; font-size: 12px;}
-#myTable thead tr{background: #efefef;}
-#myTable tbody tr:nth-child(even) {background: #efefef;}
-#myTable .img-cell{background: #fff;}
-#myTable .img-cell img{width:80px;}
-#myTable td, #myTable th{padding:5px 10px;}
-#myTable .tabledata{cursor: pointer;}
-#myTable .tabledata i{display: none;}
-#myTable .tabledata:hover i{display: block;}
+.pimtable{  width:100% !important;  margin-top: 50px; text-align: left; font-size: 12px;     border: #e1e1e1 solid 1px;  margin-bottom: 20px;}
+.pimtable thead tr{background: #efefef;}
+.pimtable tbody tr:nth-child(even) {background: #efefef;}
+.pimtable .img-cell{background: #fff;}
+.pimtable .img-cell img{width:80px;}
+.pimtable td, .pimtable th{padding:5px 10px;}
+.pimtable .tabledata{cursor: pointer;}
+.pimtable .tabledata i{display: none;}
+.pimtable .tabledata:hover i{display: block;}
 .pagination{max-width: 100%; margin-top:20px; display: block; padding: 10px 30px 80px;}
 .pagination a{margin-right:10px; float: left; cursor: pointer; font-size: 10px; }
 .pagination a.active{font-weight: 600; color:#000;}

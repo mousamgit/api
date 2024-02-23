@@ -55,7 +55,7 @@ include 'login_checking.php';
   } // show column headers
   echo '</div></div>';
 
-  echo '<table id=myTable class=display><thead><tr>';
+  echo '<table  class="display pimtable"><thead><tr>';
  
   foreach ($row as $colName => $val) { 
     $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
