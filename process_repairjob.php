@@ -28,6 +28,7 @@
             if(isset($_POST['watch-tasks'])) $watch_tasks=$_POST['watch-tasks'];
             if(isset($_POST['taskprice'])) $taskprice=$_POST['taskprice'];
             if(isset($_POST['notes'])) $notes=$_POST['notes'];
+            if(isset($_POST['address'])) $address=$_POST['address'];
 
             /* Check Files Uploaded */
             if(isset($_POST['Submit'])){ 
@@ -85,7 +86,7 @@
             }
 
             if(!empty($job_number)){
-                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date, status, notes) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date' , 'created', '$notes') ";
+                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date, status, notes, address) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date' , 'created', '$notes', '$address') ";
                 $result = mysqli_query($con, $sql) or die(mysqli_error($con));
             }
         ?>

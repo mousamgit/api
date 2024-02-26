@@ -80,6 +80,10 @@
                     <div class="cell-l"><label>Contact Details:</div>
                     <div class="cell-r"><input type="text" name="contact" id="contact" placeholder="Enter Contact Number or Email" ></div>
                 </div>
+                <div class="form-row">
+                    <div class="cell-l"><label>Contact Details:</div>
+                    <div class="cell-r"><input type="text" name="address" id="address" placeholder="Customer Address" ></div>
+                </div>
                 <div class="form-row subheader" style="margin-top: 80px;"><span>Product Details</span></div>
                 <div class="form-row">
                     <div class="cell-l">Product Code:</div>

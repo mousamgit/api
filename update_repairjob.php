@@ -20,6 +20,7 @@
     if(isset($_POST['tracking'])) $tracking=$_POST['tracking'];
     if(isset($_POST['files'])) $uploaded_files=$_POST['files'];
     if(isset($_POST['user'])) $user=$_POST['user'];
+    if(isset($_POST['address'])) $address=$_POST['address'];
 
     /* Check Files Uploaded */
     if(isset($_POST['Submit'])){ 
@@ -104,7 +105,7 @@
     }
 
     if(!empty($id)){
-        $sql = "UPDATE repairs SET job_number='$job_number', cust_code='$cust_code', cust_ref='$reference_number', cust_name='$cust_name', contact='$contact', product='$product', images='$images', repair_type='$type', tasks='$tasks', due_date='$date' , status='$status', notes='$notes', tracking='$tracking' WHERE id='$id'";
+        $sql = "UPDATE repairs SET job_number='$job_number', cust_code='$cust_code', cust_ref='$reference_number', cust_name='$cust_name', contact='$contact', product='$product', images='$images', repair_type='$type', tasks='$tasks', due_date='$date' , status='$status', notes='$notes', tracking='$tracking', address='$address' WHERE id='$id'";
         $result = mysqli_query($con, $sql) or die(mysqli_error($con));
     }
 

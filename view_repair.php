@@ -95,6 +95,10 @@
                     <div class="cell-l"><label>Contact Details:</div>
                     <div class="cell-r"><input type="text" name="contact" id="contact" value="<?php echo $row[contact]; ?>"></div>
                 </div>
+                <div class="form-row">
+                    <div class="cell-l"><label>Address:</div>
+                    <div class="cell-r"><input type="text" name="address" id="address" value="<?php echo $row[address]; ?>"></div>
+                </div>
                 <div class="form-row subheader" style="margin-top: 80px;"><span>Product Details</span></div>
                 <div class="form-row">
                     <div class="cell-l">Product Code:</div>
