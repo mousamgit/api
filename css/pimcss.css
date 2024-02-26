@@ -336,12 +336,23 @@ header a{ color:#fff}
   .appro-form .autofill ul li{padding: 5px 20px; cursor: pointer;}
   .appro-form .autofill ul li:hover{background-color: #e1e1e1; }
   .itemtable .firstrow{  font-weight: bold;  background-color: #f2f2f2;  color: #333;  border-bottom: 1px solid #ddd;}
-  .itemtable .firstrow .cell{padding: 12px;}
-  .itemtable .cell{padding:0;  border: 1px solid #ddd; width:20%;}
+  .itemtable .cell{border: 1px solid #ddd; width:20%; height:50px;     padding: 12px;}
   .itemtable .cell input{border:0; margin:0;}
   .itemtable .cell:nth-child(odd) {  background-color: #f9f9f9;}
-  .editfield, .editform{display: inline;}
+  .editform{display: inline; padding: 0!important;}
+  .editform button{border:none; background: none;     padding: 0 15px;}
+  .itemtable{border:#e1e1e1 solid 1px;}
+  .itemtable .editfield{display: inline-block; vertical-align: middle; padding-left:12px;}
+  .appro-update .editform input, .appro-update .editform select{width:calc(100% - 50px); border: none;     height: 50px;}
+  .appro-update .row>div{height:50px;     display: grid;    align-items: center;}
+  .appro-update .itemtable .row>div{display: table-cell;}
+  .appro-update .row .itemcell{height:unset;}
+  .editfield a{margin-left: 20px;}
+  .editfield a:hover i{transform: rotate(-45deg);}
+  .itemtable .inputcell{padding:0; }
 
+  .comment-container{margin-top:50px;}
+  .comment-container h2{font-size: 18px; font-weight: 600; margin-bottom: 15px;}
   .comment-box{background-color: #efefef; margin-bottom:15px}
   .comment-header{background-color: #e1e1e1; padding:10px 20px; float: left; width:100%;}
   .comment-user{float:left;}

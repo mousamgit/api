@@ -27,34 +27,37 @@ $representation = getValue('appro', 'id', $approid, 'representation');
 $notes = getValue('appro', 'id', $approid, 'notes');
 ?>
 <div  id="app"  class="container ">
-    <div class="form-design">
-    <a href="./appro_list.php">back to appro list</a>
-    <div class="header">Appro: <?php echo $appro ?></div>
+    <div class="form-design appro-update">
+    <a href="./appro_list.php" >back to appro list</a>
+    <div class="header mt-3">Appro: <?php echo $appro ?></div>
     <div class="wrapper-box">
     <div class="row">
-        <div class="col-md-12">Customer: 
+        <div class="col-md-2">Customer: </div>
+        <div class="col-md-10">
             <form class="editform"  v-if="isediting('a','customer')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="customer">
             <input type="hidden" name="oldValue" value="<?php echo $customer ?>">
             <input name="newValue" type="text" value="<?php echo $customer ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $customer ?><a  @click="editdata('a','customer')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>            
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $customer ?><a  @click="editdata('a','customer')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>            
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">Order Number: 
+        <div class="col-md-2">Order Number: </div>
+        <div class="col-md-4"> 
             <form class="editform"  v-if="isediting('a','order')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
-            <input type="hidden" name="colName" value="order">
+            <input type="hidden" name="colName" value="ordernumber">
             <input type="hidden" name="oldValue" value="<?php echo $order ?>">
             <input name="newValue" type="text" value="<?php echo $order ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $order ?><a  @click="editdata('a','order')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>         
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $order ?><a  @click="editdata('a','order')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>         
         </div>
-        <div class="col-md-6">Status: 
+        <div class="col-md-2">Status: </div>
+        <div class="col-md-4">  
             <form class="editform"  v-if="isediting('a','itemstatus')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
@@ -64,52 +67,64 @@ $notes = getValue('appro', 'id', $approid, 'notes');
                 <option value="shipped">shipped</option>
                 <option value="completed">completed</option>
             </select>
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $itemstatus ?><a  @click="editdata('a','itemstatus')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>     
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $itemstatus ?><a  @click="editdata('a','itemstatus')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>     
         </div>
-        <div class="col-md-6">Date Entered:
+    </div>
+    <div class="row">    
+        <div class="col-md-2">Date Entered: </div>
+        <div class="col-md-4"> 
             <form class="editform"  v-if="isediting('a','dateentered')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="dateentered">
             <input type="hidden" name="oldValue" value="<?php echo $dateentered ?>">
             <input name="newValue" type="date" value="<?php echo $dateentered ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $dateentered ?><a  @click="editdata('a','dateentered')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $dateentered ?><a  @click="editdata('a','dateentered')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>   
         </div>
-        <div class="col-md-6">Date Due: 
+        <div class="col-md-2">Date Due: </div>
+        <div class="col-md-4"> 
             <form class="editform"  v-if="isediting('a','datedue')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="datedue">
             <input type="hidden" name="oldValue" value="<?php echo $datedue ?>">
             <input name="newValue" type="date" value="<?php echo $datedue ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $datedue ?><a  @click="editdata('a','datedue')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $datedue ?><a  @click="editdata('a','datedue')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>   
         </div>
-        <div class="col-md-6">Representation: 
+    </div>
+    <div class="row">    
+        <div class="col-md-2">Representation: </div>
+        <div class="col-md-4"> 
             <form class="editform"  v-if="isediting('a','representation')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="representation">
             <input type="hidden" name="oldValue" value="<?php echo $representation ?>">
             <input name="newValue" type="text" value="<?php echo $representation ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else><?php echo $representation ?><a  @click="editdata('a','representation')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else><?php echo $representation ?><a  @click="editdata('a','representation')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>   
         </div>
-        <div class="col-md-12">Notes: 
+    </div>
+    <div class="row">    
+        <div class="col-md-2">Notes: </div>
+        <div class="col-md-10"> 
             <form class="editform"  v-if="isediting('a','notes')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <input type="hidden" name="colName" value="notes">
             <input type="hidden" name="oldValue" value="<?php echo $notes ?>">
             <input name="newValue" type="text" value="<?php echo $notes ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $notes ?><a  @click="editdata('a','notes')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>   
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $notes ?><a  @click="editdata('a','notes')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>   
         </div>
-    </div>
-</div>
-    <div class="table itemtable">
+        </div>
+    <div class="row"> 
+    <div class="col-md-12">Items: </div>
+        <div class="col-md-12 itemcell">
+        <div class="table itemtable">
             <div class="row firstrow">
                 <div class="cell">Sku</div>
                 <div class="cell">Price</div>
@@ -131,7 +146,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
     ?>
     <div class="row">
         <div class="cell"><?php echo $itemrow[itemcode] ?></div>
-        <div class="cell">
+        <div class="cell inputcell">
             <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
@@ -139,10 +154,10 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <input type="hidden" name="colName" value="itemprice">
             <input type="hidden" name="oldValue" value="<?php echo $itemrow[itemprice] ?>">
             <input name="newValue" type="text" value="<?php echo $itemrow[itemprice] ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $itemrow[itemprice] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $itemrow[itemprice] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"><i class="fa fa-pencil" aria-hidden="true"></i></a></i></div>
         </div>
-        <div class="cell">
+        <div class="cell inputcell">
             <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
@@ -150,8 +165,8 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <input type="hidden" name="colName" value="itemquantity">
             <input type="hidden" name="oldValue" value="<?php echo $itemrow[itemquantity] ?>">
             <input name="newValue" type="text" value="<?php echo $itemrow[itemquantity] ?>">
-            <button type="submit" >Save</button></form>
-            <div class="editfield" v-else ><?php echo $itemrow[itemquantity] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"><i class="fa fa-pencil-square-o" aria-hidden="true"></a></i></div>
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $itemrow[itemquantity] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"><i class="fa fa-pencil" aria-hidden="true"></i></a></i></div>
         </div>
         <div class="cell">{{ calculateTotal('<?php echo $itemrow[itemquantity] ?>','<?php echo $itemrow[itemprice] ?>') }}</div>
     </div>    
@@ -169,7 +184,13 @@ $notes = getValue('appro', 'id', $approid, 'notes');
    
 
         </div>
+
+        </div>
+    </div>
+</div>
+    
         <div class="comment-container">
+            <h2>Comments</h2>
             <?php
 
   $baseQuery = " SELECT * from approcomment WHERE  `approid`=$approid ORDER BY `approcomment`.`date` DESC, `approcomment`.`time` DESC ";
@@ -193,7 +214,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
             <textarea id="comment" name="comment" col="5"></textarea>
-            <button type="reset" >Reset</button><button type="submit" >Submit</button></form>
+            <button class="btn" type="reset" >Reset</button><button class="btn" type="submit" >Submit</button></form>
         </form>
             
         </div>

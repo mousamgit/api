@@ -28,7 +28,7 @@ myapp.component('approitem', {
     template: /*html*/ `
   
     <div class="row item-row"  :key="dataindex">
-        <div class="cell">
+        <div class="cell inputcell">
             <input type="text" v-model="searchQuery" @input="searchItems"  name="items[][itemcode]"  autocomplete="off"  >
             <div class="autofill">
             <ul v-if="searchSku.length > 0">
@@ -39,9 +39,9 @@ myapp.component('approitem', {
             </div>
         </div>
         <div class="cell">{{ productname }}</div>
-        <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemprice]" v-model="this.price"  @input="calculateTotal"></div>
-        <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemquantity]" v-model="inputQuantity" @input="calculateTotal"></div>
-        <div class="cell"><input  v-if="this.itemdetail" type="text" name="items[][itemtotal]" :value="this.totalPrice" readonly></div>
+        <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemprice]" v-model="this.price"  @input="calculateTotal"></div>
+        <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemquantity]" v-model="inputQuantity" @input="calculateTotal"></div>
+        <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemtotal]" :value="this.totalPrice" readonly></div>
     </div>
 
     `,

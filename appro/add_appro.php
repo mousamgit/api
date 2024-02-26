@@ -98,8 +98,8 @@ include '../login_checking.php';
                 <div class="cell">Total</div>
                 <div class="cell"></div>
                 <div class="cell"></div>
-                <div class="cell"><input type="text" id="total_quantity" name="total_quantity" :value="totalQuantity" readonly> </div>
-                <div class="cell"><input type="text" id="total_price" name="total_price"  :value="totalPrice"  readonly></div>
+                <div class="cell inputcell"><input type="text" id="total_quantity" name="total_quantity" :value="totalQuantity" readonly> </div>
+                <div class="cell inputcell"><input type="text" id="total_price" name="total_price"  :value="totalPrice"  readonly></div>
             </div>
 
         </div>
