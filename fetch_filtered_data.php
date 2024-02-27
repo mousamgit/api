@@ -156,10 +156,13 @@ class ProductDetailHandler {
                         $condition = $prevAttributeValue['attribute_name'] . ' ' . $prevAttributeValue["filter_type"] . ' "' . $prevAttributeValue['attribute_condition'] . '"';
                         break;
                     case "includes":
-                        $condition = $prevAttributeValue['attribute_name'] . ' LIKE "%' . $prevAttributeValue['attribute_condition'] . '%"';
+                        $condition = $prevAttributeValue['attribute_name'] . ' in ' . $prevAttributeValue['attribute_condition'];
                         break;
                     case "between":
                         $condition = $prevAttributeValue['attribute_name'] . ' BETWEEN ' . $prevAttributeValue['range_from'] . ' AND ' . $prevAttributeValue['range_to'];
+                        break;
+                    case "IS NULL":
+                        $condition = 'LENGTH(' . $prevAttributeValue['attribute_name'] . ') = 0';
                         break;
                     default:
                         $condition = 'LENGTH(' . $prevAttributeValue['attribute_name'] . ') > 0';

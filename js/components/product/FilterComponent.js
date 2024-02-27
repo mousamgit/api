@@ -205,7 +205,7 @@ export default {
                     const data = await response.json();
                     if (data.success)
                     {
-                        console.log('Filters deleted successfully!');
+                        console.log('filters deleted successfully!');
                         location.reload();
                     }
                     else

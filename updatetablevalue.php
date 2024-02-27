@@ -9,17 +9,24 @@ $data = json_decode(file_get_contents("php://input"), true);
 $formData= $data['formData'];
 
 
-
 if (count($formData)>0) {
-  $sku =  $formData['sku'];
+
   $colName = $formData['colName'];
   $oldvalue = $formData['oldValue'];
   $value = $formData['editedValue'];
   $username = $_SESSION['username'];
+  $table = $formData['table'];
+  $pr_key = $formData['pr_key'];
+  $pr_value =$formData[$pr_key];
 
-  addtoLog($sku, $colName, $value, $username);
-  updateValue('pim','sku',$sku,$colName,$value);
-
+  updateValue($table,$pr_key,$pr_value,$colName,$value);
+  if($table == 'pim')
+  {
+    if($oldvalue != $value)
+    {
+      addtoLog($sku, $colName, $value, $username);
+    }
+  }
 
 } else {
   // Handle invalid requests

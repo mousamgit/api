@@ -37,14 +37,6 @@ const app = Vue.createApp({
            this.itemsPerPage= 10,
            this.totalRows=0
         },
-        initializeData()
-        {
-            this.showFilters= 9;
-            this.isEditing=0;
-            this.rIndex=-1;
-            this.cIndex=-1;
-            this.formData={}
-        },
         nextPage() {
             this.initializeData();
             this.currentPage++;
@@ -57,6 +49,15 @@ const app = Vue.createApp({
                 this.fetchProducts();
             }
         },
+        initializeData()
+        {
+            this.showFilters= 9;
+            this.isEditing=0;
+            this.rIndex=-1;
+            this.cIndex=-1;
+            this.formData={}
+        },
+
         async  controlFilters(filter_no) {
             const dataToSend = {
                 filter_no: filter_no
@@ -136,18 +137,17 @@ const app = Vue.createApp({
                 if (!response.ok) {
                     throw new Error('Failed to fetch tooltip details');
                 }
-
                 const data = await response.json();
                 console.log('list', data);
                 this.filterList = data;
-
 
             } catch (error) {
                 console.error('Error updating database:', error);
             }
         },
         async saveEdit() {
-
+            this.formData.table='pim'
+            this.formData.pr_key='sku';
             try {
                 const response = await fetch('./updatetablevalue.php', {
                     method: 'POST',
@@ -176,12 +176,11 @@ const app = Vue.createApp({
             this.fetchProducts();
         },
         handleFiltersUpdated() {
-            console.log('Filters updated event received in parent component');
+            console.log('filters updated event received in parent component');
             this.initializeData();
             this.initializePagination();
             this.fetchProducts().then(() => {
-
-                console.log('Products fetched successfully');
+             console.log('Products fetched successfully');
             }).catch(error => {
                 console.error('Error fetching products:', error);
             });
@@ -189,7 +188,8 @@ const app = Vue.createApp({
     },
     template: `<div>
       <div class="row">
-        <div class="col-md-9">        
+        <div class="col-md-9">   
+            
           <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
             <button class="btn btn-primary" @click="controlFilters(fvalue)">
               Show Saved Filters {{ fkey + 1 }}
@@ -217,8 +217,8 @@ const app = Vue.createApp({
              </div>
             </div>
           </div>
-         
-          <table id="myTable" class="table table-responsive display">
+         <div class="table-responsive">
+          <table id="myTable" class="table display">
             <thead>
               <tr>
                 <th v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
@@ -233,7 +233,7 @@ const app = Vue.createApp({
                 <input type="hidden" v-model="formData.sku" value="row['sku']">
                 <input type="hidden" v-model="formData.columnName" value="colName">
                 <input type="hidden" v-model="formData.oldValue" value="row[colName]">
-                <input id="editInput" type="text" v-model="formData.editedValue" value="row['colName']" @keydown.tab.prevent="saveEdit()" @mouseleave="saveEdit()" @keyup.enter="saveEdit()">
+                <input id="editInput" type="text" v-model="formData.editedValue" value="row[colName]" @keydown.tab.prevent="saveEdit()" @mouseleave="saveEdit()" @keyup.enter="saveEdit()">
                 </div>
                 <div v-else>
                 <template v-if="colName == 'sku'">
@@ -253,22 +253,19 @@ const app = Vue.createApp({
               </tr>
             </tbody>
           </table>
+          </div>
            <div class="mt-3">
                 <div class="btn-group" role="group" aria-label="Pagination">
                 <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
-<!--                <button class="btn btn-success ml-2 mr-2">Page {{ currentPage }}</button>-->
                 <select v-model="currentPage" @change="changePage" class="page-dropdown">
                     <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
                     <template v-if="currentPage==index+1">                 
                     <option :value="index+1" selected>Page {{ index +1 }}</option>
-                    </template>
-                    
+                    </template>                   
                     <template v-else>
                     <option :value="index+1">Page {{ index +1 }}</option>
-                    </template>
-                    
+                    </template>                   
                 </select>
-
                 <button class="btn btn-primary" @click="nextPage" :disabled="productValues.length < itemsPerPage">Next</button>
               </div>
               <div class="text-muted mt-2">

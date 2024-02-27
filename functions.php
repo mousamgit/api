@@ -192,7 +192,6 @@ function updateValue($db, $prkey,$keyvalue, $attribute, $value)
     } else {
         echo "Error updating record: " . $con->error;
     }
-
     // Close conection
     $con->close();
 }
