@@ -37,6 +37,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','customer')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="customer">
             <input type="hidden" name="oldValue" value="<?php echo $customer ?>">
             <input name="newValue" type="text" value="<?php echo $customer ?>">
@@ -50,6 +51,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','order')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="ordernumber">
             <input type="hidden" name="oldValue" value="<?php echo $order ?>">
             <input name="newValue" type="text" value="<?php echo $order ?>">
@@ -61,6 +63,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','itemstatus')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="itemstatus">
             <input type="hidden" name="oldValue" value="<?php echo $itemstatus ?>">
                         <select name="newValue">
@@ -77,6 +80,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','dateentered')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="dateentered">
             <input type="hidden" name="oldValue" value="<?php echo $dateentered ?>">
             <input name="newValue" type="date" value="<?php echo $dateentered ?>">
@@ -88,6 +92,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','datedue')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="datedue">
             <input type="hidden" name="oldValue" value="<?php echo $datedue ?>">
             <input name="newValue" type="date" value="<?php echo $datedue ?>">
@@ -101,6 +106,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','representation')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="representation">
             <input type="hidden" name="oldValue" value="<?php echo $representation ?>">
             <input name="newValue" type="text" value="<?php echo $representation ?>">
@@ -114,6 +120,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('a','notes')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="colName" value="notes">
             <input type="hidden" name="oldValue" value="<?php echo $notes ?>">
             <input name="newValue" type="text" value="<?php echo $notes ?>">
@@ -150,6 +157,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="itemid" value="<?php echo $itemrow[id]; ?>">
             <input type="hidden" name="colName" value="itemprice">
             <input type="hidden" name="oldValue" value="<?php echo $itemrow[itemprice] ?>">
@@ -161,6 +169,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
             <input type="hidden" name="itemid" value="<?php echo $itemrow[id]; ?>">
             <input type="hidden" name="colName" value="itemquantity">
             <input type="hidden" name="oldValue" value="<?php echo $itemrow[itemquantity] ?>">
@@ -213,7 +222,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
         <form  class="comment-form" action="add_comments.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
-            <textarea id="comment" name="comment" col="5"></textarea>
+            <textarea id="comment" name="comment" col="5" required></textarea>
             <button class="btn" type="reset" >Reset</button><button class="btn" type="submit" >Submit</button></form>
         </form>
             

@@ -15,12 +15,18 @@ $dueDate = $_POST['due_date'];
 $totalQuantity = $_POST['total_quantity'];
 $totalPrice = $_POST['total_price'];
 $notes = $_POST['notes'];
+$username = $_POST['username'];
 
 // Process items
 $items = $_POST['items']; // This will be an array of item arrays
 
 // Serialize the items array
 $serializedItems = serialize($items);
+
+date_default_timezone_set("Australia/Sydney");
+$current = strtotime("now");
+$date = date("Y-m-d H:i:s");
+$time = date("Y-m-d H:i:s");
 
 
 for ($i = 0; $i < count($items); $i += 4) {
@@ -41,6 +47,10 @@ for ($i = 0; $i < count($items); $i += 4) {
 
 $approsql = " INSERT into appro (appro,customer,itemstatus,dateentered,datedue,ordernumber,representation,items,totalquantity,totalprice,notes) VALUES ('$approID','$customerName','$status','$dateEntered','$dueDate','$orderNumber','$representation','$serializedItems','$totalQuantity','$totalPrice','$notes')";
 $approresult = mysqli_query($con,$approsql) or die(mysqli_error($con));
+
+$approlog = " INSERT into approlog (appro,date,time,user,action) VALUES ('$approID','$date','$time','$username','add')";
+$logresult = mysqli_query($con,$approlog) or die(mysqli_error($con));
+
 
 
 echo "New record created successfully";

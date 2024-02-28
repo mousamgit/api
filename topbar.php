@@ -36,7 +36,7 @@
     </nav>
     
 
-        <?php if ($usertype == "admin") { 
+        <?php if ($usertype == "admin"|| $usertype == "production") { 
             echo '<nav class="drawer-navigation drawer-border">';
             echo '<button class="drawer-dropdown-toggle" data-target="#drawer-dropdown-admin"><span>Admin/Data Menu</span><i class="fa-solid fa-caret-down"></i></button>';
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-admin">';
