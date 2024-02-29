@@ -51,6 +51,7 @@ $count = mysqli_num_rows($result);
 date_default_timezone_set('Australia/Sydney');
 echo "<h2>Daily SGA PIM Export Completed!</h2><br>";
 echo "Total of " . $count . " Products Exported<br><br>";
+echo "<a style='font-weight:bold;' href='https://samsgroup.info/export/daily_export.csv'>View on Web</a><br><br>";
 echo date("Y-m-d G:i a")."<br>";
 $endScriptTime=microtime(TRUE);
 $totalScriptTime=$endScriptTime-$startScriptTime;
