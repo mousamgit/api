@@ -188,7 +188,7 @@ const app = Vue.createApp({
     },
     template: `<div>
       <div class="row">
-        <div class="col-md-9">   
+        <div class="col-md-9 home-table-container">   
             
           <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
             <button class="btn btn-primary" @click="controlFilters(fvalue)">
@@ -218,10 +218,10 @@ const app = Vue.createApp({
             </div>
           </div>
          <div class="table-responsive">
-          <table id="myTable" class="table display">
+          <table id="myTable" class="table display homepage-table">
             <thead>
               <tr>
-                <th v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+                <th :col="colName" v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
               </tr>
             </thead>
             <tbody>
