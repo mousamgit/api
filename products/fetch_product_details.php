@@ -3,7 +3,7 @@
 class ProductDetailHandler {
     private $con;
     private $productId;
-    private $itemsPerPage = 5;
+    private $itemsPerPage = 100;
 
     public function __construct() {
         // Error reporting

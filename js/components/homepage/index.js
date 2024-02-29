@@ -5,6 +5,7 @@ const app = Vue.createApp({
         return {
             productDetails: [],
             productValues:[],
+            productValuesTotal:[],
             showFilters: 9,
             isEditing:0,
             rIndex:-1,
@@ -12,7 +13,7 @@ const app = Vue.createApp({
             formData:{},
             filters:[],
             currentPage: 1,
-            itemsPerPage: 10,
+            itemsPerPage: 100,
             totalRows:0,
             filterList:[]
         };
@@ -34,7 +35,7 @@ const app = Vue.createApp({
         initializePagination()
         {
            this.currentPage=1,
-           this.itemsPerPage= 10,
+           this.itemsPerPage= 100,
            this.totalRows=0
         },
         nextPage() {
@@ -98,6 +99,7 @@ const app = Vue.createApp({
                     this.products = data.products;
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
+                    this.productValuesTotal = data.total_product_values;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_ids;
@@ -171,6 +173,28 @@ const app = Vue.createApp({
                 console.error('Error updating database:', error);
             }
         },
+        exportToCSV() {
+            // Include the table header in the CSV content
+            let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
+
+            // Add the rows to the CSV content
+            const rows = this.productValuesTotal.map(row => {
+                return this.columnValues.map(colName => row[colName]);
+            });
+            csvContent += rows.map(e => e.join(",")).join("\n");
+
+            // Create a download link and trigger the download
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "export_filter.csv");
+            document.body.appendChild(link);
+            link.click();
+        },
+        getHeaderRowCSV() {
+            // Create CSV content for the table header
+            return this.columnValues.map(colName => '"' + colName + '"').join(","); // Surround column names with double quotes
+        },
         cancelEdit() {
             this.initializeData();
             this.fetchProducts();
@@ -188,6 +212,13 @@ const app = Vue.createApp({
     },
     template: `<div>
       <div class="row">
+        <div class="row">      
+        <div class="col-md-2 justify-content-end">
+         <a class="btn btn-success" @click="exportToCSV" style="background: #41b883 !important;">
+              Export
+         </a>
+         </div>
+        </div>
         <div class="col-md-9">   
             
           <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
@@ -216,17 +247,21 @@ const app = Vue.createApp({
              </template>
              </div>
             </div>
+            
           </div>
+       
          <div class="table-responsive">
           <table id="myTable" class="table display">
             <thead>
               <tr>
+                <th>S.N</th>
                 <th v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
               </tr>
             </thead>
             <tbody>
             
               <tr v-for="(row,rowIndex) in productValues">
+              <td>{{rowIndex+1}}</td>
                <template v-for="(colName,colIndex) in columnValues">
                <td>              
                 <div v-if="rIndex==rowIndex && colIndex==cIndex">

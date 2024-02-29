@@ -3,7 +3,7 @@
 class ProductDetailHandler {
     private $con;
     private $productId;
-    private $itemsPerPage = 10;
+    private $itemsPerPage = 100;
 
     public function __construct() {
         // Error reporting
@@ -32,13 +32,12 @@ class ProductDetailHandler {
         $productValues = $this->getProductValues();
         $totalRows = $this->getTotalRows();
         $columnValuesRow = $this->getColumnValuesRow();
-
+        $totalProductValues = $this->getTotalRowValues();
         $filterIds = $this->getFilters();
-
         $this->con->close();
 
         header('Content-Type: application/json');
-        echo json_encode(['products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_ids'=>$filterIds]);
+        echo json_encode(['total_product_values'=>$totalProductValues,'products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_ids'=>$filterIds]);
     }
 
     private function getProducts() {
@@ -86,6 +85,18 @@ class ProductDetailHandler {
     private function getTotalRows() {
         $totalRowsQuery = $this->con->query("select DISTINCT sku FROM pim " . $this->getFilterConditionCombined());
         return $totalRowsQuery->num_rows;
+    }
+    private function getTotalRowValues() {
+        $productValuesTotal =[];
+        $filterConditionCombined = $this->getFilterConditionCombined();
+        $columnValuesRow = $this->getColumnValuesRow();
+        $productDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != '' ");
+        if ($productDetailQuery->num_rows > 0) {
+            while ($row = $productDetailQuery->fetch_assoc()) {
+                $productValuesTotal[] = $row;
+            }
+        }
+        return $productValuesTotal;
     }
 
     private function getColumnValuesRow() {

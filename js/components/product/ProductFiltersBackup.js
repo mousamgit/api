@@ -42,7 +42,7 @@ export default {
         handleChangeAttribute(index) {
             this.attribute_values = [];
             this.channelAttribute[index].filter_type = 'IS NOT NULL';
-            this.channelAttribute[index].attribute_condition = '';
+            this.channelAttribute[index].attribute_condition = 'IS NOT NULL';
             // Get the selected value from the attribute dropdown
             const selectedValue = this.channelAttribute[index].attribute;
 

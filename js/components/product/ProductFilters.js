@@ -11,7 +11,8 @@ export default {
             indexVal: -1,
             showAttributeMid: 0,
             op_show_value: 'AND',
-            selectedValues:[]
+            selectedValues:[],
+            showManualValidationMessage:0
         };
     },
     mounted() {
@@ -57,7 +58,6 @@ export default {
 
         async getAttributeValue(index, attributeName, attributeCondition) {
             try {
-
                 if (attributeCondition.length > 0) {
                     // Make an AJAX request to your PHP file to fetch attributes
                     const response = await fetch('./fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
@@ -65,6 +65,7 @@ export default {
                     // Parse the JSON response
                     const data = await response.json();
                     this.attribute_values = data;
+                    this.showManualValidationMessage=0;
                     this.indexCheck = index;
                 }
 
@@ -140,24 +141,32 @@ export default {
         },
         async submitForm() {
             try {
-                const response = await fetch('save_product_filter.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        attribute: this.channelAttribute
-                    }),
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    this.initializeData()
-                    this.$emit('filters-updated');
+                console.log(this.channelAttribute[0].filter_type)
+                if ((this.channelAttribute[0].attribute_condition.trim() == '' || this.channelAttribute[0].attribute_condition.trim() == '()') && (!(this.channelAttribute[0].filter_type == 'IS NOT NULL' || this.channelAttribute[0].filter_type == 'IS NULL'))){
+                    this.showManualValidationMessage=1
+                    this.channelAttribute[0].attribute_condition='';
                 } else {
-                    console.error('Error saving filters:', data.error);
+                    this.showManualValidationMessage=0
+                    const response = await fetch('save_product_filter.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            attribute: this.channelAttribute
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.initializeData()
+                        this.$emit('filters-updated');
+                    } else {
+                        console.error('Error saving filters:', data.error);
+                    }
                 }
+
 
             } catch (error) {
                 console.error('Error saving channel:', error);
@@ -310,6 +319,7 @@ export default {
                                                                                 </select>
                                                                                 <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
                                                                                      <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                                     <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                                      <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                                      <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
                                                                                        <li v-for="(value, vindex) in attribute_values" :key="vindex" >
@@ -345,6 +355,7 @@ export default {
                                                                         </template>
                                                                         <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
                                                                             <input type="text" v-model="cAttribute.attribute_condition"  class="form-control" readonly required>
+                                                                            <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                             <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                             <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
                                                                                 <li v-for="(value, vindex) in attribute_values" :key="vindex" >
@@ -441,6 +452,7 @@ export default {
                                                                             </select>
                                                                             <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
                                                                                 <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                                  <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                                   <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
                                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
                                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex" >
@@ -475,6 +487,7 @@ export default {
                                                                             </template>
                                                                             <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
                                                                                 <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly  required>
+                                                                                <span v-if="showManualValidationMessage==1" class="alert-danger">Search and Tick Condition below</span>
                                                                                 <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">   
                                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
                                                                                     <li v-for="(value, vindex) in attribute_values" :key="vindex" >
