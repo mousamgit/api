@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         updateSelectedValues(index) {
-        this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
+            this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
         },
         nextPage() {
             this.currentPage++;
@@ -221,7 +221,7 @@ export default {
                 this.indexVal = -1,
                 this.showAttributeMid = 0,
                 this.op_show_value = 'AND'
-                this.fetchAllColumns();
+            this.fetchAllColumns();
         }
 
 
