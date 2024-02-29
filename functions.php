@@ -226,6 +226,19 @@ function searchdata($sql){
     $con->close();
 
 
+}
 
+function duplicatedcheck($db, $colname, $value){
+    require('connect.php');
+    $value = $con->real_escape_string($value);
+
+    $sql = "SELECT * FROM $db WHERE $colname = '$value'";
+    $result = $con->query($sql);
+
+    if ($result->num_rows > 0) {
+        return true; 
+    } else {
+        return false; 
+    }
 }
 ?>

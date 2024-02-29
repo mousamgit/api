@@ -1,7 +1,7 @@
 <?php
 include '../login_checking.php';
     include '../functions.php';
-
+    $username = $_SESSION["username"];
 
 
 ?>
@@ -20,6 +20,7 @@ include '../login_checking.php';
 <div id="app" class="pim-padding">
     <div class="container">
     <form action="process_appro.php" method="post" class="appro-form form-design">
+    <input type="hidden" name="username" value="<?php echo $username ?>">
     <div class="form-row header">Add Appro Form </div>
     <div class="wrapper-box">
         <div class="row">
