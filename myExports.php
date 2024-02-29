@@ -38,7 +38,7 @@ foreach ($scriptsToRun as $scriptName => $scriptURL) {
 
 echo "<h1 style=\"font-family:'Open Sans',sans-serif; color: #c72c2c;padding-top:20px;padding-bottom:10px;font-weight:bold;\">Download Export</h1>";
 $csvFiles = [
-    'Daily Export' => 'https://samsgroup.info/daily_export.csv',
+    'Daily Export' => 'https://samsgroup.info/export/daily-export.csv',
     'Hubspot' => 'https://samsgroup.info/export/hubspot.csv',
     'Rephopper' => 'https://pim.samsgroup.info/rephopper/rephopper.csv',
     'Shopify Sapphire Dreams' => 'https://samsgroup.info/export/sd-shopify.csv',

@@ -13,12 +13,14 @@
 <div style="margin: 0 auto; width:600px; padding:20px; background-color:#F9F6F0; text-align:center;">
 
 <?php
-include_once('connect.php'); // Assuming 'connect.php' contains your database connection code
+$startScriptTime = microtime(true);
+include_once('connect.php');
+include_once ('mkdir.php');
 
 $query = 'SELECT * FROM pim';
 $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-$filepath = $_SERVER['DOCUMENT_ROOT'] . '/daily_export.csv';
+$filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/daily-export.csv';
 $fp = fopen($filepath, 'w');
 
 $num_column = mysqli_num_fields($result);
@@ -49,9 +51,9 @@ if ($error != "") {
 
 $count = mysqli_num_rows($result);
 date_default_timezone_set('Australia/Sydney');
-echo "<h2>Daily SGA PIM Export Completed!</h2><br>";
+echo "<h2>Daily Master PIM Export Completed!</h2><br>";
 echo "Total of " . $count . " Products Exported<br><br>";
-echo "<a style='font-weight:bold;' href='https://pim.samsgroup.info/export/daily_export.csv'>View on Web</a><br><br>";
+echo "<a style='font-weight:bold;' href='https://samsgroup.info/export/daily-export.csv'>View on Web</a><br><br>";
 echo date("Y-m-d G:i a")."<br>";
 $endScriptTime=microtime(TRUE);
 $totalScriptTime=$endScriptTime-$startScriptTime;
