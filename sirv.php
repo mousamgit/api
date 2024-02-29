@@ -1,3 +1,17 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Open Sans', sans-serif; }
+    table { border: 2px solid #000; }
+    th { font-size: 14px; font-weight: 700; border: 1px solid #000; padding:20px 40px; }
+    td { font-size: 12px; font-weight: 400; border: 1px solid #000; padding: 20px; }
+  </style>
+
+</head>
+<body>
+<div style="margin: 0 auto; width:600px; padding:20px; background-color:#F9F6F0; text-align:center;">
+
 <?php
 include_once('connect.php');
 
@@ -74,10 +88,15 @@ $xmlData->asXML($xmlFilePath);
 $count = $numrows;
 
 date_default_timezone_set('Australia/Sydney');
-echo "SIRV Export Completed!<br>";
-echo "Total Products Uploaded: " . $count . "<br>";
+echo "<h2>SIRV Export Completed!</h2><br>";
+echo "<a style='font-weight:bold;' href='https://pim.samsgroup.info/sirv/sirv.csv'>View on Web CSV</a><br><br>";
+echo "<a style='font-weight:bold;' href='https://pim.samsgroup.info/sirv/sirv.xml'>View on Web XML</a><br><br>";
+echo "Total Products Uploaded: " . $count . "<br><br>";
 echo date("Y-m-d G:i a");
 
 // Close database connection
 mysqli_close($con);
 ?>
+</div>
+</body>
+</html>

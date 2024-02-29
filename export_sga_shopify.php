@@ -1,9 +1,23 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Open Sans', sans-serif; }
+    table { border: 2px solid #000; }
+    th { font-size: 14px; font-weight: 700; border: 1px solid #000; padding:20px 40px; }
+    td { font-size: 12px; font-weight: 400; border: 1px solid #000; padding: 20px; }
+  </style>
+
+</head>
+<body>
+<div style="margin: 0 auto; width:600px; padding:20px; background-color:#F9F6F0; text-align:center;">
+
 <?php
   $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
   include_once ('mkdir.php');
 
-  $query = 'SELECT * FROM pim WHERE (brand = "blush pink diamonds" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND (shopify_qty > 0 OR preorder = 1)) OR (brand in ("sapphire dreams","argyle white diamonds","pink kimberley diamonds","white diamond jewellery","argyle pink diamonds","argyle blue diamonds","argyle origin diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND shopify_qty > 0) OR (brand = "shopify cl") OR ((type = "loose sapphires" OR type = "loose diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND image1 <> "" AND shopify_qty > 0);';
+  $query = 'SELECT * FROM pim WHERE (brand = "blush pink diamonds" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND (shopify_qty > 0 OR preorder = 1)) OR (brand in ("sapphire dreams","argyle white diamonds","pink kimberley diamonds","white diamond jewellery","argyle pink diamonds","argyle blue diamonds","argyle origin diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND shopify_qty > 0) OR (brand = "shopify cl" && collections <> "Vintage") OR ((type = "loose sapphires" OR type = "loose diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND image1 <> "" AND shopify_qty > 0) ORDER BY product_title ASC;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sga-shopify.csv';
@@ -34,59 +48,20 @@
         else { $handle .= $row[product_title] . "-" . $row[sku];}
         $handle = str_replace([" ","--"],"-",strtolower($handle));             
 
-        //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
-        $command = "";
-        if ( strtolower($row[brand]) == "shopify cl") { $command .= "MERGE"; }
-        else{
-          if ($row[shopify_qty] > 0) {
-            if ($status == "active") { $command = "MERGE";  }
-            elseif ($status == "draft") { $command = "MERGE"; }
-          }else { $command = "DELETE";}
-        }
-
         //Status - draft if steve, discontinued, wholesale only
-        $status = "";
+        $status = "active";
         if ( preg_match("/steve/i", strtolower($row[collections_2]))) { $status = "draft"; }
         elseif ( preg_match("/discontinued/i", strtolower($row[collections_2]))) { $status = "draft"; }
-        elseif ( preg_match("/wholesale_only/i", strtolower($row[collections_2]))) { $status = "draft"; }
 
+        //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
+        $command = "MERGE";
+        if (strtolower($row[brand]) != "shopify cl") {
+          if ( $row[shopify_qty] <= 0) { $command = "DELETE";}
+        }
+        
         // Tags
         $tags = "";
-        if ( $row[tags] != "") { $tags .= $row[tags].", "; }
-        if ( $row[brand] != "" ) { $tags .= $row[brand].", "; }
-        if ( $row[colour] != "" ) { $tags .= $row[colour].", "; }
-        if ( $row[shape] != "" ) { $tags .= $row[shape].", "; }
-        if ( $row[type] != "" ) { $tags .= $row[type].", "; }
-        if ( $row[collections] != "" ) { $tags .= $row[collections].", "; }
-        if ( $row[metal_composition] != "" ) { $tags .= $row[metal_composition].", "; }
-        if ( $row[main_metal] != "" ) { $tags .= $row[main_metal]." Metal, "; }
-
-        if ( strtolower($row[brand]) === "pink kimberley diamonds" || strtolower($row[brand]) === "blush pink diamonds" || strtolower($row[brand]) === "argyle pink diamonds" || strtolower($row[brand]) === "argyle origin diamonds"  )
-            if ( $row[colour] != "" ) {
-            if (preg_match("/pp/i", strtolower($row[colour])) > 0){ $tags .= "PP - Purplish Pink, "; }
-            elseif (preg_match("/pr/i", strtolower($row[colour])) > 0){ $tags .= "PR - Pink Rose, "; }
-            elseif (preg_match("/pc/i", strtolower($row[colour])) > 0){ $tags .= "PC - Pink Champagne, "; }
-            elseif (preg_match("/bl/i", strtolower($row[colour])) > 0){ $tags .= "BL - Blue, "; }
-            elseif (preg_match("/pred/i", strtolower($row[colour])) > 0){ $tags .= "pRed - Pinkish Red, "; }
-            else { $tags .= "P - Pink, "; }
-            }
-            if ( $row[clarity] != "" ) { $tags .= $row[clarity].", "; }
-            if ( $row[preorder] == 1 ) { $tags .= "Preorder, "; }
-            if ( strtolower($row[type]) == "loose diamonds") {
-            if ($row[collections] == "SKS") { $tags .= "pkcertified";}
-            if ($row[collections] == "STN") { $tags .= "argylecertified";}
-            }
-        elseif ( strtolower($row[brand]) === "sapphire dreams" )
-            if ( $row[treatment] != "") { $tags .= $row[treatment].", "; }
-            if ( $row[carat] != "" ) {
-            if ($row[carat] < 1.00){ $tags .= "Less than 1.00ct"; }
-            elseif ($row[carat] >= 1.00 && $row[carat] <= 1.49){ $tags .= "1.00ct - 1.49ct"; }
-            elseif ($row[carat] >= 1.50 && $row[carat] <= 1.99){ $tags .= "1.50ct - 1.99ct"; }
-            elseif ($row[carat] >= 2.00 && $row[carat] <= 2.49){ $tags .= "2.00ct - 2.49ct"; }
-            elseif ($row[carat] >= 2.50 && $row[carat] <= 2.99){ $tags .= "2.50ct - 2.99ct"; }
-            elseif ($row[carat] >= 3.00 && $row[carat] <= 3.99){ $tags .= "3.00ct - 3.99ct"; }
-            elseif ($row[carat] >= 4.00){ $tags .= "Greater than 4.00ct"; }
-        } elseif ( strtolower($row[brand]) === "shopify cl")
+        if ( strtolower($row[brand]) === "shopify cl"){
             if ( $row[watch_material] != "") { $tags .= "Material " . $row[watch_material];}
             if ( $row[watch_dial] != "") { $tags .= "," . $row[watch_strap];}
             if ( $row[product_title] != "") { $tags .= ",_alt_" . $row[product_title];}
@@ -96,25 +71,48 @@
             if ( strtolower($row[watch_strap]) == "solid gold") { $tags .= ",solid-gold";}
             if ( $row[type] != "") { $tags .= "," . $row[type];}
             if ( $row[collections] != "") { $tags .= "," . $row[watch_collections];}
+            if ( $row[tags] != "") { $tags .= ",".$row[tags];}
             $tags .= ",Classique watches,relatedproducts";
-            for ($length = 1; $length <= strlen($sku); $length++) {
-              $tags .= substr($sku, 0, $length) . ",";
-          }
+        }else {
+            if ( $row[tags] != "") { $tags .= $row[tags].", "; }
+            if ( $row[brand] != "" ) { $tags .= $row[brand].", "; }
+            if ( $row[colour] != "" ) { $tags .= $row[colour].", "; }
+            if ( $row[shape] != "" ) { $tags .= $row[shape].", "; }
+            if ( $row[type] != "" ) { $tags .= $row[type].", "; }
+            if ( $row[collections] != "" ) { $tags .= $row[collections].", "; }
+            if ( $row[metal_composition] != "" ) { $tags .= $row[metal_composition].", "; }
+            if ( $row[main_metal] != "" ) { $tags .= $row[main_metal]." Metal, "; }
 
-        //Title
-        if ( strtolower($row[brand]) == "sapphire dreams")
-          if ( strtolower($row[type]) == "loose sapphires")
-            if ( $row[treatment] == "Unheated") { $title = "Australian Sapphire ". ucfirst(strtolower($row[shape]))." 1=".$row[carat]."ct ".$row[colour] . " NH";}
-            else { $title = "Australian Sapphire ".ucfirst(strtolower($row[shape]))." 1=".$row[carat]."ct ".$row[colour];}
-          elseif ( strtolower($row[type]) !== "loose sapphires")
-            if ( strpos(strtolower($row[collections_2]), "variants") !== false) { $title = ucwords($title_mod) . " " . $row[shape] . " Sapphire " . ucwords($type_mod);}
-            else { $title = $row[product_title];}
-        elseif ( strtolower($row[brand]) == "shopify cl") { $title = $row[product_title] . " " . $row[type];}
-        else {
-          if ($row[collections] == "TPR" || $row[collections] == "TDR") { $title = str_replace("pink diamond","tender diamond",$row[product_title]);}
-          else { $title = $row[product_title];}
-        } 
-        $title = str_replace("  "," ",$row[title]);
+            if ( strtolower($row[brand]) === "pink kimberley diamonds" || strtolower($row[brand]) === "blush pink diamonds" || strtolower($row[brand]) === "argyle pink diamonds" || strtolower($row[brand]) === "argyle origin diamonds"  ){
+              if ( $row[colour] != "" ) {
+                if (preg_match("/pp/i", strtolower($row[colour])) > 0){ $tags .= "PP - Purplish Pink, "; }
+                elseif (preg_match("/pr/i", strtolower($row[colour])) > 0){ $tags .= "PR - Pink Rose, "; }
+                elseif (preg_match("/pc/i", strtolower($row[colour])) > 0){ $tags .= "PC - Pink Champagne, "; }
+                elseif (preg_match("/bl/i", strtolower($row[colour])) > 0){ $tags .= "BL - Blue, "; }
+                elseif (preg_match("/pred/i", strtolower($row[colour])) > 0){ $tags .= "pRed - Pinkish Red, "; }
+                else { $tags .= "P - Pink, "; }
+              }
+              if ( $row[clarity] != "" ) { $tags .= $row[clarity].", "; }
+              if ( $row[preorder] == 1 ) { $tags .= "Preorder, "; }
+              if ( strtolower($row[type]) == "loose diamonds") {
+              if ($row[collections] == "SKS") { $tags .= "pkcertified";}
+              if ($row[collections] == "STN") { $tags .= "argylecertified";}
+              }
+            }
+            elseif ( strtolower($row[brand]) === "sapphire dreams" ){
+                if ( $row[treatment] != "") { $tags .= $row[treatment].", "; }
+                if ( $row[carat] != "" ) {
+                if ($row[carat] < 1.00){ $tags .= "Less than 1.00ct"; }
+                elseif ($row[carat] >= 1.00 && $row[carat] <= 1.49){ $tags .= "1.00ct - 1.49ct"; }
+                elseif ($row[carat] >= 1.50 && $row[carat] <= 1.99){ $tags .= "1.50ct - 1.99ct"; }
+                elseif ($row[carat] >= 2.00 && $row[carat] <= 2.49){ $tags .= "2.00ct - 2.49ct"; }
+                elseif ($row[carat] >= 2.50 && $row[carat] <= 2.99){ $tags .= "2.50ct - 2.99ct"; }
+                elseif ($row[carat] >= 3.00 && $row[carat] <= 3.99){ $tags .= "3.00ct - 3.99ct"; }
+                elseif ($row[carat] >= 4.00){ $tags .= "Greater than 4.00ct"; }
+                }
+            }
+          }  
+        
 
         //Metafield : argyle colour
         if ( strpos(strtolower($row[brand]), "argyle") !== false) { $argyle_colour = str_replace("RED:PURPLISH RED","pRed",$row[colour]);}
@@ -133,6 +131,21 @@
           else {$description = "An Australian " .  ucfirst(strtlower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . ".";  }
         else { $description = $row[description];}
 
+        //Title
+        $title = "";
+        if (strtolower($row[brand]) == "shopify cl") { $title = $row[product_title] . " " . $row[type];}
+        elseif ( strtolower($row[brand]) == "sapphire dreams")
+          if ( strtolower($row[type]) == "loose sapphires")
+            if ( $row[treatment] == "Unheated") { $title = "Australian Sapphire ". ucfirst(strtolower($row[shape]))." 1=".$row[carat]."ct ".$row[colour] . " NH";}
+            else { $title = "Australian Sapphire ".ucfirst(strtolower($row[shape]))." 1=".$row[carat]."ct ".$row[colour];}
+          else {
+            if ( strpos(strtolower($row[collections_2]), "variants") !== false) { $title = ucwords($title_mod) . " " . $row[shape] . " Sapphire " . ucwords($type_mod);}
+            else { $title = $row[product_title];}}
+        else {
+          if ($row[collections] == "TPR" || $row[collections] == "TDR") { $title = str_replace("pink diamond","tender diamond",$row[product_title]);}
+          else { $title = $row[product_title];}
+        } 
+
         //check images
         $imageURL = "";
         if($row[image1] != "") { $imageURL .= $row[image1].";";}
@@ -144,25 +157,39 @@
         if($row[packaging_image] != "") { $imageURL .= $row[packaging_image];}
 
         //optionOneName
+        $optionOneName = "";
         if ( strtolower($row[brand]) === "shopify cl") { $optionOneName = "Case";}
-
+        else { $optionOneName = "";}
+        
         //optionTwoName
+        $optionTwoName = "";
         if ( strtolower($row[brand]) === "shopify cl") { $optionTwoName = "Dial";}
+        else { $optionTwoName = "";}
 
         //optionTwoValue
+        $optionTwoValue = "";
         if ( strtolower($row[brand]) === "shopify cl")
             if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionTwoValue = $row[watch_index];}
             else { $optionTwoValue = $row[watch_dial] . " Dial " . $row[watch_index];}
+        else { $optionTwoValue = "";}
 
         //optionThreeName
+        $optionThreeName = "";
         if ( strtolower($row[brand]) === "shopify cl")
-            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = "Bezel";}
+            if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionThreeName = "";}
+            elseif ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = "Bezel";}
             else { $optionThreeName = "Band";}
+        else { $optionThreeName = "";}
 
         //optionThreeValue
+        $optionThreeValue = "";
         if ( strtolower($row[brand]) === "shopify cl")
-            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = $row[watch_diamonds];}
-            else { $optionThreeName = $row[watch_strap];}
+            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeValue = $row[watch_bezel];}
+            else { 
+              if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionThreeValue = "";}
+              else {$optionThreeValue = $row[watch_strap];}
+            }
+        else { $optionThreeValue = "";}
 
         //Metafield: watch table specifications
         $table_specifications = "<div class='col-md-6'><table><tr class='watchtype'><td><b>Watch Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>";
@@ -261,9 +288,9 @@
   fclose($fp);
   $count = mysqli_num_rows($result) -1;
   date_default_timezone_set('Australia/Sydney');
-  echo "<h2>SGA Export Completed</h2><br>";
+  echo "<h2>SGA Export Completed!</h2><br>";
   echo "Total Products Exported to CSV: ".$count."<br>";
-  echo "File URL: <a href='https://samsgroup.info/export/sga-shopify.csv'>https://samsgroup.info/export/sga-shopify.csv</a><br><br>";
+  echo "<a style='font-weight:bold;' href='https://samsgroup.info/export/sga-shopify.csv'>View on Web</a><br><br>";
   echo date("Y-m-d G:i a")."<br>";
   $endScriptTime=microtime(TRUE);
   $totalScriptTime=$endScriptTime-$startScriptTime;
@@ -275,3 +302,6 @@
 
   fclose($fp);
 ?>
+</div>
+</body>
+</html>
