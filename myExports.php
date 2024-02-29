@@ -7,7 +7,7 @@ include 'login_checking.php';
 date_default_timezone_set('Australia/Sydney');
 $timestamp = date("Y-m-d G:i a");
 
-echo "<h1 style=\"font-family:'Open Sans',sans-serif; color: #c72c2c;padding-top:20px;padding-bottom:10px;font-weight:bold;\">Export Templates</h1>";
+echo "<h2 style=\"font-family:'Open Sans',sans-serif; color: #c72c2c;padding:15px;font-weight:bold;\">Export Templates</h2>";
 
 $scriptsToRun = [
     'Daily Export' => 'http://pim.samsgroup.info/daily_export.php',
@@ -26,8 +26,8 @@ $scriptsToRun = [
 ];
 
 function printScriptURL($scriptName, $scriptURL) {
-    echo "<div style='font-family:\"Open Sans\", sans-serif;'>";
-    echo "<span style='color:black; font-size:18px; font-weight:bold;'>".$scriptName."</span>";
+    echo "<div style='font-family:\"Open Sans\", sans-serif;padding-left:15px;line-height:1.2;'>";
+    echo "<span style='color:black; font-size:16px; font-weight:bold;'>".$scriptName."</span>";
     echo "<a style='text-decoration:none; font-size:10px; color:#a856f5;' href='" . $scriptURL . "' target='_blank'>&nbsp;&nbsp;Export</a><br><br>";
     echo"</div>";
 }
@@ -36,7 +36,7 @@ foreach ($scriptsToRun as $scriptName => $scriptURL) {
     printScriptURL($scriptName, $scriptURL);
 }
 
-echo "<h1 style=\"font-family:'Open Sans',sans-serif; color: #c72c2c;padding-top:20px;padding-bottom:10px;font-weight:bold;\">Download Export</h1>";
+echo "<h2 style=\"font-family:'Open Sans',sans-serif; color: #c72c2c;padding:15px;font-weight:bold;\">Download Export</h2>";
 $csvFiles = [
     'Daily Export' => 'https://samsgroup.info/export/daily-export.csv',
     'Hubspot' => 'https://samsgroup.info/export/hubspot.csv',
@@ -57,8 +57,8 @@ foreach ($csvFiles as $csvName => $csvURL) {
     if (strpos($csvURL,"csv") !== false) { $downloadType = "CSV Download";}
     elseif (strpos($csvURL,"xml") !== false) { $downloadType = "XML Download";}
     else { $downloadType = "Unkown Download Type";}
-    echo "<div style='font-family:\"Open Sans\", sans-serif;'>";
-    echo "<span style='color:black; font-size:18px; font-weight:bold;'>".$csvName."</span>";
+    echo "<div style='font-family:\"Open Sans\", sans-serif;padding-left:15px;line-height:1.2;'>";
+    echo "<span style='color:black; font-size:16px; font-weight:bold;'>".$csvName."</span>";
     echo '<a style="text-decoration:none; font-size:10px; color:#a856f5;" href="downloadExports.php?csv=' . urlencode($csvURL) . '">&nbsp;&nbsp;' . $downloadType . '</a><br><br>';
     echo"</div>";
 }
