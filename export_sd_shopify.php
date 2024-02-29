@@ -3,7 +3,7 @@
   include_once ('connect.php');
   include_once ('mkdir.php');
 
-  $query = 'SELECT * FROM pim WHERE (image1<> "" AND retail_aud > 0 AND description<> "" AND sync_shopify=1 AND brand = "Sapphire Dreams" AND collections != "SDL" AND collections != "SDM");';
+  $query = 'SELECT * FROM pim WHERE (image1<> "" AND retail_aud > 0 AND description<> "" AND brand = "Sapphire Dreams" AND type <> "loose sapphires" AND retail_exclusive = 1) OR (image1<> "" AND retail_aud > 0 AND description<> "" AND brand = "Sapphire Dreams" AND type = "loose sapphires" AND collections != "SDL" AND collections != "SDM") ;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sd-shopify.csv';
@@ -48,11 +48,10 @@
         if($row[packaging_image] != "") { $imageURL .= $row[packaging_image];}
 
         //Status - draft if steve, discontinued, wholesale only
-        $status = "";
+        $status = "active";
         if ( preg_match("/steve/i", strtolower($row[collections_2]))) { $status = "draft"; }
         elseif ( preg_match("/discontinued/i", strtolower($row[collections_2]))) { $status = "draft"; }
         elseif ( preg_match("/wholesale_only/i", strtolower($row[collections_2]))) { $status = "draft"; }
-        else { $status = "active"; }
 
         //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "";
@@ -162,7 +161,7 @@
   }
 
   fclose($fp);
-  $count = mysqli_num_rows($result) -1;
+  $count = mysqli_num_rows($result);
   date_default_timezone_set('Australia/Sydney');
   echo "<h2>SD Export Completed</h2><br>";
   echo "Total Products Exported to CSV: ".$count."<br>";
