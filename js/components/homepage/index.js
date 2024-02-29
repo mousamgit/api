@@ -240,7 +240,12 @@ const app = Vue.createApp({
                  {{ row['sku'] }} 
                 </template>
                 <template v-else-if="colName.includes('imag')">
-                 <img src="row[colName]" alt="No Image">
+                  <template v-if="row[colName].length>0">
+                  <a :href="row[colName]" target="_blank">
+                  <img :src="row[colName]" :alt="row['product_title']">
+                  </a>
+                  </template>
+                  <template v-else> No Image </template>
                 </template>
                 <template v-else>
                 <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">

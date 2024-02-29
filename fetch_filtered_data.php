@@ -149,14 +149,21 @@ class ProductDetailHandler {
         if ($filterFetch->num_rows > 0) {
             while ($prevAttributeValue = $filterFetch->fetch_assoc()) {
                 switch ($prevAttributeValue["filter_type"]) {
-                    case "=":
-                    case "!=":
                     case ">":
                     case "<":
                         $condition = $prevAttributeValue['attribute_name'] . ' ' . $prevAttributeValue["filter_type"] . ' "' . $prevAttributeValue['attribute_condition'] . '"';
                         break;
-                    case "includes":
+                    case "=":
                         $condition = $prevAttributeValue['attribute_name'] . ' in ' . $prevAttributeValue['attribute_condition'];
+                        break;
+                    case "!=":
+                        $condition = $prevAttributeValue['attribute_name'] . ' NOT IN ' . $prevAttributeValue['attribute_condition'];
+                        break;
+                    case "includes":
+                        $condition = $prevAttributeValue['attribute_name'] . ' LIKE "%' . $prevAttributeValue['attribute_condition'] . '%"';
+                        break;
+                    case "dont_includes":
+                        $condition = $prevAttributeValue['attribute_name'] . ' NOT LIKE "%' . $prevAttributeValue['attribute_condition'] . '%"';
                         break;
                     case "between":
                         $condition = $prevAttributeValue['attribute_name'] . ' BETWEEN ' . $prevAttributeValue['range_from'] . ' AND ' . $prevAttributeValue['range_to'];
@@ -189,6 +196,7 @@ class ProductDetailHandler {
             $filterConditionCombined = 'WHERE 1=1';
         }
         $filterConditionCombined = str_replace("AND () OR", "AND", $filterConditionCombined);
+
         return $filterConditionCombined;
     }
 }

@@ -37,7 +37,7 @@
             $range_to = '';
             $attribute_condition = '';
             $user_name = $_SESSION["username"];
-            if ($attribute_value["filter_type"] == "=" || $attribute_value["filter_type"] == "!=" || $attribute_value["filter_type"] == ">" || $attribute_value["filter_type"] == "<" || $attribute_value["filter_type"] == "includes") {
+            if ($attribute_value["filter_type"] == "=" || $attribute_value["filter_type"] == "!=" || $attribute_value["filter_type"] == ">" || $attribute_value["filter_type"] == "<" || $attribute_value["filter_type"] == "includes" || $attribute_value["filter_type"] == "dont_includes") {
                 $attribute_condition = $attribute_value['attribute_condition'];
             } elseif ($attribute_value['filter_type'] == 'between') {
                 $range_from = $attribute_value['rangeFrom'];

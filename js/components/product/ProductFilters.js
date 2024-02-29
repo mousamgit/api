@@ -57,7 +57,8 @@ export default {
 
         async getAttributeValue(index, attributeName, attributeCondition) {
             try {
-                if (attributeCondition.length > 2) {
+
+                if (attributeCondition.length > 0) {
                     // Make an AJAX request to your PHP file to fetch attributes
                     const response = await fetch('./fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
 
@@ -80,6 +81,7 @@ export default {
         addChannelCondition(op_value, condition_type, previous_row) {
             this.op_show_value = op_value;
             this.showAttributeMid = previous_row['id'];
+            this.selectedValues=[];
             this.channelAttribute = [{
                 id: 0,
                 attribute_name: '',
@@ -94,6 +96,7 @@ export default {
             this.showAttFilter = 1;
         },
         refreshAttributeAgain() {
+
             this.initializeData()
             this.$emit('filters-updated');
         },
@@ -218,7 +221,7 @@ export default {
                 this.indexVal = -1,
                 this.showAttributeMid = 0,
                 this.op_show_value = 'AND'
-            this.fetchAllColumns();
+                this.fetchAllColumns();
         }
 
 
@@ -293,7 +296,7 @@ export default {
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    {{cAttribute.attribute}}
+                                                                    
                                                                     <div class="col-md-12" v-if="cAttribute.attribute != ''">
                                                                         <div class="mb-3">
                                                                             <template v-if="cAttribute.data_type == 'varchar'">
@@ -305,23 +308,18 @@ export default {
                                                                                     <option value="IS NOT NULL">is not empty</option>
                                                                                     <option value="IS NULL">is empty</option>
                                                                                 </select>
-                                                                                <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || (cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes')">
-                                                                                    <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
-                                                                                     <ul v-if="index == indexCheck && (cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes')" class="autocomplete-suggestions">
-                                                                                  
-                                                                                   <li v-for="(value, vindex) in attribute_values" :key="vindex" >
-                                                                                      <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
-                                                                                      <label :for="'checkbox_' + vindex">{{ value }}</label>
-                                                                                    </li>
-                                                                                   
-                                                                                </ul>
-                                                                                 <ul v-else-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
-                                                                                 
-                                                                                   <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                                                                                        {{ value }}
-                                                                                    </li>
-                                                                                   
-                                                                                </ul>
+                                                                                <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
+                                                                                     <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                                     <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
+                                                                                     <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
+                                                                                       <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                          <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
+                                                                                          <label :for="'checkbox_' + vindex">{{ value }}</label>
+                                                                                        </li>    
+                                                                                     </ul>
+                                                                                </template>
+                                                                                <template v-else-if="cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes'">
+                                                                                     <input type="text" v-model="cAttribute.attribute_condition" class="form-control"  required>    
                                                                                 </template>
                                                                             </template>
                                                                             <template v-if="cAttribute.data_type != 'varchar'">
@@ -345,13 +343,18 @@ export default {
                                                                                     </div>
                                                                         </div>
                                                                         </template>
-                                                                        <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == '>' || cAttribute.filter_type == '<')">
-                                                                            <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                                                                        <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
+                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control" readonly required>
+                                                                            <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                             <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                                <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                                                                                    {{ value }}
-                                                                                </li>
+                                                                                <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                          <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
+                                                                                          <label :for="'checkbox_' + vindex">{{ value }}</label>
+                                                                                </li> 
                                                                             </ul>
+                                                                        </template>
+                                                                        <template v-else-if="cAttribute.filter_type == '>' || cAttribute.filter_type == '<'">
+                                                                          <input type="text" v-model="cAttribute.attribute_condition" class="form-control"  required>    
                                                                         </template>
                                                                     </div>
                                                                     <div class="submit-form" v-if="cAttribute.attribute!=''">
@@ -436,23 +439,18 @@ export default {
                                                                                 <option value="IS NOT NULL">is not empty</option>
                                                                                 <option value="IS NULL">is empty</option>
                                                                             </select>
-                                                                            <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || (cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes')">
-                                                                                <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
-                                                                                <ul v-if="index == indexCheck && (cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes')" class="autocomplete-suggestions">
-                                                                                  
+                                                                            <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
+                                                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                                  <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
+                                                                                <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
                                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex" >
                                                                                       <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
                                                                                       <label :for="'checkbox_' + vindex">{{ value }}</label>
                                                                                     </li>
-                                                                                   
-                                                                                </ul>
-                                                                                 <ul v-else-if="index == indexCheck && cAttribute.filter_type != 'includes'" class="autocomplete-suggestions">
-                                                                                 
-                                                                                   <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                                                                                        {{ value }}
-                                                                                    </li>
-                                                                                   
-                                                                                </ul>
+                                                                                </ul>  
+                                                                            </template>
+                                                                            <template v-else-if="cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes'">
+                                                                              <input type="text" v-model="cAttribute.attribute_condition" class="form-control"  required>    
                                                                             </template>
                                                                         </template>
                                                                         <template v-if="cAttribute.data_type != 'varchar'">
@@ -475,13 +473,19 @@ export default {
                                                                                     </div>
                                                                                 </div>
                                                                             </template>
-                                                                            <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=' || cAttribute.filter_type == '>' || cAttribute.filter_type == '<')">
-                                                                                <input type="text" v-model="cAttribute.attribute_condition" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_condition)" class="form-control" placeholder="Enter condition" required>
+                                                                            <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
+                                                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly  required>
+                                                                                <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">   
                                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex" @click="selectAutocompleteValue(index, value)">
-                                                                                        {{ value }}
-                                                                                    </li>
+                                                                                  
+                                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                          <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
+                                                                                          <label :for="'checkbox_' + vindex">{{ value }}</label>
+                                                                                    </li> 
                                                                                 </ul>
+                                                                            </template>
+                                                                            <template v-else-if="cAttribute.filter_type == '>' || cAttribute.filter_type == '<'">
+                                                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control"  required>    
                                                                             </template>
                                                                     </div>
                                                                     <div class="submit-form" v-if="cAttribute.attribute!=''">
