@@ -370,6 +370,10 @@ header a{ color:#fff}
   .home-table-container{ overflow-x: scroll;}
   .homepage-table th[col="specifications"], .homepage-table th[col="description"]{width:400px;}
   .homepage-table td img{width:100px;}
+  .filter-container{padding: 20px;}
+  .filter-container hr{display: none;}
+  .filter-header{margin-bottom: 20px; font-weight: 600;}
+  .channel-condition{padding:20px;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}

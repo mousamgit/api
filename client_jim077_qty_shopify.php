@@ -36,28 +36,29 @@
 
           // Create handle
           $handle = "";
-          if ( strtolower($row[brand]) == "sapphire dreams")
-            if ( strtolower($row[type]) == "loose sapphires") { $handle .= $row[shape] . "-" . $row[colour] . "-australian-sapphire-" . $row[sku] . "-matthews-jewellers";}
-            else { $handle .= $row[product_title] . "-" . $row[sku] . "-matthews-jewellers";}
-          elseif ( strtolower($row[brand]) == "argyle origin diamonds" || strtolower($row[brand]) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row[shape] . "-" . $row[colour] . "-" . $row[clarity] . "-" . $row[sku] . "-matthews-jewellers";}
-          elseif ( strtolower($row[brand])== "pink kimberley diamonds" || strtolower($row[brand]) == "blush pink diamonds") { $handle .= $row[product_title] . "-" . $row[sku] . "-matthews-jewellers";}
-          else { $handle .= $row[product_title] . "-" . $row[sku] . "-matthews-jewellers";}
+          if ( strtolower($row['brand']) == "sapphire dreams")
+            if ( strtolower($row['type']) == "loose sapphires") { $handle .= $row['shape'] . "-" . $row['colour'] . "-australian-sapphire-" . $row['sku'] . "-matthews-jewellers";}
+            else { $handle .= $row['product_title'] . "-" . $row['sku'] . "-matthews-jewellers";}
+          elseif ( strtolower($row['brand']) == "argyle origin diamonds" || strtolower($row['brand']) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row['shape'] . "-" . $row['colour'] . "-" . $row['clarity'] . "-" . $row['sku'] . "-matthews-jewellers";}
+          elseif ( strtolower($row['brand'])== "pink kimberley diamonds" || strtolower($row['brand']) == "blush pink diamonds") { $handle .= $row['product_title'] . "-" . $row['sku'] . "-matthews-jewellers";}
+          else { $handle .= $row['product_title'] . "-" . $row['sku'] . "-matthews-jewellers";}
           $handle = str_replace([" ","--"],"-",strtolower($handle));   
           
           //product title
-          $title = $row[product_title];
-          if ( strtolower($row[brand]) == "sapphire dreams")
-            if ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) == "unheated") { $title = "Australian Sapphire ". $row[shape]." 1=".$row[carat]."ct ".$row[colour] . " NH";}
-            elseif ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) !== "unheated") { $title = "Australian Sapphire ". $row[shape]." 1=".$row[carat]."ct ".$row[colour]; }
-            elseif ( strtolower($row[type]) !== "loose sapphires" && strpos(strtolower($row[collections_2]), "variants") !== false) { $title = ucwords($title_mod) . " " . $row[shape] . " Sapphire " . ucwords($type_mod);}
-          if ( $row[collections] == "TPR" || $row[collections] == "TDR") { $title = str_replace("pink diamond","tender diamond", $row[product_title]);}
+          $title = $row['product_title'];
+          if ( strtolower($row['brand']) == "sapphire dreams")
+            if ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) == "unheated") { $title = "Australian Sapphire ". $row['shape']." 1=".$row['carat']."ct ".$row['colour'] . " NH";}
+            elseif ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) !== "unheated") { $title = "Australian Sapphire ". $row['shape']." 1=".$row['carat']."ct ".$row['colour']; }
+            elseif ( strtolower($row['type']) !== "loose sapphires" && strpos(strtolower($row['collections_2']), "variants") !== false) { $title = ucwords($title_mod) . " " . $row['shape'] . " Sapphire " . ucwords($type_mod);}
+          if ( $row['collections'] == "TPR" || $row['collections'] == "TDR") { $title = str_replace("pink diamond","tender diamond", $row['product_title']);}
 
           //if SGA Stock >= 5 qty = 1 else 0
-          if ( $row[client_jim077_qty] > 0 ) { $inventoryQty = $row[client_jim077_qty];}
+          if ( $row['client_jim077_qty'] > 0 ) { $inventoryQty = $row['client_jim077_qty'];}
           else{
-            if ( $row[client_sgastock] == 1 )
-              if ( $row[shopify_qty] >= 3) { $inventoryQty = 1; }
+            if ( $row['client_sgastock'] == 1 ){
+              if ( $row['shopify_qty'] >= 3) { $inventoryQty = 1; }
               else { $inventoryQty = 0;}
+            }          
           }
 
                 $content = array (
@@ -69,7 +70,7 @@
                     5 => "",
                     6 => "",
                     7 => "",
-                    8 => $row[sku],
+                    8 => $row['sku'],
                     9 => "",
                     10 => "",
                     11 => "Matthews Group",

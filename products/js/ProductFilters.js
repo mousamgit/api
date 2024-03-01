@@ -235,12 +235,12 @@ export default {
 
 
     },
-    template: `<div class="col-md-12 bg-light filter-container" style="min-height: 100vh">
+    template: `<div class="col-md-12 bg-light filter-container" >
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
         </div>
-        <hr>
+
         <div class="flex-row vcenter filter-header" v-if="productDetails.length==0 && channelAttribute.length==0">
             <div class="row">
                 <!-- Container for both Attributes and "+" button -->
@@ -259,15 +259,10 @@ export default {
                 </div>
             </div>
         </div>
-        <hr>
-        <div class="filter-column">
-            <div class="flex-col filters-container flex-grow-1">
-                <div class="filters-content">
-                    <!-- Bootstrap Card Component -->
-                    <div class="card">
-                        <div class="card-body">
+
+
                             <div class="form-group selected-filters">
-                                <div class="row" v-for="(productDet,index) in productDetails" style="margin-bottom: 5px; !important">
+                                <div v-for="(productDet,index) in productDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
                                         <span v-if="productDet.op_value == 'OR' && productDet.id != productDetails[0].id">
                                             <a class="btn btn-link" @click="addChannelCondition('AND','middle',productDetails[index-1])" data-test-id="and">
@@ -281,7 +276,7 @@ export default {
                                                 <span>----- {{op_show_value}} -------</span> 
                                                 <div class="row">
                                                     <!-- Bootstrap Form Group Component -->
-                                                    <div class="form-group filter-clauses" style="max-height: 90vh; overflow-y: auto;">
+                                                    <div class="form-group filter-clauses" >
                                                         <fieldset>
                                                             <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
                                                                 <div class="row mb-3">
@@ -390,56 +385,51 @@ export default {
                                         </div>
                                         <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">----------{{productDet.op_value}}------------</span>
                                     </span></center>
-                                    <div class="filter-clauses" v-if="showAttFilter==1">
+                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1">
                                        
-                                        <div class="clause">
-                                            <div class="filter flex-row border-default card position-relative">
+          
                                                 <div class="flex-grow-1">
-                                                    <div style="margin: 5px !important;">
+                                                    
                                                         <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> <br>
                                                         <span class="text-default mt-5" v-if="productDet.filter_type !=''">&nbsp;{{ getEmptyPrinted(productDet.filter_type) }}</span>
                                                         <span class="text-default" v-if="productDet.range_to !=''">&nbsp; {{productDet.range_from}} to {{productDet.range_to}}</span>
                                                         <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
-                                                    </div>
+                                                    
                                                 </div>
                                                 <div class="delete-icon position-absolute top-0 end-0" data-test-id="delete">
                                                     <a @click="deleteFilter(productDet.id,productDet.product_id,index)">
                                                         <i class="btn btn-danger fas fa-trash-alt"></i>
                                                     </a>
                                                 </div>
-                                            </div>
-                                        </div>
+            
                                     </div>
                                 </div>
-                                <div>
-                                    <div class="row">
-                                        <!-- Bootstrap Form Group Component -->
-                                        
-                                        <div class="form-group filter-clauses" style="max-height: 90vh; overflow-y: auto;">
+                                <div class="form-group filter-clauses">
+
                                             <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
                                                 <form @submit.prevent="submitForm">
                                                     <span v-if="productDetails.length>0">----- {{op_show_value}} -------</span>
-                                                    <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-12" v-if="showAttribute==1">
-                                                                <div class="col-md-12 position-relative">
-                                                                    <div class="d-flex justify-content-between align-items-center">
+                                                    <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
+                                                        
+                                                            <div  v-if="showAttribute==1">
+                                                                
+                                                                    
                                                                         <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
                                                                         <label class="delete-icon" style=" position: absolute;top: -10px;  right: 0;">
                                                                             <a @click="refreshAttributeAgain">
                                                                                 <i class="btn btn-danger fas fa-trash-alt"></i>
                                                                             </a>
                                                                         </label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-3">
+                                                                    
+                                                                
+                                                                
                                                                     <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
                                                                         <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
                                                                             {{ column.column_name }}
                                                                         </option>
                                                                     </select>
-                                                                </div>
-                                                                <div class="col-md-12" v-if="cAttribute.attribute != ''">
+                                                               
+                                                                <div  v-if="cAttribute.attribute != ''">
                                                                     <div class="mb-3">
                                                                         <template v-if="cAttribute.data_type == 'varchar'">
                                                                             <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
@@ -504,7 +494,7 @@ export default {
                                                                         <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                          
                                                 </form>
                                             </fieldset>
                                             <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
@@ -515,20 +505,16 @@ export default {
                                                     <strong>OR</strong>
                                                 </a>
                                             </div>
-                                            <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
-                                                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
-                                                <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
-                                            </div>
+
                                         </div>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+</div>
+<div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
+<a class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
+<a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
 </div>
   `,
 };
