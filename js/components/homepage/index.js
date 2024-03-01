@@ -187,7 +187,11 @@ const app = Vue.createApp({
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "export_filter.csv");
+            // Get current date and time
+            var now = new Date();
+            var formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
+            var filename = "export_filter_" + formattedDateTime + ".csv";
+            link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
         },
@@ -219,9 +223,9 @@ const app = Vue.createApp({
          </a>
          </div>
         </div>
-        <div class="col-md-9">   
-            
-          <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
+    
+        <div class="col-md-9 home-table-container">   
+        <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
             <button class="btn btn-primary" @click="controlFilters(fvalue)">
               Show Saved Filters {{ fkey + 1 }}
             </button>
@@ -251,11 +255,11 @@ const app = Vue.createApp({
           </div>
        
          <div class="table-responsive">
-          <table id="myTable" class="table display">
+          <table id="myTable" class="table display homepage-table">
             <thead>
               <tr>
                 <th>S.N</th>
-                <th v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+                <th :col="colName" v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
               </tr>
             </thead>
             <tbody>

@@ -365,9 +365,12 @@ header a{ color:#fff}
 .itemtable .cell:hover {  background-color: #f0f0f0;}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 
+  /* homepage */
+  .homepage-table{ width: max-content;}
+  .home-table-container{ overflow-x: scroll;}
+  .homepage-table th[col="specifications"], .homepage-table th[col="description"]{width:400px;}
+  .homepage-table td img{width:100px;}
 
-  /* temp id class */
-  #index #myTable img{width:100px;}
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}
     #search-form{padding:7px 20px;}

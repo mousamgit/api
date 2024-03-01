@@ -1,12 +1,29 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Open Sans', sans-serif; }
+    table { border: 2px solid #000; }
+    th { font-size: 14px; font-weight: 700; border: 1px solid #000; padding:20px 40px; }
+    td { font-size: 12px; font-weight: 400; border: 1px solid #000; padding: 20px; }
+  </style>
+
+</head>
+<body>
+<div style="margin: 0 auto; width:600px; padding:20px; background-color:#F9F6F0; text-align:center;">
+
 <?php
+  $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
-  $query = 'SELECT * FROM pim WHERE (brand = "shopify cl" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "")';
+  include_once ('mkdir.php');
+
+  $query = 'SELECT * FROM pim WHERE (brand = "shopify cl" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "") ORDER BY product_title ASC';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/export/sga-shopify.csv';
+  $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/cl-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","Command","Handle","Body HTML","Image Command","Inventory Available:Head Office","Tags","Tags Command","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Barcode","Variant Inventory Policy","Variant Inventory Tracker","Option1 Name","Option1 Value","Option3 Name","Option2 Name","Option2 Value","Option3 Value","Variant Metafield:custom_dial","Variant Metafield:custom_straptype","Variant Metafield:custom_gender","Image Alt Text","Variant Metafield:custom_features","Variant Metafield:custom_glass","Variant Metafield:custom_waterresistance","Variant Metafield:custom_movement","Variant Metafield:custom_dimension","Variant Metafield:custom_watchtype","Variant Metafield:custom_watchspecs", "SEO Title","Variant Fulfillment Service","Image Position");
+  $headers = array("Variant SKU","Command","Handle","Body HTML","Image Command","Inventory Available:Head Office","Tags","Tags Command","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Barcode","Variant Inventory Policy","Variant Inventory Tracker","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Variant Metafield:custom_dial","Variant Metafield:custom_straptype","Variant Metafield:custom_gender","Image Alt Text","Variant Metafield:custom_features","Variant Metafield:custom_glass","Variant Metafield:custom_waterresistance","Variant Metafield:custom_movement","Variant Metafield:custom_dimension","Variant Metafield:custom_watchtype","Variant Metafield:custom_watchspecs", "SEO Title","Variant Fulfillment Service","Image Position", "Variant Compare At Price");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -17,18 +34,22 @@
   $numrows = mysqli_num_rows($result);
   while($row = mysqli_fetch_assoc($result)){
 
-        //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
-        $command = "";
-        if ($row[shopify_qty] > 0) {
-        if ($status == "active") { $command = "MERGE";  }
-        if ($status == "draft") { $command = "MERGE"; }
-        }else { $command = "DELETE";}
-
         //Status - draft if steve, discontinued, wholesale only
-        $status = "";
-        if ( preg_match("/steve/i", strtolower($row[collections_2]))) { $status = "draft"; }
-        elseif ( preg_match("/discontinued/i", strtolower($row[collections_2]))) { $status = "draft"; }
-        elseif ( preg_match("/wholesale_only/i", strtolower($row[collections_2]))) { $status = "draft"; }
+        $status = "active";
+        if ( $row[collections] == "Vintage" && $row[sync_shopify] == 0) { $status = "draft";}
+
+        //Command - deletwe if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
+        $command = "MERGE";
+        if ($row[collections] == "Vintage")
+          if ($row[sync_shopify] == 0) { $command = "DELETE";}
+          elseif ($row[deletion] == 1) { $command = "DELETE";}
+        
+        // Create handle
+        if ( $row[collections] == "Vintage") 
+          if ( $row[product_title] != "") { $handle = $row[watch_gender] . "-" . $row[product_title] . "-" . $row[watch_dimension]. "-" . $row[watch_movement] . "-watch";}
+          else {  $handle = $row[watch_gender] . "-" . $row[watch_dimension]. "-" . $row[watch_movement] . "-watch";}
+        else { $handle = $row[watch_gender] . "-" . $row[product_title] . "-" . $row[watch_dimension] . "-" . $row[watch_movement] . "-watch";}
+        $handle = str_replace([" ","--"],"-",strtolower($handle));            
 
         //check images
         $imageURL = "";
@@ -41,25 +62,34 @@
         if($row[packaging_image] != "") { $imageURL .= $row[packaging_image];}
 
         //optionOneName
+        $optionOneName = "";
         if ( strtolower($row[brand]) === "shopify cl") { $optionOneName = "Case";}
 
         //optionTwoName
+        $optionTwoName = "";
         if ( strtolower($row[brand]) === "shopify cl") { $optionTwoName = "Dial";}
 
         //optionTwoValue
+        $optionTwoValue = "";
         if ( strtolower($row[brand]) === "shopify cl")
             if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionTwoValue = $row[watch_index];}
             else { $optionTwoValue = $row[watch_dial] . " Dial " . $row[watch_index];}
 
         //optionThreeName
+        $optionThreeName = "";
         if ( strtolower($row[brand]) === "shopify cl")
-            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = "Bezel";}
+            if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionThreeName = "";}
+            elseif ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = "Bezel";}
             else { $optionThreeName = "Band";}
 
         //optionThreeValue
+        $optionThreeValue = "";
         if ( strtolower($row[brand]) === "shopify cl")
-            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = $row[watch_diamonds];}
-            else { $optionThreeName = $row[watch_strap];}
+            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeValue = $row[watch_bezel];}
+            else { 
+              if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionThreeValue = "";}
+              else {$optionThreeValue = $row[watch_strap];}
+            }
 
         //Metafield: watch table specifications
         $table_specifications = "<div class='col-md-6'><table><tr class='watchtype'><td><b>Watch Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>";
@@ -83,7 +113,8 @@
         $vendor = str_replace("Shopify CL","Classique Watches",$row[brand]);
 
         //Metafield: Dial
-        if (strtolower($row[type]) === "pocket watch" || strtolower($row[type]) === "pendant watch") { $mf_dial = "";} else { $mf_dial = $row[dial];}
+        if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $mf_dial = "";}
+        else { $mf_dial = $row[watch_dial];}
 
         //Metafield: features
         $mf_features = "";
@@ -94,7 +125,8 @@
         $mf_features = trim($mf_features);
 
         //Metafield: watch type
-        if (strtolower($row[type]) !== "pocket watch" || strtolower($row[type]) !== "pendant watch") { $mf_watchtype = "Wrist Watch";} else { $mf_watchtype = $row[type];}
+        $mf_watchtype = "Wrist Watch";
+        if (strtolower($row[type]) == "pocket watch" || strtolower($row[type]) == "pendant watch") { $mf_watchtype = $row[type];}
 
         //Image Alt Text
         if (strtolower($row[type]) == "pocket watch" || strtolower($row[type]) == "pendant watch") { $image_alt_text = "Case " . $row[watch_material] . " Dial " . $row[watch_index] . " " . $row[watch_strap];}
@@ -102,61 +134,116 @@
 
         //SEO Title
         $seo_title = "";
-        if($row[product_title] != "") { $seo_title .= $row[product_title];}
-        if($row[watch_material] != "") { $seo_title .= " " . $row[watch_material];}
-        if($row[watch_dimension] != "") { $seo_title .= " " . $row[watch_dimension];}
-        if($row[watch_material] != "") { $seo_title .= " " . $row[watch_material] . " watch";}
+        if ( $row[collections] == "Vintage") 
+          if ( $row[product_title] != "") { $seo_title = "vintage " . $row[watch_gender] . " " . $row[watch_material] . " " . $row[product_title] . " watch";}
+          else { $seo_title = "vintage " . $row[watch_gender] . " " . $row[watch_material] . " watch";}
+        else {
+          if($row[product_title] != "") { $seo_title .= $row[product_title];}
+          if($row[watch_material] != "") { $seo_title .= " " . $row[watch_material];}
+          if($row[watch_dimension] != "") { $seo_title .= " " . $row[watch_dimension];}
+          if($row[watch_material] != "") { $seo_title .= " " . $row[watch_material] . " watch";} 
+        }
         $seo_title = strtolower($seo_title);
+
+        // Tags
+        $tags = "";
+        if ( $row[tags] != "") { $tags .= $row[tags].", "; }
+        if ( $row[collections] != "" ) { $tags .= $row[collections].", "; }
+        if ( $row[watch_material] != "") { $tags .= "Material " . $row[watch_material];}
+        if ( $row[watch_dial] != "") { $tags .= "," . $row[watch_strap];}
+        if ( $row[product_title] != "") { $tags .= ",_alt_" . $row[product_title];}
+        if ( $row[watch_movement] != "") { $tags .= "," . $row[watch_movement];}
+        if ( $row[watch_strap] != "") { $tags .= "," . $row[watch_strap];}
+        if ( strpos($row[watch_strap], "leather")) { $tags .= ",Leather Strap Watch";}
+        if ( strtolower($row[watch_strap]) == "solid gold") { $tags .= ",solid-gold";}
+        if ( $row[type] != "") { $tags .= "," . $row[type];}
+        if ( $row[collections] != "") { $tags .= "," . $row[watch_collections];}
+        $tags .= ",Classique watches,relatedproducts";
+        for ($length = 1; $length <= strlen($sku); $length++) {
+          $tags .= substr($sku, 0, $length) . ",";}
+
+
+        //Title
+        $title = "";
+        if ($row[collections] == "Vintage") { $title = "Vintage " . $row[product_title] . " " . $$row[watch_gender] . " Watch"; }
+        else { $title = $row[product_title];}
+        $title = str_replace(["  "]," ",$title);  
+
+        //Retail Price for compare
+        $compare_price = 0;
+        if ($row[collections] == "Vintage") { $compare_price = $row[retail_aud];}
+        
+        //Sale Price for Vintage collection, else RRP
+        $price = $row[retail_aud];
+        if ($row[collections] == "Vintage" && $row[sales_percentage] !== "") { $price = ceil($row[retail_aud]*((100-$row[sales_percentage])/100));}
+
 
         $content = array (
             0 => $row[sku],
             1 => $command,
             2 => $handle,
             3 => $row[description],
-            4 => $row[shopify_qty],
-            5 => $tags,
-            6 => "REPLACE",
-            7 => $row[product_title],
-            8 => $row[type],
-            9 => $row[purchase_cost_aud],
-            10 => $row[image1],
-            11 => $row[retail_aud],
-            12 => "MERGE",
-            13 => $vendor,
-            14 => $imageURL,
-            15 => $status,
-            16 => "deny",
-            17 => "shopify",
-            18 => $optionOneName,
-            19 => $row[watch_material],
-            20 => $optionTwoName,
-            21 => $optionTwoValue,
-            22 => $optionThreeName,
-            23 => $optionThreeValue,
-            24 => $mf_dial,
-            25 => $row[watch_strap],
-            26 => $row[watch_gender],
-            27 => $image_alt_text,
-            28 => $mf_features,
-            29 => $row[watch_glass],
-            30 => $row[watch_waterresistance],
-            31 => $row[watch_movement],
-            32 => $row[watch_dimension],
-            33 => $mf_watchtype,
-            34 => $table_specifications,
-            36 => $seo_title,
-            37 => "manual",
-            38 => 1,
+            4 => "REPLACE",
+            5 => $row[shopify_qty],
+            6 => $tags,
+            7 => "REPLACE",
+            8 => $title,
+            9 => $row[type],
+            10 => $row[purchase_cost_aud],
+            11 => $row[image1],
+            12 => $price,
+            13 => "MERGE",
+            14 => $vendor,
+            15 => $imageURL,
+            16 => $status,
+            17 => "",
+            18 => "deny",
+            19 => "shopify",
+            20 => $optionOneName,
+            21 => $row[watch_material],
+            22 => $optionTwoName,
+            23 => $optionTwoValue,
+            24 => $optionThreeName,
+            25 => $optionThreeValue,
+            26 => $mf_dial,
+            27 => $row[watch_strap],
+            28 => $row[watch_gender],
+            29 => $image_alt_text,
+            30 => $mf_features,
+            31 => $row[watch_glass],
+            32 => $row[watch_waterresistance],
+            33 => $row[watch_movement],
+            34 => $row[watch_dimension],
+            35 => $mf_watchtype,
+            36 => $table_specifications,
+            37 => $seo_title,
+            38 => "manual",
+            39 => 1,
+            40 => $compare_price,
 
           );
+
+
 
           fputcsv($fp, $content);
   }
 
-date_default_timezone_set('Australia/Sydney');
-echo "SGA Wholesale Export Completed!<br>";
-echo date("Y-m-d G:i a");
-
-
   fclose($fp);
+  $count = mysqli_num_rows($result);
+  date_default_timezone_set('Australia/Sydney');
+  echo "<center><h2>CL Export Completed!</h2><br>";
+  echo "Total of ".$count." Products Exported<br><br>";
+  echo "<a style='font-weight:bold;' href='https://samsgroup.info/export/cl-shopify.csv'>View on Web</a><br><br>";
+  echo date("Y-m-d G:i a")."<br>";
+  $endScriptTime=microtime(TRUE);
+  $totalScriptTime=$endScriptTime-$startScriptTime;
+  echo 'Processed in: '.number_format($totalScriptTime, 4).' seconds<br><br></center>';
+  
+  
+  $error = mysqli_error($con);
+  if($error != "") { print($sku."Error Occurred: ".$error."<br>"); }
 ?>
+
+</div>
+</body>
+</html>

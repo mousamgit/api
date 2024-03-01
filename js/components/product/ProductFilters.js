@@ -235,7 +235,7 @@ export default {
 
 
     },
-    template: `<div class="col-md-12 bg-light" style="min-height: 100vh">
+    template: `<div class="col-md-12 bg-light filter-container" style="min-height: 100vh">
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
