@@ -14,7 +14,7 @@ include 'functions.php';
     <script src="./js/pimjs.js" ></script>
     <script src="./js/filter.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
-    <script type="module" src="./js/components/product/ProductFilters.js" ></script>
+    <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
     <style>
         .tooltip-container {
@@ -52,6 +52,6 @@ include 'functions.php';
     </div>
     </div>
 </div>
-    <script type="module" src="./js/components/homepage/index.js" defer></script>
+    <script type="module" src="./homepage/js/index.js" defer></script>
 </body>
 </html>
