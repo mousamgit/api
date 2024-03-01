@@ -36,128 +36,128 @@
 
         //Status - draft if steve, discontinued, wholesale only
         $status = "active";
-        if ( $row[collections] == "Vintage" && $row[sync_shopify] == 0) { $status = "draft";}
+        if ( $row['collections'] == "Vintage" && $row['sync_shopify'] == 0) { $status = "draft";}
 
         //Command - deletwe if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "MERGE";
-        if ($row[collections] == "Vintage")
-          if ($row[sync_shopify] == 0) { $command = "DELETE";}
-          elseif ($row[deletion] == 1) { $command = "DELETE";}
+        if ($row['collections'] == "Vintage")
+          if ($row['sync_shopify'] == 0) { $command = "DELETE";}
+          elseif ($row['deletion'] == 1) { $command = "DELETE";}
         
         // Create handle
-        if ( $row[collections] == "Vintage") 
-          if ( $row[product_title] != "") { $handle = $row[watch_gender] . "-" . $row[product_title] . "-" . $row[watch_dimension]. "-" . $row[watch_movement] . "-watch";}
-          else {  $handle = $row[watch_gender] . "-" . $row[watch_dimension]. "-" . $row[watch_movement] . "-watch";}
-        else { $handle = $row[watch_gender] . "-" . $row[product_title] . "-" . $row[watch_dimension] . "-" . $row[watch_movement] . "-watch";}
+        if ( $row['collections'] == "Vintage") 
+          if ( $row['product_title'] != "") { $handle = $row['watch_gender'] . "-" . $row['product_title'] . "-" . $row['watch_dimension']. "-" . $row['watch_movement'] . "-watch";}
+          else {  $handle = $row['watch_gender'] . "-" . $row['watch_dimension']. "-" . $row['watch_movement'] . "-watch";}
+        else { $handle = $row['watch_gender'] . "-" . $row['product_title'] . "-" . $row['watch_dimension'] . "-" . $row['watch_movement'] . "-watch";}
         $handle = str_replace([" ","--"],"-",strtolower($handle));            
 
         //check images
         $imageURL = "";
-        if($row[image1] != "") { $imageURL .= $row[image1].";";}
-        if($row[image2] != "") { $imageURL .= $row[image2].";";}
-        if($row[image3] != "") { $imageURL .= $row[image3].";";}
-        if($row[image4] != "") { $imageURL .= $row[image4].";";}
-        if($row[image5] != "") { $imageURL .= $row[image5].";";}
-        if($row[image6] != "") { $imageURL .= $row[image6].";";}
-        if($row[packaging_image] != "") { $imageURL .= $row[packaging_image];}
+        if($row['image1'] != "") { $imageURL .= $row['image1'].";";}
+        if($row['image2'] != "") { $imageURL .= $row['image2'].";";}
+        if($row['image3'] != "") { $imageURL .= $row['image3'].";";}
+        if($row['image4'] != "") { $imageURL .= $row['image4'].";";}
+        if($row['image5'] != "") { $imageURL .= $row['image5'].";";}
+        if($row['image6'] != "") { $imageURL .= $row['image6'].";";}
+        if($row['packaging_image'] != "") { $imageURL .= $row['packaging_image'];}
 
         //optionOneName
         $optionOneName = "";
-        if ( strtolower($row[brand]) === "shopify cl") { $optionOneName = "Case";}
+        if ( strtolower($row['brand']) === "shopify cl") { $optionOneName = "Case";}
 
         //optionTwoName
         $optionTwoName = "";
-        if ( strtolower($row[brand]) === "shopify cl") { $optionTwoName = "Dial";}
+        if ( strtolower($row['brand']) === "shopify cl") { $optionTwoName = "Dial";}
 
         //optionTwoValue
         $optionTwoValue = "";
-        if ( strtolower($row[brand]) === "shopify cl")
-            if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionTwoValue = $row[watch_index];}
-            else { $optionTwoValue = $row[watch_dial] . " Dial " . $row[watch_index];}
+        if ( strtolower($row['brand']) === "shopify cl")
+            if ( strtolower($row['type']) == "pendant watch" || strtolower($row['type']) == "pocket watch") { $optionTwoValue = $row['watch_index'];}
+            else { $optionTwoValue = $row['watch_dial'] . " Dial " . $row['watch_index'];}
 
         //optionThreeName
         $optionThreeName = "";
-        if ( strtolower($row[brand]) === "shopify cl")
-            if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionThreeName = "";}
-            elseif ( strpos($row[tags], "bezel-set") !== false) { $optionThreeName = "Bezel";}
+        if ( strtolower($row['brand']) === "shopify cl")
+            if ( strtolower($row['type']) == "pendant watch" || strtolower($row['type']) == "pocket watch") { $optionThreeName = "";}
+            elseif ( strpos($row['tags'], "bezel-set") !== false) { $optionThreeName = "Bezel";}
             else { $optionThreeName = "Band";}
 
         //optionThreeValue
         $optionThreeValue = "";
-        if ( strtolower($row[brand]) === "shopify cl")
-            if ( strpos($row[tags], "bezel-set") !== false) { $optionThreeValue = $row[watch_bezel];}
+        if ( strtolower($row['brand']) === "shopify cl")
+            if ( strpos($row['tags'], "bezel-set") !== false) { $optionThreeValue = $row[watch_bezel];}
             else { 
-              if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $optionThreeValue = "";}
-              else {$optionThreeValue = $row[watch_strap];}
+              if ( strtolower($row['type']) == "pendant watch" || strtolower($row['type']) == "pocket watch") { $optionThreeValue = "";}
+              else {$optionThreeValue = $row['watch_strap'];}
             }
 
         //Metafield: watch table specifications
         $table_specifications = "<div class='col-md-6'><table><tr class='watchtype'><td><b>Watch Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>";
-        if (strtolower($row[type]) !== "pocket watch" || strtolower($row[type]) !== "pendant watch") { $table_specifications .= "Wrist Watch";} else { $table_specifications .= $row[type]; }
-        $table_specifications .= "</td></tr><tr class='movementtype'><td><b>Movement Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row[watch_movement] 
-        . "</td></tr><tr class='dialcolour'><td><b>Dial</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row[watch_dial] 
-        . "</td></tr><tr class='casedimension'><td><b>Case Dimension</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row[watch_dimension] 
-        . "</td></tr><tr class='Glass'><td><b>Glass</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row[watch_glass] 
-        . "</td></tr></table></div><div class='col-md-6'><table><tr class='waterresistance'><td><b>Water Resistance</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row[watch_waterresistance] 
-        . "</td></tr><tr class='gender'><td><b>Gender</b></div></td><td>" . $row[watch_gender] 
-        . "</td></tr><tr class='straptype'><td><b>Strap Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row[watch_strap] 
+        if (strtolower($row['type']) !== "pocket watch" || strtolower($row['type']) !== "pendant watch") { $table_specifications .= "Wrist Watch";} else { $table_specifications .= $row['type']; }
+        $table_specifications .= "</td></tr><tr class='movementtype'><td><b>Movement Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row['watch_movement'] 
+        . "</td></tr><tr class='dialcolour'><td><b>Dial</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row['watch_dial'] 
+        . "</td></tr><tr class='casedimension'><td><b>Case Dimension</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row['watch_dimension'] 
+        . "</td></tr><tr class='Glass'><td><b>Glass</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row['watch_glass'] 
+        . "</td></tr></table></div><div class='col-md-6'><table><tr class='waterresistance'><td><b>Water Resistance</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row['watch_waterresistance'] 
+        . "</td></tr><tr class='gender'><td><b>Gender</b></div></td><td>" . $row['watch_gender'] 
+        . "</td></tr><tr class='straptype'><td><b>Strap Type</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>" . $row['watch_strap'] 
         . "</td></tr><tr class='specialfeatures'><td><b>Special Features</b><i class='las la-question-circle'></i><div class='arr-left'></div></td><td>";
         $add_desc = "";
-        if ( $row[add_desc1] != "") { $add_desc .= $row[add_desc1];}
-        if ( $row[add_desc2] != "") { $add_desc .= "," . $row[add_desc2];}
-        if ( $row[add_desc3] != "") { $add_desc .= "," . $row[add_desc3];}
-        if ( $row[add_desc4] != "") { $add_desc .= "," . $row[add_desc4];}
+        if ( $row['add_desc1'] != "") { $add_desc .= $row['add_desc1'];}
+        if ( $row['add_desc2'] != "") { $add_desc .= "," . $row['add_desc2'];}
+        if ( $row['add_desc3'] != "") { $add_desc .= "," . $row['add_desc3'];}
+        if ( $row['add_desc4'] != "") { $add_desc .= "," . $row['add_desc4'];}
         $table_specifications .= $add_desc  . "</td></tr></table></div>";
 
         //Vendor
-        $vendor = str_replace("Shopify CL","Classique Watches",$row[brand]);
+        $vendor = str_replace("Shopify CL","Classique Watches",$row['brand']);
 
         //Metafield: Dial
-        if ( strtolower($row[type]) == "pendant watch" || strtolower($row[type]) == "pocket watch") { $mf_dial = "";}
-        else { $mf_dial = $row[watch_dial];}
+        if ( strtolower($row['type']) == "pendant watch" || strtolower($row['type']) == "pocket watch") { $mf_dial = "";}
+        else { $mf_dial = $row['watch_dial'];}
 
         //Metafield: features
         $mf_features = "";
-        if($row[add_desc1] != "") { $mf_features .= $row[add_desc1];}
-        if($row[add_desc2] != "") { $mf_features .= " " . $row[add_desc2];}
-        if($row[add_desc3] != "") { $mf_features .= " " . $row[add_desc3];}
-        if($row[add_desc4] != "") { $mf_features .= " " . $row[add_desc4];}
+        if($row['add_desc1'] != "") { $mf_features .= $row['add_desc1'];}
+        if($row['add_desc2'] != "") { $mf_features .= " " . $row['add_desc2'];}
+        if($row['add_desc3'] != "") { $mf_features .= " " . $row['add_desc3'];}
+        if($row['add_desc4'] != "") { $mf_features .= " " . $row['add_desc4'];}
         $mf_features = trim($mf_features);
 
         //Metafield: watch type
         $mf_watchtype = "Wrist Watch";
-        if (strtolower($row[type]) == "pocket watch" || strtolower($row[type]) == "pendant watch") { $mf_watchtype = $row[type];}
+        if (strtolower($row['type']) == "pocket watch" || strtolower($row['type']) == "pendant watch") { $mf_watchtype = $row['type'];}
 
         //Image Alt Text
-        if (strtolower($row[type]) == "pocket watch" || strtolower($row[type]) == "pendant watch") { $image_alt_text = "Case " . $row[watch_material] . " Dial " . $row[watch_index] . " " . $row[watch_strap];}
-        else { $image_alt_text = "Case " . $row[watch_material] . " Dial " . $row[watch_dial] . " Dial " . $row[watch_index] . " " . $row[watch_strap];}
+        if (strtolower($row['type']) == "pocket watch" || strtolower($row['type']) == "pendant watch") { $image_alt_text = "Case " . $row['watch_material'] . " Dial " . $row['watch_index'] . " " . $row['watch_strap'];}
+        else { $image_alt_text = "Case " . $row['watch_material'] . " Dial " . $row['watch_dial'] . " Dial " . $row['watch_index'] . " " . $row['watch_strap'];}
 
         //SEO Title
         $seo_title = "";
-        if ( $row[collections] == "Vintage") 
-          if ( $row[product_title] != "") { $seo_title = "vintage " . $row[watch_gender] . " " . $row[watch_material] . " " . $row[product_title] . " watch";}
-          else { $seo_title = "vintage " . $row[watch_gender] . " " . $row[watch_material] . " watch";}
+        if ( $row['collections'] == "Vintage") 
+          if ( $row['product_title'] != "") { $seo_title = "vintage " . $row['watch_gender'] . " " . $row['watch_material'] . " " . $row['product_title'] . " watch";}
+          else { $seo_title = "vintage " . $row['watch_gender'] . " " . $row['watch_material'] . " watch";}
         else {
-          if($row[product_title] != "") { $seo_title .= $row[product_title];}
-          if($row[watch_material] != "") { $seo_title .= " " . $row[watch_material];}
-          if($row[watch_dimension] != "") { $seo_title .= " " . $row[watch_dimension];}
-          if($row[watch_material] != "") { $seo_title .= " " . $row[watch_material] . " watch";} 
+          if($row['product_title'] != "") { $seo_title .= $row['product_title'];}
+          if($row['watch_material'] != "") { $seo_title .= " " . $row['watch_material'];}
+          if($row['watch_dimension'] != "") { $seo_title .= " " . $row['watch_dimension'];}
+          if($row['watch_material'] != "") { $seo_title .= " " . $row['watch_material'] . " watch";} 
         }
         $seo_title = strtolower($seo_title);
 
         // Tags
         $tags = "";
-        if ( $row[tags] != "") { $tags .= $row[tags].", "; }
-        if ( $row[collections] != "" ) { $tags .= $row[collections].", "; }
-        if ( $row[watch_material] != "") { $tags .= "Material " . $row[watch_material];}
-        if ( $row[watch_dial] != "") { $tags .= "," . $row[watch_strap];}
-        if ( $row[product_title] != "") { $tags .= ",_alt_" . $row[product_title];}
-        if ( $row[watch_movement] != "") { $tags .= "," . $row[watch_movement];}
-        if ( $row[watch_strap] != "") { $tags .= "," . $row[watch_strap];}
-        if ( strpos($row[watch_strap], "leather")) { $tags .= ",Leather Strap Watch";}
-        if ( strtolower($row[watch_strap]) == "solid gold") { $tags .= ",solid-gold";}
-        if ( $row[type] != "") { $tags .= "," . $row[type];}
-        if ( $row[collections] != "") { $tags .= "," . $row[watch_collections];}
+        if ( $row['tags'] != "") { $tags .= $row['tags'].", "; }
+        if ( $row['collections'] != "" ) { $tags .= $row['collections'].", "; }
+        if ( $row['watch_material'] != "") { $tags .= "Material " . $row['watch_material'];}
+        if ( $row['watch_dial'] != "") { $tags .= "," . $row['watch_strap'];}
+        if ( $row['product_title'] != "") { $tags .= ",_alt_" . $row['product_title'];}
+        if ( $row['watch_movement'] != "") { $tags .= "," . $row['watch_movement'];}
+        if ( $row['watch_strap'] != "") { $tags .= "," . $row['watch_strap'];}
+        if ( strpos($row['watch_strap'], "leather")) { $tags .= ",Leather Strap Watch";}
+        if ( strtolower($row['watch_strap']) == "solid gold") { $tags .= ",solid-gold";}
+        if ( $row['type'] != "") { $tags .= "," . $row['type'];}
+        if ( $row['collections'] != "") { $tags .= "," . $row['watch_collections'];}
         $tags .= ",Classique watches,relatedproducts";
         for ($length = 1; $length <= strlen($sku); $length++) {
           $tags .= substr($sku, 0, $length) . ",";}
@@ -165,32 +165,32 @@
 
         //Title
         $title = "";
-        if ($row[collections] == "Vintage") { $title = "Vintage " . $row[product_title] . " " . $$row[watch_gender] . " Watch"; }
-        else { $title = $row[product_title];}
+        if ($row['collections'] == "Vintage") { $title = "Vintage " . $row['product_title'] . " " . $$row['watch_gender'] . " Watch"; }
+        else { $title = $row['product_title'];}
         $title = str_replace(["  "]," ",$title);  
 
         //Retail Price for compare
         $compare_price = 0;
-        if ($row[collections] == "Vintage") { $compare_price = $row[retail_aud];}
+        if ($row['collections'] == "Vintage") { $compare_price = $row['retail_aud'];}
         
         //Sale Price for Vintage collection, else RRP
-        $price = $row[retail_aud];
-        if ($row[collections] == "Vintage" && $row[sales_percentage] !== "") { $price = ceil($row[retail_aud]*((100-$row[sales_percentage])/100));}
+        $price = $row['retail_aud'];
+        if ($row['collections'] == "Vintage" && $row['sales_percentage'] !== "") { $price = ceil($row['retail_aud']*((100-$row['sales_percentage'])/100));}
 
 
         $content = array (
-            0 => $row[sku],
+            0 => $row['sku'],
             1 => $command,
             2 => $handle,
-            3 => $row[description],
+            3 => $row['description'],
             4 => "REPLACE",
-            5 => $row[shopify_qty],
+            5 => $row['shopify_qty'],
             6 => $tags,
             7 => "REPLACE",
             8 => $title,
-            9 => $row[type],
-            10 => $row[purchase_cost_aud],
-            11 => $row[image1],
+            9 => $row['type'],
+            10 => $row['purchase_cost_aud'],
+            11 => $row['image1'],
             12 => $price,
             13 => "MERGE",
             14 => $vendor,
@@ -200,20 +200,20 @@
             18 => "deny",
             19 => "shopify",
             20 => $optionOneName,
-            21 => $row[watch_material],
+            21 => $row['watch_material'],
             22 => $optionTwoName,
             23 => $optionTwoValue,
             24 => $optionThreeName,
             25 => $optionThreeValue,
             26 => $mf_dial,
-            27 => $row[watch_strap],
-            28 => $row[watch_gender],
+            27 => $row['watch_strap'],
+            28 => $row['watch_gender'],
             29 => $image_alt_text,
             30 => $mf_features,
-            31 => $row[watch_glass],
-            32 => $row[watch_waterresistance],
-            33 => $row[watch_movement],
-            34 => $row[watch_dimension],
+            31 => $row['watch_glass'],
+            32 => $row['watch_waterresistance'],
+            33 => $row['watch_movement'],
+            34 => $row['watch_dimension'],
             35 => $mf_watchtype,
             36 => $table_specifications,
             37 => $seo_title,
