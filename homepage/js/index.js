@@ -1,4 +1,4 @@
-import ProductFilters from '../product/ProductFilters.js';
+import ProductFilters from '../../products/js/ProductFilters.js';
 
 const app = Vue.createApp({
     data() {
@@ -19,7 +19,6 @@ const app = Vue.createApp({
         };
     },
     mounted() {
-
         this.fetchProducts();
     },
 
@@ -230,7 +229,6 @@ const app = Vue.createApp({
               Show Saved Filters {{ fkey + 1 }}
             </button>
             <div class="tooltip-content">
-            
              <div v-for="(value,index) in filterList">
              <template v-if="index==0">
              <p>
