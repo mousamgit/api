@@ -108,7 +108,7 @@
         $table_specifications .= $add_desc  . "</td></tr></table></div>";
 
         //Vendor
-        $vendor = str_replace("Shopify CL","Classique Watches",$row['brand']);
+        $vendor = str_replace("shopify cl","Classique Watches",strtolower($row['brand']));
 
         //Metafield: Dial
         if ( strtolower($row['type']) == "pendant watch" || strtolower($row['type']) == "pocket watch") { $mf_dial = "";}
