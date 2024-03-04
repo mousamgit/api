@@ -12,13 +12,59 @@ export default {
             showAttributeMid: 0,
             op_show_value: 'AND',
             selectedValues:[],
-            showManualValidationMessage:0
+            showManualValidationMessage:0,
+            editForm:-1 //v2
         };
     },
     mounted() {
         this.fetchAllColumns();
     },
     methods: {
+        //v2
+        editFilter(productDet,index)
+        {
+            let attribute_condition_value = productDet.attribute_condition.slice(1, -1).split(',');
+            attribute_condition_value = attribute_condition_value.map(function(value) {
+                value = value.trim();
+
+                // Remove leading and trailing double quotes
+                if (value.startsWith('"')) {
+                    value = value.substring(1);
+                }
+                if (value.endsWith('"')) {
+                    value = value.substring(0, value.length - 1);
+                }
+
+                return value;
+            });
+            this.selectedValues=[]
+            // Reset the selectedValues array
+            this.selectedValues = [];
+
+            attribute_condition_value.forEach(function(value) {
+                this.selectedValues.push(value);
+            }, this);
+
+            console.log(this.selectedValues);
+            this.showAttFilter =0;
+            this.editForm=index;
+            this.channelAttribute = [{
+                id: productDet.id,
+                attribute_name: productDet.attribute_name,
+                data_type: productDet.data_type_value,
+                filter_type: productDet.filter_type,
+                attribute: productDet.attribute_name +','+productDet.data_type_value,
+                attribute_condition: productDet.attribute_condition,
+                attribute_current: '',
+                rangeFrom: productDet.range_from,
+                rangeTo:productDet.range_to,
+                operator: productDet.op_value,
+                condition_type: 'abc',
+                previous_row: [],
+                type:'edit'
+            }];
+
+        },
         updateSelectedValues(index) {
             this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
         },
@@ -147,7 +193,7 @@ export default {
                     this.channelAttribute[0].attribute_condition='';
                 } else {
                     this.showManualValidationMessage=0
-                    const response = await fetch('save_product_filter.php', {
+                    const response = await fetch('products/save_product_filter.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -385,7 +431,7 @@ export default {
                                         </div>
                                         <center v-if="productDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
                                     </span></center>
-                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1">
+                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1" @click="editFilter(productDet,index)">
                                        
           
                                                 <div class="flex-grow-1">
@@ -403,6 +449,93 @@ export default {
                                                 </div>
             
                                     </div>
+                                    <div class="editForm" v-if="showAttFilter==0 && editForm===index">
+                    <form @submit.prevent="submitForm">
+                        <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
+                            <div>
+                                <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
+                                <label class="delete-icon position-absolute top-0 end-0">
+                                    <a @click="refreshAttributeAgain">
+                                        <i class="fa fa-times animation-mode" aria-hidden="true"></i>
+                                    </a>
+                                </label>
+                                <select class="form-control" @change="handleChangeAttribute(index)" required="">
+                                    <template v-for="column in columns">
+                                        <template v-if="column.column_name == productDet.attribute_name">
+                                            <option :value="column.column_name+ ',' +column.data_type" selected>{{column.column_name}}</option>
+                                        </template>
+                                        <template v-else>
+                                            <option :value="column.column_name+ ',' +column.data_type">{{column.column_name}}</option>
+                                        </template>
+                                    </template>
+                                </select>
+                                <div>
+                                    <div class="mb-3">
+                                        <template v-if="cAttribute.data_type == 'varchar'">
+                                            <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
+                                                <option value="includes" :selected="productDet.filter_type === 'includes'">includes</option>
+                                                <option value="dont_includes" :selected="productDet.filter_type === 'dont_includes'">doesn't include</option>
+                                                <option value="=" :selected="productDet.filter_type === '='">equal to</option>
+                                                <option value="!=" :selected="productDet.filter_type === '!='">not equal to</option>
+                                                <option value="IS NOT NULL" :selected="productDet.filter_type === 'IS NOT NULL'">is not empty</option>
+                                                <option value="IS NULL" :selected="productDet.filter_type === 'IS NULL'">is empty</option>
+                                            </select>
+                                            <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
+                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
+                                                <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
+                                                <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
+                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex">
+                                                        <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)" :checked="selectedValues.includes(value)">
+                                                        <label :for="'checkbox_' + vindex">{{ value }} </label>
+                                                    </li>
+                                                </ul>
+                                            </template>
+                                            <template v-else-if="cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes'">
+                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" required>
+                                            </template>
+                                        </template>
+                                        <template v-if="cAttribute.data_type != 'varchar'">
+                                            <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
+                                                <option value="=">equal to</option>
+                                                <option value="!=">not equal to</option>
+                                                <option value=">">is greater than</option>
+                                                <option value="<">is less than</option>
+                                                <option value="between">range</option>
+                                                <option value="IS NOT NULL">is not empty</option>
+                                                <option value="IS NULL">is empty</option>
+                                            </select>
+                                            <template v-if="cAttribute.filter_type == 'between'">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <input type="text" v-model="cAttribute.rangeFrom" class="form-control" placeholder="From" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" v-model="cAttribute.rangeTo" class="form-control" placeholder="To" required>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
+                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                <span v-if="showManualValidationMessage==1" class="alert-danger">Search and Tick Condition below</span>
+                                                <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
+                                                <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
+                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex">
+                                                        <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)" :checked="selectedValues.includes(value)">
+                                                        <label :for="'checkbox_' + vindex">{{ value }}</label>
+                                                    </li>
+                                                </ul>
+                                            </template>
+                                            <template v-else-if="cAttribute.filter_type == '>' || cAttribute.filter_type == '<'">
+                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" required>
+                                            </template>
+                                    </div>
+                                    <div class="submit-form" v-if="cAttribute.attribute!=''">
+                                        <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
+                                    </div>
+                                </div>
+                    </form>
+                </div>
                                 </div>
                                 <div class="form-group filter-clauses">
 

@@ -442,7 +442,7 @@ export default {
                         </a>
                     </div>
                 </div>
-                <!--                                    v2 form from line 434 to 530-->
+                <!--  v2 form from line 434 to 530-->
                 <div class="editForm" v-if="showAttFilter==0 && editForm===index">
                     <form @submit.prevent="submitForm">
                         <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
