@@ -1,4 +1,9 @@
-body{font-family: Verdana, Geneva, Tahoma, sans-serif;}
+:root {
+  --main-color: #ae1930;
+  --main-font: 'Open Sans', sans-serif;
+  --light-grey: #e1e1e1;
+}
+body{font-family: var(--main-font);}
 /* .showcols, .showrows{width:50%; float: left;} */
 img{max-width: 100%;}
 a{cursor: pointer; text-decoration: none;}
@@ -8,7 +13,6 @@ a{cursor: pointer; text-decoration: none;}
     display: inline-block;
     font-size: 14px;
     margin: 0 5px 3px 0;
-    padding: 10px 20px;
     cursor: pointer;
     color:#fff;
     background-color: #222;
@@ -20,6 +24,8 @@ a{cursor: pointer; text-decoration: none;}
     color: #222;
     background-color: #fff;
 }
+.white-btn{border: var(--light-grey) 1px solid; color: var(--main-color); background-color: #fff;     border-radius: 0.25rem;}
+.white-btn:hover{background-color: var(--main-color); color:#fff;}
 .animation-mode{
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -379,11 +385,12 @@ header a{ color:#fff}
   .homepage-table td img{width:100px;}
   .filter-container{padding: 20px;}
   .filter-container hr{display: none;}
-  .filter-header{margin-bottom: 20px; font-weight: 600;}
+  .filter-condition center{color:#ccc;}
+  .filter-header{margin-bottom: 20px; color:#ccc; font-size: 28px;}
   .channel-condition{padding:20px;}
-  .card{padding:15px; margin:15px 0;}
+  .card{padding:15px; margin:5px 0; color:#666;}
   .channel-condition .form-control{margin-top:5px;}
-  .delete-icon{color: #999;}
+  .delete-icon{color: var(--main-color); top:0.5rem;}
   .delete-icon a{padding:0px; font-size: 28px; margin-right:10px;}
   .delete-icon a:hover i{transform: rotate(360deg)}
 
