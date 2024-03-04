@@ -40,9 +40,7 @@
 
         //Command - deletwe if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "MERGE";
-        if ($row['collections'] == "Vintage")
-          if ($row['sync_shopify'] == 0) { $command = "DELETE";}
-          elseif ($row['deletion'] == 1) { $command = "DELETE";}
+        if ($row['deletion'] == 1) { $command = "DELETE";}
         
         // Create handle
         if ( $row['collections'] == "Vintage") 
@@ -110,7 +108,7 @@
         $table_specifications .= $add_desc  . "</td></tr></table></div>";
 
         //Vendor
-        $vendor = str_replace("Shopify CL","Classique Watches",$row['brand']);
+        $vendor = str_replace("shopify cl","Classique Watches",strtolower($row['brand']));
 
         //Metafield: Dial
         if ( strtolower($row['type']) == "pendant watch" || strtolower($row['type']) == "pocket watch") { $mf_dial = "";}
@@ -149,15 +147,19 @@
         $tags = "";
         if ( $row['tags'] != "") { $tags .= $row['tags'].", "; }
         if ( $row['collections'] != "" ) { $tags .= $row['collections'].", "; }
+        $tags = str_replace("Solid Gold","solid-gold",$tags);
         if ( $row['watch_material'] != "") { $tags .= "Material " . $row['watch_material'];}
-        if ( $row['watch_dial'] != "") { $tags .= "," . $row['watch_strap'];}
+        if ( $row['watch_dial'] != "") { $tags .= "," . $row['watch_dial'];}
         if ( $row['product_title'] != "") { $tags .= ",_alt_" . $row['product_title'];}
         if ( $row['watch_movement'] != "") { $tags .= "," . $row['watch_movement'];}
         if ( $row['watch_strap'] != "") { $tags .= "," . $row['watch_strap'];}
-        if ( strpos($row['watch_strap'], "leather")) { $tags .= ",Leather Strap Watch";}
-        if ( strtolower($row['watch_strap']) == "solid gold") { $tags .= ",solid-gold";}
+        if ( $row['type'] == "Watch"){
+          if ( strpos($row['watch_strap'], "leather")) { $tags .= ",Leather Strap Watch";}
+          elseif ( strpos($row['watch_strap'], "bracelet")) { $tags .= ",Bracelet Watch";}
+          else { $tags .= "";} 
+        }
         if ( $row['type'] != "") { $tags .= "," . $row['type'];}
-        if ( $row['collections'] != "") { $tags .= "," . $row['watch_collections'];}
+        if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= "," . $row['collections_2'];}
         $tags .= ",Classique watches,relatedproducts";
         for ($length = 1; $length <= strlen($sku); $length++) {
           $tags .= substr($sku, 0, $length) . ",";}

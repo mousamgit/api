@@ -349,7 +349,7 @@ export default {
                                                                         </div>
                                                                         </template>
                                                                         <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
-                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control" readonly required>
+                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control hidden" readonly required>
                                                                             <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                             <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                             <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
