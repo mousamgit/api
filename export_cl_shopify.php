@@ -40,9 +40,7 @@
 
         //Command - deletwe if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "MERGE";
-        if ($row['collections'] == "Vintage")
-          if ($row['sync_shopify'] == 0) { $command = "DELETE";}
-          elseif ($row['deletion'] == 1) { $command = "DELETE";}
+        if ($row['deletion'] == 1) { $command = "DELETE";}
         
         // Create handle
         if ( $row['collections'] == "Vintage") 
