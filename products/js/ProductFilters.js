@@ -412,8 +412,6 @@ export default {
                                                     <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
                                                         
                                                             <div  v-if="showAttribute==1">
-                                                                
-                                                                    
                                                                         <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
                                                                         <label class="delete-icon position-absolute top-0 end-0" >
                                                                             <a @click="refreshAttributeAgain">
