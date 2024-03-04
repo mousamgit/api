@@ -20,7 +20,7 @@ export default {
     },
     methods: {
         updateSelectedValues(index) {
-        this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
+            this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
         },
         nextPage() {
             this.currentPage++;
@@ -140,8 +140,7 @@ export default {
         },
         async submitForm() {
             try {
-                // console.log(this.channelAttribute[0].filter_type)
-
+                console.log(this.channelAttribute[0].filter_type)
                 if ((this.channelAttribute[0].attribute_condition.trim() == '' || this.channelAttribute[0].attribute_condition.trim() == '()') && (!(this.channelAttribute[0].filter_type == 'IS NOT NULL' || this.channelAttribute[0].filter_type == 'IS NULL')) && (this.channelAttribute[0].filter_type != 'between' )){
                     this.showManualValidationMessage=1
                     this.channelAttribute[0].attribute_condition='';
@@ -230,7 +229,7 @@ export default {
                 this.indexVal = -1,
                 this.showAttributeMid = 0,
                 this.op_show_value = 'AND'
-                this.fetchAllColumns();
+            this.fetchAllColumns();
         }
 
 

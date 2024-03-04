@@ -14,8 +14,7 @@ include 'functions.php';
     <script src="./js/pimjs.js" ></script>
     <script src="./js/filter.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
-    <script type="module" src="./js/components/product/ProductFilters.js" ></script>
-
+    <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
     <style>
         .tooltip-container {
@@ -44,14 +43,15 @@ include 'functions.php';
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div class="row">
-    <div class="col-md-12">
-        <div id="index">
-            <index></index>
+<div class="pim-padding">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="index">
+                <index></index>
+            </div>
         </div>
     </div>
-
 </div>
-<script type="module" src="./js/components/homepage/index.js" defer></script>
+<script type="module" src="./homepage/js/index_v2.js" defer></script>
 </body>
 </html>
