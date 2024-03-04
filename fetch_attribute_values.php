@@ -6,7 +6,6 @@ require_once('connect.php');
 
 $attribute_name = $_GET['attribute_name'];
 $attribute_condition = strtolower($_GET['attribute_condition']);
-
 $result = $con->query("SELECT DISTINCT ".$attribute_name." from pim where ".$attribute_name." IS NOT NULL AND lower(".$attribute_name.") like '%$attribute_condition%' ");
 
 $attribute_values=[];
