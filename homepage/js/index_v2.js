@@ -1,4 +1,4 @@
-import ProductFilters from '../../products/js/ProductFilters.js';
+import ProductFilters from '../../products/js/ProductFiltersV2.js';
 
 const app = Vue.createApp({
     data() {
@@ -16,7 +16,7 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
-            showSavedFilters:false,
+            draggedIndex: null
         };
     },
     mounted() {
@@ -24,22 +24,19 @@ const app = Vue.createApp({
     },
 
     methods: {
-        showHideFilters(){
-            this.showSavedFilters = !this.showSavedFilters;
-        },
         changePage()
         {
             this.initializeData()
             this.fetchProducts();
         },
         totalPages(totalRows,itemsPerPage){
-           return Math.ceil(totalRows / itemsPerPage);
+            return Math.ceil(totalRows / itemsPerPage);
         },
         initializePagination()
         {
-           this.currentPage=1,
-           this.itemsPerPage= 100,
-           this.totalRows=0
+            this.currentPage=1,
+                this.itemsPerPage= 100,
+                this.totalRows=0
         },
         nextPage() {
             this.initializeData();
@@ -83,7 +80,7 @@ const app = Vue.createApp({
                 this.initializePagination();
                 this.fetchProducts();
                 console.log('Database updated successfully');
-                
+
             } catch (error) {
                 console.error('Error updating database:', error);
             }
@@ -111,15 +108,50 @@ const app = Vue.createApp({
                     console.error('Error fetching data:', error);
                 });
         },
+        handleDragStart(index) {
+            this.draggedIndex = index;
+        },
+        handleDragOver(index) {
+            event.preventDefault();
+        },
+        handleDrop(index) {
+            if (this.draggedIndex !== null && index !== this.draggedIndex) {
+                const removed = this.columnValues.splice(this.draggedIndex, 1)[0];
+                this.columnValues.splice(index, 0, removed);
+                this.draggedIndex = null;
+                const dataToSend = {
+                    column_values: this.columnValues
+                };
+                try {
+                    const response =  fetch('./save_column_order_values.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dataToSend)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to order columns');
+                    }
+                    alert('its done')
+
+
+                } catch (error) {
+                    console.error('Error updating database:', error);
+                }
+
+            }
+        },
         changeEditValue(rowIndex,columnIndex,oldValue,editedValue,sku,colName)
         {
-          this.isEditing = 1;
-          this.rIndex = rowIndex;
-          this.cIndex = columnIndex;
-          this.formData.oldValue = oldValue;
-          this.formData.editedValue = editedValue;
-          this.formData.sku = sku;
-          this.formData.colName = colName;
+            this.isEditing = 1;
+            this.rIndex = rowIndex;
+            this.cIndex = columnIndex;
+            this.formData.oldValue = oldValue;
+            this.formData.editedValue = editedValue;
+            this.formData.sku = sku;
+            this.formData.colName = colName;
             setTimeout(() => {
                 document.getElementById('editInput').focus();
             }, 0);
@@ -177,20 +209,16 @@ const app = Vue.createApp({
             }
         },
         exportToCSV() {
-            // Include the table header in the CSV content
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
 
-            // Add the rows to the CSV content
             const rows = this.productValuesTotal.map(row => {
                 return this.columnValues.map(colName => row[colName]);
             });
             csvContent += rows.map(e => e.join(",")).join("\n");
 
-            // Create a download link and trigger the download
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            // Get current date and time
             var now = new Date();
             var formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
             var filename = "export_filter_" + formattedDateTime + ".csv";
@@ -210,7 +238,7 @@ const app = Vue.createApp({
             this.initializeData();
             this.initializePagination();
             this.fetchProducts().then(() => {
-             console.log('Products fetched successfully');
+                console.log('Products fetched successfully');
             }).catch(error => {
                 console.error('Error fetching products:', error);
             });
@@ -218,44 +246,53 @@ const app = Vue.createApp({
     },
     template: `<div>
       <div class="row">
+        <div class="row">      
+        <div class="col-md-2 justify-content-end">
+         <a class="btn btn-success" @click="exportToCSV" style="background: #41b883 !important;">
+              Export
+         </a>
+         </div>
+        </div>
     
         <div class="col-md-9 home-table-container">   
-        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn" @click="showHideFilters">Show Saved Filters</a>
-        <div class="save-dfilter-container" v-if="showSavedFilters">
-            <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-                <button class="btn btn-primary" @click="controlFilters(fvalue)">
-                Show Saved Filters {{ fkey + 1 }}
-                </button>
-                <div class="tooltip-content">
-                <div v-for="(value,index) in filterList">
-                <template v-if="index==0">
-                <p>
-                <span>{{ value.attribute_name }}</span> 
-                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-                </p>
-                </template>
-                <template v-else>
-                <p>
-                <strong>{{ value.op_value }}</strong>
-                </p>
-                <p>
-                <span>{{ value.attribute_name }}</span> 
-                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-                </p>
-                </template>
-                </div>
-                </div>
+        <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
+            <button class="btn btn-primary" @click="controlFilters(fvalue)">
+              Show Saved Filters {{ fkey + 1 }}
+            </button>
+            <div class="tooltip-content">
+             <div v-for="(value,index) in filterList">
+             <template v-if="index==0">
+             <p>
+             <span>{{ value.attribute_name }}</span> 
+             <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+             <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+             </p>
+             </template>
+             <template v-else>
+             <p>
+            <strong>{{ value.op_value }}</strong>
+             </p>
+             <p>
+             <span>{{ value.attribute_name }}</span> 
+             <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+             <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+             </p>
+             </template>
+             </div>
             </div>
-        </div>
+            
+          </div>
+       
          <div class="table-responsive">
           <table id="myTable" class="table display homepage-table">
             <thead>
               <tr>
                 <th>S.N</th>
-                <th :col="colName" v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+                 <th v-for="(colName, index) in columnValues" :key="index" 
+                :draggable="true" @dragstart="handleDragStart(index)" 
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                {{ convertToTitleCase(colName) }}
+                </th>
               </tr>
             </thead>
             <tbody>

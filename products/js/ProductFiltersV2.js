@@ -12,13 +12,32 @@ export default {
             showAttributeMid: 0,
             op_show_value: 'AND',
             selectedValues:[],
-            showManualValidationMessage:0
+            showManualValidationMessage:0,
+            editForm:-1
         };
     },
     mounted() {
         this.fetchAllColumns();
     },
     methods: {
+        editFilter(productDet,index)
+        {
+            console.log('edit');
+            this.showAttFilter =0;
+            this.editForm=index;
+            this.channelAttribute = [{
+                id: 0,
+                attribute_name: '',
+                data_type: productDet.data_type_value,
+                filter_type: productDet.filter_type,
+                attribute: productDet.attribute_name +','+productDet.data_type_value,
+                attribute_condition: productDet.attribute_condition,
+                operator: productDet.op_value,
+                condition_type: 'abc',
+                previous_row: [],
+                type:'edit'
+            }];
+        },
         updateSelectedValues(index) {
             this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
         },
@@ -265,7 +284,7 @@ export default {
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
                                         <span v-if="productDet.op_value == 'OR' && productDet.id != productDetails[0].id">
-                                            <a class="btn white-btn" @click="addChannelCondition('AND','middle',productDetails[index-1])" data-test-id="and">
+                                            <a class="btn btn-link" @click="addChannelCondition('AND','middle',productDetails[index-1])" data-test-id="and">
                                                 <strong>AND</strong>
                                             </a>
                                         </span>
@@ -371,10 +390,10 @@ export default {
                                                                 </div>
                                                             </div>
                                                             <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
-                                                                <a class="btn white-btn" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and">
+                                                                <a class="btn btn-link" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and">
                                                                     <strong>AND</strong>
                                                                 </a>
-                                                                <a class="btn white-btn" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or">
+                                                                <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or">
                                                                     <strong>OR</strong>
                                                                 </a>
                                                             </div>
@@ -383,14 +402,14 @@ export default {
                                                 </div>
                                             </form>
                                         </div>
-                                        <center v-if="productDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
+                                        <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
                                     </span></center>
                                     <div class="filter-clauses card position-relative" v-if="showAttFilter==1">
                                        
           
                                                 <div class="flex-grow-1">
                                                     
-                                                        <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> 
+                                                        <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> <br>
                                                         <span class="text-default mt-5" v-if="productDet.filter_type !=''">&nbsp;{{ getEmptyPrinted(productDet.filter_type) }}</span>
                                                         <span class="text-default" v-if="productDet.range_to !=''">&nbsp; {{productDet.range_from}} to {{productDet.range_to}}</span>
                                                         <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
@@ -408,7 +427,7 @@ export default {
 
                                             <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
                                                 <form @submit.prevent="submitForm">
-                                                <center class="hidden"><span v-if="productDetails.length>0">---------- {{op_show_value}} ----------</span></center>
+                                                <center><span v-if="productDetails.length>0">---------- {{op_show_value}} ----------</span></center>
                                                     <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
                                                         
                                                             <div  v-if="showAttribute==1">
@@ -496,10 +515,10 @@ export default {
                                                 </form>
                                             </fieldset>
                                             <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
-                                                <a class="btn white-btn" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and">
+                                                <a class="btn btn-link" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and">
                                                     <strong>AND</strong>
                                                 </a>
-                                                <a class="btn white-btn" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or">
+                                                <a class="btn btn-link" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or">
                                                     <strong>OR</strong>
                                                 </a>
                                             </div>

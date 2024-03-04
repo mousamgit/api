@@ -36,7 +36,7 @@
     </nav>
     
 
-        <?php if ($usertype == "admin"|| $usertype == "production") { 
+        <?php if ($usertype == "admin" || $usertype == "production") {
             echo '<nav class="drawer-navigation drawer-border">';
             echo '<button class="drawer-dropdown-toggle" data-target="#drawer-dropdown-admin"><span>Admin/Data Menu</span><i class="fa-solid fa-caret-down"></i></button>';
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-admin">';
@@ -88,7 +88,7 @@
 
 <header class="pim-padding">
     <div class="header-menu">
-<a class="header-drawer-toggle">
+    <a class="header-drawer-toggle">
         <i class="fa-solid fa-bars fa-xl menu-icon"></i><span>s</span>
     </a>
     <a href="https://pim.samsgroup.info"><img src="https://pim.samsgroup.info/sga-pim-redwhite-horizontal.png" ></a>
@@ -102,7 +102,6 @@
         <label for="fname">search:</label>
         <input type="submit" value="Search">
         <input type="text" id="search-field" name="search-term" placeholder="Type in SKU or Product Name"></input>
-        
     </form>
     </div>
 
