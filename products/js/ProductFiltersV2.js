@@ -20,11 +20,24 @@ export default {
         this.fetchAllColumns();
     },
     methods: {
-        nameDatatypeMerged(name,data_type)
+        editFilter(productDet,index)
         {
-           return name + ',' + data_type;
+            console.log('edit');
+            this.showAttFilter =0;
+            this.editForm=index;
+            this.channelAttribute = [{
+                id: 0,
+                attribute_name: '',
+                data_type: productDet.data_type_value,
+                filter_type: productDet.filter_type,
+                attribute: productDet.attribute_name +','+productDet.data_type_value,
+                attribute_condition: productDet.attribute_condition,
+                operator: productDet.op_value,
+                condition_type: 'abc',
+                previous_row: [],
+                type:'edit'
+            }];
         },
-
         updateSelectedValues(index) {
             this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
         },
@@ -86,8 +99,6 @@ export default {
         },
 
         addChannelCondition(op_value, condition_type, previous_row) {
-            console.log('add')
-            this.editForm=-1;
             this.op_show_value = op_value;
             this.showAttributeMid = previous_row['id'];
             this.selectedValues=[];
@@ -99,8 +110,7 @@ export default {
                 attribute_condition: 'IS NOT NULL',
                 operator: op_value,
                 condition_type: condition_type,
-                previous_row: previous_row,
-                type:'insert'
+                previous_row: previous_row
             }];
             this.showAttribute = 1;
             this.showAttFilter = 1;
@@ -239,7 +249,7 @@ export default {
                 this.indexVal = -1,
                 this.showAttributeMid = 0,
                 this.op_show_value = 'AND'
-                this.fetchAllColumns();
+            this.fetchAllColumns();
         }
 
 
@@ -268,7 +278,9 @@ export default {
                 </div>
             </div>
         </div>
-                                <div class="form-group selected-filters">
+
+
+                            <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
                                         <span v-if="productDet.op_value == 'OR' && productDet.id != productDetails[0].id">
@@ -277,6 +289,8 @@ export default {
                                             </a>
                                         </span>
                                         <div v-if="productDet.op_value== 'OR' && productDet.id != productDetails[0].id && showAttributeMid==productDetails[index-1].id">
+                                            <!--{{showAttributeMid}} '=' {{productDetails[index-1].id}}-->
+                                            
                                             <form @submit.prevent="submitForm">
                                                 <span>----- {{op_show_value}} -------</span> 
                                                 <div class="row">
@@ -286,6 +300,7 @@ export default {
                                                             <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition">
                                                                 <div class="row mb-3">
                                                                     <div class="col-md-12" v-if="showAttribute==1">
+                                                                        <!-- <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>-->
                                                                         <div class="col-md-12 position-relative">
                                                                             <div class="d-flex justify-content-between align-items-center">
                                                                                 <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
@@ -353,7 +368,7 @@ export default {
                                                                         </div>
                                                                         </template>
                                                                         <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
-                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control" readonly required>
+                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control hidden" readonly required>
                                                                             <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                             <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                             <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
@@ -389,30 +404,32 @@ export default {
                                         </div>
                                         <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
                                     </span></center>
-                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1" >
-                                                
+                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1">
+                                       
+          
                                                 <div class="flex-grow-1">
+                                                    
                                                         <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> <br>
                                                         <span class="text-default mt-5" v-if="productDet.filter_type !=''">&nbsp;{{ getEmptyPrinted(productDet.filter_type) }}</span>
                                                         <span class="text-default" v-if="productDet.range_to !=''">&nbsp; {{productDet.range_from}} to {{productDet.range_to}}</span>
                                                         <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
+                                                    
                                                 </div>
                                                 <div class="delete-icon position-absolute end-0" data-test-id="delete">
                                                     <a @click="deleteFilter(productDet.id,productDet.product_id,index)">
                                                         <i class="fa fa-times animation-mode" aria-hidden="true"></i>
                                                     </a>
                                                 </div>
-                                                
-                                                
+            
+                                    </div>
                                 </div>
-                             
-                               
                                 <div class="form-group filter-clauses">
-                                            {{showAttributeMid}} {{productDetails[productDetails.length-1].id}}
+
                                             <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
                                                 <form @submit.prevent="submitForm">
                                                 <center><span v-if="productDetails.length>0">---------- {{op_show_value}} ----------</span></center>
                                                     <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
+                                                        
                                                             <div  v-if="showAttribute==1">
                                                                         <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
                                                                         <label class="delete-icon position-absolute top-0 end-0" >
@@ -421,6 +438,8 @@ export default {
                                                                             </a>
                                                                         </label>
                                                                     
+                                                                
+                                                                
                                                                     <select v-model="cAttribute.attribute" class="form-control" @change="handleChangeAttribute(index)" required>
                                                                         <option v-for="column in columns" :key="column.column_name" :value="column.column_name + ',' + column.data_type">
                                                                             {{ column.column_name }}
@@ -503,7 +522,9 @@ export default {
                                                     <strong>OR</strong>
                                                 </a>
                                             </div>
+
                                         </div>
+
                             </div>
                         </div>
 
