@@ -147,15 +147,19 @@
         $tags = "";
         if ( $row['tags'] != "") { $tags .= $row['tags'].", "; }
         if ( $row['collections'] != "" ) { $tags .= $row['collections'].", "; }
+        $tags = str_replace("Solid Gold","solid-gold",$tags);
         if ( $row['watch_material'] != "") { $tags .= "Material " . $row['watch_material'];}
-        if ( $row['watch_dial'] != "") { $tags .= "," . $row['watch_strap'];}
+        if ( $row['watch_dial'] != "") { $tags .= "," . $row['watch_dial'];}
         if ( $row['product_title'] != "") { $tags .= ",_alt_" . $row['product_title'];}
         if ( $row['watch_movement'] != "") { $tags .= "," . $row['watch_movement'];}
         if ( $row['watch_strap'] != "") { $tags .= "," . $row['watch_strap'];}
-        if ( strpos($row['watch_strap'], "leather")) { $tags .= ",Leather Strap Watch";}
-        if ( strtolower($row['watch_strap']) == "solid gold") { $tags .= ",solid-gold";}
+        if ( $row['type'] == "Watch"){
+          if ( strpos($row['watch_strap'], "leather")) { $tags .= ",Leather Strap Watch";}
+          elseif ( strpos($row['watch_strap'], "bracelet")) { $tags .= ",Bracelet Watch";}
+          else { $tags .= "";} 
+        }
         if ( $row['type'] != "") { $tags .= "," . $row['type'];}
-        if ( $row['collections'] != "") { $tags .= "," . $row['watch_collections'];}
+        if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= $row['collections_2'];}
         $tags .= ",Classique watches,relatedproducts";
         for ($length = 1; $length <= strlen($sku); $length++) {
           $tags .= substr($sku, 0, $length) . ",";}
