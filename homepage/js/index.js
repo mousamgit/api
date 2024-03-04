@@ -15,7 +15,8 @@ const app = Vue.createApp({
             currentPage: 1,
             itemsPerPage: 100,
             totalRows:0,
-            filterList:[]
+            filterList:[],
+            showSavedFilters:false,
         };
     },
     mounted() {
@@ -23,6 +24,9 @@ const app = Vue.createApp({
     },
 
     methods: {
+        showHideFilters(){
+            this.showSavedFilters = !this.showSavedFilters;
+        },
         changePage()
         {
             this.initializeData()
@@ -214,43 +218,38 @@ const app = Vue.createApp({
     },
     template: `<div>
       <div class="row">
-        <div class="row">      
-        <div class="col-md-2 justify-content-end">
-         <a class="btn btn-success" @click="exportToCSV" style="background: #41b883 !important;">
-              Export
-         </a>
-         </div>
-        </div>
     
         <div class="col-md-9 home-table-container">   
-        <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-            <button class="btn btn-primary" @click="controlFilters(fvalue)">
-              Show Saved Filters {{ fkey + 1 }}
-            </button>
-            <div class="tooltip-content">
-             <div v-for="(value,index) in filterList">
-             <template v-if="index==0">
-             <p>
-             <span>{{ value.attribute_name }}</span> 
-             <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-             <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-             </p>
-             </template>
-             <template v-else>
-             <p>
-            <strong>{{ value.op_value }}</strong>
-             </p>
-             <p>
-             <span>{{ value.attribute_name }}</span> 
-             <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-             <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-             </p>
-             </template>
-             </div>
+        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
+        <a class="btn" @click="showHideFilters">Show Saved Filters</a>
+        <div class="save-dfilter-container" v-if="showSavedFilters">
+            <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
+                <button class="btn btn-primary" @click="controlFilters(fvalue)">
+                Show Saved Filters {{ fkey + 1 }}
+                </button>
+                <div class="tooltip-content">
+                <div v-for="(value,index) in filterList">
+                <template v-if="index==0">
+                <p>
+                <span>{{ value.attribute_name }}</span> 
+                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+                </p>
+                </template>
+                <template v-else>
+                <p>
+                <strong>{{ value.op_value }}</strong>
+                </p>
+                <p>
+                <span>{{ value.attribute_name }}</span> 
+                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+                </p>
+                </template>
+                </div>
+                </div>
             </div>
-            
-          </div>
-       
+        </div>
          <div class="table-responsive">
           <table id="myTable" class="table display homepage-table">
             <thead>
