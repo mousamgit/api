@@ -7,8 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 
   <style>
-body { font-family: 'Open Sans', sans-serif; }
-table { border: 2px solid black; margin: 0px auto; background-color:#F9F6F0; width:30%; text-align:center; border-collapse:collapse;}
+body { font-family: 'Open Sans', sans-serif; text-align:center; font-weight:normal;}
+table { border: 2px solid black; margin: 0px auto; background-color:#F9F6F0; width:30%; border-collapse:collapse;}
 td { border: 1px solid black; padding: 20px; width:50%;}
 </style>
 </head>
@@ -48,7 +48,7 @@ function updateRetailExclusive($con, $query, $categoryValue)
             echo $sku;
     }echo "</div></td>";
 }
-echo "<center><h1 style='font-family:'Open Sans',sans-serif; font-weight:normal; padding:20px;'>Sync Shopify Updated 0 => 1</h1></center><table><tr><td>";
+echo "<h1 style='padding:20px;'>Sync Shopify Updated 0 => 1</h1><table><tr><td>";
 
 // Update sync_shopify for SD Jewellery
 $sdJewelleryQuery = 'SELECT * FROM pim WHERE (image1 <> "" && image1 IS NOT NULL && description <> "" && description IS NOT NULL && retail_aud > 0 && shopify_qty > 0 && sync_shopify <> 1 && brand = "sapphire dreams" && collections_2 <> "steve" && collections_2 <> "discontinued" && collections_2 <> "wholesale_only" && collections <> "sds" && collections <> "melee")'; 
@@ -74,7 +74,7 @@ echo "</td></tr><tr><td>";
 $sgaWholesaleQuery = 'SELECT * FROM pim WHERE (image1 <> "" && image1 IS NOT NULL && description <> "" & description IS NOT NULL && retail_aud > 0 && shopify_qty > 0 && collections <> "melee" && collections <> "SDL" && sync_shopify <> 1 && brand <> "classique watches" && brand <> "shopify cl" && brand <> "sapphire dreams" && brand <> "pink kimberley diamonds" && brand <> "blush pink diamonds" && brand <> "argyle pink diamonds" && brand <> "argyle origin diamonds")';
 updateSync($con, $sgaWholesaleQuery,'SGA Wholesale:');
 
-echo "</td></tr></table><h1 style='font-family:'Open Sans',sans-serif; font-weight:normal; padding:20px;'>Retail Exclusive (SD Stones Only) 0 => 1</h1><table><tr><td>";
+echo "</td></tr></table><h1 style='padding:20px;'>Retail Exclusive (SD Stones Only) 0 => 1</h1><table><tr><td>";
 
 // Update retail_exclusive status for SD Stones, jewellery is manual therefore excluded
 $sdsOnlyQuery = 'SELECT * FROM pim WHERE (image1 <> "" && image1 IS NOT NULL && retail_aud > 0 && shopify_qty > 0 && collections <> "melee" && brand = "sapphire dreams" && type LIKE "%loose%" && retail_exclusive <> 1)'; 
