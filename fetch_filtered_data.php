@@ -100,8 +100,18 @@ class ProductDetailHandler {
     }
 
     private function getColumnValuesRow() {
+        $columnValuesRow = [];
+        $userOrderedColumns = $this->con->query("select column_name from user_columns where user_name ='".$_SESSION["username"]."' order by order_no ASC");
 
-        $columnValuesRow = ['sku'];
+        if ($userOrderedColumns->num_rows > 0) {
+            while ($row = $userOrderedColumns->fetch_assoc()) {
+                $columnValuesRow[]=$row['column_name'];
+            }
+        }
+        if(!in_array('sku',$columnValuesRow))
+        {
+            $columnValuesRow[]='sku';
+        }
 
         $userColumns = $this->con->query("select columns from users where username ='".$_SESSION["username"]."'");
         $columnValuesRowCustomer='';
