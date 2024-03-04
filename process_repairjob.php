@@ -97,6 +97,7 @@
                 $quickResult = mysqli_query($con, $quickLookup) or die(mysqli_error($con));
                         while ($row = mysqli_fetch_assoc($quickResult)){
                             echo '<div style="float:right; width:49%; text-align:right;"><a href="https://pim.samsgroup.info/view_repair.php?id='.$row[id].'">View Added Repair Job'.$job_number.' <i class="fa-solid fa-right-long"></i></a></div>';
+                            $url = "https://pim.samsgroup.info/view_repair.php?id=".$row[id];
                         }
             ?>
             
@@ -111,6 +112,9 @@
             </tbody>
             </table>
         </div>
-        <?php exit(); ?>
+        <?php 
+            header('Location: '.$url);
+            exit();
+        ?>
     </body>
 </html>
