@@ -35,45 +35,45 @@
 
 
     //price per piece carat for loose
-    if ( strpos(strtolower($row[type]), "loose") !== false ) { $price = $row[stone_price_wholesale_aud];}
-        else { $price = $row[wholesale_aud];}
+    if ( strpos(strtolower($row['type']), "loose") !== false ) { $price = $row['stone_price_wholesale_aud'];}
+        else { $price = $row['wholesale_aud'];}
 
     //description
     $name = "";
 
-    if ($row[sales_percentage] > 0) {$name .= "[SPECIAL" . $row[sales_percentage] . "%]";}
-    if (strtolower($row[type]) === "loose sapphires") {
-        if (strtolower($row[collections]) === "sds") {
-            $name .= "AU Sapphire " . $row[colour] . " " . $row[shape] . " " . $row[carat] . "ct " . $row[measurement];} 
-        elseif (strtolower($row[collections]) === "sdm") {$name .= "AU Sapphire Melee " . $row[colour] . " " . $row[shape] . " " . $row[measurement];}
-    } elseif (strtolower($row[type]) === "loose diamonds") {
-        if (strtolower($row[collections]) === "sks") {$name .= "AOD " . $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct " . $row[measurement];} 
-        elseif (strtolower($row[collections]) === "awd") {$name .= "AWD " . $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct " . $row[measurement];} 
-        elseif (strtolower($row[collections]) === "stn" || strtolower($row[collections]) === "sta" || strtolower($row[collections]) === "stp" || strtolower($row[collections]) === "stx") {$name .= "APD " . $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct " . $row[measurement];} 
-        elseif (strtolower($row[collections]) === "tpr" || strtolower($row[collections]) === "tdr" ) {$name .=  "APD Tender" . $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct " . $row[measurement];}
-        elseif (strtolower($row[collections]) === "melee") {
-            if (strtolower($row[brand]) === "argyle pink diamonds") {$name .= "APD Melee " . $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct ";}
-            elseif (strtolower($row[brand]) === "argyle blue diamonds") {$name .= "ABD Melee " . $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct ";} 
-            elseif (strtolower($row[brand]) === "yellow" || strtolower($row[brand]) === "colour" || strtolower($row[brand]) === "coloured") {$name .= "FCD " . $row[colour] . "/" . $row[clarity];} 
-            elseif (strtolower($row[brand]) === "white diamonds") {$name .= $row[edl9];}
-        elseif (strtolower($row[collections]) === "fcd") {$name .= $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct " . $row[measurement] . " " . $row[edl2];} 
-        elseif (strtolower($row[collections]) === "est") {$name .= $row[colour] . "/" . $row[clarity] . " " . $row[shape] . " " . $row[carat] . "ct ";}
+    if ($row['sales_percentage'] > 0) {$name .= "[SPECIAL" . $row['sales_percentage'] . "%]";}
+    if (strtolower($row['type']) === "loose sapphires") {
+        if (strtolower($row['collections']) === "sds") {
+            $name .= "AU Sapphire " . $row['colour'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'];} 
+        elseif (strtolower($row['collections']) === "sdm") {$name .= "AU Sapphire Melee " . $row['colour'] . " " . $row['shape'] . " " . $row['measurement'];}
+    } elseif (strtolower($row['type']) === "loose diamonds") {
+        if (strtolower($row['collections']) === "sks") {$name .= "AOD " . $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'];} 
+        elseif (strtolower($row['collections']) === "awd") {$name .= "AWD " . $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'];} 
+        elseif (strtolower($row['collections']) === "stn" || strtolower($row['collections']) === "sta" || strtolower($row['collections']) === "stp" || strtolower($row['collections']) === "stx") {$name .= "APD " . $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'];} 
+        elseif (strtolower($row['collections']) === "tpr" || strtolower($row['collections']) === "tdr" ) {$name .=  "APD Tender" . $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'];}
+        elseif (strtolower($row['collections']) === "melee") {
+            if (strtolower($row['brand']) === "argyle pink diamonds") {$name .= "APD Melee " . $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct ";}
+            elseif (strtolower($row['brand']) === "argyle blue diamonds") {$name .= "ABD Melee " . $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct ";} 
+            elseif (strtolower($row['brand']) === "yellow" || strtolower($row['brand']) === "colour" || strtolower($row['brand']) === "coloured") {$name .= "FCD " . $row['colour'] . "/" . $row['clarity'];} 
+            elseif (strtolower($row['brand']) === "white diamonds") {$name .= $row['edl9'];}
+        elseif (strtolower($row['collections']) === "fcd") {$name .= $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'] . " " . $row['edl2'];} 
+        elseif (strtolower($row['collections']) === "est") {$name .= $row['colour'] . "/" . $row['clarity'] . " " . $row['shape'] . " " . $row['carat'] . "ct ";}
         }
     } else {
-        if (strtolower($row[brand]) === "blush pink diamonds" || strtolower($row[brand]) === "pink kimberley diamonds" || strtolower($row[brand]) === "sapphire dreams") {$name .= ($row[edl9] ? $row[edl9]." ":"") . ($row[edl1] ? $row[edl1]." ":"") . ($row[edl2] ? $row[edl2]." ":"") . ($row[edl3] ? $row[edl3]." ":"") . ($row[edl4] ? $row[edl4]." ":"") . ($row[edl5] ? $row[edl5]." ":"") . ($row[edl6] ? $row[edl6]." ":"") . ($row[edl7] ? $row[edl7]." ":"") . ($row[edl8] ?? ""); $name = str_replace(["Argyle certificate", "# ", "Pink Round Brilliant Cut", "Round Brilliant Cut", " = "],["Cert", "#", "P.RBC", "RBC", "="],$name);} 
-        elseif (strtolower($row[brand]) === "classique watches") {
-            if ( strpos($row[type], "Clearance 50%")!= false ) {$name .= "[CLEARANCE50%]";}
-            $name .= ($row[edl1] ? $row[edl1]." ":"") . ($row[edl2] ? $row[edl2]." ":"") . ($row[edl3] ? $row[edl3]." ":"") . ($row[edl4] ? $row[edl4]." ":"") . ($row[edl5] ? $row[edl5]." ":"") . ($row[edl6] ? $row[edl6]." ":"") . ($row[edl7] ? $row[edl7]." ":"") . ($row[edl8] ?? "") . ($row[edl9] ?? "") . ($row[edl10] ?? "") . ($row[edl11] ?? "");}
-        else {$name .= ($row[edl1] ? $row[edl1]." ":"") . ($row[edl2] ? $row[edl2]." ":"") . ($row[edl3] ? $row[edl3]." ":"") . ($row[edl4] ? $row[edl4]." ":"") . ($row[edl5] ? $row[edl5]." ":"") . ($row[edl6] ? $row[edl6]." ":"") . ($row[edl7] ? $row[edl7]." ":"") . ($row[edl8] ?? ""); $name = str_replace(["Argyle certificate", "# ", "Pink Round Brilliant Cut", "Round Brilliant Cut", " = "],["Cert", "#", "P.RBC", "RBC", "="],$name);}
+        if (strtolower($row['brand']) === "blush pink diamonds" || strtolower($row['brand']) === "pink kimberley diamonds" || strtolower($row['brand']) === "sapphire dreams") {$name .= ($row['edl9'] ? $row['edl9']." ":"") . ($row['edl1'] ? $row['edl1']." ":"") . ($row['edl2'] ? $row['edl2']." ":"") . ($row['edl3'] ? $row['edl3']." ":"") . ($row['edl4'] ? $row['edl4']." ":"") . ($row['edl5'] ? $row['edl5']." ":"") . ($row['edl6'] ? $row['edl6']." ":"") . ($row['edl7'] ? $row['edl7']." ":"") . ($row['edl8'] ?? ""); $name = str_replace(["Argyle certificate", "# ", "Pink Round Brilliant Cut", "Round Brilliant Cut", " = "],["Cert", "#", "P.RBC", "RBC", "="],$name);} 
+        elseif (strtolower($row['brand']) === "classique watches") {
+            if ( strpos($row['type'], "Clearance 50%")!= false ) {$name .= "[CLEARANCE50%]";}
+            $name .= ($row['edl1'] ? $row['edl1']." ":"") . ($row['edl2'] ? $row['edl2']." ":"") . ($row['edl3'] ? $row['edl3']." ":"") . ($row['edl4'] ? $row['edl4']." ":"") . ($row['edl5'] ? $row['edl5']." ":"") . ($row['edl6'] ? $row['edl6']." ":"") . ($row['edl7'] ? $row['edl7']." ":"") . ($row['edl8'] ?? "") . ($row['edl9'] ?? "") . ($row['edl10'] ?? "") . ($row['edl11'] ?? "");}
+        else {$name .= ($row['edl1'] ? $row['edl1']." ":"") . ($row['edl2'] ? $row['edl2']." ":"") . ($row['edl3'] ? $row['edl3']." ":"") . ($row['edl4'] ? $row['edl4']." ":"") . ($row['edl5'] ? $row['edl5']." ":"") . ($row['edl6'] ? $row['edl6']." ":"") . ($row['edl7'] ? $row['edl7']." ":"") . ($row['edl8'] ?? ""); $name = str_replace(["Argyle certificate", "# ", "Pink Round Brilliant Cut", "Round Brilliant Cut", " = "],["Cert", "#", "P.RBC", "RBC", "="],$name);}
     }   $name = trim(substr($name, 0, 180));
 
 
     $content = array (
-        0 => $row[sku],
-        1 => $row[sku],
+        0 => $row['sku'],
+        1 => $row['sku'],
         2 => $price,
         3 => $name,
-        4 => $row[purchase_cost_aud],
+        4 => $row['purchase_cost_aud'],
 
 
       );

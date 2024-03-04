@@ -73,7 +73,7 @@ $shopifyqty = 0; $whshopify = 0; $mdshopify = 0; $psshopify = 0; $allocatedshopi
 if (preg_match("/loose/i", strtolower($type)) > 0){
   if ( $mdqty == 0 ) { $mdshopify = 0; } else { $mdshopify = 1; }
   if ( $psqty == 0 ) { $psshopify = 0; } else { $psshopify = 1; }
-  if ( $warehouseqty == 0 ) { $whshopify = 0; } else { $whshopify = 1; }
+  if ( $warehouseqty == 0 ) { $whshopify = 0; } else { if ($warehouseqty < 0){ $whshopify = 0; } else {$whshopify = 1; }}
   if ( $allocatedQty == 0 ) { $allocatedshopify = 0; } else { $allocatedshopify = 1; }
   if (strtolower($brand) == "sapphire dreams")
   {
@@ -174,6 +174,8 @@ elseif (strtolower($brand) == "sapphire dreams" && strtolower($type) == "loose s
 }
 elseif (preg_match("/argyle/i", $brand) > 0){
   if (preg_match("/mel/i", $sku) > 0) {  }
+  elseif (preg_match("/tdr/i", $sku) > 0) {  }
+  elseif (preg_match("/tpr/i", $sku) > 0) {  }
   else { $packagingimg .= "https://samsgroup.info/pim-images/pd-box-cert.jpg"; }
 }
 
