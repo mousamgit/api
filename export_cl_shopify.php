@@ -159,7 +159,7 @@
           else { $tags .= "";} 
         }
         if ( $row['type'] != "") { $tags .= "," . $row['type'];}
-        if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= $row['collections_2'];}
+        if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= "," . $row['collections_2'];}
         $tags .= ",Classique watches,relatedproducts";
         for ($length = 1; $length <= strlen($sku); $length++) {
           $tags .= substr($sku, 0, $length) . ",";}
