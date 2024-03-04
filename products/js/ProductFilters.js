@@ -313,7 +313,7 @@ export default {
                                                                                     <option value="IS NULL">is empty</option>
                                                                                 </select>
                                                                                 <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
-                                                                                     <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                                     <input type="text" v-model="cAttribute.attribute_condition" class="form-control hidden" readonly required>
                                                                                      <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                                      <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                                      <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
@@ -349,7 +349,7 @@ export default {
                                                                         </div>
                                                                         </template>
                                                                         <template v-if="cAttribute.data_type != 'varchar' && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')">
-                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control" readonly required>
+                                                                            <input type="text" v-model="cAttribute.attribute_condition"  class="form-control hidden" readonly required>
                                                                             <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                             <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                             <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
@@ -383,7 +383,7 @@ export default {
                                                 </div>
                                             </form>
                                         </div>
-                                        <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">----------{{productDet.op_value}}------------</span>
+                                        <center><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
                                     </span></center>
                                     <div class="filter-clauses card position-relative" v-if="showAttFilter==1">
                                        
@@ -396,9 +396,9 @@ export default {
                                                         <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
                                                     
                                                 </div>
-                                                <div class="delete-icon position-absolute top-0 end-0" data-test-id="delete">
+                                                <div class="delete-icon position-absolute end-0" data-test-id="delete">
                                                     <a @click="deleteFilter(productDet.id,productDet.product_id,index)">
-                                                        <i class="btn btn-danger fas fa-trash-alt"></i>
+                                                        <i class="fa fa-times animation-mode" aria-hidden="true"></i>
                                                     </a>
                                                 </div>
             
@@ -408,16 +408,16 @@ export default {
 
                                             <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
                                                 <form @submit.prevent="submitForm">
-                                                    <span v-if="productDetails.length>0">----- {{op_show_value}} -------</span>
+                                                <center><span v-if="productDetails.length>0">---------- {{op_show_value}} ----------</span></center>
                                                     <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
                                                         
                                                             <div  v-if="showAttribute==1">
                                                                 
                                                                     
                                                                         <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
-                                                                        <label class="delete-icon" style=" position: absolute;top: -10px;  right: 0;">
+                                                                        <label class="delete-icon position-absolute top-0 end-0" >
                                                                             <a @click="refreshAttributeAgain">
-                                                                                <i class="btn btn-danger fas fa-trash-alt"></i>
+                                                                                <i class="fa fa-times animation-mode" aria-hidden="true"></i>
                                                                             </a>
                                                                         </label>
                                                                     
@@ -441,7 +441,7 @@ export default {
                                                                                 <option value="IS NULL">is empty</option>
                                                                             </select>
                                                                             <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
-                                                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                                <input type="text" v-model="cAttribute.attribute_condition" class="form-control hidden" readonly required>
                                                                                   <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                                   <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
                                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
