@@ -283,29 +283,25 @@ export default {
 
 
     },
-    template: `<div class="col-md-12 bg-light filter-container" >
+    template: `
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
         </div>
 
-        <div class="flex-row vcenter filter-header" v-if="productDetails.length==0 && channelAttribute.length==0">
-            <div class="row">
-                <!-- Container for both Attributes and "+" button -->
-                <div class="col-md-12">
-                    <div class="d-flex justify-content-between align-items-center p-3 border">
+        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
+
+
                         <!-- Left column for Attributes -->
                         <div>
-                            <span>Attributes</span>
+                            New Condition
                         </div>
-                        <div>
-                            <a class="sub-heading btn btn-primary" @click="addChannelCondition('AND','normal',[])">
+
+                            <a class="position-absolute end-0" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+
         </div>
 
 
@@ -642,7 +638,7 @@ export default {
                                         </div>
 
                             </div>
-                        </div>
+                    
 
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">

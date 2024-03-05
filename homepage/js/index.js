@@ -292,7 +292,9 @@ const app = Vue.createApp({
         </div>
     </div>
     </div>
-    
+    <div class="bg-light filter-container animation-mode" :class="{ 'active': showFilter }">
+    <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
+</div>
         <div class="pim-padding home-table-container">   
         
 
@@ -365,9 +367,7 @@ const app = Vue.createApp({
         </div>
         </div>
        
-        <div class="bg-light filter-container" v-if="showFilter">
-            <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
-        </div>
+
       </div>
 
 `,
