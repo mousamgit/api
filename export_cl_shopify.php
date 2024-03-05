@@ -23,7 +23,7 @@
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/cl-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","Command","Handle","Body HTML","Image Command","Inventory Available:Head Office","Tags","Tags Command","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Barcode","Variant Inventory Policy","Variant Inventory Tracker","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Variant Metafield:custom_dial","Variant Metafield:custom_straptype","Variant Metafield:custom_gender","Image Alt Text","Variant Metafield:custom_features","Variant Metafield:custom_glass","Variant Metafield:custom_waterresistance","Variant Metafield:custom_movement","Variant Metafield:custom_dimension","Variant Metafield:custom_watchtype","Variant Metafield:custom_watchspecs", "SEO Title","Variant Fulfillment Service","Image Position", "Variant Compare At Price");
+  $headers = array("Variant SKU","Command","Handle","Body HTML","Image Command","Inventory Available:Head Office","Tags","Tags Command","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Barcode","Variant Inventory Policy","Variant Inventory Tracker","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Variant Metafield:custom.dial","Variant Metafield:custom.straptype","Variant Metafield:custom.gender","Image Alt Text","Variant Metafield:custom.features","Variant Metafield:custom.glass","Variant Metafield:custom.waterresistance","Variant Metafield:custom.movement","Variant Metafield:custom.dimension","Variant Metafield:custom.watchtype","Variant Metafield:custom.watchspecs", "SEO Title","Variant Fulfillment Service","Image Position", "Variant Compare At Price");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -156,7 +156,7 @@
         if ( $row['watch_strap'] != "") { $tags .= "," . $row['watch_strap'];}
         if ( strpos($row['watch_strap'], "Leather") !== false) { $tags .= ",Leather Strap Watch";}
         if ( $row['type'] != "") { $tags .= "," . $row['type'];}
-        if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= "," . $row['collections_2'];}
+        if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= ",multiimages," . $row['collections_2'];}
         $tags .= ",Classique watches,relatedproducts";
         for ($length = 1; $length <= strlen($sku); $length++) {
           $tags .= substr($sku, 0, $length) . ",";}
@@ -219,7 +219,7 @@
             38 => "manual",
             39 => 1,
             40 => $compare_price,
-
+            
           );
 
 
