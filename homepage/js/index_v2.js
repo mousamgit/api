@@ -35,8 +35,8 @@ const app = Vue.createApp({
         initializePagination()
         {
             this.currentPage=1,
-                this.itemsPerPage= 100,
-                this.totalRows=0
+            this.itemsPerPage= 100,
+            this.totalRows=0
         },
         nextPage() {
             this.initializeData();
@@ -134,7 +134,7 @@ const app = Vue.createApp({
                     if (!response.ok) {
                         throw new Error('Failed to order columns');
                     }
-                    alert('its done')
+                    // alert('its done')
 
 
                 } catch (error) {

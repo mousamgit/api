@@ -16,7 +16,9 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
+            showFilter:true,
             showSavedFilters:false,
+            draggedIndex: null
         };
     },
     mounted() {
@@ -24,7 +26,10 @@ const app = Vue.createApp({
     },
 
     methods: {
-        showHideFilters(){
+        showHideFilter(){
+            this.showFilter = !this.showFilter;
+        },
+        selectFilter(){
             this.showSavedFilters = !this.showSavedFilters;
         },
         changePage()
@@ -177,16 +182,11 @@ const app = Vue.createApp({
             }
         },
         exportToCSV() {
-            // Include the table header in the CSV content
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
-
-            // Add the rows to the CSV content
             const rows = this.productValuesTotal.map(row => {
                 return this.columnValues.map(colName => row[colName]);
             });
             csvContent += rows.map(e => e.join(",")).join("\n");
-
-            // Create a download link and trigger the download
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -214,17 +214,52 @@ const app = Vue.createApp({
             }).catch(error => {
                 console.error('Error fetching products:', error);
             });
+        },
+        handleDragStart(index) {
+            this.draggedIndex = index;
+        },
+        handleDragOver(index) {
+            event.preventDefault();
+        },
+        handleDrop(index) {
+            if (this.draggedIndex !== null && index !== this.draggedIndex) {
+                const removed = this.columnValues.splice(this.draggedIndex, 1)[0];
+                this.columnValues.splice(index, 0, removed);
+                this.draggedIndex = null;
+                const dataToSend = {
+                    column_values: this.columnValues
+                };
+                try {
+                    const response =  fetch('./save_column_order_values.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dataToSend)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to order columns');
+                    }
+                    // alert('its done')
+
+
+                } catch (error) {
+                    console.error('Error updating database:', error);
+                }
+
+            }
         }
     },
     template: `<div>
+    <div class=" toolbar pim-padding">
       <div class="row">
-    
-        <div class="col-md-9 home-table-container">   
-        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn" @click="showHideFilters">Show Saved Filters</a>
-        <div class="save-dfilter-container" v-if="showSavedFilters">
+        <div class="col-md-6">
+
+        <div class="saved-filter-container">
+            <div class="tooltip-container"><button class="btn btn-primary">All Products</button></div>
             <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-                <button class="btn btn-primary" @click="controlFilters(fvalue)">
+                <button class="btn btn-primary" @click="controlFilters(fvalue)">    
                 Show Saved Filters {{ fkey + 1 }}
                 </button>
                 <div class="tooltip-content">
@@ -247,15 +282,31 @@ const app = Vue.createApp({
                 </p>
                 </template>
                 </div>
+</div>
                 </div>
             </div>
         </div>
+        <div class="col-md-6 text-end">
+            <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
+            <a class="btn" @click="showHideFilter">Filter</a>
+        </div>
+    </div>
+    </div>
+    
+        <div class="pim-padding home-table-container">   
+        
+
          <div class="table-responsive">
           <table id="myTable" class="table display homepage-table">
             <thead>
               <tr>
                 <th>S.N</th>
-                <th :col="colName" v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+                 <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
+                :draggable="true" @dragstart="handleDragStart(index)" 
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                {{ convertToTitleCase(colName) }}
+                </th>
+                
               </tr>
             </thead>
             <tbody>
@@ -314,11 +365,11 @@ const app = Vue.createApp({
         </div>
         </div>
        
-        <div class="col-md-3">
+        <div class="bg-light filter-container" v-if="showFilter">
             <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
         </div>
       </div>
-    </div>
+
 `,
 });
 app.mount('#index');
