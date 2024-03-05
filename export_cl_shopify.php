@@ -150,14 +150,11 @@
         $tags = str_replace("Solid Gold","solid-gold",$tags);
         if ( $row['watch_material'] != "") { $tags .= "Material " . $row['watch_material'];}
         if ( $row['watch_dial'] != "") { $tags .= "," . $row['watch_dial'];}
+        if ( $row['watch_gender'] != "") { $tags .= "," . $row['watch_gender'];}
         if ( $row['product_title'] != "") { $tags .= ",_alt_" . $row['product_title'];}
         if ( $row['watch_movement'] != "") { $tags .= "," . $row['watch_movement'];}
         if ( $row['watch_strap'] != "") { $tags .= "," . $row['watch_strap'];}
-        if ( $row['type'] == "Watch"){
-          if ( strpos($row['watch_strap'], "leather")) { $tags .= ",Leather Strap Watch";}
-          elseif ( strpos($row['watch_strap'], "bracelet")) { $tags .= ",Bracelet Watch";}
-          else { $tags .= "";} 
-        }
+        if ( strpos($row['watch_strap'], "Leather") !== false) { $tags .= ",Leather Strap Watch";}
         if ( $row['type'] != "") { $tags .= "," . $row['type'];}
         if ( $row['collections'] == "Vintage" && $row['collections_2'] != "") { $tags .= "," . $row['collections_2'];}
         $tags .= ",Classique watches,relatedproducts";
