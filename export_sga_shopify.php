@@ -55,9 +55,14 @@
 
         //Command - delete if 0 stock, MERGE if in stock but status is draft, MERGE if everything passes
         $command = "MERGE";
-        if (strtolower($row['brand']) != "shopify cl") {
-          if ( $row['shopify_qty'] <= 0) { $command = "DELETE";}
+        if ($row['deletion'] == 1) {$command = "DELETE";}
+        elseif ($row['shopify_qty'] <= 0) {
+          if ($row['brand'] == "Shopify CL") {$command = "MERGE";}
+          elseif ($row['preorder'] == 1) {$command = "MERGE";}
+          else {$command = "DELETE";}
         }
+        
+
         
         // Tags
         $tags = "";
@@ -126,9 +131,10 @@
         else { $certification = "NO";}
 
         //Descriptions, if loose sapphire generate description else import from field description
-        if (strtolower($type) == "loose sapphires") 
-          if( strtolower($treatment) == "unheated") { $description = "An unheated Australian " .  ucfirst(strtolower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . "."; }
+        if (strtolower($row['type']) == "loose sapphires") {
+          if( strtolower($row['treatment']) == "unheated") { $description = "An unheated Australian " .  ucfirst(strtolower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . "."; }
           else {$description = "An Australian " .  ucfirst(strtolower($shape)) . " cut " . $colour . " sapphire weighing " . $carat . "ct and measures " . $measurement . ".";  }
+        }
         else { $description = $row['description'];}
 
         //Title
