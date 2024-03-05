@@ -16,7 +16,9 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
+            showFilter:true,
             showSavedFilters:false,
+            selectedFilter:'',
         };
     },
     mounted() {
@@ -24,7 +26,10 @@ const app = Vue.createApp({
     },
 
     methods: {
-        showHideFilters(){
+        showHideFilter(){
+            this.showFilter = !this.showFilter;
+        },
+        selectFilter(){
             this.showSavedFilters = !this.showSavedFilters;
         },
         changePage()
@@ -217,39 +222,48 @@ const app = Vue.createApp({
         }
     },
     template: `<div>
-      <div class="row">
-    
-        <div class="col-md-9 home-table-container">   
-        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn" @click="showHideFilters">Show Saved Filters</a>
-        <div class="save-dfilter-container" v-if="showSavedFilters">
-            <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-                <button class="btn btn-primary" @click="controlFilters(fvalue)">
-                Show Saved Filters {{ fkey + 1 }}
-                </button>
-                <div class="tooltip-content">
-                <div v-for="(value,index) in filterList">
-                <template v-if="index==0">
-                <p>
-                <span>{{ value.attribute_name }}</span> 
-                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-                </p>
-                </template>
-                <template v-else>
-                <p>
-                <strong>{{ value.op_value }}</strong>
-                </p>
-                <p>
-                <span>{{ value.attribute_name }}</span> 
-                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-                </p>
-                </template>
-                </div>
+    <div class="row toolbar">
+        <div class="col-md-6">
+            <a class="btn" @click="selectFilter">{{selectedFilter}}</a>
+            <div class="saved-filter-container" v-if="showFilter">
+                <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
+                    <button class="btn btn-primary" @click="controlFilters(fvalue)">
+                    Show Saved Filters {{ fkey + 1 }}
+                    </button>
+                    <div class="tooltip-content">
+                    <div v-for="(value,index) in filterList">
+                    <template v-if="index==0">
+                    <p>
+                    <span>{{ value.attribute_name }}</span> 
+                    <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+                    <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+                    </p>
+                    </template>
+                    <template v-else>
+                    <p>
+                    <strong>{{ value.op_value }}</strong>
+                    </p>
+                    <p>
+                    <span>{{ value.attribute_name }}</span> 
+                    <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
+                    <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
+                    </p>
+                    </template>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
+            <a class="btn" @click="showHideFilter">Filter</a>
+        </div>
+    </div>
+      <div class="row">
+    
+        <div class="col-md-9 home-table-container">   
+        
+
          <div class="table-responsive">
           <table id="myTable" class="table display homepage-table">
             <thead>
@@ -314,7 +328,7 @@ const app = Vue.createApp({
         </div>
         </div>
        
-        <div class="col-md-3">
+        <div class="col-md-3" v-if="showFilter">
             <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
         </div>
       </div>
