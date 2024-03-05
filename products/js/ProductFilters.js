@@ -283,7 +283,7 @@ export default {
 
 
     },
-    template: `<div class="col-md-12 bg-light filter-container" >
+    template: `
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
@@ -642,7 +642,7 @@ export default {
                                         </div>
 
                             </div>
-                        </div>
+                    
 
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">

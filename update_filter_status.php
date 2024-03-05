@@ -81,11 +81,12 @@ else
         $filterConditionCombined = 'WHERE 1=1';
     }
     $user_name = $_SESSION['username'];
+    $filter_name = $data['filter_name'];
     $user_id = getValue('users','username', $user_name,'id');
 
     $filterConditionCombined = str_replace("AND () OR", "AND", $filterConditionCombined);
-    $sql = "INSERT INTO user_filters (`user_id`, `filter_value`) 
-                VALUES ('$user_id', '$filterConditionCombined')";
+    $sql = "INSERT INTO user_filters (`user_id`, `filter_value`, `filter_name`) 
+                VALUES ('$user_id', '$filterConditionCombined', '$filter_name')";
 
 
     if ($con->query($sql) === TRUE ) {
