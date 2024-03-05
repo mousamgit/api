@@ -46,7 +46,7 @@ a{cursor: pointer; text-decoration: none;}
 
 .hidden{display: none;}
 .pim-padding{padding:10px 25px;}
-header{background-color: #222; width: 100%; height: 50px; color:#fff; }
+header{background-color: #222; width: 100%; height: 50px; color:#fff; position: relative; z-index: 9; }
 .top-bar { padding:20px; text-align:left; background-color:#fafafa;}
 .app-container{padding: 10px 50px;}
 .welcome_info{float: left;}
@@ -380,7 +380,9 @@ header a{ color:#fff}
   .home-table-container{ overflow-x: scroll;}
   .homepage-table th[col="specifications"], .homepage-table th[col="description"]{width:400px;}
   .homepage-table td img{width:100px;}
-  .filter-container{padding: 20px;}
+  .toolbar{position: relative; z-index: 2;}
+  .filter-container{    padding: 150px 20px 20px;  position: fixed;    right: -400px;    top: 0;    width: 400px;    max-width: 90%;    height: 100%; z-index: 1;}
+  .filter-container.active{right:0;}
   .filter-container hr{display: none;}
   .filter-condition center{color:#ccc;}
   .filter-header{margin-bottom: 20px; color:#ccc; font-size: 28px;}
