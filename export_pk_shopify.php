@@ -68,7 +68,7 @@
     // Create handle
     $handle ="";
     if( substr($row['sku'],0,3) == "TDR" || substr($row['sku'],0,3) == "TPR" ){ $handle = "argyle-tender-diamond-".$row['shape']."-".$row['colour']."-".$row['clarity']."-".$row['sku']; $handle = strtolower($handle); } elseif( strtolower($row['type']) == "loose diamonds" ) { $handle = ""; $handle = "argyle-pink-diamond-".$row['shape']."-".$row['colour']."-".$row['clarity']."-".$row['sku']; $handle = strtolower($handle); } else{ $handle = ""; $handle = str_replace(" ","-",strtolower($row['product_title'])) ."-". strtolower($row['sku']); }
-    $handle = str_replace("--","-",$handle);
+    $handle = str_replace(["--"," "],"-",$handle);
 
     // Purchase Cost Calculation
     $purchase_cost = "";
