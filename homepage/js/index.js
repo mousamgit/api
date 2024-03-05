@@ -18,7 +18,6 @@ const app = Vue.createApp({
             filterList:[],
             showFilter:true,
             showSavedFilters:false,
-            selectedFilter:'',
             draggedIndex: null
         };
     },
@@ -253,12 +252,14 @@ const app = Vue.createApp({
         }
     },
     template: `<div>
-      <div class="row toolbar">
+    <div class=" toolbar pim-padding">
+      <div class="row">
         <div class="col-md-6">
-        <a class="btn" @click="selectFilter">{{selectedFilter}}</a>
-        <div class="saved-filter-container" v-if="showFilter">
+
+        <div class="saved-filter-container">
+            <div class="tooltip-container"><button class="btn btn-primary">All Products</button></div>
             <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-                <button class="btn btn-primary" @click="controlFilters(fvalue)">
+                <button class="btn btn-primary" @click="controlFilters(fvalue)">    
                 Show Saved Filters {{ fkey + 1 }}
                 </button>
                 <div class="tooltip-content">
@@ -285,14 +286,14 @@ const app = Vue.createApp({
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 text-end">
             <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
             <a class="btn" @click="showHideFilter">Filter</a>
         </div>
     </div>
-      <div class="row">
+    </div>
     
-        <div class="col-md-9 home-table-container">   
+        <div class="pim-padding home-table-container">   
         
 
          <div class="table-responsive">
@@ -364,11 +365,11 @@ const app = Vue.createApp({
         </div>
         </div>
        
-        <div class="col-md-3" v-if="showFilter">
+        <div class="bg-light filter-container" v-if="showFilter">
             <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
         </div>
       </div>
-    </div>
+
 `,
 });
 app.mount('#index');

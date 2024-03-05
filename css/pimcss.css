@@ -45,8 +45,8 @@ a{cursor: pointer; text-decoration: none;}
 .table .row:last-child .cell {  border-bottom: none;}
 
 .hidden{display: none;}
-.pim-padding{padding:10px 100px;}
-header{background-color: #222; width: 100%; height: 50px; color:#fff; margin-bottom: 50px;}
+.pim-padding{padding:10px 25px;}
+header{background-color: #222; width: 100%; height: 50px; color:#fff; }
 .top-bar { padding:20px; text-align:left; background-color:#fafafa;}
 .app-container{padding: 10px 50px;}
 .welcome_info{float: left;}
