@@ -17,6 +17,7 @@ class ProductFilterManager
 
     public function saveFunction($data)
     {
+
         if(count($data['attribute']) >0)
         {
             if ($data['attribute'][0]['type'] === 'edit') {

@@ -1,4 +1,4 @@
-import ProductFilters from '../../products/js/ProductFilters.js';
+import ProductFilters from '../../products/js/ProductFiltersV2.js';
 
 const app = Vue.createApp({
     data() {
@@ -15,7 +15,8 @@ const app = Vue.createApp({
             currentPage: 1,
             itemsPerPage: 100,
             totalRows:0,
-            filterList:[]
+            filterList:[],
+            draggedIndex: null
         };
     },
     mounted() {
@@ -34,8 +35,8 @@ const app = Vue.createApp({
         initializePagination()
         {
             this.currentPage=1,
-                this.itemsPerPage= 100,
-                this.totalRows=0
+            this.itemsPerPage= 100,
+            this.totalRows=0
         },
         nextPage() {
             this.initializeData();
@@ -107,6 +108,41 @@ const app = Vue.createApp({
                     console.error('Error fetching data:', error);
                 });
         },
+        handleDragStart(index) {
+            this.draggedIndex = index;
+        },
+        handleDragOver(index) {
+            event.preventDefault();
+        },
+        handleDrop(index) {
+            if (this.draggedIndex !== null && index !== this.draggedIndex) {
+                const removed = this.columnValues.splice(this.draggedIndex, 1)[0];
+                this.columnValues.splice(index, 0, removed);
+                this.draggedIndex = null;
+                const dataToSend = {
+                    column_values: this.columnValues
+                };
+                try {
+                    const response =  fetch('./save_column_order_values.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dataToSend)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to order columns');
+                    }
+                    // alert('its done')
+
+
+                } catch (error) {
+                    console.error('Error updating database:', error);
+                }
+
+            }
+        },
         changeEditValue(rowIndex,columnIndex,oldValue,editedValue,sku,colName)
         {
             this.isEditing = 1;
@@ -173,20 +209,16 @@ const app = Vue.createApp({
             }
         },
         exportToCSV() {
-            // Include the table header in the CSV content
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
 
-            // Add the rows to the CSV content
             const rows = this.productValuesTotal.map(row => {
                 return this.columnValues.map(colName => row[colName]);
             });
             csvContent += rows.map(e => e.join(",")).join("\n");
 
-            // Create a download link and trigger the download
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            // Get current date and time
             var now = new Date();
             var formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
             var filename = "export_filter_" + formattedDateTime + ".csv";
@@ -256,7 +288,11 @@ const app = Vue.createApp({
             <thead>
               <tr>
                 <th>S.N</th>
-                <th :col="colName" v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+                 <th v-for="(colName, index) in columnValues" :key="index" 
+                :draggable="true" @dragstart="handleDragStart(index)" 
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                {{ convertToTitleCase(colName) }}
+                </th>
               </tr>
             </thead>
             <tbody>

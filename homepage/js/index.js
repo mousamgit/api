@@ -17,6 +17,7 @@ const app = Vue.createApp({
             totalRows:0,
             filterList:[],
             showSavedFilters:false,
+            draggedIndex: null
         };
     },
     mounted() {
@@ -177,16 +178,11 @@ const app = Vue.createApp({
             }
         },
         exportToCSV() {
-            // Include the table header in the CSV content
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
-
-            // Add the rows to the CSV content
             const rows = this.productValuesTotal.map(row => {
                 return this.columnValues.map(colName => row[colName]);
             });
             csvContent += rows.map(e => e.join(",")).join("\n");
-
-            // Create a download link and trigger the download
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -214,11 +210,45 @@ const app = Vue.createApp({
             }).catch(error => {
                 console.error('Error fetching products:', error);
             });
+        },
+        handleDragStart(index) {
+            this.draggedIndex = index;
+        },
+        handleDragOver(index) {
+            event.preventDefault();
+        },
+        handleDrop(index) {
+            if (this.draggedIndex !== null && index !== this.draggedIndex) {
+                const removed = this.columnValues.splice(this.draggedIndex, 1)[0];
+                this.columnValues.splice(index, 0, removed);
+                this.draggedIndex = null;
+                const dataToSend = {
+                    column_values: this.columnValues
+                };
+                try {
+                    const response =  fetch('./save_column_order_values.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dataToSend)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to order columns');
+                    }
+                    // alert('its done')
+
+
+                } catch (error) {
+                    console.error('Error updating database:', error);
+                }
+
+            }
         }
     },
     template: `<div>
       <div class="row">
-    
         <div class="col-md-9 home-table-container">   
         <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
         <a class="btn" @click="showHideFilters">Show Saved Filters</a>
@@ -255,7 +285,12 @@ const app = Vue.createApp({
             <thead>
               <tr>
                 <th>S.N</th>
-                <th :col="colName" v-for="colName in columnValues">{{ convertToTitleCase(colName) }}</th>
+                 <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
+                :draggable="true" @dragstart="handleDragStart(index)" 
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                {{ convertToTitleCase(colName) }}
+                </th>
+                
               </tr>
             </thead>
             <tbody>
