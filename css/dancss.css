@@ -60,6 +60,7 @@ body { font-family: 'Open Sans', sans-serif; }
   /* Search Div */
   .search-div { width:100%; margin:50px auto; text-align:center; } 
   .search-input { width:400px; }
+  #select_columns { display: none; }
 
   /* Login Page */
   .login-box { max-width:500px; background-color:#fafafa; border:1px solid #999; border-radius:5px; margin:50px auto; text-align:center; padding:20px; }
