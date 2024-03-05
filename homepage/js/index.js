@@ -16,6 +16,7 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
+            showFilter:true,
             showSavedFilters:false,
             draggedIndex: null
         };
@@ -25,7 +26,10 @@ const app = Vue.createApp({
     },
 
     methods: {
-        showHideFilters(){
+        showHideFilter(){
+            this.showFilter = !this.showFilter;
+        },
+        selectFilter(){
             this.showSavedFilters = !this.showSavedFilters;
         },
         changePage()
@@ -248,13 +252,14 @@ const app = Vue.createApp({
         }
     },
     template: `<div>
+    <div class=" toolbar pim-padding">
       <div class="row">
-        <div class="col-md-9 home-table-container">   
-        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn" @click="showHideFilters">Show Saved Filters</a>
-        <div class="save-dfilter-container" v-if="showSavedFilters">
+        <div class="col-md-6">
+
+        <div class="saved-filter-container">
+            <div class="tooltip-container"><button class="btn btn-primary">All Products</button></div>
             <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-                <button class="btn btn-primary" @click="controlFilters(fvalue)">
+                <button class="btn btn-primary" @click="controlFilters(fvalue)">    
                 Show Saved Filters {{ fkey + 1 }}
                 </button>
                 <div class="tooltip-content">
@@ -277,9 +282,22 @@ const app = Vue.createApp({
                 </p>
                 </template>
                 </div>
+</div>
                 </div>
             </div>
         </div>
+        <div class="col-md-6 text-end">
+            <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
+            <a class="btn" @click="showHideFilter">Filter</a>
+        </div>
+    </div>
+    </div>
+    <div class="bg-light filter-container animation-mode" :class="{ 'active': showFilter }">
+    <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
+</div>
+        <div class="pim-padding home-table-container">   
+        
+
          <div class="table-responsive">
           <table id="myTable" class="table display homepage-table">
             <thead>
@@ -349,11 +367,9 @@ const app = Vue.createApp({
         </div>
         </div>
        
-        <div class="col-md-3">
-            <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
-        </div>
+
       </div>
-    </div>
+
 `,
 });
 app.mount('#index');
