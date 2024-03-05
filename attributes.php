@@ -157,6 +157,7 @@ elseif (strtolower($brand) == "blush pink diamonds"){
 }
 elseif (strtolower($brand) == "sapphire dreams" && strtolower($type) != "loose sapphires"){
   if ( strtolower($type) == "bracelets" && preg_match("/9ct/i", $metalcomposition) > 0) { $packagingimg .= "https://samsgroup.info/pim-images/sdb-9-box-card.jpg"; }
+  elseif ( strtolower($type) == "bracelet" && preg_match("/18ct/i", $metalcomposition) > 0 ) { $packagingimg .= "https://samsgroup.info/pim-images/sdb-18-box-card.jpg"; }
   elseif ( strtolower($type) == "earrings" && preg_match("/9ct/i", $metalcomposition) > 0 ) { $packagingimg .= "https://samsgroup.info/pim-images/sde-9-box-card.jpg"; }
   elseif ( strtolower($type) == "earrings" && preg_match("/18ct/i", $metalcomposition) > 0 ) { $packagingimg .= "https://samsgroup.info/pim-images/sde-18-box-card.jpg"; }
   elseif ( strtolower($type) == "necklaces" && preg_match("/9ct/i", $metalcomposition) > 0 && preg_match("/cert/i", $specifications) > 0 ) { $packagingimg .= "https://samsgroup.info/pim-images/sdp-9-box-card-cert.jpeg"; }
