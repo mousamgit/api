@@ -33,11 +33,11 @@ class ProductDetailHandler {
         $totalRows = $this->getTotalRows();
         $columnValuesRow = $this->getColumnValuesRow();
         $totalProductValues = $this->getTotalRowValues();
-        $filterIds = $this->getFilters();
+        $filterNames = $this->getFilters();
         $this->con->close();
 
         header('Content-Type: application/json');
-        echo json_encode(['total_product_values'=>$totalProductValues,'products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_ids'=>$filterIds]);
+        echo json_encode(['total_product_values'=>$totalProductValues,'products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_names'=>$filterNames]);
     }
 
     private function getProducts() {
@@ -145,19 +145,19 @@ class ProductDetailHandler {
     {
         require('./functions.php');
         require('./connect.php');
-        $filter_ids =[];
+        $filter_names =[];
         $user_id = getValue('users', 'username', $_SESSION['username'], 'id');
 
-        $query="select id from user_filters where user_id=".$user_id;
+        $query="select id,filter_name from user_filters where user_id=".$user_id;
         $filters=$con->query($query);
         if($filters->num_rows>0)
         {
             while($row=$filters->fetch_assoc())
             {
-                $filter_ids[]=$row['id'];
+                $filter_names[]=$row;
             }
         }
-        return $filter_ids;
+        return $filter_names;
     }
 
     public function getFilterConditionCombined() {

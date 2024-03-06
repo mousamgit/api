@@ -110,7 +110,7 @@ const app = Vue.createApp({
                     this.productValuesTotal = data.total_product_values;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
-                    this.filters = data.filter_ids;
+                    this.filters = data.filter_names;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -252,56 +252,38 @@ const app = Vue.createApp({
         }
     },
     template: `<div>
+    
     <div class=" toolbar pim-padding">
-      <div class="row">
-        <div class="col-md-6">
+    
         <div class="saved-filter-container">
-            <div class="tooltip-container"><button class="btn btn-primary">All Products</button></div>
-            <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
-                <button class="btn btn-primary" @click="controlFilters(fvalue)">    
-                Show Saved Filters {{ fkey + 1 }}
-                </button>
-                <div class="tooltip-content">
-                <div v-for="(value,index) in filterList">
-                <template v-if="index==0">
-                <p>
-                <span>{{ value.attribute_name }}</span> 
-                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-                </p>
-                </template>
-                <template v-else>
-                <p>
-                <strong>{{ value.op_value }}</strong>
-                </p>
-                <p>
-                <span>{{ value.attribute_name }}</span> 
-                <span> &nbsp;&nbsp;{{ value.filter_type }}</span> 
-                <span> &nbsp;&nbsp;{{ value.attribute_condition }}</span> 
-                </p>
-                </template>
-                </div>
-</div>
-                </div>
-            </div>
+       
+        <select name="" id="" style="width:20% !important;">
+            <option value="all" selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
+            <template v-for="(fvalue, fkey) in filters">
+              <option value="{{fvalue['id']}}" @click="controlFilters(fvalue['id'])"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
+            </template>
+        </select>
+      
+        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
+        <a class="btn" @click="showHideFilter">Filter</a>
         </div>
-        <div class="col-md-6 text-end">
-            <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-            <a class="btn" @click="showHideFilter">Filter</a>
         </div>
+
+    
+    
     </div>
-    </div>
-    <div class="bg-light filter-container animation-mode" :class="{ 'active': showFilter }">
+    <div style="height:100px"></div>
+    <div class="bg-light shadow filter-container animation-mode" :class="{ 'active': showFilter }">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
         <div class="pim-padding home-table-container">   
         
 
          <div class="table-responsive">
-          <table id="myTable" class="table display homepage-table">
+          <table class="pimtable  display homepage-table">
             <thead>
               <tr>
-                <th>S.N</th>
+                <th class="hidden">S.N</th>
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
@@ -313,9 +295,9 @@ const app = Vue.createApp({
             <tbody>
             
               <tr v-for="(row,rowIndex) in productValues">
-              <td>{{rowIndex+1}}</td>
+              <td class="hidden">{{rowIndex+1}}</td>
                <template v-for="(colName,colIndex) in columnValues">
-               <td>              
+               <td  :col="colName">              
                 <div v-if="rIndex==rowIndex && colIndex==cIndex">
                 <input type="hidden" v-model="formData.sku" value="row['sku']">
                 <input type="hidden" v-model="formData.columnName" value="colName">
@@ -332,12 +314,14 @@ const app = Vue.createApp({
                   <img :src="row[colName]" :alt="row['product_title']">
                   </a>
                   </template>
-                  <template v-else> No Image </template>
+                  <template v-else> <img src="/css/no-image.png?v=1" alt="no image"> </template>
                 </template>
                 <template v-else>
+                
                 <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
-                    {{ row[colName] }} <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    {{ row[colName] }} <i class="fa fa-pencil" aria-hidden="true"></i></i>
                 </a>
+                
                 </div>
                 </template>
                 </td>

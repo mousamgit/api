@@ -14,6 +14,7 @@ export default {
             selectedValues:[],
             showManualValidationMessage:0,
             filter_name:'',
+            showInput:0,
             editForm:-1 //v2
         };
     },
@@ -21,8 +22,12 @@ export default {
         this.fetchAllColumns();
     },
     methods: {
+        handleInput(){
+        this.showInput=1;
+        },
         async updateStatus(value) {
             try {
+
                 const response = await fetch('update_filter_status.php', {
                     method: 'POST',
                     headers: {
@@ -39,6 +44,8 @@ export default {
                 if (data.success) {
                     this.initializeData()
                     this.$emit('filters-updated');
+                    this.showInput =0;
+                    this.filter_name ='';
                 } else {
                     console.error('Error updating status:', data.error);
                 }
@@ -286,47 +293,24 @@ export default {
 
     },
     template: `
-<div class="modal" id="FilterModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Filter Name</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" class="form-control" required>
-      </div>
-      <div class="modal-footer">
-        <button type="button" @click="updateStatus(1)" data-bs-dismiss="modal" class="btn btn-primary">Save </button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
         </div>
-        
-        <div class="flex-row vcenter filter-header" v-if="productDetails.length==0 && channelAttribute.length==0">
-            <div class="row">
-                <!-- Container for both Attributes and "+" button -->
-                <div class="col-md-12">
-                    <div class="d-flex justify-content-between align-items-center p-3 border">
+
+        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
+
+
                         <!-- Left column for Attributes -->
                         <div>
-                            <span>Attributes</span>
+                            New Condition
                         </div>
-                        <div>
-                            <a class="sub-heading btn btn-primary" @click="addChannelCondition('AND','normal',[])">
+
+                            <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+
         </div>
 
 
@@ -659,13 +643,23 @@ export default {
                                                     <strong>OR</strong>
                                                 </a>
                                             </div>
+
                                         </div>
+
                             </div>
+                    
+
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
-<a class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#FilterModal">Save Filters</a>
+<template class="filter-input" v-if="showInput==1">
+<input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" placeholder="Enter Filter Name and Save" class="form-control" required>
+<a class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
+</template>
+<template class="filter-input" v-else>
+<a class="btn btn-primary mt-3"  @click="handleInput()">Save Filters</a>
+</template>
+
 <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
 </div>
-
   `,
 };
