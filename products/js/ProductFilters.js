@@ -13,6 +13,7 @@ export default {
             op_show_value: 'AND',
             selectedValues:[],
             showManualValidationMessage:0,
+            filter_name:'',
             editForm:-1 //v2
         };
     },
@@ -20,6 +21,31 @@ export default {
         this.fetchAllColumns();
     },
     methods: {
+        async updateStatus(value) {
+            try {
+                const response = await fetch('update_filter_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        value: value,
+                        filter_name:this.filter_name
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    this.initializeData()
+                    this.$emit('filters-updated');
+                } else {
+                    console.error('Error updating status:', data.error);
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        },
         //v2
         editFilter(productDet,index)
         {
@@ -243,31 +269,7 @@ export default {
                 console.error('Error fetching attributes:', error);
             }
         },
-        async updateStatus(value) {
 
-            try {
-                const response = await fetch('update_filter_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        value: value
-                    }),
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    this.initializeData()
-                    this.$emit('filters-updated');
-                } else {
-                    console.error('Error updating status:', data.error);
-                }
-            } catch (error) {
-                console.error('Error updating status:', error);
-            }
-        },
         initializeData() {
             this.channelAttribute = [],
                 this.indexCheck = 0,
@@ -284,24 +286,47 @@ export default {
 
     },
     template: `
+<div class="modal" id="FilterModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Filter Name</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" class="form-control" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" @click="updateStatus(1)" data-bs-dismiss="modal" class="btn btn-primary">Save </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
     <div class="right-menu filters background-secondary-bg">
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
         </div>
-
-        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
-
-
+        
+        <div class="flex-row vcenter filter-header" v-if="productDetails.length==0 && channelAttribute.length==0">
+            <div class="row">
+                <!-- Container for both Attributes and "+" button -->
+                <div class="col-md-12">
+                    <div class="d-flex justify-content-between align-items-center p-3 border">
                         <!-- Left column for Attributes -->
                         <div>
-                            New Condition
+                            <span>Attributes</span>
                         </div>
-
-                            <a class="position-absolute end-0" @click="addChannelCondition('AND','normal',[])">
+                        <div>
+                            <a class="sub-heading btn btn-primary" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
-
-
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -634,16 +659,13 @@ export default {
                                                     <strong>OR</strong>
                                                 </a>
                                             </div>
-
                                         </div>
-
                             </div>
-                    
-
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
-<a class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
+<a class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#FilterModal">Save Filters</a>
 <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
 </div>
+
   `,
 };

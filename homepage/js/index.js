@@ -255,7 +255,6 @@ const app = Vue.createApp({
     <div class=" toolbar pim-padding">
       <div class="row">
         <div class="col-md-6">
-
         <div class="saved-filter-container">
             <div class="tooltip-container"><button class="btn btn-primary">All Products</button></div>
             <div v-for="(fvalue, fkey) in filters" class="tooltip-container" @mouseover="getTooltipDetails(fvalue)">
@@ -294,7 +293,7 @@ const app = Vue.createApp({
     </div>
     <div class="bg-light filter-container animation-mode" :class="{ 'active': showFilter }">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
-</div>
+    </div>
         <div class="pim-padding home-table-container">   
         
 
