@@ -46,7 +46,7 @@ a{cursor: pointer; text-decoration: none;}
 
 .hidden{display: none;}
 .pim-padding{padding:10px 25px;}
-header{background-color: #222; width: 100%; height: 50px; color:#fff; position: relative; z-index: 9; }
+header{background-color: #222; width: 100%; height: 50px; color:#fff; position: fixed; z-index: 9; }
 .top-bar { padding:20px; text-align:left; background-color:#fafafa;}
 .app-container{padding: 10px 50px;}
 .welcome_info{float: left;}
@@ -54,7 +54,7 @@ header a{ color:#fff}
 .data_body{padding: 10px 50px;}
 
 .show-filter{margin-right: 50px;}
-.pimtable{  width:100% !important;  margin-top: 50px; text-align: left; font-size: 12px;     border: #e1e1e1 solid 1px;  margin-bottom: 20px;}
+.pimtable{  width:100% !important;  text-align: left; font-size: 12px;     border: #e1e1e1 solid 1px;  margin-bottom: 20px;}
 .pimtable thead tr{background: #efefef;}
 .pimtable tbody tr:nth-child(even) {background: #efefef;}
 .pimtable .img-cell{background: #fff;}
@@ -358,7 +358,7 @@ header a{ color:#fff}
   .appro-update .itemtable .row>div{display: table-cell;}
   .appro-update .row .itemcell{height:unset;}
   .editfield a{margin-left: 20px;}
-  .editfield a:hover i{transform: rotate(-45deg);}
+  .editfield:hover i{transform: rotate(-45deg);}
   .itemtable .inputcell{padding:0; }
 
   .comment-container{margin-top:50px;}
@@ -376,12 +376,12 @@ header a{ color:#fff}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 
   /* homepage */
-  .homepage-table{ width: max-content;}
+  .homepage-table.pimtable { width: max-content; border:none;}
   .home-table-container{ overflow-x: scroll;}
   .homepage-table th[col="specifications"], .homepage-table th[col="description"]{width:400px;}
   .homepage-table td img{width:100px;}
-  .toolbar{position: relative; z-index: 2;}
-  .filter-container{    padding: 150px 20px 20px;  position: fixed;    right: -400px;    top: 0;    width: 400px;    max-width: 90%;    height: 100%; z-index: 1;}
+  .toolbar{position: fixed; z-index: 1; width: 100%; background-color: #fff;  padding:25px;}
+  .filter-container{    padding: 150px 20px 20px;  position: fixed;    right: -400px;    top: 0;    width: 400px;    max-width: 90%;    height: 100%; z-index: 2;}
   .filter-container.active{right:0;}
   .filter-container hr{display: none;}
   .filter-condition center{color:#ccc;}
@@ -391,6 +391,7 @@ header a{ color:#fff}
   .channel-condition .form-control{margin-top:5px;}
   .delete-icon{color: var(--main-color); top:0.5rem;}
   .delete-icon a{padding:0px; font-size: 28px; margin-right:10px;}
+  .add-icon{    padding: 10px;    font-size: 24px;    right: 0px;    color: #222;    top: 0;}
   .delete-icon a:hover i{transform: rotate(360deg)}
 
   @media (max-width: 767px)  {

@@ -16,30 +16,6 @@ include 'functions.php';
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
-    <style>
-        .tooltip-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip-content {
-            display: none;
-            position: absolute;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 1;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            font-size: 14px;
-            max-width: 300px; /* Adjust width as needed */
-        }
-
-        .tooltip-container:hover .tooltip-content {
-            display: block;
-        }
-
-    </style>
 </head>
 <body>
 <?php include 'topbar.php'; ?>
