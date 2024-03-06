@@ -258,7 +258,7 @@ const app = Vue.createApp({
         <div class="saved-filter-container">
        
         <select name="" id="" style="width:20% !important;">
-            <option value="all" selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
+            <option value="0" @click="fetchProducts()" selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
             <template v-for="(fvalue, fkey) in filters">
               <option value="{{fvalue['id']}}" @click="controlFilters(fvalue['id'])"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
             </template>
@@ -308,8 +308,9 @@ const app = Vue.createApp({
                 <template v-if="colName == 'sku'">
                  {{ row['sku'] }} 
                 </template>
+                
                 <template v-else-if="colName.includes('imag')">
-                  <template v-if="row[colName].length>0">
+                  <template v-if="row[colName]">
                   <a :href="row[colName]" target="_blank">
                   <img :src="row[colName]" :alt="row['product_title']">
                   </a>
