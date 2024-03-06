@@ -297,7 +297,7 @@ export default {
                             New Condition
                         </div>
 
-                            <a class="position-absolute end-0" @click="addChannelCondition('AND','normal',[])">
+                            <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
 
