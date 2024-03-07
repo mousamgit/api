@@ -274,9 +274,7 @@ const app = Vue.createApp({
         }
     },
     template: `<div>
-    
     <div class=" toolbar pim-padding">
-    
         <div class="saved-filter-container">
         <select name="" id="" style="width:20% !important;" v-model="filter_no" @change="controlFilters">
             <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
@@ -289,9 +287,6 @@ const app = Vue.createApp({
         <a class="btn show-filter" >Filter</a>
         </div>
         </div>
-
-    
-    
     </div>
     <div style="height:100px"></div>
     <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }">
