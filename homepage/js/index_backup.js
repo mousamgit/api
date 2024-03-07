@@ -18,11 +18,7 @@ const app = Vue.createApp({
             filterList:[],
             showFilter:true,
             showSavedFilters:false,
-            draggedIndex: null,
-            isDragging: false,
-            startClientX: 0,
-            startScrollLeft: 0,
-            tableWidth: 0,
+            draggedIndex: null
         };
     },
     mounted() {
@@ -30,20 +26,6 @@ const app = Vue.createApp({
     },
 
     methods: {
-        handleMouseDown(event) {
-            this.isDragging = true;
-            this.startClientX = event.clientX;
-            this.startScrollLeft = this.$refs.overflowContainer.scrollLeft;
-            this.tableWidth = this.$refs.overflowContainer.scrollWidth;
-        },
-        handleMouseMove(event) {
-            if (!this.isDragging) return;
-            const dx = this.startClientX - event.clientX;
-            this.$refs.overflowContainer.scrollLeft = this.startScrollLeft + dx;
-        },
-        handleMouseUp() {
-            this.isDragging = false;
-        },
         showHideFilter(){
             this.showFilter = !this.showFilter;
         },
@@ -297,10 +279,7 @@ const app = Vue.createApp({
         <div class="pim-padding home-table-container">   
         
 
-         <div class="table-responsive"  @mousedown="handleMouseDown" 
-       @mousemove="handleMouseMove" 
-       @mouseup="handleMouseUp">
-          <div class="overflow-container" ref="overflowContainer">
+         <div class="table-responsive">
           <table class="pimtable  display homepage-table">
             <thead>
               <tr>
@@ -352,7 +331,6 @@ const app = Vue.createApp({
             </tbody>
           </table>
           </div>
-          </div>
            <div class="mt-3">
                 <div class="btn-group" role="group" aria-label="Pagination">
                 <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
@@ -380,3 +358,4 @@ const app = Vue.createApp({
 });
 app.mount('#index');
 app.component('product-filters', ProductFilters);
+
