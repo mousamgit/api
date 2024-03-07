@@ -77,4 +77,26 @@ $(document).ready(function(){
           }
         }
       });
+      if($('.home-table-container').length>0){
+        var tableheight = window.innerHeight - 270;
+        // var containerTop = $('.home-table-container').getBoundingClientRect().top;
+        console.log('tableheight'+tableheight);
+        $('.home-table-container').css('max-height',tableheight+'px');
+      }
+      
+
+      $('.show-filter').click(function(){
+        $('.filter-container').addClass('is-open');
+        });
+        
+
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('.filter-container').length &&
+            !$(event.target).hasClass('show-filter') &&
+            !$(event.target).closest('.filter-container').find('button').length) {
+            $('.filter-container').removeClass('is-open');
+        }
+        });
+
+
 });

@@ -16,7 +16,7 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
-            showFilter:true,
+            // showFilter:true,
             showSavedFilters:false,
             draggedIndex: null,
             isDragging: false,
@@ -31,6 +31,9 @@ const app = Vue.createApp({
     },
 
     methods: {
+        getProductUrl(sku){
+            return('/product.php?sku='+sku);
+        },
         handleMouseDown(event) {
             this.isDragging = true;
             this.startClientX = event.clientX;
@@ -45,9 +48,9 @@ const app = Vue.createApp({
         handleMouseUp() {
             this.isDragging = false;
         },
-        showHideFilter(){
-            this.showFilter = !this.showFilter;
-        },
+        // showHideFilter(){
+        //     this.showFilter = !this.showFilter;
+        // },
         selectFilter(){
             this.showSavedFilters = !this.showSavedFilters;
         },
@@ -283,7 +286,7 @@ const app = Vue.createApp({
         </select>
       
         <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn" @click="showHideFilter">Filter</a>
+        <a class="btn show-filter" >Filter</a>
         </div>
         </div>
 
@@ -291,16 +294,14 @@ const app = Vue.createApp({
     
     </div>
     <div style="height:100px"></div>
-    <div class="bg-light shadow filter-container animation-mode" :class="{ 'active': showFilter }">
+    <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
-        <div class="pim-padding home-table-container">   
+        <div class="pim-padding ">   
         
 
-         <div class="table-responsive"  @mousedown="handleMouseDown" 
-       @mousemove="handleMouseMove" 
-       @mouseup="handleMouseUp">
-          <div class="overflow-container" ref="overflowContainer">
+         
+          <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
               <tr>
@@ -327,7 +328,7 @@ const app = Vue.createApp({
                 </div>
                 <div v-else>
                 <template v-if="colName == 'sku'">
-                 {{ row['sku'] }} 
+                 <a :href="getProductUrl(row['sku'])">{{ row['sku'] }} </a>
                 </template>
                 
                 <template v-else-if="colName.includes('imag')">
@@ -352,7 +353,7 @@ const app = Vue.createApp({
             </tbody>
           </table>
           </div>
-          </div>
+
            <div class="mt-3">
                 <div class="btn-group" role="group" aria-label="Pagination">
                 <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
