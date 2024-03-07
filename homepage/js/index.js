@@ -23,6 +23,7 @@ const app = Vue.createApp({
             startClientX: 0,
             startScrollLeft: 0,
             tableWidth: 0,
+            filter_no:0
         };
     },
     mounted() {
@@ -85,9 +86,10 @@ const app = Vue.createApp({
             this.formData={}
         },
 
-        async  controlFilters(filter_no) {
+        async  controlFilters() {
+
             const dataToSend = {
-                filter_no: filter_no
+                filter_no: this.filter_no
             };
 
             try {
@@ -102,10 +104,11 @@ const app = Vue.createApp({
                 if (!response.ok) {
                     throw new Error('Failed to update database');
                 }
+
                 this.initializeData();
                 this.initializePagination();
                 this.fetchProducts();
-                console.log('Database updated successfully');
+
 
             } catch (error) {
                 console.error('Error updating database:', error);
@@ -122,10 +125,8 @@ const app = Vue.createApp({
                 },
             }).then(response => response.json())
                 .then(data => {
-                    this.products = data.products;
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
-                    this.productValuesTotal = data.total_product_values;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
@@ -274,11 +275,10 @@ const app = Vue.createApp({
     <div class=" toolbar pim-padding">
     
         <div class="saved-filter-container">
-       
-        <select name="" id="" style="width:20% !important;">
-            <option value="0" @click="fetchProducts()" selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
+        <select name="" id="" style="width:20% !important;" v-model="filter_no" @change="controlFilters">
+            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
             <template v-for="(fvalue, fkey) in filters">
-              <option value="{{fvalue['id']}}" @click="controlFilters(fvalue['id'])"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
+              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
             </template>
         </select>
       

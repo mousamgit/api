@@ -309,8 +309,6 @@ export default {
                             <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
-
-
         </div>
 
 

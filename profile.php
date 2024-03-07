@@ -3,6 +3,8 @@
 include 'login_checking.php';
 include 'functions.php';
 require('connect.php');
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 $username = $_SESSION["username"];
 $usertype = getValue('users', 'username', $username, 'type');

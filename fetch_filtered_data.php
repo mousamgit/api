@@ -37,7 +37,7 @@ class ProductDetailHandler {
         $this->con->close();
 
         header('Content-Type: application/json');
-        echo json_encode(['total_product_values'=>$totalProductValues,'products' => $products, 'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_names'=>$filterNames]);
+        echo json_encode(['product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_names'=>$filterNames]);
     }
 
     private function getProducts() {
