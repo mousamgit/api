@@ -8,21 +8,10 @@ ini_set('display_errors', '1');
 
 $username = $_SESSION["username"];
 $usertype = getValue('users', 'username', $username, 'type');
+
 $usercol = getValue('users', 'username', $username, 'columns');
 
-
 $filtersString = getValue('users', 'username', $username, 'filters');
-
-// Check if the form is submitted
-// if ($_SERVER["REQUEST_METHOD"] == "POST") {
-   
-//     $value = $_POST["column"];
-//     updateValue('users','username',$username,'columns',$value);
-
-//     // Display a success message or redirect the user
-//     echo "<h2>Update Completed</h2>";
-// }
-
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -34,6 +23,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $selectedColumnsArray[] = $selectedColumn;
         }
     }
+    $uncommonvalue=[];
+    $userColArray = explode(",",$usercol);
+    foreach($userColArray as $key=>$uval)
+    {
+        if(!(in_array($uval,$selectedColumnsArray))){
+           $uncommonvalue[]=$uval;
+        }
+
+    }
+    $array1 = $userColArray;
+    $array2 = $selectedColumnsArray;
+    $array1 = array_map('trim', str_replace('"', '', $array1));
+    $array2 = array_map('trim', str_replace('"', '', $array2));
+
+    $diff = array_diff($array1, $array2);
+    $diff = array_map(function($item) {
+        return "'$item'";
+    }, $diff);
+    $con->query("DELETE from user_columns where column_name in (".implode(',',$diff).") and user_name='".$_SESSION['username']."'");
 
     $value = '"' . implode('","', $selectedColumnsArray) . '"';
     updateValue('users','username',$username,'columns',$value);

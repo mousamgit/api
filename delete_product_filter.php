@@ -30,11 +30,13 @@ if($deleting_row->num_rows >0)
 }
 
 if ($con->query($deleteProductFilterQuery) === TRUE) {
-    $check_if_it_is_single_row = $con->query("select id,op_value from product_filter where product_id =". $data['productId']);
+    $check_if_it_is_single_row = $con->query("select id,op_value,attribute_name from product_filter where product_id =". $data['productId']);
     if($check_if_it_is_single_row->num_rows == 1)
     {
         while ($sing_row_data = $check_if_it_is_single_row->fetch_assoc()) {
             $con->query("update product_filter set op_value ='AND' where id =" . $sing_row_data['id']);
+            $con->query("DELETE from user_columns where column_name ='".sing_row_data['attribute_name']."' and user_name='".$_SESSION['username']."'");
+
         }
     }
     $success=true;
