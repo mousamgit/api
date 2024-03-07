@@ -102,10 +102,11 @@ const app = Vue.createApp({
                 if (!response.ok) {
                     throw new Error('Failed to update database');
                 }
+
                 this.initializeData();
                 this.initializePagination();
                 this.fetchProducts();
-                console.log('Database updated successfully');
+
 
             } catch (error) {
                 console.error('Error updating database:', error);
@@ -122,10 +123,8 @@ const app = Vue.createApp({
                 },
             }).then(response => response.json())
                 .then(data => {
-                    this.products = data.products;
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
-                    this.productValuesTotal = data.total_product_values;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
