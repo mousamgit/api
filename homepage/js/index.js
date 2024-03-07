@@ -276,7 +276,7 @@ const app = Vue.createApp({
     template: `<div>
     <div class=" toolbar pim-padding">
         <div class="saved-filter-container">
-        <select name="" id="" style="width:20% !important;" v-model="filter_no" @change="controlFilters">
+        <select class="btn" v-model="filter_no" @change="controlFilters">
             <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
             <template v-for="(fvalue, fkey) in filters">
               <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
