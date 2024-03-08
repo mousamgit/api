@@ -16,7 +16,7 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
-            // showFilter:true,
+            showFilter:true,
             showSavedFilters:false,
             draggedIndex: null,
             isDragging: false,
@@ -28,9 +28,23 @@ const app = Vue.createApp({
     },
     mounted() {
         this.fetchProducts();
+        document.addEventListener('click', this.handleClickOutside);
     },
+    beforeDestroy() {
+        // Remove the event listener when the component is destroyed
+        document.removeEventListener('click', this.handleClickOutside);
+      },
 
     methods: {
+        handleClickOutside(event) {
+            const isInsideFilterContainer = event.target.closest('.filter-container');
+            if ((event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
+                this.showFilter = false;
+            }
+            else{
+                
+            }
+          },
         getProductUrl(sku){
             return('/product.php?sku='+sku);
         },
@@ -48,9 +62,9 @@ const app = Vue.createApp({
         handleMouseUp() {
             this.isDragging = false;
         },
-        // showHideFilter(){
-        //     this.showFilter = !this.showFilter;
-        // },
+        showHideFilter(){
+            this.showFilter = !this.showFilter;
+        },
         selectFilter(){
             this.showSavedFilters = !this.showSavedFilters;
         },
@@ -62,11 +76,33 @@ const app = Vue.createApp({
         totalPages(totalRows,itemsPerPage){
             return Math.ceil(totalRows / itemsPerPage);
         },
+        visiblePages(totalRows,itemsPerPage) {
+            const pages = [];
+            const startPage = Math.max(1, this.currentPage - 2);
+            const endPage = Math.min(Math.ceil(totalRows / itemsPerPage), startPage + 4);
+            console.log('current'+this.currentPage+'start'+startPage+'end'+endPage);
+      
+            for (let i = startPage; i <= endPage; i++) {
+              pages.push(i);
+            }
+            return pages;
+          },
+        
         initializePagination()
         {
             this.currentPage=1,
                 this.itemsPerPage= 100,
                 this.totalRows=0
+        },
+        firstPage(){
+            this.initializeData();
+            this.currentPage = 1;
+            this.fetchProducts();
+        },
+        lastPage(totalRows,itemsPerPage){
+            this.initializeData();
+            this.currentPage = Math.ceil(totalRows / itemsPerPage);
+            this.fetchProducts();
         },
         nextPage() {
             this.initializeData();
@@ -80,6 +116,11 @@ const app = Vue.createApp({
                 this.fetchProducts();
             }
         },
+        gotoPage(page) {
+            this.initializeData();
+            this.currentPage = page;
+            this.fetchProducts();
+          },
         initializeData()
         {
             this.showFilters= 9;
@@ -286,7 +327,7 @@ const app = Vue.createApp({
         </select>
       
         <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn show-filter" >Filter</a>
+        <a class="btn show-filter" @click="showHideFilter" >Filter</a>
         </div>
         </div>
 
@@ -294,7 +335,7 @@ const app = Vue.createApp({
     
     </div>
     <div style="height:100px"></div>
-    <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }">
+    <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
         <div class="pim-padding ">   
@@ -354,10 +395,10 @@ const app = Vue.createApp({
           </table>
           </div>
 
-           <div class="mt-3">
-                <div class="btn-group" role="group" aria-label="Pagination">
-                <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
-                <select v-model="currentPage" @change="changePage" class="page-dropdown">
+           <div class="mt-3 row">
+                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
+                
+                <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
                     <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
                     <template v-if="currentPage==index+1">                 
                     <option :value="index+1" selected>Page {{ index +1 }}</option>
@@ -366,10 +407,20 @@ const app = Vue.createApp({
                     <option :value="index+1">Page {{ index +1 }}</option>
                     </template>                   
                 </select>
-                <button class="btn btn-primary" @click="nextPage" :disabled="productValues.length < itemsPerPage">Next</button>
+
+                <a class="page-btn" @click="firstPage" :class="{ 'disabled': currentPage === 1 }" ><i class="fa fa-step-backward" aria-hidden="true"></i></a>
+                <a class="page-btn" @click="prevPage" :class="{ 'disabled': currentPage === 1 }"><i class="fa fa-caret-left" aria-hidden="true"></i></a>
+                <span v-if="this.currentPage>3">...</span>
+                <a class="page-btn"  v-for="(page, index) in visiblePages(totalRows,itemsPerPage)"  :key="index" :class="{ 'active': currentPage == page }"  @click="gotoPage(page)">{{page}}</a>
+                <span v-if="this.currentPage<totalPages(totalRows,itemsPerPage)-2">...</span>
+                <a class="page-btn" @click="nextPage" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }" ><i class="fa fa-caret-right" aria-hidden="true"></i></a>
+                <a class="page-btn" @click="lastPage(totalRows,itemsPerPage)" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }"><i class="fa fa-step-forward" aria-hidden="true"></i></a>
+                
+
+
               </div>
-              <div class="text-muted mt-2">
-                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} of {{totalRows}} records
+              <div class="text-muted col-md-4 text-center p-2">
+                {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} / {{totalRows}} records
               </div>
         </div>
         </div>

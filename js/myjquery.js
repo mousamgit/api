@@ -85,18 +85,19 @@ $(document).ready(function(){
       }
       
 
-      $('.show-filter').click(function(){
-        $('.filter-container').addClass('is-open');
-        });
+    //   $('.show-filter').click(function(){
+    //     $('.filter-container').addClass('is-open');
+    //     });
         
 
-        $(document).on('click', function(event) {
-            if (!$(event.target).closest('.filter-container').length &&
-            !$(event.target).hasClass('show-filter') &&
-            !$(event.target).closest('.filter-container').find('button').length) {
-            $('.filter-container').removeClass('is-open');
-        }
-        });
+    //     $(document).on('click', function(event) {
+    //         if (!$(event.target).closest('.filter-container').length &&
+    //         !$(event.target).hasClass('show-filter') &&
+    //         !$(event.target).closest('.filter-container').find('button').length &&
+    //         !$(event.target).is('a')) {
+    //         $('.filter-container').removeClass('is-open');
+    //     }
+    //     });
 
 
 });
