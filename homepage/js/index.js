@@ -16,7 +16,7 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
-            // showFilter:true,
+            showFilter:true,
             showSavedFilters:false,
             draggedIndex: null,
             isDragging: false,
@@ -28,9 +28,28 @@ const app = Vue.createApp({
     },
     mounted() {
         this.fetchProducts();
+        document.addEventListener('click', this.handleClickOutside);
     },
+    beforeDestroy() {
+        // Remove the event listener when the component is destroyed
+        document.removeEventListener('click', this.handleClickOutside);
+      },
 
     methods: {
+        handleClickOutside(event) {
+            // Check if the click target is outside the filter container
+            const isButtonOrAnchor = event.target.tagName == 'BUTTON' || event.target.tagName == 'A' || event.target.classList.contains('show-filter');
+            const isInsideFilterContainer = event.target.closest('.filter-container');
+            console.log('click');
+
+            // If the clicked element is not a button or an anchor tag inside the filter container, close the filter
+            if (event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') {
+                this.showFilter = false;
+            }
+            else{
+
+            }
+        },
         getProductUrl(sku){
             return('/product.php?sku='+sku);
         },
@@ -48,9 +67,9 @@ const app = Vue.createApp({
         handleMouseUp() {
             this.isDragging = false;
         },
-        // showHideFilter(){
-        //     this.showFilter = !this.showFilter;
-        // },
+        showHideFilter(){
+            this.showFilter = !this.showFilter;
+        },
         selectFilter(){
             this.showSavedFilters = !this.showSavedFilters;
         },
@@ -274,7 +293,9 @@ const app = Vue.createApp({
         }
     },
     template: `<div>
+    
     <div class=" toolbar pim-padding">
+    
         <div class="saved-filter-container">
         <select class="btn" v-model="filter_no" @change="controlFilters">
             <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
@@ -284,12 +305,15 @@ const app = Vue.createApp({
         </select>
       
         <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn show-filter" >Filter</a>
+        <a class="btn show-filter" @click="showHideFilter" >Filter</a>
         </div>
         </div>
+
+    
+    
     </div>
     <div style="height:100px"></div>
-    <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }">
+    <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
         <div class="pim-padding ">   

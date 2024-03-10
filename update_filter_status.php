@@ -28,7 +28,9 @@ $value = $data['value'];
 if($value ==0)
 {
    $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
+   $sql1="update user_columns set status =0 where filter_from =0 and user_name ='".$user_name."'";
    $con->query($sql);
+   $con->query($sql1);
    $success=true;
 }
 else
@@ -92,29 +94,22 @@ else
     if ($con->query($sql) === TRUE ) {
         $filter_no = $con->insert_id;
 
-        $filterFetchNew = $con->query("SELECT * FROM product_filter WHERE status =1 and user_name = '".$_SESSION['username']."' and product_id=" . $productId . " ORDER BY index_no ASC");
-        if ($filterFetch->num_rows > 0) {
+        $con->query("update user_columns set status =0 where filter_from =0 and user_name ='".$user_name."'");
+        $con->query("update product_filter set status =0 where product_id=0 and user_name ='".$user_name."'");
 
-            while ($prevAttributeValue= $filterFetchNew->fetch_assoc()) {
+        $product_details = $data['product_details'];
 
+        foreach ($product_details as $pkey=> $value)
+        {
+            $column_name = $value['attribute_name'];
+            $order_no = maxOrderNo('user_columns');
+            $product_detail_id = $value['id'];
+            $con->query("update product_filter set status =1 where product_id =0 and id ='".$value['id']."'");
 
-                $productId = 0;
-                $filter_type = $prevAttributeValue['filter_type'];
-                $attribute_name = $prevAttributeValue['attribute_name'];
-                $attribute_condition = $prevAttributeValue['attribute_condition'];
-                $range_from = $prevAttributeValue['range_from'];
-                $range_to = $prevAttributeValue['range_to'];
-                $data_type_value = $prevAttributeValue['data_type_value'];
-                $op_value = $prevAttributeValue['op_value'];
-                $index_no = $prevAttributeValue['index_no'];
-                $user_name = $prevAttributeValue['user_name'];
-                $filter_id_product = $prevAttributeValue['id'];
+//            $con->query("update user_columns set status =1, filter_no=".$filter_no." where filter_from =0 and product_detail_id ='".$value['id']."' and filter_no =0");
 
-                $sql1 = "INSERT INTO user_filter_details (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`,`user_name`,`id`,`filter_no`) 
-                      VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type_value','$op_value','$index_no','$user_name','$filter_id_product','$filter_no')";
-                $con->query($sql1);
-
-            }
+            $con->query("INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`, `filter_from`, `product_detail_id`, `filter_no` )
+                VALUES ('$user_name', '$column_name', $order_no, 1, 0, $product_detail_id,$filter_no)");
         }
         $success=true;
     }

@@ -35,7 +35,8 @@ export default {
                     },
                     body: JSON.stringify({
                         value: value,
-                        filter_name:this.filter_name
+                        filter_name:this.filter_name,
+                        product_details:this.productDetails
                     }),
                 });
 
@@ -138,7 +139,7 @@ export default {
         async getAttributeValue(index, attributeName, attributeCondition) {
             try {
                 if (attributeCondition.length > 0) {
-                    // Make an AJAX request to your PHP file to fetch attributes
+                    // Make an AJAX request to  PHP file to fetch attributes
                     const response = await fetch('./fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
 
                     // Parse the JSON response
@@ -176,11 +177,12 @@ export default {
             }];
             this.showAttribute = 1;
             this.showAttFilter = 1;
+
         },
         refreshAttributeAgain() {
-
             this.initializeData()
             this.$emit('filters-updated');
+            this.showFilter=true;
         },
         async deleteFilter(productDetId, productId, indexVal) {
 
@@ -190,6 +192,7 @@ export default {
                 } else {
                     this.indexVal = -1;
                 }
+
                 // Display a confirmation dialog
                 const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
 
@@ -210,6 +213,7 @@ export default {
                         console.log('filters deleted successfully!');
                         this.initializeData()
                         this.$emit('filters-updated');
+                        this.showFilter=true;
                     } else {
                         console.error('Error deleting filter:', data.error);
                     }
@@ -287,7 +291,7 @@ export default {
                 this.indexVal = -1,
                 this.showAttributeMid = 0,
                 this.op_show_value = 'AND'
-            this.fetchAllColumns();
+                this.fetchAllColumns();
         }
 
 
@@ -297,7 +301,7 @@ export default {
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
         </div>
-
+        
         <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
 
 
@@ -321,8 +325,7 @@ export default {
                                             </a>
                                         </span>
                                         <div v-if="productDet.op_value== 'OR' && productDet.id != productDetails[0].id && showAttributeMid==productDetails[index-1].id">
-                                            <!--{{showAttributeMid}} '=' {{productDetails[index-1].id}}-->
-                                            
+                                           
                                             <form @submit.prevent="submitForm">
                                                 <span>----- {{op_show_value}} -------</span> 
                                                 <div class="row">
@@ -437,8 +440,6 @@ export default {
                                         <center v-if="productDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
                                     </span></center>
                                     <div class="filter-clauses card position-relative" v-if="showAttFilter==1" @click="editFilter(productDet,index)">
-                                       
-          
                                                 <div class="flex-grow-1">
                                                     
                                                         <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> 

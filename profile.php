@@ -9,9 +9,10 @@ ini_set('display_errors', '1');
 $username = $_SESSION["username"];
 $usertype = getValue('users', 'username', $username, 'type');
 
-$usercol = getValue('users', 'username', $username, 'columns');
+$usercol = implode(",",getColumns(1));
 
-$filtersString = getValue('users', 'username', $username, 'filters');
+
+$filtersString = getColumns(1);
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -37,11 +38,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $array1 = array_map('trim', str_replace('"', '', $array1));
     $array2 = array_map('trim', str_replace('"', '', $array2));
 
-    $diff = array_diff($array1, $array2);
-    $diff = array_map(function($item) {
+    $updating_columns = array_diff($array1, $array2);
+    $updating_array = array_map(function($item) {
         return "'$item'";
-    }, $diff);
-    $con->query("DELETE from user_columns where column_name in (".implode(',',$diff).") and user_name='".$_SESSION['username']."'");
+    }, $updating_columns);
+    $con->query("update user_columns set status=0 where column_name in (".implode(',',$updating_array).") and user_name='".$_SESSION['username']."' and filter_from='user'");
+
+    $inserting_columns=array_diff($array2, $array1);
+    $inserting_array = array_map(function($item) {
+        return "'$item'";
+    }, $inserting_columns);
+
+    foreach ($inserting_array as $ikey=>$i_array_val)
+    {
+
+        $status=1;
+        $order_no = maxOrderNo('user_columns');
+        $value = $i_array_val;
+
+        $columns = getColumns(0);
+        if (!in_array($i_array_val, $columns)) {
+            // Insert a new record
+            $sql = "INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`, `filter_from`)
+                VALUES ('$username', $value, $order_no, $status, 'user')";
+        } else {
+            // Update the existing record
+            $sql = "UPDATE user_columns 
+                SET `status` = 1 
+                WHERE `column_name` = $value AND `user_name` = '" . $_SESSION['username'] . "' AND `filter_from` = 'user'";
+        }
+        $con->query($sql);
+    }
+
 
     $value = '"' . implode('","', $selectedColumnsArray) . '"';
     updateValue('users','username',$username,'columns',$value);
@@ -63,18 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    
 <div id="app" class="app-container">
     <p>Your user type is <?php echo $usertype; ?></p><br>
-    <?php
-    // Convert the string into an array using explode
-    $filters = explode(',', $filtersString);
-    $filterCount = count($filters);
 
-    // Iterate through the filters, excluding the last one
-    for ($index = 0; $index < $filterCount - 1; $index++) {
-        $filter = trim($filters[$index]);
-        echo '<a class="btn" href="' . $filter . '">' . $filter. '</a> <a class="btn" href="savefilter.php?remove='.$filter.'">Remove Filter</a><br>';
-        // echo $filter;
-    }
-    ?>
     <br><p>Your default columns:</p>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -83,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $baseQuery = getQuery('pim',1);
     $result = getResult($baseQuery , 1);
     $row = mysqli_fetch_assoc($result);
-    foreach ($row as $colName => $val) { 
+    foreach ($row as $colName => $val) {
         $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
         $checked = '';
         $selectedcol = explode(',', str_replace('"', '', $usercol));
@@ -95,7 +112,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } // show column headers
     ?>
     </div>
-
         <input type="submit" value="Update">
     </form>
 
