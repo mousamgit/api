@@ -22,7 +22,7 @@ if($deleting_row->num_rows >0)
     while ($d_value = $deleting_row->fetch_assoc()) {
         $opvalue = $d_value['op_value']; $filterCondition='where 1=1';
         $indexNo = $d_value['index_no'];
-        $con->query("DELETE from user_columns where column_name ='".$d_value['attribute_name']."' and user_name='".$_SESSION['username']."'");
+        $con->query("update user_columns set status=0 where column_name ='".$d_value['attribute_name']."' and user_name='".$_SESSION['username']."'");
     }
     if($opvalue == 'OR')
     {
@@ -37,7 +37,7 @@ if ($con->query($deleteProductFilterQuery) === TRUE) {
     {
         while ($sing_row_data = $check_if_it_is_single_row->fetch_assoc()) {
             $con->query("update product_filter set op_value ='AND' where id =" . $sing_row_data['id']);
-            $con->query("DELETE from user_columns where column_name ='".sing_row_data['attribute_name']."' and user_name='".$_SESSION['username']."'");
+            $con->query("update user_columns set status=0 where column_name ='".sing_row_data['attribute_name']."' and user_name='".$_SESSION['username']."'");
         }
     }
     $success=true;

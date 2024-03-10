@@ -37,19 +37,14 @@ const app = Vue.createApp({
 
     methods: {
         handleClickOutside(event) {
-            // Check if the click target is outside the filter container
-            const isButtonOrAnchor = event.target.tagName == 'BUTTON' || event.target.tagName == 'A' || event.target.classList.contains('show-filter');
             const isInsideFilterContainer = event.target.closest('.filter-container');
-            console.log('click');
-
-            // If the clicked element is not a button or an anchor tag inside the filter container, close the filter
-            if (event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') {
+            if ((event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
                 this.showFilter = false;
             }
             else{
-
+                
             }
-        },
+          },
         getProductUrl(sku){
             return('/product.php?sku='+sku);
         },
@@ -81,11 +76,33 @@ const app = Vue.createApp({
         totalPages(totalRows,itemsPerPage){
             return Math.ceil(totalRows / itemsPerPage);
         },
+        visiblePages(totalRows,itemsPerPage) {
+            const pages = [];
+            const startPage = Math.max(1, this.currentPage - 2);
+            const endPage = Math.min(Math.ceil(totalRows / itemsPerPage), startPage + 4);
+            console.log('current'+this.currentPage+'start'+startPage+'end'+endPage);
+      
+            for (let i = startPage; i <= endPage; i++) {
+              pages.push(i);
+            }
+            return pages;
+          },
+        
         initializePagination()
         {
             this.currentPage=1,
                 this.itemsPerPage= 100,
                 this.totalRows=0
+        },
+        firstPage(){
+            this.initializeData();
+            this.currentPage = 1;
+            this.fetchProducts();
+        },
+        lastPage(totalRows,itemsPerPage){
+            this.initializeData();
+            this.currentPage = Math.ceil(totalRows / itemsPerPage);
+            this.fetchProducts();
         },
         nextPage() {
             this.initializeData();
@@ -99,6 +116,11 @@ const app = Vue.createApp({
                 this.fetchProducts();
             }
         },
+        gotoPage(page) {
+            this.initializeData();
+            this.currentPage = page;
+            this.fetchProducts();
+          },
         initializeData()
         {
             this.showFilters= 9;
@@ -282,8 +304,6 @@ const app = Vue.createApp({
                     if (!response.ok) {
                         throw new Error('Failed to order columns');
                     }
-                    // alert('its done')
-
 
                 } catch (error) {
                     console.error('Error updating database:', error);
@@ -373,10 +393,10 @@ const app = Vue.createApp({
           </table>
           </div>
 
-           <div class="mt-3">
-                <div class="btn-group" role="group" aria-label="Pagination">
-                <button class="btn btn-primary" @click="prevPage" :disabled="currentPage === 1">Prev</button>
-                <select v-model="currentPage" @change="changePage" class="page-dropdown">
+           <div class="mt-3 row">
+                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
+                
+                <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
                     <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
                     <template v-if="currentPage==index+1">                 
                     <option :value="index+1" selected>Page {{ index +1 }}</option>
@@ -385,10 +405,20 @@ const app = Vue.createApp({
                     <option :value="index+1">Page {{ index +1 }}</option>
                     </template>                   
                 </select>
-                <button class="btn btn-primary" @click="nextPage" :disabled="productValues.length < itemsPerPage">Next</button>
+
+                <a class="page-btn" @click="firstPage" :class="{ 'disabled': currentPage === 1 }" ><i class="fa fa-step-backward" aria-hidden="true"></i></a>
+                <a class="page-btn" @click="prevPage" :class="{ 'disabled': currentPage === 1 }"><i class="fa fa-caret-left" aria-hidden="true"></i></a>
+                <span v-if="this.currentPage>3">...</span>
+                <a class="page-btn"  v-for="(page, index) in visiblePages(totalRows,itemsPerPage)"  :key="index" :class="{ 'active': currentPage == page }"  @click="gotoPage(page)">{{page}}</a>
+                <span v-if="this.currentPage<totalPages(totalRows,itemsPerPage)-2">...</span>
+                <a class="page-btn" @click="nextPage" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }" ><i class="fa fa-caret-right" aria-hidden="true"></i></a>
+                <a class="page-btn" @click="lastPage(totalRows,itemsPerPage)" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }"><i class="fa fa-step-forward" aria-hidden="true"></i></a>
+                
+
+
               </div>
-              <div class="text-muted mt-2">
-                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} of {{totalRows}} records
+              <div class="text-muted col-md-4 text-center p-2">
+                {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} / {{totalRows}} records
               </div>
         </div>
         </div>
