@@ -122,6 +122,7 @@
         19 => "deny",
         20 => "shopify",
         21 => "manual",
+        
       );
 
       fputcsv($fp, $content);
