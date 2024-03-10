@@ -4,6 +4,21 @@ function valuefromString($string, $symbol, $element){
     $keyParts = explode($symbol, $string);
     return $keyParts[$element];
 }
+function maxOrderNo($table)
+{
+    require('connect.php');
+    $maxOrderNoQuery = "SELECT MAX(order_no) AS max_order_no FROM ".$table." where user_name ='".$_SESSION['username']."'";
+    $maxOrderNoResult =mysqli_query($con, $maxOrderNoQuery);
+
+    if ($maxOrderNoResult) {
+        $row = mysqli_fetch_assoc($maxOrderNoResult);
+        $maxOrderNo = $row['max_order_no'];
+        $newOrderNo = $maxOrderNo + 1;
+    } else {
+        $newOrderNo = 1;
+    }
+    return $newOrderNo;
+}
 function getQuery($db){
     require('connect.php');
 
@@ -56,10 +71,11 @@ function getQuery($db){
 
 function getResult($baseQuery , $records_per_page){
     require('connect.php');
-      // Calculate total rows for pagination
+    // Calculate total rows for pagination
     $totalRowsResult = mysqli_query($con, $baseQuery);
     $total_rows = mysqli_num_rows($totalRowsResult);
-  
+
+
     // Assuming $result is your SQL query result
   
     $total_pages = ceil($total_rows / $records_per_page);
@@ -149,7 +165,19 @@ function getFilterValueHover($filter_no)
     }
     return $filterCondition;
 }
+function getColumns($status)
+{
+    require('connect.php');
+    $columnValuesRow = [];
+    $userOrderedColumns = $con->query("select column_name from user_columns where user_name ='".$_SESSION["username"]."' and filter_from= 'user' and status=".$status." order by order_no ASC");
 
+    if ($userOrderedColumns->num_rows > 0) {
+        while ($row = $userOrderedColumns->fetch_assoc()) {
+            $columnValuesRow[]=$row['column_name'];
+        }
+    }
+    return $columnValuesRow;
+}
 function getValue($db, $prkey, $keyvalue, $attribute) {
     require('connect.php');
     // Construct the SQL query

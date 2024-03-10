@@ -63,7 +63,6 @@ class ProductDetailHandler {
                 $productFilter[] = $row;
             }
         }
-
         return $productFilter;
     }
 
@@ -101,7 +100,8 @@ class ProductDetailHandler {
 
     private function getColumnValuesRow() {
         $columnValuesRow = [];
-        $userOrderedColumns = $this->con->query("select column_name from user_columns where user_name ='".$_SESSION["username"]."' order by order_no ASC");
+
+        $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
 
         if ($userOrderedColumns->num_rows > 0) {
             while ($row = $userOrderedColumns->fetch_assoc()) {
@@ -113,31 +113,6 @@ class ProductDetailHandler {
             $columnValuesRow[]='sku';
         }
 
-        $userColumns = $this->con->query("select columns from users where username ='".$_SESSION["username"]."'");
-        $columnValuesRowCustomer='';
-        if ($userColumns->num_rows > 0) {
-            while ($row = $userColumns->fetch_assoc()) {
-                $columnValuesRowCustomer = str_replace('"','',$row['columns']);
-            }
-            $columnValuesRowCustomer = explode(",",$columnValuesRowCustomer);
-
-        }
-        foreach ($columnValuesRowCustomer as $key =>$cval)
-        {
-            if(!in_array($cval,$columnValuesRow))
-            {
-                $columnValuesRow[] = $cval;
-            }
-        }
-        $checkIfColumns = $this->con->query("select attribute_name from product_filter where status=1 and product_id =" . $this->productId. " and user_name ='".$_SESSION["username"]."'");
-
-        if ($checkIfColumns->num_rows > 0) {
-            while ($row = $checkIfColumns->fetch_assoc()) {
-                if (!in_array($row['attribute_name'], $columnValuesRow)) {
-                    $columnValuesRow[] = $row['attribute_name'];
-                }
-            }
-        }
 
         return $columnValuesRow;
     }

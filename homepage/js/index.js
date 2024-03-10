@@ -304,8 +304,6 @@ const app = Vue.createApp({
                     if (!response.ok) {
                         throw new Error('Failed to order columns');
                     }
-                    // alert('its done')
-
 
                 } catch (error) {
                     console.error('Error updating database:', error);
