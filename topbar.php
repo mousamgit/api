@@ -69,6 +69,7 @@
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-sales">';
             echo '<a class="drawer-list-item"  href="/export-data"><span>Export Data for Stockists</span></a> ';
             echo '<a class="drawer-list-item"  href="/stockist-images"><span>Grab Images for Stockists</span></a>';
+            echo '<a class="drawer-list-item"  href="/appro/appro_list.php"><span>Appros List</span></a>';
             echo '</nav> </nav>';
         
             echo '<nav class="drawer-navigation drawer-border">';
