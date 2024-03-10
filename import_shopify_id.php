@@ -11,9 +11,9 @@
 </head>
 <?php
 $startScriptTime=microtime(TRUE);
-include_once ('connect.php');  
  function importCsvFile($filedirect){
-    global $con;
+    include 'connect.php';
+
     if( file_exists($filedirect) ){
         $file = fopen($filedirect, "r");
 
@@ -36,11 +36,10 @@ include_once ('connect.php');
 
             //echo "<tr><td>".$sku."</td><td>".$product_id."</td><td>".$variant_id."</td></tr>";
 
-            $sql = "UPDATE pim SET product_id = '" . mysqli_real_escape_string($con, $product_id) . "', variant_id = '" . mysqli_real_escape_string($con, $variant_id) . "' WHERE sku = '" . mysqli_real_escape_string($con, $sku) . "'";
+            $sql = "UPDATE pim SET product_id = '" . mysqli_real_escape_string($con, $product_id) . "', variant_id = '" . mysqli_real_escape_string($con, $variant_id) . "' WHERE sku = '" . mysqli_real_escape_string($con, $sku) . "';";
             $result = mysqli_query($con, $sql);
             
             echo "SQL query: $sql<br>"; // Check the generated SQL query
-            $result = mysqli_query($con, $sql);
             if (!$result) {
                 echo "Query failed: " . mysqli_error($con) . "<br>";
             }

@@ -24,7 +24,7 @@
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/pk-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.Specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy","Variant Inventory Tracker","Variant Fulfillment Service");
+  $headers = array("Variant SKU","handle","Command","Body HTML","Image Command","Inventory Available:Pink Kimberley Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Metafield:custom.Specifications","Variant Price","Variant Command","Vendor","Image Src","Status","Metafield:custom.centrecolour","Variant Inventory Policy","Variant Inventory Tracker","Variant Fulfillment Service","ID");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -122,6 +122,7 @@
         19 => "deny",
         20 => "shopify",
         21 => "manual",
+        22 => strval($row['product_id']),
         
       );
 
