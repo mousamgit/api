@@ -24,6 +24,7 @@ $itemstatus = getValue('appro', 'id', $approid, 'itemstatus');
 $dateentered  = getValue('appro', 'id', $approid, 'dateentered');
 $datedue = getValue('appro', 'id', $approid, 'datedue');
 $representation = getValue('appro', 'id', $approid, 'representation');
+$contact = getValue('appro', 'id', $approid, 'contact');
 $notes = getValue('appro', 'id', $approid, 'notes');
 ?>
 <div  id="app"  class="container ">
@@ -113,6 +114,18 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
             <div class="editfield" v-else><?php echo $representation ?><a  @click="editdata('a','representation')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>   
         </div>
+        <div class="col-md-2">Contact Person: </div>
+        <div class="col-md-4"> 
+            <form class="editform"  v-if="isediting('a','contact')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
+            <input type="hidden" name="colName" value="contact">
+            <input type="hidden" name="oldValue" value="<?php echo $contact ?>">
+            <input name="newValue" type="text" value="<?php echo $contact ?>">
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else><?php echo $contact ?><a  @click="editdata('a','contact')"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>   
+        </div>
     </div>
     <div class="row">    
         <div class="col-md-2">Notes: </div>
@@ -135,6 +148,7 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <div class="row firstrow">
                 <div class="cell">Sku</div>
                 <div class="cell">Price</div>
+                <div class="cell">Discount</div>
                 <div class="cell">Qty</div>
                 <div class="cell">Total</div>
             </div>
@@ -166,6 +180,18 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <div class="editfield" v-else ><?php echo $itemrow[itemprice] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemprice]; ?>')"><i class="fa fa-pencil" aria-hidden="true"></i></a></i></div>
         </div>
         <div class="cell inputcell">
+            <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[discount]; ?>')"  action="update_appro.php" method="post">
+            <input type="hidden" name="username" value="<?php echo $username ?>">
+            <input type="hidden" name="id" value="<?php echo $approid ?>">
+            <input type="hidden" name="appro" value="<?php echo $appro ?>">
+            <input type="hidden" name="itemid" value="<?php echo $itemrow[id]; ?>">
+            <input type="hidden" name="colName" value="discount">
+            <input type="hidden" name="oldValue" value="<?php echo $itemrow[discount] ?>">
+            <input name="newValue" type="text" value="<?php echo $itemrow[discount] ?>">
+            <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <div class="editfield" v-else ><?php echo $itemrow[discount] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[discount]; ?>')"><i class="fa fa-pencil" aria-hidden="true"></i></a></i></div>
+        </div>
+        <div class="cell inputcell">
             <form class="editform"  v-if="isediting('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"  action="update_appro.php" method="post">
             <input type="hidden" name="username" value="<?php echo $username ?>">
             <input type="hidden" name="id" value="<?php echo $approid ?>">
@@ -177,13 +203,14 @@ $notes = getValue('appro', 'id', $approid, 'notes');
             <button type="submit" ><i class="fa fa-check" aria-hidden="true"></i></button></form>
             <div class="editfield" v-else ><?php echo $itemrow[itemquantity] ?><a  @click="editdata('<?php echo $itemrow[id]; ?>','<?php echo $itemrow[itemquantity]; ?>')"><i class="fa fa-pencil" aria-hidden="true"></i></a></i></div>
         </div>
-        <div class="cell">{{ calculateTotal('<?php echo $itemrow[itemquantity] ?>','<?php echo $itemrow[itemprice] ?>') }}</div>
+        <div class="cell">{{ calculateTotal('<?php echo $itemrow[itemquantity] ?>','<?php echo $itemrow[itemprice] ?>','<?php echo $itemrow[discount] ?>') }}</div>
     </div>    
 
   <?php endfor; ?>
 
   <div class="row firstrow">
                 <div class="cell">Total</div>
+                <div class="cell"></div>
                 <div class="cell"></div>
                 <div class="cell">{{ calculateQty() }}</div>
                 <div class="cell">{{ calculateSum() }}</div>

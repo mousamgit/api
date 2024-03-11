@@ -16,6 +16,7 @@ myapp.component('approitem', {
             price:0,
             productname:'',
             inputQuantity:0,
+            discount:0,
             totalPrice:0,
         };
     },
@@ -40,7 +41,8 @@ myapp.component('approitem', {
         </div>
         <div class="cell">{{ productname }}</div>
         <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemprice]" v-model="this.price"  @input="calculateTotal"></div>
-        <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemquantity]" v-model="inputQuantity" @input="calculateTotal"></div>
+        <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][discount]" v-model="this.discount"  @input="calculateTotal"></div>
+        <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemquantity]" v-model="this.inputQuantity" @input="calculateTotal"></div>
         <div class="cell inputcell"><input  v-if="this.itemdetail" type="text" name="items[][itemtotal]" :value="this.totalPrice" readonly></div>
     </div>
 
@@ -76,12 +78,13 @@ myapp.component('approitem', {
             // Convert price and quantity to numbers
             var inputprice = parseFloat(this.price);
             var quantity = parseFloat(this.inputQuantity);
+            var discount = parseFloat(this.discount);
 
             
             // Check if both price and quantity are valid numbers
             if (!isNaN(inputprice) && !isNaN(quantity)) {
                 // Calculate total price
-                this.totalPrice = inputprice * quantity;
+                this.totalPrice = inputprice * quantity * (1-discount/100);
             } else {
                 this.totalPrice = 0; // Reset total price if inputs are not valid numbers
             }

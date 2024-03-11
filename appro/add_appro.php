@@ -57,13 +57,20 @@ include '../login_checking.php';
         <select id="status" name="status">
             <option value="shipped">shipped</option>
             <option value="completed">completed</option>
+            <option value="left in store">left in store</option>
         </select>
         </div>    
         <div class="col-md-2 form-cell">
-        <label for="representation">representation:</label>
+        <label for="representation">Representation:</label>
         
         </div>
-        <div class="col-md-4 form-cell"><input type="text" id="representation" name="representation" required></div>    
+        <div class="col-md-4 form-cell"><input type="text" id="representation" name="representation" required></div>
+        <div class="col-md-2 form-cell">
+        <label for="contact">Contact Person:</label>
+        
+        </div>
+        <div class="col-md-4 form-cell"><input type="text" id="contact" name="contact" ></div>    
+
         <div class="col-md-2 form-cell">
         <label for="date_entered">Date Entered:</label>
         
@@ -91,12 +98,14 @@ include '../login_checking.php';
                 <div class="cell">Sku</div>
                 <div class="cell">Product Name</div>
                 <div class="cell">Price</div>
+                <div class="cell">Discount(%)</div>
                 <div class="cell">Qty</div>
                 <div class="cell">Total</div>
             </div>
             <approitem v-for="(item, index) in items" :key="index" @update-index="updateindex(index)" @update-qty="updateqty" @update-price="updateprice"></approitem>
             <div class="row">
                 <div class="cell">Total</div>
+                <div class="cell"></div>
                 <div class="cell"></div>
                 <div class="cell"></div>
                 <div class="cell inputcell"><input type="text" id="total_quantity" name="total_quantity" :value="totalQuantity" readonly> </div>
