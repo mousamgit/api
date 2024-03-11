@@ -23,7 +23,7 @@
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sd-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","Handle","Command","Body HTML","Image Command","Inventory Available:Sapphire Dreams Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Inventory Policy","Metafield:custom.metal_colour","Metafield:custom.metal_info","Metafield:custom.stone_info","Metafield:custom.stone_shape","Metafield:title_tag","Metafield:custom.certification","Metafield:custom.specifications","Metafield:custom.stone_colour","Metafield:custom.stone_specifications","Variant Inventory Tracker","Variant Fulfillment Service");
+  $headers = array("Variant SKU","Handle","Command","Body HTML","Image Command","Inventory Available:Sapphire Dreams Head Office","Tags Command","Tags","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Inventory Policy","Metafield:custom.metal_colour","Metafield:custom.metal_info","Metafield:custom.stone_info","Metafield:custom.stone_shape","Metafield:title_tag","Metafield:custom.certification","Metafield:custom.specifications","Metafield:custom.stone_colour","Metafield:custom.stone_specifications","Variant Inventory Tracker","Variant Fulfillment Service","ID");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -175,6 +175,7 @@
             26 => $stone_specifications,
             27 => "shopify",
             28 => "manual",
+            29 => $row['product_id'],
 
           );
 
