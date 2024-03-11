@@ -110,7 +110,7 @@ class ProductDetailHandler {
         }
         if(!in_array('sku',$columnValuesRow))
         {
-            $columnValuesRow[]='sku';
+            array_unshift($columnValuesRow, 'sku');
         }
 
 
