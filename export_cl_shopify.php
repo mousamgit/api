@@ -23,7 +23,7 @@
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/cl-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","Command","Handle","Body HTML","Image Command","Inventory Available:Head Office","Tags","Tags Command","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Barcode","Variant Inventory Policy","Variant Inventory Tracker","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Variant Metafield:custom.dial","Variant Metafield:custom.straptype","Variant Metafield:custom.gender","Image Alt Text","Variant Metafield:custom.features","Variant Metafield:custom.glass","Variant Metafield:custom.waterresistance","Variant Metafield:custom.movement","Variant Metafield:custom.dimension","Variant Metafield:custom.watchtype","Variant Metafield:custom.watchspecs", "SEO Title","Variant Fulfillment Service","Image Position", "Variant Compare At Price");
+  $headers = array("Variant SKU","Command","Handle","Body HTML","Image Command","Inventory Available:Head Office","Tags","Tags Command","Title","Type","Variant Cost","Variant Image","Variant Price","Variant Command","Vendor","Image Src","Status","Variant Barcode","Variant Inventory Policy","Variant Inventory Tracker","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Variant Metafield:custom.dial","Variant Metafield:custom.straptype","Variant Metafield:custom.gender","Image Alt Text","Variant Metafield:custom.features","Variant Metafield:custom.glass","Variant Metafield:custom.waterresistance","Variant Metafield:custom.movement","Variant Metafield:custom.dimension","Variant Metafield:custom.watchtype","Variant Metafield:custom.watchspecs", "SEO Title","Variant Fulfillment Service","Image Position", "Variant Compare At Price","ID");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -219,6 +219,7 @@
             38 => "manual",
             39 => 1,
             40 => $compare_price,
+            41 => $row['product_id'],
             
           );
 

@@ -10,32 +10,25 @@ require_once('./login_checking.php');
 require_once('./functions.php');
 
 
-
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
 
 $user_name = $_SESSION['username'];
-$success= false;
-$delete_previous = $con->query("delete from user_columns where user_name ='".$user_name."'");
 
-foreach ($data['column_values'] as $key=>$value)
+foreach ($data['column_values'] as $key => $value)
 {
-    $status=1;
-    $sql = "INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`) 
-                VALUES ('$user_name', '$value', '$key', $status)";
-    if($con->query($sql)==true)
-    {
-        $success=true;
+    $order_no = $key + 1;
+    $column_name = $con->real_escape_string($value);
+
+    $sql = "UPDATE user_columns SET order_no = $order_no WHERE column_name = '$column_name' AND status = 1";
+
+    if ($con->query($sql) === TRUE) {
+        $success = true;
+    } else {
+        $success = false;
+        echo "Error: " . $con->error;
     }
 }
 
-
-if ($success == true ) {
-    echo json_encode(['success' => true]);
-} else {
-    echo json_encode(['success' => false, 'error' => $con->error]);
-}
-
-// Close the database connection
 $con->close();
 ?>
