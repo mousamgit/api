@@ -10,6 +10,7 @@ $approID = $_POST['appro_id'];
 $orderNumber = $_POST['order_number'];
 $status = $_POST['status'];
 $representation = $_POST['representation'];
+$contact = $_POST['contact'];
 $dateEntered = $_POST['date_entered'];
 $dueDate = $_POST['due_date'];
 $totalQuantity = $_POST['total_quantity'];
@@ -32,23 +33,26 @@ if (duplicatedcheck('appro','appro',$approID)){
     echo '<div class="error-msg">Appro ID is already exist, please enter a new Appro ID, click <a href="add_appro.php">here</a> to go back to adding appro form</div>';
 }
 else{
-    for ($i = 0; $i < count($items); $i += 4) {
+    for ($i = 0; $i < count($items); $i += 5) {
+
         $itemcode = $items[$i]['itemcode'];
-        $itemprice = $items[$i + 1]['itemprice'];
-        $itemquantity = $items[$i + 2]['itemquantity'];
-        $itemtotal = $items[$i + 3]['itemtotal'];
+        $itemprice = $items[$i+1]['itemprice'];
+        $discount = $items[$i+2]['discount'];
+        $itemquantity = $items[$i+3]['itemquantity'];
+        $itemtotal = $items[$i+4]['itemtotal'];
     
-        $itemsql = "INSERT INTO approitems (itemcode, itemprice, itemquantity, approid)
-                VALUES ('$itemcode', '$itemprice', '$itemquantity', '$approID')";
+        $itemsql = "INSERT INTO approitems (itemcode, itemprice, itemquantity, discount, approid)
+                VALUES ('$itemcode', '$itemprice', '$itemquantity', '$discount', '$approID')";
     
         $itemresult = mysqli_query($con,$itemsql) or die(mysqli_error($con)); 
+
     }
     
     // Now you can insert $customerName, $approID, $orderNumber, $dateEntered, $dueDate, and $serializedItems into your database
     // Execute your database insert query here, including the serialized items
     
     
-    $approsql = " INSERT into appro (appro,customer,itemstatus,dateentered,datedue,ordernumber,representation,items,totalquantity,totalprice,notes) VALUES ('$approID','$customerName','$status','$dateEntered','$dueDate','$orderNumber','$representation','$serializedItems','$totalQuantity','$totalPrice','$notes')";
+    $approsql = " INSERT into appro (appro,customer,itemstatus,dateentered,datedue,ordernumber,representation,contact,items,totalquantity,totalprice,notes) VALUES ('$approID','$customerName','$status','$dateEntered','$dueDate','$orderNumber','$representation','$contact','$serializedItems','$totalQuantity','$totalPrice','$notes')";
     $approresult = mysqli_query($con,$approsql) or die(mysqli_error($con));
     
     $approlog = " INSERT into approlog (appro,date,time,user,action) VALUES ('$approID','$date','$time','$username','add')";

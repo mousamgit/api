@@ -16,9 +16,9 @@ const myapp = Vue.createApp({
         };
     },
     methods: {
-          calculateTotal(quantity, price) {
+          calculateTotal(quantity, price,discount) {
             const qty = Number(quantity);
-            const total = price * quantity;
+            const total = price * quantity*(1-discount/100);
             this.totals.push(total);
             this.quantitytotals.push(qty);
             return total;
