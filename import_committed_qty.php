@@ -10,6 +10,7 @@
   <h1>Shopify Committed Quantity Updated!</h1>
 </head>
 <?php
+include 'functions.php';
 $startScriptTime=microtime(TRUE);
 function importCommittedQty($filedirect){
   include 'connect.php';
@@ -24,7 +25,7 @@ function importCommittedQty($filedirect){
       $refundColumnIndex = array_search('Refund: Restock Type', $header);
 
       
-
+      $skuqty = array();
       while (($line = fgetcsv($file, 10000, ",")) !== false) {
           if (!isset($skipHeaders)) {
               $skipHeaders = true;
@@ -35,6 +36,7 @@ function importCommittedQty($filedirect){
           $sku = isset($line[$skuColumnIndex]) ? $line[$skuColumnIndex] : null;
           $quantity = isset($line[$quantityColumnIndex]) ? $line[$quantityColumnIndex] : null;
           $refund = isset($line[$refundColumnIndex]) ? $line[$refundColumnIndex] : null;
+          $skuExists = false;
 
           // Skip the row if SKU is empty
           if (empty($sku)) {
@@ -44,16 +46,23 @@ function importCommittedQty($filedirect){
           elseif ($refund == "return") {
             continue;
           }
-          
-          $sql = "UPDATE pim SET committed_qty = committed_qty + '" . mysqli_real_escape_string($con, $quantity) . "' WHERE sku = '" . mysqli_real_escape_string($con, $sku) . "'";
-          $result = mysqli_query($con, $sql);
-          
-          echo "SQL query: $sql<br>"; // Check the generated SQL query
-          if (!$result) {
-              echo "Query failed: " . mysqli_error($con) . "<br>";
+          foreach ($skuqty as &$item) {
+            if ($item['sku'] === $sku) {
+                // If SKU exists, add quantity
+                $item['quantity'] += $quantity;
+                $skuExists = true;
+                break;
+            }
           }
-      }
+          if (!$skuExists) {
+              $skuqty[] = array('sku' => $sku, 'quantity' => $quantity);
+          }   
 
+      }
+      foreach ($skuqty as &$item) {
+        echo '<br>sku ='.$item['sku'].', qty = '.$item['quantity'];
+        updateValue('pim','sku',$item['sku'],'committed_qty',$item['quantity']);
+      }
       fclose($file);
   }
 }
