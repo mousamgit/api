@@ -60,12 +60,6 @@ class ProductFilterManager
                 VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type','$operator','$indexNo','$user_name')";
 
             if ($this->con->query($sql) == TRUE) {
-                include '../functions.php';
-                $order_no = maxOrderNo('user_columns');
-                $status=1;
-                $product_detail_id = $this->con->insert_id;
-                $this->con->query("INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`, `filter_from`, `product_detail_id`)
-                VALUES ('$user_name', '$attribute_name', $order_no, $status, 0, '$product_detail_id')");
 
                 if (!($attribute_value['condition_type'] == 'group' || $attribute_value['condition_type'] == 'normal')) {
                     $update_product_filter = "update product_filter set index_no=index_no+1 where index_no>=" . $indexNo . " and id !=" . $this->con->insert_id;

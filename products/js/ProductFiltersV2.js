@@ -14,6 +14,7 @@ export default {
             selectedValues:[],
             showManualValidationMessage:0,
             filter_name:'',
+            showInput:0,
             editForm:-1 //v2
         };
     },
@@ -21,6 +22,38 @@ export default {
         this.fetchAllColumns();
     },
     methods: {
+        handleInput(){
+            this.showInput=1;
+        },
+        async updateStatus(value) {
+            try {
+
+                const response = await fetch('update_filter_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        value: value,
+                        filter_name:this.filter_name,
+                        product_details:this.productDetails
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    this.initializeData()
+                    this.$emit('filters-updated');
+                    this.showInput =0;
+                    this.filter_name ='';
+                } else {
+                    console.error('Error updating status:', data.error);
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        },
         //v2
         editFilter(productDet,index)
         {
@@ -106,7 +139,7 @@ export default {
         async getAttributeValue(index, attributeName, attributeCondition) {
             try {
                 if (attributeCondition.length > 0) {
-                    // Make an AJAX request to your PHP file to fetch attributes
+                    // Make an AJAX request to  PHP file to fetch attributes
                     const response = await fetch('./fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
 
                     // Parse the JSON response
@@ -144,11 +177,12 @@ export default {
             }];
             this.showAttribute = 1;
             this.showAttFilter = 1;
+
         },
         refreshAttributeAgain() {
-
             this.initializeData()
             this.$emit('filters-updated');
+            this.showFilter=true;
         },
         async deleteFilter(productDetId, productId, indexVal) {
 
@@ -158,6 +192,7 @@ export default {
                 } else {
                     this.indexVal = -1;
                 }
+
                 // Display a confirmation dialog
                 const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
 
@@ -178,6 +213,7 @@ export default {
                         console.log('filters deleted successfully!');
                         this.initializeData()
                         this.$emit('filters-updated');
+                        this.showFilter=true;
                     } else {
                         console.error('Error deleting filter:', data.error);
                     }
@@ -244,31 +280,7 @@ export default {
                 console.error('Error fetching attributes:', error);
             }
         },
-        async updateStatus(value) {
-            try {
-                const response = await fetch('update_filter_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        value: value,
-                        filter_name:this.filter_name
-                    }),
-                });
 
-                const data = await response.json();
-
-                if (data.success) {
-                    this.initializeData()
-                    this.$emit('filters-updated');
-                } else {
-                    console.error('Error updating status:', data.error);
-                }
-            } catch (error) {
-                console.error('Error updating status:', error);
-            }
-        },
         initializeData() {
             this.channelAttribute = [],
                 this.indexCheck = 0,
@@ -289,25 +301,21 @@ export default {
         <div class="flex-row vcenter filter-header">
             <span class="sub-heading">FILTERS</span>
         </div>
+        
+        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
 
-        <div class="flex-row vcenter filter-header" v-if="productDetails.length==0 && channelAttribute.length==0">
-            <div class="row">
-                <!-- Container for both Attributes and "+" button -->
-                <div class="col-md-12">
-                    <div class="d-flex justify-content-between align-items-center p-3 border">
+
                         <!-- Left column for Attributes -->
                         <div>
-                            <span>Attributes</span>
+                            New Condition
                         </div>
-                        <div>
-                            <a class="sub-heading btn btn-primary" @click="addChannelCondition('AND','normal',[])">
+
+                            <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
                             </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
+
+
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
@@ -317,8 +325,7 @@ export default {
                                             </a>
                                         </span>
                                         <div v-if="productDet.op_value== 'OR' && productDet.id != productDetails[0].id && showAttributeMid==productDetails[index-1].id">
-                                            <!--{{showAttributeMid}} '=' {{productDetails[index-1].id}}-->
-                                            
+                                           
                                             <form @submit.prevent="submitForm">
                                                 <span>----- {{op_show_value}} -------</span> 
                                                 <div class="row">
@@ -433,8 +440,6 @@ export default {
                                         <center v-if="productDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
                                     </span></center>
                                     <div class="filter-clauses card position-relative" v-if="showAttFilter==1" @click="editFilter(productDet,index)">
-                                       
-          
                                                 <div class="flex-grow-1">
                                                     
                                                         <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> 
@@ -644,27 +649,15 @@ export default {
                     
 
 </div>
-<div class="modal" id="FilterModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Filter Name</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" class="form-control" required>
-      </div>
-      <div class="modal-footer">
-        <button type="button" @click="updateStatus(1)" data-bs-dismiss="modal" class="btn btn-primary">Save </button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
-<a class="btn btn-primary mt-3"  data-bs-toggle="modal" data-bs-target="#FilterModal">Save Filters</a>
+<template class="filter-input" v-if="showInput==1">
+<input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" placeholder="Enter Filter Name and Save" class="form-control" required>
+<a class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
+</template>
+<template class="filter-input" v-else>
+<a class="btn btn-primary mt-3"  @click="handleInput()">Save Filters</a>
+</template>
+
 <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
 </div>
   `,

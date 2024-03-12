@@ -20,9 +20,9 @@ $deleting_row = $con->query("select attribute_name,op_value,index_no from produc
 if($deleting_row->num_rows >0)
 {
     while ($d_value = $deleting_row->fetch_assoc()) {
-        $opvalue = $d_value['op_value']; $filterCondition='where 1=1';
+        $opvalue = $d_value['op_value'];
+        $filterCondition='where 1=1';
         $indexNo = $d_value['index_no'];
-        $con->query("update user_columns set status=0 where column_name ='".$d_value['attribute_name']."' and user_name='".$_SESSION['username']."'");
     }
     if($opvalue == 'OR')
     {

@@ -18,26 +18,29 @@ include 'functions.php';
     <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
     <style>
-        .tooltip-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip-content {
-            display: none;
+        .column-selector {
+            width:300px;
             position: absolute;
+            top: 220px; /* Adjust this value to position it just below the table */
+            right: 60px;
             background-color: #fff;
             border: 1px solid #ccc;
             padding: 10px;
-            border-radius: 5px;
-            z-index: 1;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            font-size: 14px;
-            max-width: 300px; /* Adjust width as needed */
+            z-index: 999;
+            max-height:675px;
+            overflow-y: auto;
         }
-
-        .tooltip-container:hover .tooltip-content {
-            display: block;
+        .column-selector .description {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .column-selector ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .column-selector li {
+            margin-bottom: 5px;
         }
 
     </style>

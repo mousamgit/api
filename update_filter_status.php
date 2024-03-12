@@ -28,9 +28,7 @@ $value = $data['value'];
 if($value ==0)
 {
    $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
-   $sql1="update user_columns set status =0 where filter_from =0 and user_name ='".$user_name."'";
    $con->query($sql);
-   $con->query($sql1);
    $success=true;
 }
 else
@@ -105,8 +103,6 @@ else
             $order_no = maxOrderNo('user_columns');
             $product_detail_id = $value['id'];
             $con->query("update product_filter set status =1 where product_id =0 and id ='".$value['id']."'");
-
-//            $con->query("update user_columns set status =1, filter_no=".$filter_no." where filter_from =0 and product_detail_id ='".$value['id']."' and filter_no =0");
 
             $con->query("INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`, `filter_from`, `product_detail_id`, `filter_no` )
                 VALUES ('$user_name', '$column_name', $order_no, 1, 0, $product_detail_id,$filter_no)");
