@@ -380,15 +380,15 @@ const app = Vue.createApp({
             </template>
         </select>
       
-        <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
-        <a class="btn show-filter" @click="showHideFilter" >Filter</a>
+        <a class="btn btn-success" @click="exportToCSV" title="Export to CSV"><i class="fa fa-download" aria-hidden="true"></i></a>
+        <a class="btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
         </div>
         </div>
 
     
     
     </div>
-    <div style="height:100px"></div>
+    
     <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>

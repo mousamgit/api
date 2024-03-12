@@ -56,7 +56,7 @@ header{background-color: #222; width: 100%; height: 50px; color:#fff; position: 
 header a{ color:#fff}
 .data_body{padding: 10px 50px;}
 
-.show-filter{margin-right: 50px;}
+.show-filter .btn-success{ float: right;}
 .pimtable{  width:100% !important;  text-align: left; font-size: 12px;     border: #e1e1e1 solid 1px;  margin-bottom: 20px;}
 .pimtable thead tr{background: #efefef;}
 .pimtable tbody tr:nth-child(even) {background: #efefef;}
