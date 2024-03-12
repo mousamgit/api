@@ -41,6 +41,7 @@
             echo '<button class="drawer-dropdown-toggle" data-target="#drawer-dropdown-admin"><span>Admin/Data Menu</span><i class="fa-solid fa-caret-down"></i></button>';
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-admin">';
             echo '<a class="drawer-list-item"  href="/check_inactive.php"><span>Check Inactive SKUs</span></a>';
+            echo '<a class="drawer-list-item"  href="/myExports.php"><span>Export Templates</span></a>';
             //echo '';
             echo '</nav> </nav>';
         }
