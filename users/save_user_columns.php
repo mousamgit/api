@@ -28,7 +28,6 @@ if($data['selectedStatus'] == 1)
  {
      $con->query("INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`)
                 VALUES ('$user_name', '$column_name', $order_no, 1)");
-
  }
     $success = true;
 }

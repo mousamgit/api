@@ -17,7 +17,7 @@ $success=false;
 $user_name = $_SESSION['username'];
 $con->query("update product_filter set status=0 where user_name='".$_SESSION['username']."'");
 
-$updated_product_detail_id = $con->query("select id from user_filter_details where filter_no=".$data['filter_no']);
+$updated_product_detail_id = $con->query("select id from user_filter_details where status=1 and filter_no=".$data['filter_no']);
 
 if ($updated_product_detail_id->num_rows > 0) {
     while ($prevAttributeValue = $updated_product_detail_id->fetch_assoc()) {

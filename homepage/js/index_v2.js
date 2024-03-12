@@ -395,7 +395,7 @@ const app = Vue.createApp({
     </div>
     <div style="height:100px"></div>
     <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
-    <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
+    <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
      
         <div class="pim-padding ">   
