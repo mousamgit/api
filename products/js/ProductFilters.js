@@ -23,7 +23,7 @@ export default {
     },
     methods: {
         handleInput(){
-        this.showInput=1;
+            this.showInput=1;
         },
         async updateStatus(value) {
             try {
@@ -291,7 +291,7 @@ export default {
                 this.indexVal = -1,
                 this.showAttributeMid = 0,
                 this.op_show_value = 'AND'
-                this.fetchAllColumns();
+            this.fetchAllColumns();
         }
 
 

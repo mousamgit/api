@@ -22,7 +22,7 @@ if($data['selectedStatus'] == 1)
  $check_query=$con->query("select id from user_columns where user_name ='".$user_name."' and column_name='".$column_name."'");
  if($check_query->num_rows>0)
  {
-     $con->query("update user_columns set status =1 where user_name='".$user_name."' and column_name='".$column_name."'");
+     $con->query("update user_columns set status =1, order_no=".$order_no." where user_name='".$user_name."' and column_name='".$column_name."'");
  }
  else
  {

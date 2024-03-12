@@ -19,17 +19,14 @@ if ($selected_columns->num_rows > 0) {
 
 $result = $con->query("SELECT COLUMN_NAME as column_name,DATA_TYPE as data_type,false as selected
                        FROM information_schema.columns
-                       WHERE table_schema = '".$name."' AND table_name = 'pim'");
+                       WHERE table_schema = '".$name."' AND table_name = 'pim' ORDER BY COLUMN_NAME ASC");
 
 $columns=[];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-       if(!(in_array($row['column_name'], $column_names)))
-       {
-           $columns[] = $row;
-       }
-
-
+        $selected = in_array($row['column_name'], $column_names) ? true : false;
+        $row['selected'] = $selected;
+        $columns[] = $row;
     }
 }
 

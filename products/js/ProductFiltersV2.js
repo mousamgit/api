@@ -15,7 +15,8 @@ export default {
             showManualValidationMessage:0,
             filter_name:'',
             showInput:0,
-            editForm:-1 //v2
+            editForm:-1,
+            filters:[]
         };
     },
     mounted() {
@@ -310,11 +311,21 @@ export default {
                             New Condition
                         </div>
 
-                            <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
+                        <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
-                            </a>
+                        </a>
+                       
+                            
         </div>
-
+        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
+         <select class="btn" v-model="filter_no" @change="controlFilters">
+                            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
+                            <template v-for="(fvalue, fkey) in filters">
+                              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
+                            </template>
+                        </select>
+                            
+        </div>
 
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
