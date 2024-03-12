@@ -384,14 +384,7 @@ const app = Vue.createApp({
             </div>
         </div>
         <div class="saved-filter-container">
-<!--        <select class="btn" v-model="filter_no" @change="controlFilters">-->
-<!--            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>-->
-<!--            <template v-for="(fvalue, fkey) in filters">-->
-<!--              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>-->
-<!--            </template>-->
-<!--        </select>-->
-        <a class="btn btn-success" @click="toggleColumnSelector">Add Columns &nbsp;<i class="fa fa-plus"></i></a>
-      
+        <a class="btn btn-success" @click="toggleColumnSelector">Add Columns &nbsp;<i class="fa fa-plus"></i></a>     
         <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
         <a class="btn show-filter" @click="showHideFilter" >Filter</a>
         </div>
