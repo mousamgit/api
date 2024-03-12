@@ -371,14 +371,26 @@ const app = Vue.createApp({
     template: `<div>
     
     <div class=" toolbar pim-padding">
-    
+        <div v-if="showColumnSelector" class="column-selector">
+            <div class="ui-widget-content">
+              <div class="description" tabindex="0">Columns</div>
+              <ul>
+            
+                <li v-for="(column, index) in columns" :key="index">
+                  <input type="checkbox" class="button-menu-item-checkbox" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
+                  <label> &nbsp; {{ column.column_name }}</label>
+                </li>
+              </ul>
+            </div>
+        </div>
         <div class="saved-filter-container">
-        <select class="btn" v-model="filter_no" @change="controlFilters">
-            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
-            <template v-for="(fvalue, fkey) in filters">
-              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
-            </template>
-        </select>
+<!--        <select class="btn" v-model="filter_no" @change="controlFilters">-->
+<!--            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>-->
+<!--            <template v-for="(fvalue, fkey) in filters">-->
+<!--              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>-->
+<!--            </template>-->
+<!--        </select>-->
+        <a class="btn btn-success" @click="toggleColumnSelector">Add Columns &nbsp;<i class="fa fa-plus"></i></a>
       
         <a class="btn btn-success" @click="exportToCSV">Export to CSV</a>
         <a class="btn show-filter" @click="showHideFilter" >Filter</a>
@@ -404,9 +416,7 @@ const app = Vue.createApp({
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                 </th>
-                <th style="width:20px;">
-               <a @click="toggleColumnSelector">Cols<i class="fa fa-plus"></i></a>
-                </th>
+               
                 
               </tr>
             </thead>
@@ -444,10 +454,7 @@ const app = Vue.createApp({
                 </div>
                 </template>
                 </td>
-                </template>
-                
-               
-               
+                </template>              
               </tr>
               
             </tbody>
@@ -483,18 +490,7 @@ const app = Vue.createApp({
               </div>
         </div>
         </div>
-        <div v-if="showColumnSelector" class="column-selector">
-            <div class="ui-widget-content">
-              <div class="description" tabindex="0">Columns</div>
-              <ul>
-            
-                <li v-for="(column, index) in columns" :key="index">
-                  <input type="checkbox" class="button-menu-item-checkbox" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
-                  <label> &nbsp; {{ column.column_name }}</label>
-                </li>
-              </ul>
-            </div>
-        </div>
+        
 
       </div>
 

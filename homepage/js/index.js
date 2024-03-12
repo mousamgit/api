@@ -23,28 +23,84 @@ const app = Vue.createApp({
             startClientX: 0,
             startScrollLeft: 0,
             tableWidth: 0,
-            filter_no:0
+            filter_no:0,
+            showColumnSelector: false,
+            columns: []
         };
     },
     mounted() {
+        this.fetchUserColumns();
         this.fetchProducts();
         document.addEventListener('click', this.handleClickOutside);
     },
     beforeDestroy() {
         // Remove the event listener when the component is destroyed
         document.removeEventListener('click', this.handleClickOutside);
-      },
+    },
 
     methods: {
+        updateColumns(selectedColumns, selectedStatus) {
+            if (selectedStatus == true) {
+                selectedStatus = 1;
+            } else {
+                selectedStatus = 0;
+            }
+            let dataToSend = {
+                'column_name': selectedColumns,
+                'selectedStatus': selectedStatus
+            }
+
+            try {
+                fetch('./users/save_user_columns.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to order columns');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            this.fetchUserColumns();
+                            this.fetchProducts();
+                        } else {
+                            console.error('Error updating database:', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating database:', error);
+                    });
+            } catch (error) {
+                console.error('Error updating database:', error);
+            }
+        },
+        toggleColumnSelector() {
+            this.showColumnSelector = !this.showColumnSelector;
+        },
+        async fetchUserColumns() {
+            try {
+                const response = await fetch('./users/fetch_columns_user_wise.php');
+                const data = await response.json();
+                this.columns = data;
+            } catch (error) {
+                console.error('Error fetching attributes:', error);
+            }
+        },
         handleClickOutside(event) {
             const isInsideFilterContainer = event.target.closest('.filter-container');
             if ((event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
                 this.showFilter = false;
+                this.showColumnSelector= false;
             }
             else{
-                
+
             }
-          },
+        },
         getProductUrl(sku){
             return('/product.php?sku='+sku);
         },
@@ -81,13 +137,13 @@ const app = Vue.createApp({
             const startPage = Math.max(1, this.currentPage - 2);
             const endPage = Math.min(Math.ceil(totalRows / itemsPerPage), startPage + 4);
             console.log('current'+this.currentPage+'start'+startPage+'end'+endPage);
-      
+
             for (let i = startPage; i <= endPage; i++) {
-              pages.push(i);
+                pages.push(i);
             }
             return pages;
-          },
-        
+        },
+
         initializePagination()
         {
             this.currentPage=1,
@@ -120,7 +176,7 @@ const app = Vue.createApp({
             this.initializeData();
             this.currentPage = page;
             this.fetchProducts();
-          },
+        },
         initializeData()
         {
             this.showFilters= 9;
@@ -336,10 +392,8 @@ const app = Vue.createApp({
     <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
+     
         <div class="pim-padding ">   
-        
-
-         
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
@@ -348,7 +402,10 @@ const app = Vue.createApp({
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
-                {{ convertToTitleCase(colName) }}
+                {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
+                </th>
+                <th style="width:20px;">
+               <a @click="toggleColumnSelector">Cols<i class="fa fa-plus"></i></a>
                 </th>
                 
               </tr>
@@ -388,7 +445,11 @@ const app = Vue.createApp({
                 </template>
                 </td>
                 </template>
+                
+               
+               
               </tr>
+              
             </tbody>
           </table>
           </div>
@@ -422,7 +483,18 @@ const app = Vue.createApp({
               </div>
         </div>
         </div>
-       
+        <div v-if="showColumnSelector" class="column-selector">
+            <div class="ui-widget-content">
+              <div class="description" tabindex="0">Columns</div>
+              <ul>
+            
+                <li v-for="(column, index) in columns" :key="index">
+                  <input type="checkbox" class="button-menu-item-checkbox" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
+                  <label> &nbsp; {{ column.column_name }}</label>
+                </li>
+              </ul>
+            </div>
+        </div>
 
       </div>
 

@@ -21,8 +21,8 @@ include 'functions.php';
         .column-selector {
             width:300px;
             position: absolute;
-            top: 220px; /* Adjust this value to position it just below the table */
-            right: 60px;
+            top: 65px; /* Adjust this value to position it just below the table */
+            left: 25px;
             background-color: #fff;
             border: 1px solid #ccc;
             padding: 10px;
