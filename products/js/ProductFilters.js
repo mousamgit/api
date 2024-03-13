@@ -297,8 +297,8 @@ export default {
 
     },
     template: `
-    <div class="right-menu filters background-secondary-bg">
-        <div class="flex-row vcenter filter-header">
+    <div>
+        <div class="flex-row vcenter right-slider-header">
             <span class="sub-heading">FILTERS</span>
         </div>
         

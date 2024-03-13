@@ -379,9 +379,9 @@ const app = Vue.createApp({
               <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
             </template>
         </select>
-      
-        <a class="btn btn-success" @click="exportToCSV" title="Export to CSV"><i class="fa fa-download" aria-hidden="true"></i></a>
-        <a class="btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
+        <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
+
+        <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
         </div>
         </div>
 
@@ -389,7 +389,7 @@ const app = Vue.createApp({
     
     </div>
     
-    <div class="bg-light shadow filter-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
+    <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
      
@@ -403,11 +403,7 @@ const app = Vue.createApp({
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
-                </th>
-                <th style="width:20px;">
-               <a @click="toggleColumnSelector">Cols<i class="fa fa-plus"></i></a>
-                </th>
-                
+                </th>               
               </tr>
             </thead>
             <tbody>
@@ -481,18 +477,23 @@ const app = Vue.createApp({
               <div class="text-muted col-md-4 text-center p-2">
                 {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} / {{totalRows}} records
               </div>
+              <div class="text-muted col-md-4 text-end">
+                <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
+                <a class="icon-btn" @click="exportToCSV" title="Export to CSV"><i class="fa fa-download" aria-hidden="true"></i></a>
+              </div>
         </div>
         </div>
-        <div v-if="showColumnSelector" class="column-selector">
+        <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showColumnSelector }" >
             <div class="ui-widget-content">
-              <div class="description" tabindex="0">Columns</div>
-              <ul>
+              <div class="flex-row vcenter right-slider-header" tabindex="0"><span class="sub-heading">Columns</span></div>
+              
+              
             
-                <li v-for="(column, index) in columns" :key="index">
+                <div class="select-btn" v-for="(column, index) in columns" :key="index">
                   <input type="checkbox" class="button-menu-item-checkbox" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
                   <label> &nbsp; {{ column.column_name }}</label>
-                </li>
-              </ul>
+                </div>
+       
             </div>
         </div>
 
