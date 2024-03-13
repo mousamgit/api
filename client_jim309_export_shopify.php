@@ -16,7 +16,7 @@
   $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
 
-  $query = 'SELECT * FROM pim WHERE (client_jim309_qty > 0 AND brand IN ("blush pink diamonds", "pink kimberley diamonds","sapphire dreams") AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl") OR (client_jim309_qty <= 0 AND client_sgastock = 1 AND collections_2 <> "steve" && collections_2 <> "discontinued" AND brand <> "classique watches" AND brand <>"shopify cl" AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl")';
+  $query = 'SELECT * FROM pim WHERE (client_jim309_qty > 0 AND brand IN ("blush pink diamonds", "pink kimberley diamonds","sapphire dreams") AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl") OR (client_jim309_qty <= 0 AND client_sgastock = 1 AND shopify_qty >= 0 AND collections_2 <> "steve" AND collections_2 <> "discontinued" AND brand <> "classique watches" AND brand <>"shopify cl" AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl")';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/client_export/jim309_product_import.csv';
@@ -33,108 +33,108 @@
   $numrows = mysqli_num_rows($result);
   while($row = mysqli_fetch_assoc($result)){
 
-    $title_mod = trim(str_replace(["earrings","pendant","necklace","bracelet"," ring","various"],"",strtolower($row[product_title])));
-    $type_mod = str_replace(["rings","pendants","necklaces","bracelets","earring"],["ring","pendant","necklace","bracelet","earrings"],strtolower($row[type]));  
+    $title_mod = trim(str_replace(["earrings","pendant","necklace","bracelet"," ring","various"],"",strtolower($row['product_title'])));
+    $type_mod = str_replace(["rings","pendants","necklaces","bracelets","earring"],["ring","pendant","necklace","bracelet","earrings"],strtolower($row['type']));  
 
           //Image Position = 0
           $a = 0;
     
           // Create handle
           $handle = "";
-          if ( strtolower($row[brand]) == "sapphire dreams")
-            if ( strtolower($row[type]) == "loose sapphires") { $handle .= $row[shape] . "-" . $row[colour] . "-australian-sapphire-" . $row[sku] . "-melbourne-jewellers";}
-            else { $handle .= $row[product_title] . "-" . $row[sku] . "-melbourne-jewellers";}
-          elseif ( strtolower($row[brand]) == "argyle origin diamonds" || strtolower($row[brand]) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row[shape] . "-" . $row[colour] . "-" . $row[clarity] . "-" . $row[sku] . "-melbourne-jewellers";}
-          elseif ( strtolower($row[brand])== "pink kimberley diamonds" || strtolower($row[brand]) == "blush pink diamonds") { $handle .= $row[product_title] . "-" . $row[sku] . "-melbourne-jewellers";}
-          else { $handle .= $row[product_title] . "-" . $row[sku] . "-melbourne-jewellers";}
+          if ( strtolower($row['brand']) == "sapphire dreams")
+            if ( strtolower($row['type']) == "loose sapphires") { $handle .= $row['shape'] . "-" . $row['colour'] . "-australian-sapphire-" . $row['sku'] . "-melbourne-jewellers";}
+            else { $handle .= $row['product_title'] . "-" . $row['sku'] . "-melbourne-jewellers";}
+          elseif ( strtolower($row['brand']) == "argyle origin diamonds" || strtolower($row['brand']) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row['shape'] . "-" . $row['colour'] . "-" . $row['clarity'] . "-" . $row['sku'] . "-melbourne-jewellers";}
+          elseif ( strtolower($row['brand'])== "pink kimberley diamonds" || strtolower($row['brand']) == "blush pink diamonds") { $handle .= $row['product_title'] . "-" . $row['sku'] . "-melbourne-jewellers";}
+          else { $handle .= $row['product_title'] . "-" . $row['sku'] . "-melbourne-jewellers";}
           $handle = str_replace([" ","--"],"-",strtolower($handle));   
           
           //product title
-          $title = $row[product_title];
-          if ( strtolower($row[brand]) == "sapphire dreams")
-            if ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) == "unheated") { $title = "Australian Sapphire ". $row[shape]." 1=".$row[carat]."ct ".$row[colour] . " NH";}
-            elseif ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) !== "unheated") { $title = "Australian Sapphire ". $row[shape]." 1=".$row[carat]."ct ".$row[colour]; }
-            else { $title = $row[brand] . " " . $row[product_title];}
-          if ( $row[collections] == "TPR" || $row[collections] == "TDR") { $title = str_replace("pink diamond","tender diamond", $row[product_title]);}
+          $title = $row['product_title'];
+          if ( strtolower($row['brand']) == "sapphire dreams")
+            if ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) == "unheated") { $title = "Australian Sapphire ". $row['shape']." 1=".$row['carat']."ct ".$row['colour'] . " NH";}
+            elseif ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) !== "unheated") { $title = "Australian Sapphire ". $row['shape']." 1=".$row['carat']."ct ".$row['colour']; }
+            else { $title = $row['brand'] . " " . $row['product_title'];}
+          if ( $row['collections'] == "TPR" || $row['collections'] == "TDR") { $title = str_replace("pink diamond","tender diamond", $row['product_title']);}
 
           //Descriptions, if loose sapphire generate description else import from field description
-          if (strtolower($row[type]) == "loose sapphires") 
-          if( strtolower($row[treatment]) == "unheated") { $description = "An unheated Australian " .  $row[shape] . " cut " . $row[colour] . " sapphire weighing " . $row[carat] . "ct and measures " . $row[measurement] . "."; }
-          else {$description = "An Australian " .  $row[shape] . " cut " . $row[colour] . " sapphire weighing " . $row[carat] . "ct and measures " . $row[measurement] . ".";  }
-          else { $description = $row[description];}
+          if (strtolower($row['type']) == "loose sapphires") 
+          if( strtolower($row['treatment']) == "unheated") { $description = "An unheated Australian " .  $row['shape'] . " cut " . $row['colour'] . " sapphire weighing " . $row['carat'] . "ct and measures " . $row['measurement'] . "."; }
+          else {$description = "An Australian " .  $row['shape'] . " cut " . $row['colour'] . " sapphire weighing " . $row['carat'] . "ct and measures " . $row['measurement'] . ".";  }
+          else { $description = $row['description'];}
 
           //Product custom Category for shopify
           $category = "Apparel & Accessories > Jewelry";
-          if ( strtolower($row[brand]) == "shopify cl") { $category .= " > Watches";}
-          if ( strtolower($row[type]) == "rings") { $category .= " > Rings";}
-          if ( strtolower($row[type]) == "earrings") { $category .= " > Earrings";}
-          if ( strtolower($row[type]) == "bracelets") { $category .= "";}
-          if ( strtolower($row[type]) == "necklaces") { $category .= " > Necklaces";}
-          if ( strtolower($row[type]) == "pendants") { $category .= " > Charms & Pendants";}
+          if ( strtolower($row['brand']) == "shopify cl") { $category .= " > Watches";}
+          if ( strtolower($row['type']) == "rings") { $category .= " > Rings";}
+          if ( strtolower($row['type']) == "earrings") { $category .= " > Earrings";}
+          if ( strtolower($row['type']) == "bracelets") { $category .= "";}
+          if ( strtolower($row['type']) == "necklaces") { $category .= " > Necklaces";}
+          if ( strtolower($row['type']) == "pendants") { $category .= " > Charms & Pendants";}
 
 
           // Tags
           $tags = "";
-          if ( $row[brand] != "" ) { $tags .= $row[brand].", "; }
-          if ( $row[colour] != "" ) { $tags .= $row[colour].", "; }
-          if ( $row[shape] != "" ) { $tags .= $row[shape].", "; }
-          if ( $row[clarity] != "" ) { $tags .= $row[clarity].", ";}
-          if ( $row[type] != "" ) { $tags .= $row[type].", "; }
-          if ( $row[metal_composition] != "" ) { $tags .= $row[metal_composition].", "; }
-          if ( $row[main_metal] != "" ) { $tags .= $row[main_metal]." Metal, "; }
-          if ( $row[treatment] != "" ) { $tags .= $row[treatment].", "; }
-          if ( $row[client_tags] != "" ) { $tags .= $row[client_tags].", "; }
-          if ( $row[client_jim309_qty] > 0 ) { $tags .= "MELBOURNE_JWLR_STOCK"; }
-          if ( $row[client_jim309_qty] <= 0 & $row[client_sgastock] != 1 ) { $tags .= "SGA_STOCK";}
+          if ( $row['brand'] != "" ) { $tags .= $row['brand'].", "; }
+          if ( $row['colour'] != "" ) { $tags .= $row['colour'].", "; }
+          if ( $row['shape'] != "" ) { $tags .= $row['shape'].", "; }
+          if ( $row['clarity'] != "" ) { $tags .= $row['clarity'].", ";}
+          if ( $row['type'] != "" ) { $tags .= $row['type'].", "; }
+          if ( $row['metal_composition'] != "" ) { $tags .= $row['metal_composition'].", "; }
+          if ( $row['main_metal'] != "" ) { $tags .= $row['main_metal']." Metal, "; }
+          if ( $row['treatment'] != "" ) { $tags .= $row['treatment'].", "; }
+          if ( $row['client_tags'] != "" ) { $tags .= $row['client_tags'].", "; }
+          if ( $row['client_jim309_qty'] > 0 ) { $tags .= "MELBOURNE_JWLR_STOCK"; }
+          if ( $row['client_jim309_qty'] <= 0 & $row['client_sgastock'] != 1 ) { $tags .= "SGA_STOCK";}
 
           //if SGA Stock >= 3 qty = 1 else 0
-          if ( $row[client_jim309_qty] >= 1 ) { $inventoryQty = $row[client_jim309_qty];}
+          if ( $row['client_jim309_qty'] >= 1 ) { $inventoryQty = $row['client_jim309_qty'];}
           else{
-            if ( $row[client_sgastock] == 1)
-              if ( $row[shopify_qty] >= 3) { $inventoryQty = 1; }
+            if ( $row['client_sgastock'] == 1)
+              if ( $row['shopify_qty'] >= 3) { $inventoryQty = 1; }
               else { $inventoryQty = 0;}
           }
 
           //price
-          $price = $row[retail_aud];
+          $price = $row['retail_aud'];
 
           //BP & PK > PK
-          $brand = str_replace("Blush Pink Diamonds","Pink Kimberley Diamonds", $row[brand]);
+          $brand = str_replace("Blush Pink Diamonds","Pink Kimberley Diamonds", $row['brand']);
 
           //check Status
           if ( $inventoryQty <= 0) { $status = "draft";} else { $status = "active";} 
 
           //images alt text
-          if (strtolower($row[brand]) == "sapphire dreams") 
-            if ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) == "unheated") { $alt_text = $row[carat] . "ct Unheated " . $row[colour] . " " . $row[shape] . " Australian Sapphire - Melbourne Jewellers";}
-            elseif ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) !== "unheated") { $alt_text = $row[carat] . "ct " . $row[colour] . " " . $row[shape] . " Australian Sapphire - Melbourne Jewellers";}
-            else { $alt_text =  ucwords($title_mod) . " " . $row[metal_composition] . " Australian " . $row[colour] . " Sapphire " . ucwords($type_mod) . " - Melbourne Jewellers";}
+          if (strtolower($row['brand']) == "sapphire dreams") 
+            if ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) == "unheated") { $alt_text = $row['carat'] . "ct Unheated " . $row['colour'] . " " . $row['shape'] . " Australian Sapphire - Melbourne Jewellers";}
+            elseif ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) !== "unheated") { $alt_text = $row['carat'] . "ct " . $row['colour'] . " " . $row['shape'] . " Australian Sapphire - Melbourne Jewellers";}
+            else { $alt_text =  ucwords($title_mod) . " " . $row['metal_composition'] . " Australian " . $row['colour'] . " Sapphire " . ucwords($type_mod) . " - Melbourne Jewellers";}
           else {
-            if ( strtolower($row[brand]) == "argyle origin diamonds") { $alt_text = $row[carat] . "ct " . $row[colour] . " " . $row[shape] . " Argyle origin pink diamond - Melbourne Jewellers";}
-            elseif ( strtolower($row[brand]) == "argyle pink diamonds") { $alt_text = $row[carat] . "ct " . $row[colour] . " " . $row[shape] . " Argyle certified pink diamond - Melbourne Jewellers";}
-            else { $alt_text = $row[product_title] . " - Melbourne Jewellers";}
+            if ( strtolower($row['brand']) == "argyle origin diamonds") { $alt_text = $row['carat'] . "ct " . $row['colour'] . " " . $row['shape'] . " Argyle origin pink diamond - Melbourne Jewellers";}
+            elseif ( strtolower($row['brand']) == "argyle pink diamonds") { $alt_text = $row['carat'] . "ct " . $row['colour'] . " " . $row['shape'] . " Argyle certified pink diamond - Melbourne Jewellers";}
+            else { $alt_text = $row['product_title'] . " - Melbourne Jewellers";}
           }
 
           //SEO title
-          if (strtolower($row[brand]) == "sapphire dreams") 
-            if ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) == "unheated") { $seoTitle = $row[carat] . "ct Unheated " . $row[colour] . " " . $row[shape] . " Australian Sapphire";}
-            elseif ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) !== "unheated") { $seoTitle = $row[carat] . "ct " . $row[colour] . " " . $row[shape] . " Australian Sapphire";}
-            else { $seoTitle =  ucwords($title_mod) . " " . $row[metal_composition] . " Australian " . $row[colour] . " Sapphire " . ucwords($type_mod);}
+          if (strtolower($row['brand']) == "sapphire dreams") 
+            if ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) == "unheated") { $seoTitle = $row['carat'] . "ct Unheated " . $row['colour'] . " " . $row['shape'] . " Australian Sapphire";}
+            elseif ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) !== "unheated") { $seoTitle = $row['carat'] . "ct " . $row['colour'] . " " . $row['shape'] . " Australian Sapphire";}
+            else { $seoTitle =  ucwords($title_mod) . " " . $row['metal_composition'] . " Australian " . $row['colour'] . " Sapphire " . ucwords($type_mod);}
           else {
-            if ( strtolower($row[brand]) == "argyle origin diamonds") { $seoTitle = $row[carat] . "ct " . $row[colour] . " " . $row[shape] . " Argyle origin pink diamond";}
-            elseif ( strtolower($row[brand]) == "argyle pink diamonds") { $seoTitle = $row[carat] . "ct " . $row[colour] . " " . $row[shape] . " Argyle certified pink diamond";}
-            else { $seoTitle = $row[product_title] . " set with Argyle pink diamonds";}
+            if ( strtolower($row['brand']) == "argyle origin diamonds") { $seoTitle = $row['carat'] . "ct " . $row['colour'] . " " . $row['shape'] . " Argyle origin pink diamond";}
+            elseif ( strtolower($row['brand']) == "argyle pink diamonds") { $seoTitle = $row['carat'] . "ct " . $row['colour'] . " " . $row['shape'] . " Argyle certified pink diamond";}
+            else { $seoTitle = $row['product_title'] . " set with Argyle pink diamonds";}
           }
 
          //check images
          $imageURL = "";
-         if($row[image1] != "") { $imageURL .= $row[image1].";";}
-         if($row[image2] != "") { $imageURL .= $row[image2].";";}
-         if($row[image3] != "") { $imageURL .= $row[image3].";";}
-         if($row[image4] != "") { $imageURL .= $row[image4].";";}
-         if($row[image5] != "") { $imageURL .= $row[image5].";";}
-         if($row[image6] != "") { $imageURL .= $row[image6].";";}
-         if($row[packaging_image] != "") { $imageURL .= $row[packaging_image];}
+         if($row['image1'] != "") { $imageURL .= $row['image1'].";";}
+         if($row['image2'] != "") { $imageURL .= $row['image2'].";";}
+         if($row['image3'] != "") { $imageURL .= $row['image3'].";";}
+         if($row['image4'] != "") { $imageURL .= $row['image4'].";";}
+         if($row['image5'] != "") { $imageURL .= $row['image5'].";";}
+         if($row['image6'] != "") { $imageURL .= $row['image6'].";";}
+         if($row['packaging_image'] != "") { $imageURL .= $row['packaging_image'];}
 
          $images = explode(';', rtrim($imageURL, ';'));
          $imagesString = print_r($images, true);
@@ -147,7 +147,7 @@
                     2 => $isPositionGreaterThanOne ? "" : $description, 
                     3 => $isPositionGreaterThanOne ? "" : $brand,
                     4 => $isPositionGreaterThanOne ? "" : $category,
-                    5 => $isPositionGreaterThanOne ? "" : $row[type],
+                    5 => $isPositionGreaterThanOne ? "" : $row['type'],
                     6 => $isPositionGreaterThanOne ? "" : $tags,
                     7 => $isPositionGreaterThanOne ? "" : "FALSE",
                     8 => "",
@@ -156,7 +156,7 @@
                     11 => "",
                     12 => "",
                     13 => "",
-                    14 => $isPositionGreaterThanOne ? "" : $row[sku],
+                    14 => $isPositionGreaterThanOne ? "" : $row['sku'],
                     15 => "",
                     16 => $isPositionGreaterThanOne ? "" : "shopify",
                     17 => $isPositionGreaterThanOne ? "" : $inventoryQty,
@@ -186,7 +186,7 @@
                     41 => "",
                     42 => "",
                     43 => "",
-                    44 => $isPositionGreaterThanOne ? "" : $row[image1],
+                    44 => $isPositionGreaterThanOne ? "" : $row['image1'],
                     45 => "",
                     46 => "",
                     47 => "",

@@ -17,13 +17,13 @@
   include_once ('connect.php');
   include_once ('mkdir.php');
 
-  $query = 'SELECT * FROM pim WHERE (brand = "blush pink diamonds" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND (shopify_qty > 0 OR preorder = 1)) OR (brand in ("sapphire dreams","argyle white diamonds","pink kimberley diamonds","white diamond jewellery","argyle pink diamonds","argyle blue diamonds","argyle origin diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND shopify_qty > 0) OR (brand = "shopify cl" && collections <> "Vintage") OR ((type = "loose sapphires" OR type = "loose diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND image1 <> "" AND shopify_qty > 0) ORDER BY product_title ASC;';
+  $query = 'SELECT * FROM pim WHERE (brand = "blush pink diamonds" AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "" AND (shopify_qty > 0 OR preorder = 1)) OR (brand in ("sapphire dreams","argyle white diamonds","pink kimberley diamonds","white diamond jewellery","argyle pink diamonds","argyle blue diamonds","argyle origin diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND description <> "" AND image1 <> "") OR (brand = "shopify cl" && collections <> "Vintage") OR ((type = "loose sapphires" OR type = "loose diamonds") AND collections not in ("sdm","melee") AND wholesale_aud > 0 AND retail_aud > 0 AND image1 <> "") ORDER BY product_title ASC;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sga-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","Command","Handle","Body HTML","Inventory Available:Home","Inventory Available:MD","Inventory Available:PS","Status","Tags","Tags Command","Title","Type","Variant Barcode","Variant Command","Variant Cost","Variant Inventory Policy","Variant Inventory Tracker","Variant Price","Vendor","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Image Src","Image Command","Variant Image","Metafield:custom.argyle_colour","Metafield:custom.certification","Metafield:custom.product_caratprice","Metafield:custom.product_rrp","Metafield:custom.specifications","Metafield:custom.stone_carat","Metafield:custom.stone_clarity","Metafield:custom.stone_colour","Metafield:custom.stone_measurement","Metafield:custom.stone_shape","Metafield:custom.table_specifications","Variant Fullfilment Service");
+  $headers = array("Variant SKU","Command","Handle","Body HTML","Inventory Available:Home","Inventory Available:MD","Inventory Available:PS","Status","Tags","Tags Command","Title","Type","Variant Barcode","Variant Command","Variant Cost","Variant Inventory Policy","Variant Inventory Tracker","Variant Price","Vendor","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Image Src","Image Command","Variant Image","Metafield:custom.argyle_colour","Metafield:custom.certification","Metafield:custom.product_caratprice","Metafield:custom.product_rrp","Metafield:custom.specifications","Metafield:custom.stone_carat","Metafield:custom.stone_clarity","Metafield:custom.stone_colour","Metafield:custom.stone_measurement","Metafield:custom.stone_shape","Metafield:custom.table_specifications","Variant Fullfilment Service","ID");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -61,8 +61,6 @@
           elseif ($row['preorder'] == 1) {$command = "MERGE";}
           else {$command = "DELETE";}
         }
-        
-
         
         // Tags
         $tags = "";
@@ -284,6 +282,7 @@
             37 => $row['shape'],
             38 => $table_specifications,
             39 => "manual",
+            40 => $row['ws_product_id'],
 
           );
 

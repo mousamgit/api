@@ -16,7 +16,7 @@
   $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
 
-  $query = 'SELECT * FROM pim WHERE (client_jim309_qty > 0 AND brand IN ("blush pink diamonds", "pink kimberley diamonds","sapphire dreams") AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl") OR (client_jim309_qty <= 0 AND client_sgastock = 1 AND collections_2 <> "steve" && collections_2 <> "discontinued" AND brand <> "classique watches" AND brand <>"shopify cl" AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl")';
+  $query = 'SELECT * FROM pim WHERE (client_jim309_qty > 0 AND brand IN ("blush pink diamonds", "pink kimberley diamonds","sapphire dreams") AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl") OR (client_jim309_qty <= 0 AND client_sgastock = 1 AND shopify_qty >= 3 AND collections_2 <> "steve" AND collections_2 <> "discontinued" AND brand <> "classique watches" AND brand <>"shopify cl" AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl")';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/client_export/jim309_inventory_import.csv';
@@ -36,27 +36,27 @@
 
           // Create handle
           $handle = "";
-          if ( strtolower($row[brand]) == "sapphire dreams")
-            if ( strtolower($row[type]) == "loose sapphires") { $handle .= $row[shape] . "-" . $row[colour] . "-australian-sapphire-" . $row[sku] . "-melbourne-jewellers";}
-            else { $handle .= $row[product_title] . "-" . $row[sku] . "-melbourne-jewellers";}
-          elseif ( strtolower($row[brand]) == "argyle origin diamonds" || strtolower($row[brand]) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row[shape] . "-" . $row[colour] . "-" . $row[clarity] . "-" . $row[sku] . "-melbourne-jewellers";}
-          elseif ( strtolower($row[brand])== "pink kimberley diamonds" || strtolower($row[brand]) == "blush pink diamonds") { $handle .= $row[product_title] . "-" . $row[sku] . "-melbourne-jewellers";}
-          else { $handle .= $row[product_title] . "-" . $row[sku] . "-melbourne-jewellers";}
+          if ( strtolower($row['brand']) == "sapphire dreams")
+            if ( strtolower($row['type']) == "loose sapphires") { $handle .= $row['shape'] . "-" . $row['colour'] . "-australian-sapphire-" . $row['sku'] . "-melbourne-jewellers";}
+            else { $handle .= $row['product_title'] . "-" . $row['sku'] . "-melbourne-jewellers";}
+          elseif ( strtolower($row['brand']) == "argyle origin diamonds" || strtolower($row['brand']) == "argyle pink diamonds") { $handle .= "argyle-pink-diamond-" . $row['shape'] . "-" . $row['colour'] . "-" . $row['clarity'] . "-" . $row['sku'] . "-melbourne-jewellers";}
+          elseif ( strtolower($row['brand'])== "pink kimberley diamonds" || strtolower($row['brand']) == "blush pink diamonds") { $handle .= $row['product_title'] . "-" . $row['sku'] . "-melbourne-jewellers";}
+          else { $handle .= $row['product_title'] . "-" . $row['sku'] . "-melbourne-jewellers";}
           $handle = str_replace([" ","--"],"-",strtolower($handle));   
           
           //product title
-          $title = $row[product_title];
-          if ( strtolower($row[brand]) == "sapphire dreams")
-            if ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) == "unheated") { $title = "Australian Sapphire ". $row[shape]." 1=".$row[carat]."ct ".$row[colour] . " NH";}
-            elseif ( strtolower($row[type]) == "loose sapphires" && strtolower($row[treatment]) !== "unheated") { $title = "Australian Sapphire ". $row[shape]." 1=".$row[carat]."ct ".$row[colour]; }
-            elseif ( strtolower($row[type]) !== "loose sapphires" && strpos(strtolower($row[collections_2]), "variants") !== false) { $title = ucwords($title_mod) . " " . $row[shape] . " Sapphire " . ucwords($type_mod);}
-          if ( $row[collections] == "TPR" || $row[collections] == "TDR") { $title = str_replace("pink diamond","tender diamond", $row[product_title]);}
+          $title = $row['product_title'];
+          if ( strtolower($row['brand']) == "sapphire dreams")
+            if ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) == "unheated") { $title = "Australian Sapphire ". $row['shape']." 1=".$row['carat']."ct ".$row['colour'] . " NH";}
+            elseif ( strtolower($row['type']) == "loose sapphires" && strtolower($row['treatment']) !== "unheated") { $title = "Australian Sapphire ". $row['shape']." 1=".$row['carat']."ct ".$row['colour']; }
+            elseif ( strtolower($row['type']) !== "loose sapphires" && strpos(strtolower($row['collections_2']), "variants") !== false) { $title = ucwords($title_mod) . " " . $row['shape'] . " Sapphire " . ucwords($type_mod);}
+          if ( $row['collections'] == "TPR" || $row['collections'] == "TDR") { $title = str_replace("pink diamond","tender diamond", $row['product_title']);}
 
           //if SGA Stock >= 5 qty = 1 else 0
-          if ( $row[client_jim309_qty] >= 1 ) { $inventoryQty = $row[client_jim309_qty];}
+          if ( $row['client_jim309_qty'] >= 1 ) { $inventoryQty = $row['client_jim309_qty'];}
           else{
-            if ( $row[client_sgastock] == 1)
-              if ( $row[shopify_qty] >= 3) { $inventoryQty = 1; }
+            if ( $row['client_sgastock'] == 1)
+              if ( $row['shopify_qty'] >= 3) { $inventoryQty = 1; }
               else { $inventoryQty = 0;}
           }
 
@@ -69,7 +69,7 @@
                     5 => "",
                     6 => "",
                     7 => "",
-                    8 => $row[sku],
+                    8 => $row['sku'],
                     9 => "",
                     10 => "",
                     11 => "Retail Shop",

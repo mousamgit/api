@@ -132,45 +132,46 @@
                         case 'cancelled':
                             $select = 1;
                             break;
-                        case 'created':
+                        case 'jeweller_aram':
                             $select = 2;
                             break;
-                        case 'jeweller_aram':
+                        case 'polisher_genlik':
                             $select = 3;
                             break;
-                        case 'jeweller_mardo':
+                        case 'watchmaker_sy':
                             $select = 4;
                             break;
-                        case 'setter_apkar':
+                        case 'shipped':
                             $select = 5;
                             break;
-                        case 'setter_harut':
+                        case 'received':
                             $select = 6;
                             break;
-                        case 'polisher_genlik':
+                        case 'pending approval':
                             $select = 7;
                             break;
-                        case 'watchmaker_sy':
+                        case 'quote':
                             $select = 8;
                             break;
-                        case 'shipped':
+                        case 'completed':
                             $select = 9;
                             break;
-                    }
+                        }
                 ?>
                 <div class="form-row">
                     <div class="cell-l">Status:</div>
                     <div class='cell-r'>
                         <select id='status' name='status' class="select-design" style="width:100%;" required>
                             <option value="cancelled" <?php if($select == 1){ echo "selected"; }?> >Cancelled</option>
-                            <option value="created" <?php if($select == 2){ echo "selected"; }?> >Created</option>
-                            <option value="jeweller_aram" <?php if($select == 3){ echo "selected"; }?> >Jeweller - Aram</option>
-                            <option value="jeweller_mardo" <?php if($select == 4){ echo "selected"; }?> >Jeweller - Mardo</option>
-                            <option value="setter_apkar" <?php if($select == 5){ echo "selected"; }?> >Setter - Apkar</option>
-                            <option value="setter_harut" <?php if($select == 6){ echo "selected"; }?> >Setter - Harut</option>
-                            <option value="polisher_genlik" <?php if($select == 7){ echo "selected"; }?> >Polisher - Genlik</option>
-                            <option value="watchmaker_sy" <?php if($select == 8){ echo "selected"; }?> >Watchmaker - SY</option>
-                            <option value="shipped" <?php if($select == 9){ echo "selected"; }?> >Shipped</option>
+                            <option value="jeweller_aram" <?php if($select == 2){ echo "selected"; }?> >Jeweller - Aram</option>
+                            <option value="polisher_genlik" <?php if($select == 3){ echo "selected"; }?> >Polisher - Genlik</option>
+                            <option value="watchmaker_sy" <?php if($select == 4){ echo "selected"; }?> >Watchmaker - SY</option>
+                            <option value="shipped" <?php if($select == 5){ echo "selected"; }?> >Shipped</option>
+                            <option value="received" <?php if($select == 6){ echo "selected"; }?> >Received</option>
+                            <option value="pending approval" <?php if($select == 7){ echo "selected"; }?> >Pending Approval</option>
+                            <option value="quote" <?php if($select == 8){ echo "selected"; }?> >Quote</option>
+                            <option value="completed" <?php if($select == 9){ echo "selected"; }?> >Completed</option>
+
                         </select>
                     </div>
                 </div>
