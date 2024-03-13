@@ -16,7 +16,7 @@
   $startScriptTime=microtime(TRUE);
   include_once ('connect.php');
 
-  $query = 'SELECT * FROM pim WHERE (client_jim077_qty > 0 AND brand IN ("blush pink diamonds", "pink kimberley diamonds","sapphire dreams") AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl") OR (client_jim077_qty <= 0 AND client_sgastock = 1 AND collections_2 <> "steve" && collections_2 <> "discontinued" AND brand <> "classique watches" AND brand <>"shopify cl" AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl")';
+  $query = 'SELECT * FROM pim WHERE (client_jim077_qty > 0 AND brand IN ("blush pink diamonds", "pink kimberley diamonds","sapphire dreams") AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl") OR (client_jim077_qty <= 0 AND client_sgastock = 1 AND shopify_qty >= 0 AND collections_2 <> "steve" AND collections_2 <> "discontinued" AND brand <> "classique watches" AND brand <>"shopify cl" AND image1 <> "" AND image1 IS NOT NULL AND collections <> "melee" AND collections <> "sdm" AND collections <> "sdl")';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/client_export/jim077_product_import.csv';
