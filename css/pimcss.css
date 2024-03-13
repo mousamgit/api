@@ -402,7 +402,9 @@ header a{ color:#fff}
   .delete-icon a:hover i{transform: rotate(360deg)}
   .page-btn, .pagination-container span{padding:10px 18px; color:var(--dark-grey);}
   .page-btn:hover, .page-btn.active{background-color: var(--light-grey);  color:var(--dark-grey);}
-  .select-btn{border: 1px solid rgba(0, 0, 0, .125);  background-color: #fff;  border-radius: 0.25rem;  padding:5px 15px;     float: left;    margin-right: 5px;  font-size: 14px;  margin-top: 5px;}
+  .select-btn{border: 1px solid rgba(0, 0, 0, .125);  background-color: #fff;  border-radius: 0.25rem;  padding:5px 15px;     float: left;    margin-right: 5px;  font-size: 14px;  margin-top: 5px; cursor: pointer;}
+  .select-btn label{cursor: pointer;}
+  .select-btn.selected{background-color: #222; color:#fff;}
 
 
   @media (max-width: 767px)  {

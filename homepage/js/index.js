@@ -16,7 +16,7 @@ const app = Vue.createApp({
             itemsPerPage: 100,
             totalRows:0,
             filterList:[],
-            showFilter:true,
+            showFilter:false,
             showSavedFilters:false,
             draggedIndex: null,
             isDragging: false,
@@ -79,6 +79,10 @@ const app = Vue.createApp({
                 console.error('Error updating database:', error);
             }
         },
+        toggleCheckbox(column) {
+            column.selected = !column.selected; 
+            this.updateColumns(column.column_name, column.selected); 
+          },
         toggleColumnSelector() {
             this.showColumnSelector = !this.showColumnSelector;
         },
@@ -486,11 +490,8 @@ const app = Vue.createApp({
         <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showColumnSelector }" >
             <div class="ui-widget-content">
               <div class="flex-row vcenter right-slider-header" tabindex="0"><span class="sub-heading">Columns</span></div>
-              
-              
-            
-                <div class="select-btn" v-for="(column, index) in columns" :key="index">
-                  <input type="checkbox" class="button-menu-item-checkbox" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
+                <div class="select-btn" v-for="(column, index) in columns" :key="index" @click="toggleCheckbox(column)" :class="{'selected': column.selected }">
+                  <input type="checkbox" class="button-menu-item-checkbox hidden" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
                   <label> &nbsp; {{ column.column_name }}</label>
                 </div>
        
