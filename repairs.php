@@ -23,8 +23,8 @@
   <table id="myTable" class="producttable">
         <thead>
             <tr>
-                <th style="color:#fff; font-size:14px;">Date Added</th>
-                <th style="color:#fff; font-size:14px;">Type</th>
+                <th style="color:#fff; font-size:14px;">Date Created</th>
+                <th style="color:#fff; font-size:14px;">Department</th>
                 <th style="color:#fff; font-size:14px;">Job Number</th>
                 <th style="color:#fff; font-size:14px;">Customer Code</th>
                 <th style="color:#fff; font-size:14px;">Due Date</th>
