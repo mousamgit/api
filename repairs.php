@@ -22,27 +22,32 @@
   <div style="width:100%;">
   <table id="myTable" class="producttable">
         <thead>
-            <tr>
-                <th style="color:#fff; font-size:14px;">Date Created</th>
-                <th style="color:#fff; font-size:14px;">Department</th>
-                <th style="color:#fff; font-size:14px;">Job Number</th>
-                <th style="color:#fff; font-size:14px;">Customer Code</th>
-                <th style="color:#fff; font-size:14px;">Due Date</th>
-                <th style="color:#fff; font-size:14px;">User</th>
-                <th style="color:#fff; font-size:14px;">Status</th>
+            <tr style="font-size: 14px; color:#fff;">
+                <th>Log Number</th>
+                <th>Date Created</th>
+                <th>Job Number</th>
+                <th>Customer Code</th>
+                <th>Due Date</th>
+                <th>Department</th>
+                <th>User</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
                 <?php 
                     while ($row = mysqli_fetch_assoc($result)){
+                        if ($row[repair_type] == "watch") { $depcolor = '#b58946';} else { $depcolor = '#c792d1';}
+                        if ($row[status] == "pending approval") { $statcolor = '#ed9c77';} 
+                        elseif ($row[status] == "shipped") { $statcolor = '#c4c2c2';} else { $statcolor = '#fff';}
                         echo "<tr class='clickable-row' data-href='https://pim.samsgroup.info/view_repair.php?id=".$row[id]."'>";
+                        echo "<td>".$row[id]."</td>";
                         echo "<td>".$row[added_date]."</td>";
-                        if ($row[repair_type] == "watch") { echo "<td bgcolor='#b58946'>".$row[repair_type]."</td>"; } else { echo "<td bgcolor='#E4DDFF'>".$row[repair_type]."</td>"; }
                         echo "<td><a href='https://pim.samsgroup.info/view_repair.php?id=".$row[id]."'>".$row[job_number]."</a></td>";
                         echo "<td>".$row[cust_code]."</td>";
                         echo "<td>".$row[due_date]."</td>";
-                        echo "<td>".$row[team_member]."</td>";
-                        echo "<td>".$row[status]."</td>";
+                        echo "<td style='color:$depcolor; font-weight:bold;'>".strtoupper($row[repair_type])."</td>";
+                        echo "<td>".ucwords($row[team_member])."</td>";
+                        echo "<td bgcolor=$statcolor>".ucwords($row[status])."</td>";
                         echo "</tr>";
                     }
                 ?>
