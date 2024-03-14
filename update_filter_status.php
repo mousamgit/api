@@ -31,6 +31,11 @@ if($value ==0)
 {
     $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
     $con->query($sql);
+
+    $sql_filter_update_1 = "DELETE from user_filters where id=".$data['filter_no'];
+    $sql_filter_update_2 = "DELETE from user_filter_details where filter_no=".$data['filter_no'];
+    $con->query($sql_filter_update_1);
+    $con->query($sql_filter_update_2);
     $success=true;
 }
 else
