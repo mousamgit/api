@@ -98,6 +98,23 @@
             <div class="r-div">
             <div class="wrapper-box">
                 <div class="form-row">
+                <div class="cell-l">Status:</div>
+                    <div class='cell-r'>
+                        <select id='status' name='status' class="select-design" style="width:100%;" required>
+                        <option value="received" <?php if($select == 1){ echo "selected"; }?> >Received</option>
+                            <option value="cancelled" <?php if($select == 2){ echo "selected"; }?> >Cancelled</option>
+                            <option value="jeweller_aram" <?php if($select == 3){ echo "selected"; }?> >Jeweller - Aram</option>
+                            <option value="polisher_genlik" <?php if($select == 4){ echo "selected"; }?> >Polisher - Genlik</option>
+                            <option value="watchmaker_sy" <?php if($select == 5){ echo "selected"; }?> >Watchmaker - SY</option>
+                            <option value="shipped" <?php if($select == 6){ echo "selected"; }?> >Shipped</option>
+                            <option value="pending approval" <?php if($select == 7){ echo "selected"; }?> >Pending Approval</option>
+                            <option value="quote" <?php if($select == 8){ echo "selected"; }?> >Quote</option>
+                            <option value="completed" <?php if($select == 9){ echo "selected"; }?> >Completed</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="cell-l">Repair Type:</div>
                     <div class="cell-r">
                         <select name="type" id="type" required>
@@ -116,10 +133,11 @@
                     <div id="item-container-j" class="item-container-j"></div>
                 </div>
                 <div id="watch" class="task watch w-tasks">
-                    <div class="task-header">Watch Repair Tasks<button class="task_button"><i class="fa-solid fa-plus"></i></button></div>
+                    <div class="task-header">Watch Repair Tasks<button class="add_buttonw"><i class="fa-solid fa-plus"></i></button></div>
                     <div id="item-container-w" class="item-container-w"></div>
                 </div>
                 <div class="form-row">
+                    <input type="hidden" id="user" name="user" value="<?php echo $username;?>">
                     <button type="submit" id="submit" name="Submit" class="submit-btn">Submit</button>
                 </div>
             </div>

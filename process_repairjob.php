@@ -4,16 +4,16 @@
     require 'connect.php';
 ?>
 
-<html>
+<!--<html>
     <head>
-        <?php include 'header.php'; ?>
+        <?php // include 'header.php'; ?>
         <title> SGA PIM - Repair Job Processing... </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     </head>
-    <body>
-        <?php include 'topbar.php'; ?>
+    <body> -->
+        <?php // include 'topbar.php'; ?>
         <?php
             /* Posted Values to Variables */
             if(isset($_POST['job_number'])) $job_number=$_POST['job_number'];
@@ -29,6 +29,8 @@
             if(isset($_POST['taskprice'])) $taskprice=$_POST['taskprice'];
             if(isset($_POST['notes'])) $notes=$_POST['notes'];
             if(isset($_POST['address'])) $address=$_POST['address'];
+            if(isset($_POST['user'])) $user=$_POST['user'];
+            if(isset($_POST['status'])) $status=$_POST['status'];
 
             /* Check Files Uploaded */
             if(isset($_POST['Submit'])){ 
@@ -86,32 +88,41 @@
             }
 
             if(!empty($job_number)){
-                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date, status, notes, address) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$username', '$date' , 'created', '$notes', '$address') ";
+                $sql = "INSERT into repairs (job_number, cust_code, cust_ref, cust_name, contact, product, images, repair_type, tasks, team_member, due_date, status, notes, address) VALUES ('$job_number', '$cust_code', '$reference_number', '$cust_name', '$contact', '$product', '$images', '$type', '$tasks', '$user', '$date' , '$status', '$notes', '$address') ";
                 $result = mysqli_query($con, $sql) or die(mysqli_error($con));
             }
         ?>
+        <!--
         <div class="pim-padding">
-            <div style="float:left; width:49%;"><a href="https://pim.samsgroup.info/repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div>
+            <div style="float:left; width:49%;"><a href="https://pim.samsgroup.info/repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div> -->
             <?php 
-                $quickLookup = "SELECT id from repairs where job_number='".$job_number."' and cust_code='".$cust_code."' and cust_name='".$cust_name."' and cust_ref='".$reference_number."' ";
+                /*$quickLookup = "SELECT id from repairs where job_number='".$job_number."' and cust_code='".$cust_code."' and cust_name='".$cust_name."' and cust_ref='".$reference_number."' ";
                 $quickResult = mysqli_query($con, $quickLookup) or die(mysqli_error($con));
                         while ($row = mysqli_fetch_assoc($quickResult)){
                             echo '<div style="float:right; width:49%; text-align:right;"><a href="https://pim.samsgroup.info/view_repair.php?id='.$row[id].'">View Added Repair Job'.$job_number.' <i class="fa-solid fa-right-long"></i></a></div>';
                             $url = "https://pim.samsgroup.info/view_repair.php?id=".$row[id];
-                        }
+                        }*/
             ?>
             
-            <table class="sga-table producttable">
+            <!--<table class="sga-table producttable">
             <thead><tr><td colspan="1000"><h2>Repair added successfully!</h2></td></tr></thead>
             <tbody>
-            <tr><td class="l"> Job Number: </td> <td><b><?php echo $job_number; ?></b></td></tr>
-            <tr><td class="l"> Customer Code: </td> <td><?php echo $cust_code; ?></td></tr>
-            <tr><td class="l"> Contact: </td> <td><?php echo $contact; ?></td></tr>
-            <tr><td class="l"> Reference: </td> <td><?php echo $reference_number; ?></td></tr>
-            <tr><td class="l"> Type: </td> <td><?php echo $type; ?></td></tr>
+            <tr><td class="l"> Job Number: </td> <td><b><?php // echo $job_number; ?></b></td></tr>
+            <tr><td class="l"> Customer Code: </td> <td><?php // echo $cust_code; ?></td></tr>
+            <tr><td class="l"> Contact: </td> <td><?php //  echo $contact; ?></td></tr>
+            <tr><td class="l"> Reference: </td> <td><?php // echo $reference_number; ?></td></tr>
+            <tr><td class="l"> Type: </td> <td><?php // echo $type; ?></td></tr>
             </tbody>
             </table>
-        </div>
+        </div>-->
+        <?php 
+                $quickLookup = "SELECT id from repairs where job_number='".$job_number."' and cust_code='".$cust_code."' and cust_name='".$cust_name."' and cust_ref='".$reference_number."' ";
+                $quickResult = mysqli_query($con, $quickLookup) or die(mysqli_error($con));
+                        while ($row = mysqli_fetch_assoc($quickResult)){
+                            //echo '<div style="float:right; width:49%; text-align:right;"><a href="https://pim.samsgroup.info/view_repair.php?id='.$row[id].'">View Added Repair Job'.$job_number.' <i class="fa-solid fa-right-long"></i></a></div>';
+                            $url = "https://pim.samsgroup.info/view_repair.php?id=".$row[id];
+                        }
+            ?>
         <?php 
             header('Location: '.$url);
             exit();
