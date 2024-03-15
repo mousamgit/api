@@ -8,10 +8,12 @@ include '../login_checking.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
 
     <?php include '../header.php'; ?>
-    <script src="./autofill.js" ></script>
+    <script>
+    const myapp = Vue.createApp({});
+</script>
+    <script src="./autofill.js"></script>
 
     <title>test</title>
 </head>
@@ -20,7 +22,7 @@ include '../login_checking.php';
 <div id="app" class="pim-padding">
     <h1>test</h1>
     <form action="" method="post" class="appro-form form-design">
-        <autofill  :col1="code" :col2="company" :db="customer" :inputname="test"></autofill>
+        <autofill  :col1="'code'" :col2="'company'" :db="'customer'" :inputname="'test'"></autofill>
         
     </form>
 
@@ -28,10 +30,10 @@ include '../login_checking.php';
 </form>
 
 </div>
+
+
 <script>
-    const myapp = Vue.createApp({}); // Initialize Vue.js app
-    // Include autofill.js content here
-    const callmyapp = myapp.mount('#app'); // Mount the Vue app
+    const callmyapp = myapp.mount('#app');
 </script>
 </body>
 </html>

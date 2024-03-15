@@ -13,7 +13,7 @@ if($col2){
 else{
     $sql = "SELECT $col1 AS val FROM $db WHERE $col1 LIKE '%$searchQuery%'";
 }
-echo $sql;
+
 $searchResults = searchdata($sql);
 header('Content-Type: application/json');
 
