@@ -356,8 +356,9 @@ export default {
 
     },
     template: `
+    <div class="flex-row vcenter right-slider-header"><span class="sub-heading">FILTERS</span> </div>
     <div class=" test right-menu filters background-secondary-bg">
-    <div class="flex-row vcenter right-slider-header">    <span class="sub-heading">FILTERS</span> </div>
+
         
                              <select class="card" v-model="filter_no" @change="controlFilters"  v-if="productDetails.length==0">
                                 <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
@@ -715,7 +716,7 @@ export default {
 
                             </div>
                     
-
+                            </div>
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
       
