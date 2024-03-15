@@ -39,6 +39,11 @@ const app = Vue.createApp({
         this.fetchProducts();
         document.addEventListener('click', this.handleClickOutside);
     },
+    computed: {
+        isExportDisabled() {
+            return this.exportRows.length === 0;
+        }
+    },
     beforeDestroy() {
         document.removeEventListener('click', this.handleClickOutside);
     },
@@ -88,24 +93,39 @@ const app = Vue.createApp({
 
         },
         exportToCSV() {
-
+            if (this.exportRows.length === 0) {
+                // Export cannot proceed if there are no rows to export
+                return;
+            }
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
+            const columnNames = this.columnValues; // Get the column names in the correct order
+
             this.exportRows.forEach(row => {
-                const rowData = this.columnValues.map(colName => row[colName]);
+                const rowData = columnNames.map(colName => {
+                    let value = row[colName];
+                    if (typeof value === 'string' && value.includes(',')) {
+                        // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
                 csvContent += rowData.join(",") + "\n";
             });
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
+
             const now = new Date();
             const formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
             const filename = "export_filter_" + formattedDateTime + ".csv";
+
             link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
-            this.clearCheckedState()
+            this.clearCheckedState();
         },
+
         getHeaderRowCSV() {
             return this.columnValues.map(colName => '"' + colName + '"').join(","); // Surround column names with double quotes
         },
@@ -306,7 +326,6 @@ const app = Vue.createApp({
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
-                    this.productValuesTotal = data.product_values_total;
                     const storedCheckedRows = localStorage.getItem('checkedRows');
                     if (storedCheckedRows) {
                         this.checkedRows = JSON.parse(storedCheckedRows);
@@ -546,7 +565,7 @@ const app = Vue.createApp({
               </div>
               <div class="text-muted col-md-4 text-end">
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
-                <a class="icon-btn" @click="exportToCSV" title="Export to CSV"><i class="fa fa-download" aria-hidden="true"></i></a>
+                <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
               </div>
         </div>
         </div>

@@ -32,13 +32,11 @@ class ProductDetailHandler {
         $productValues = $this->getProductValues();
         $totalRows = $this->getTotalRows();
         $columnValuesRow = $this->getColumnValuesRow();
-        $totalProductValues = $this->getTotalRowValues();
         $filterNames = $this->getFilters();
-        $totalProductValues = $this->getTotalRowValues();
         $this->con->close();
 
         header('Content-Type: application/json');
-        echo json_encode(['product_values_total'=>$totalProductValues,'product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_names'=>$filterNames]);
+        echo json_encode(['product_details' => $productFilter, 'product_values' => $productValues, 'total_rows' => $totalRows, 'column_values_row' => $columnValuesRow,'filter_names'=>$filterNames]);
     }
 
     private function getProducts() {
