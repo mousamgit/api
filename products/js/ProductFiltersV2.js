@@ -23,7 +23,6 @@ export default {
     mounted() {
         this.fetchAllColumns();
         this.updateStatus(0)
-
     },
     methods: {
         async  controlFilters() {
@@ -356,7 +355,7 @@ export default {
     template: `
     <div class="right-menu filters background-secondary-bg">
         
-          <div class="card">
+          <div class="card" v-if="productDetails.length==0">
                              <select class="btn" v-model="filter_no" @change="controlFilters">
                                 <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
                                 <template v-for="(fvalue, fkey) in filters">
@@ -722,15 +721,14 @@ export default {
       
        <template v-if="filter_no ==0">
            
-           <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Add New Filter</a>
-               
-            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear New Filter</a>
+           <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
+            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
        </template>
        <template v-else>
            
-                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update {{filter_name}} Filter</a>
-              
-            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Remove {{filter_name}} Filter</a>
+                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update </a>
+                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
+                <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
        </template>
 </div>
   `,

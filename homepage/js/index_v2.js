@@ -27,16 +27,22 @@ const app = Vue.createApp({
             showColumnSelector: false,
             columns: [],
             selectedRows: [],
-            selectAllChecked: false,
             pageSize:100,
+            selectAllChecked:{},
             exportRows: [], // Array to store data for export
             checkedRows: {} // Object to track checked rows
         };
     },
     mounted() {
+        this.clearCheckedState()
         this.fetchUserColumns();
         this.fetchProducts();
         document.addEventListener('click', this.handleClickOutside);
+    },
+    computed: {
+        isExportDisabled() {
+            return this.exportRows.length === 0;
+        }
     },
     beforeDestroy() {
         document.removeEventListener('click', this.handleClickOutside);
@@ -46,52 +52,79 @@ const app = Vue.createApp({
     methods: {
         clearCheckedState() {
             this.checkedRows = {};
+            this.selectAllChecked = {};
             this.exportRows = [];
             localStorage.removeItem('checkedRows');
         },
-            toggleRowSelection(sku) {
-                this.checkedRows[sku] = !this.checkedRows[sku];
-                localStorage.setItem('checkedRows', JSON.stringify(this.checkedRows));
-                if (this.checkedRows[sku]) {
+        toggleRowSelection(sku) {
+            this.checkedRows[sku] = !this.checkedRows[sku];
+            localStorage.setItem('checkedRows', JSON.stringify(this.checkedRows));
+            if (this.checkedRows[sku]) {
                     this.exportRows.push(this.productValues.find(row => row.sku === sku));
-                } else {
+            } else {
                     const index = this.exportRows.findIndex(row => row.sku === sku);
                     if (index !== -1) {
                         this.exportRows.splice(index, 1);
                     }
-                }
-            },
+            }
+         },
         selectAllRows(current_page) {
-            const startIndex = (current_page - 1) * this.pageSize;
+            const startIndex = 0;
             const endIndex = Math.min(startIndex + this.pageSize, this.productValues.length);
 
             for (let i = startIndex; i < endIndex; i++) {
                 const sku = this.productValues[i]['sku'];
-                // Use standard JavaScript to set properties
-                this.checkedRows[sku] = this.selectAllChecked;
+                this.checkedRows[sku] = this.selectAllChecked[current_page];
+
+                if (this.selectAllChecked[current_page]) {
+                    // If Select All is checked, add the row to exportRows
+                    if (!this.exportRows.some(row => row['sku'] === sku)) {
+                        this.exportRows.push(this.productValues[i]);
+                    }
+                } else {
+                    // If Select All is unchecked, remove the row from exportRows (if exists)
+                    const exportIndex = this.exportRows.findIndex(row => row['sku'] === sku);
+                    if (exportIndex !== -1) {
+                        this.exportRows.splice(exportIndex, 1);
+                    }
+                }
             }
+
         },
-        // Method to handle export
         exportToCSV() {
-            // Prepare CSV content from exportRows array
+            if (this.exportRows.length === 0) {
+                // Export cannot proceed if there are no rows to export
+                return;
+            }
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
+            const columnNames = this.columnValues; // Get the column names in the correct order
+
             this.exportRows.forEach(row => {
-                const rowData = this.columnValues.map(colName => row[colName]);
+                const rowData = columnNames.map(colName => {
+                    let value = row[colName];
+                    if (typeof value === 'string' && value.includes(',')) {
+                        // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
                 csvContent += rowData.join(",") + "\n";
             });
 
-            // Create a download link for the CSV data
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
+
             const now = new Date();
             const formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
             const filename = "export_filter_" + formattedDateTime + ".csv";
+
             link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
-            this.clearCheckedState()
+            this.clearCheckedState();
         },
+
         getHeaderRowCSV() {
             return this.columnValues.map(colName => '"' + colName + '"').join(","); // Surround column names with double quotes
         },
@@ -292,7 +325,6 @@ const app = Vue.createApp({
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
-                    this.productValuesTotal = data.product_values_total;
                     const storedCheckedRows = localStorage.getItem('checkedRows');
                     if (storedCheckedRows) {
                         this.checkedRows = JSON.parse(storedCheckedRows);
@@ -448,8 +480,7 @@ const app = Vue.createApp({
               <tr>
                 <th class="hidden">S.N</th>
                 <th>
-                  <input type="checkbox" v-model="selectAllChecked" @change="selectAllRows(currentPage)">
-                </th>
+                <input type="checkbox" v-model="selectAllChecked[currentPage]" @change="selectAllRows(currentPage)"> </th>               </th>
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
@@ -533,7 +564,7 @@ const app = Vue.createApp({
               </div>
               <div class="text-muted col-md-4 text-end">
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
-                <a class="icon-btn" @click="exportToCSV" title="Export to CSV"><i class="fa fa-download" aria-hidden="true"></i></a>
+                <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
               </div>
         </div>
         </div>
