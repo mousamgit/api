@@ -185,8 +185,8 @@ const app = Vue.createApp({
             }
         },
         handleClickOutside(event) {
-            const isInsideFilterContainer = event.target.closest('.filter-container');
-            if ((event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
+            const isInsideFilterContainer = event.target.closest('.right-slider-header');
+            if ((event.target.tagName == 'HEADER' || event.target.tagName == 'NAV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
                 this.showFilter = false;
                 this.showColumnSelector= false;
             }
@@ -448,22 +448,16 @@ const app = Vue.createApp({
             }
         }
     },
-    template: `<div>
+    template: `
     
-    <div class=" toolbar pim-padding">
+    <nav class=" toolbar pim-padding">
     
-        <div class="saved-filter-container">
-<!--        <select class="btn" v-model="filter_no" @change="controlFilters">-->
-<!--            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>-->
-<!--            <template v-for="(fvalue, fkey) in filters">-->
-<!--              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>-->
-<!--            </template>-->
-<!--        </select>-->
+
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
-        </div>
-        </div>
+        </nav>
+     
 
     
     
