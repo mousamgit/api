@@ -30,11 +30,11 @@ $scriptsToRun = [
     'Shopify Pink Kimberley' => ['script' => 'http://pim.samsgroup.info/export_pk_shopify.php', 'file' => 'https://samsgroup.info/export/pk-shopify.csv'],
     'Shopify SGA Wholesale' => ['script' => 'http://pim.samsgroup.info/export_sga_shopify.php', 'file' => 'https://samsgroup.info/export/sga-shopify.csv'],
     'Shopify Classique Watches' => ['script' => 'http://pim.samsgroup.info/export_cl_shopify.php', 'file' => 'https://samsgroup.info/export/cl-shopify.csv'],
-    'Shopify Client JIM077 Products Import' => ['script' => 'http://pim.samsgroup.info/client_jim077_export_shopify.php', 'file' => 'https://pim.samsgroup.info/client_export/jim077_product_import.csv'],
-    'Shopify Client JIM309 Products Import' => ['script' => 'http://pim.samsgroup.info/client_jim309_export_shopify.php', 'file' => 'https://pim.samsgroup.info/client_export/jim309_product_import.csv'],
-    'Shopify Client JIM077 Inventory Import' => ['script' => 'http://pim.samsgroup.info/client_jim077_qty_shopify.php', 'file' => 'https://pim.samsgroup.info/client_export/jim077_inventory_import.csv'],
-    'Shopify Client JIM309 Inventory Import' => ['script' => 'http://pim.samsgroup.info/client_jim309_qty_shopify.php', 'file' => 'https://pim.samsgroup.info/client_export/jim309_inventory_import.csv'],
-    'Sirv Certificate' => ['script' => 'http://pim.samsgroup.info/sirv.php', 'file' => 'https://pim.samsgroup.info/sirv/sirv.xml'],
+    'Shopify Client JIM077 Products Import' => ['script' => 'http://pim.samsgroup.info/export_jim077_product.php', 'file' => 'https://pim.samsgroup.info/client_export/jim077_product_import.csv'],
+    'Shopify Client JIM309 Products Import' => ['script' => 'http://pim.samsgroup.info/export_jim309_product.php', 'file' => 'https://pim.samsgroup.info/client_export/jim309_product_import.csv'],
+    'Shopify Client JIM077 Inventory Import' => ['script' => 'http://pim.samsgroup.info/export_jim077_inventory.php', 'file' => 'https://pim.samsgroup.info/client_export/jim077_inventory_import.csv'],
+    'Shopify Client JIM309 Inventory Import' => ['script' => 'http://pim.samsgroup.info/export_jim309_inventory.php', 'file' => 'https://pim.samsgroup.info/client_export/jim309_inventory_import.csv'],
+    'Sirv Certificate' => ['script' => 'http://pim.samsgroup.info/export_sirv.php', 'file' => 'https://pim.samsgroup.info/sirv/sirv.xml'],
 ];
 
 echo "<table><tr>";
