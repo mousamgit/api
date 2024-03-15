@@ -72,7 +72,7 @@ const app = Vue.createApp({
             const startIndex = 0;
             const endIndex = Math.min(startIndex + this.pageSize, this.productValues.length);
 
-            for (let i = startIndex; i < endIndex; i++) {
+            for (let i = startIndex; i < 500; i++) {
                 const sku = this.productValues[i]['sku'];
                 this.checkedRows[sku] = this.selectAllChecked[current_page];
 
@@ -475,6 +475,7 @@ const app = Vue.createApp({
      
         <div class="pim-padding ">   
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
+          
           <table class="pimtable  display homepage-table">
             <thead>
               <tr>
@@ -536,8 +537,7 @@ const app = Vue.createApp({
           </div>
 
            <div class="mt-3 row">
-                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
-                
+                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">               
                 <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
                     <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
                     <template v-if="currentPage==index+1">                 

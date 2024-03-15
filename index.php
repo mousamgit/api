@@ -30,6 +30,6 @@ include 'functions.php';
         </div>
     </div>
 </div>
-<script type="module" src="./homepage/js/index_v2.js" defer></script>
+<script type="module" src="./homepage/js/index.js" defer></script>
 </body>
 </html>
