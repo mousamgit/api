@@ -13,6 +13,7 @@ include '../login_checking.php';
     <?php include '../header.php'; ?>
     <script src="./js/appro.js" ></script>
     <script src="./js/approitem.js" ></script>
+    <script src="../autofill/autofill.js"></script>
     <title>add appro</title>
 </head>
 <body>
@@ -29,14 +30,8 @@ include '../login_checking.php';
         
             </div>
             <div class="col-md-10 form-cell">
-                <input type="text" id="customer_name" name="customer_name" @input="searchname"  autocomplete="off" v-model="customername" required>
-                <div class="autofill">
-                <ul v-if="searchCustomer.length > 0">
-                    <li v-for="result in searchCustomer" :key="result.id" @click="selectCustomer(result)">
-                        {{ result.customer }}
-                    </li>
-                </ul>
-                </div>
+            <autofill  :col1="'code'" :col2="'company'" :db="'customer'" :inputname="'customer_name'"></autofill>
+
         </div>
 
             <div class="col-md-2 form-cell">
@@ -130,6 +125,7 @@ include '../login_checking.php';
 </div>
 <script>
 const callmyapp = myapp.mount('#app');
+
 </script>
 </body>
 </html>

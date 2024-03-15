@@ -14,13 +14,18 @@ myapp.component('autofill', {
         },
         inputname:{
             type: String
+        },
+        placeholder:{
+            type: String
         },  
+        req:{
+            type: Boolean
+        }, 
       },
     data() {
         return {
             searchQuery: '',
             items: [],
-            selectedValue: ''
         };
     },
 
@@ -28,11 +33,11 @@ myapp.component('autofill', {
 
     template: /*html*/ `
 
-    <input type="text" v-model="searchQuery" @input="searchItems"  name="inputname" autocomplete="off"  >
+    <input type="text" v-model="searchQuery" @input="searchItems" :placeholder="placeholder" :name="inputname" autocomplete="off" :required="req ? 'required' : null" >
     <div class="autofill">
     <ul v-if="items.length > 0">
-        <li v-for="item in items" :key="item.id" @click="selectItem(item)">
-            {{ item.value }}
+        <li v-for="item in items" @click="selectItem(item)">
+            {{ item.val }}
         </li>
     </ul>
     </div>
@@ -41,23 +46,23 @@ myapp.component('autofill', {
     methods: {
 
         searchItems() {
-            axios.get('./resultlist.php', { params: { 
+            axios.get('https://pim.samsgroup.info/autofill/resultlist.php', { params: { 
                 query: this.searchQuery,
-                col1: col1,
-                col2: col2,
-                db: db,
+                col1: this.col1,
+                col2: this.col2,
+                db: this.db,
                 } 
             })
                 .then(response => {
-                    this.searchSku = response.data;
-                    console.log(this.searchSku);
+                    this.items = response.data;
+                    console.log(this.items);
                 })
                 .catch(error => {
                     console.error('Error searching items:', error);
                 });
         },
         selectItem(item){
-            this.selectedValue = item.val;
+            this.searchQuery = item.val;
             this.items = []; // Clear search results
         },
         
