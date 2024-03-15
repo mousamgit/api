@@ -473,7 +473,7 @@ const app = Vue.createApp({
             <thead>
               <tr>
                 <th class="hidden">S.N</th>
-                <th>
+                <th col="checkbox">
                 <input type="checkbox" v-model="selectAllChecked[currentPage]" @change="selectAllRows(currentPage)"> </th>               </th>
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
