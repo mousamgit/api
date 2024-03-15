@@ -21,15 +21,7 @@ include 'functions.php';
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div class="pim-padding">
-    <div class="row">
-        <div class="col-md-12">
-            <div id="index">
-                <index></index>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="index"><index></index></div>
 <script type="module" src="./homepage/js/index.js" defer></script>
 </body>
 </html>

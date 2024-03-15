@@ -7,6 +7,12 @@ $col1 = $_GET['col1'];
 $col2 = $_GET['col2'];
 $db =  $_GET['db'];
 $searchQuery = $_GET['query'];
+$cola = $_GET['cola'];
+$colb = $_GET['colb'];
+$colc = $_GET['colc'];
+$cold = $_GET['cold'];
+$cole = $_GET['cole'];
+$colf = $_GET['colf'];
 if($col2){
     $sql = "SELECT CONCAT($col1, ' - ', $col2) AS val FROM $db WHERE CONCAT($col1, ' - ', $col2) LIKE '%$searchQuery%'";
 }

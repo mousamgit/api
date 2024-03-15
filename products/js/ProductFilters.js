@@ -353,24 +353,21 @@ export default {
 
     },
     template: `
-    <div class="right-menu filters background-secondary-bg">
+    <div class=" test right-menu filters background-secondary-bg">
+    <div class="flex-row vcenter right-slider-header">    <span class="sub-heading">FILTERS</span> </div>
         
-          <div class="card" v-if="productDetails.length==0">
-                             <select class="btn" v-model="filter_no" @change="controlFilters">
+                             <select class="card" v-model="filter_no" @change="controlFilters"  v-if="productDetails.length==0">
                                 <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
                                 <template v-for="(fvalue, fkey) in filters">
                                    <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
                                 </template>
                              </select>                           
-          </div>
+     
           
-           <div class="card" v-if="productDetails.length>0">
-             <label for="filter-name">Filter Name</label>
-             <input type="text" v-model="filter_name"  class="form-control" required>                        
-          </div>
-          <div class="flex-row vcenter filter-header">
-            <span class="sub-heading">FILTERS</span>
-        </div>
+
+             <input  class="card" v-if="productDetails.length>0" type="text" v-model="filter_name"  class="form-control" placeholder="Name your filter" required>                        
+
+
         
         <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
 
@@ -730,6 +727,12 @@ export default {
                 <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
                 <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
        </template>
+</div>
+<div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
+      
+    
+                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
+            
 </div>
   `,
 };
