@@ -17,7 +17,8 @@ export default {
             showInput:0,
             editForm:-1,
             filter_no:0,
-            filterList:[]
+            filterList:[],
+            deletedId:[]
         };
     },
     mounted() {
@@ -55,7 +56,6 @@ export default {
         },
         async updateStatus(value) {
             try {
-
                 const response = await fetch('update_filter_status.php', {
                     method: 'POST',
                     headers: {
@@ -65,7 +65,8 @@ export default {
                         value: value,
                         filter_name:this.filter_name,
                         product_details:this.productDetails,
-                        filter_no:this.filter_no
+                        filter_no:this.filter_no,
+                        deletedId:this.deletedId
                     }),
                 });
 
@@ -242,6 +243,8 @@ export default {
                     });
                     const data = await response.json();
                     if (data.success) {
+                        this.deletedId.push(productDetId);
+                        console.log(this.deletedId)
                         console.log('filters deleted successfully!');
                         this.initializeData()
                         this.$emit('filters-updated');
@@ -729,10 +732,7 @@ export default {
        </template>
 </div>
 <div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
-      
-    
                 <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
-            
 </div>
   `,
 };
