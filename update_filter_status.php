@@ -27,6 +27,7 @@ parse_str($urlParts['query'] ?? '', $queryParameters);
 
 // Extracting the channel_id parameter
 $value = $data['value'];
+
 if($value ==0)
 {
     $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
@@ -36,6 +37,12 @@ if($value ==0)
     $sql_filter_update_2 = "DELETE from user_filter_details where filter_no=".$data['filter_no'];
     $con->query($sql_filter_update_1);
     $con->query($sql_filter_update_2);
+    $success=true;
+}
+elseif ($value == -1)
+{
+    $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
+    $con->query($sql);
     $success=true;
 }
 else

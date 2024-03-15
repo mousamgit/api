@@ -71,8 +71,7 @@ const app = Vue.createApp({
         selectAllRows(current_page) {
             const startIndex = 0;
             const endIndex = Math.min(startIndex + this.pageSize, this.productValues.length);
-            console.log(startIndex)
-            console.log(endIndex)
+
             for (let i = startIndex; i < endIndex; i++) {
                 const sku = this.productValues[i]['sku'];
                 this.checkedRows[sku] = this.selectAllChecked[current_page];
