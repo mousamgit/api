@@ -41,26 +41,18 @@ if($value ==0)
 }
 elseif ($value == -1)
 {
-    $deleted_id_string = implode(",",$data['deletedId']);
     $filter_no= $data['filter_no'];
-
-    $sql="update user_filter_details set status =1 where id in (".$deleted_id_string.") and user_name ='".$user_name."'";
-    $con->query($sql);
-
-//    if($data['filter_no'] >0)
-//    {
-//        $product_filter_id = $con->query("select id from user_filter_details where filter_no=".$data['filter_no']);
-//        if ($product_filter_id->num_rows > 0) {
-//            while ($prevAttributeValue = $product_filter_id->fetch_assoc()) {
-//
-//            }
-//        }
-//    }
+    $con->query("update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'");
+    if(count($data['deletedId'])>0)
+    {
+        $deleted_id_string = implode(",",$data['deletedId']);
+        $sql="update user_filter_details set status =1 where id in (".$deleted_id_string.") and user_name ='".$user_name."'";
+        $con->query($sql);
+    }
     $success=true;
 }
 else
 {
-
     $filterConditions = [];
     $groupedConditions = [];
     $filterConditionCombined = '';

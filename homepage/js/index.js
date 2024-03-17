@@ -490,7 +490,8 @@ const app = Vue.createApp({
     </div>
      
         <div class="pim-padding ">   
-        <span v-if="itemNo >0">{{itemNo}} items selected </span> &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow">Select All</a>
+        <span v-if="itemNo >0">{{itemNo}} items selected </span> 
+<!-- &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow">Select All</a>-->
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
