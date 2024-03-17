@@ -13,12 +13,28 @@ $colc = $_GET['colc'];
 $cold = $_GET['cold'];
 $cole = $_GET['cole'];
 $colf = $_GET['colf'];
-if($col2){
-    $sql = "SELECT CONCAT($col1, ' - ', $col2) AS val FROM $db WHERE CONCAT($col1, ' - ', $col2) LIKE '%$searchQuery%'";
+
+
+$xcol='';
+if ($cola) { $xcol .= ",$cola"; }
+if ($colb) { $xcol .= ",$colb"; }
+if ($colc) { $xcol .= ",$colc"; }
+if ($cold) { $xcol .= ",$cold"; }
+if ($cole) { $xcol .= ",$cole"; }
+if ($colf) { $xcol .= ",$colf"; }
+
+
+$val = '';
+
+// Check if $col2 is set and not empty
+if ($col2 && $col2 !== '') {
+    $val = "CONCAT($col1, ' - ', $col2)";
+} else {
+    $val = $col1;
 }
-else{
-    $sql = "SELECT $col1 AS val FROM $db WHERE $col1 LIKE '%$searchQuery%'";
-}
+
+
+$sql = "SELECT $val AS val $xcol FROM $db WHERE $val LIKE '%$searchQuery%'";
 
 $searchResults = searchdata($sql);
 header('Content-Type: application/json');
