@@ -18,29 +18,30 @@ include 'functions.php';
     <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
     <style>
-        .column-selector {
-            width:300px;
-            position: absolute;
-            top: 65px; /* Adjust this value to position it just below the table */
-            left: 25px;
-            background-color: #fff;
+        .box-container {
+            position: relative;
+            display: inline-block;
+            padding: 0px;
             border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .box-content {
+            min-width:50px;
+            display: none; /* Hide the box content by default */
+            position: absolute;
+            top: -10px; /* Position the box above the container */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
             padding: 10px;
-            z-index: 999;
-            max-height:675px;
-            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 999; /* Set a high z-index value to ensure the box appears on top */
         }
-        .column-selector .description {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .column-selector ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        .column-selector li {
-            margin-bottom: 5px;
+
+        .box-container:hover .box-content {
+            display: block; /* Show the box content on hover */
         }
 
     </style>

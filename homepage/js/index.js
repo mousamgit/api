@@ -32,7 +32,8 @@ const app = Vue.createApp({
             itemNo:0,
             isLoading:false,
             exportRows: [], // Array to store data for export
-            checkedRows: {} // Object to track checked rows
+            checkedRows: {}, // Object to track checked rows
+            selectAllCheckbox: false,
         };
     },
     mounted() {
@@ -56,6 +57,7 @@ const app = Vue.createApp({
             this.itemNo=0
             this.checkedRows = {};
             this.selectAllChecked = {};
+            this.selectAllCheckbox = {};
             this.exportRows = [];
             localStorage.removeItem('checkedRows');
         },
@@ -95,6 +97,13 @@ const app = Vue.createApp({
             }
             this.itemNo=this.exportRows.length;
 
+        },
+        selectAllPagesRow() {
+            if (this.selectAllCheckbox) {
+                this.SelectAllPagesRow(1); // Select All
+            } else {
+                this.SelectAllPagesRow(0); // Unselect All
+            }
         },
         SelectAllPagesRow(value)
         {
@@ -487,13 +496,18 @@ const app = Vue.createApp({
         }
     },
     template: `
+    
     <nav class=" toolbar pim-padding">
     
+
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
         </nav>
      
+
+    
+    
     </div>
     
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
@@ -501,13 +515,9 @@ const app = Vue.createApp({
     </div>
      
         <div class="pim-padding ">   
-        <span v-if="itemNo >0">{{itemNo}} items selected </span> 
-        <template v-if="itemNo < totalRows">
- &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(1)">Select All</a>
-        </template>
-        <template v-else>
-        &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(0)">UnSelect All</a>
-        </template>
+        
+          &nbsp;&nbsp;<input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow">
+           &nbsp;&nbsp;<span v-if="itemNo >0">{{itemNo}} items selected </span> 
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>

@@ -1,4 +1,4 @@
-import ProductFilters from '../../products/js/ProductFiltersV2.js';
+import ProductFilters from '../../products/js/ProductFilters.js';
 
 const app = Vue.createApp({
     data() {
@@ -29,6 +29,10 @@ const app = Vue.createApp({
             selectedRows: [],
             pageSize:100,
             selectAllChecked:{},
+            itemNo:0,
+            isLoading:false,
+            showTooltipIndex: null,
+            tooltipContent: "",
             exportRows: [], // Array to store data for export
             checkedRows: {} // Object to track checked rows
         };
@@ -50,7 +54,14 @@ const app = Vue.createApp({
 
 
     methods: {
+        showTooltip(colName) {
+            // You can set tooltip content based on colName or any other logic
+            this.tooltipContent = "Tooltip content for " + colName;
+            // Set the index to display the tooltip
+            this.showTooltipIndex = index;
+        },
         clearCheckedState() {
+            this.itemNo=0
             this.checkedRows = {};
             this.selectAllChecked = {};
             this.exportRows = [];
@@ -60,19 +71,20 @@ const app = Vue.createApp({
             this.checkedRows[sku] = !this.checkedRows[sku];
             localStorage.setItem('checkedRows', JSON.stringify(this.checkedRows));
             if (this.checkedRows[sku]) {
-                    this.exportRows.push(this.productValues.find(row => row.sku === sku));
+                this.exportRows.push(this.productValues.find(row => row.sku === sku));
             } else {
-                    const index = this.exportRows.findIndex(row => row.sku === sku);
-                    if (index !== -1) {
-                        this.exportRows.splice(index, 1);
-                    }
+                const index = this.exportRows.findIndex(row => row.sku === sku);
+                if (index !== -1) {
+                    this.exportRows.splice(index, 1);
+                }
             }
-         },
+            this.itemNo= this.exportRows.length;
+        },
         selectAllRows(current_page) {
             const startIndex = 0;
             const endIndex = Math.min(startIndex + this.pageSize, this.productValues.length);
 
-            for (let i = startIndex; i < 500; i++) {
+            for (let i = startIndex; i < endIndex; i++) {
                 const sku = this.productValues[i]['sku'];
                 this.checkedRows[sku] = this.selectAllChecked[current_page];
 
@@ -89,26 +101,58 @@ const app = Vue.createApp({
                     }
                 }
             }
+            this.itemNo=this.exportRows.length;
+
+        },
+        SelectAllPagesRow(value)
+        {
+            if(value==1)
+            {
+                this.exportRows=[];
+                const startIndex = 0;
+                const endIndex = this.totalRows;
+                const totalPages = parseInt(endIndex/100);
+                for (let i = startIndex; i < totalPages; i++) {
+                    this.selectAllChecked[i]=true;
+                }
+
+                for (let i = startIndex; i < endIndex; i++) {
+                    const sku = this.productValuesTotal[i]['sku'];
+                    this.checkedRows[sku] = true;
+                    this.exportRows.push(this.productValuesTotal[i]);
+                }
+
+                this.itemNo=this.exportRows.length;
+            }
+            else{
+                this.clearCheckedState();
+            }
 
         },
         exportToCSV() {
             if (this.exportRows.length === 0) {
+                alert("Please Select Products To Export")
                 // Export cannot proceed if there are no rows to export
                 return;
             }
+
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
             const columnNames = this.columnValues; // Get the column names in the correct order
-
+            console.log(this.exportRows);
             this.exportRows.forEach(row => {
-                const rowData = columnNames.map(colName => {
-                    let value = row[colName];
-                    if (typeof value === 'string' && value.includes(',')) {
-                        // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
-                        value = '"' + value.replace(/"/g, '""') + '"';
-                    }
-                    return value;
-                });
-                csvContent += rowData.join(",") + "\n";
+                if(row)
+                {
+                    const rowData = columnNames.map(colName => {
+                        let value = row[colName];
+                        if (typeof value === 'string' && value.includes(',')) {
+                            // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
+                            value = '"' + value.replace(/"/g, '""') + '"';
+                        }
+                        return value;
+                    });
+                    csvContent += rowData.join(",") + "\n";
+                }
+
             });
 
             const encodedUri = encodeURI(csvContent);
@@ -185,8 +229,8 @@ const app = Vue.createApp({
             }
         },
         handleClickOutside(event) {
-            const isInsideFilterContainer = event.target.closest('.filter-container');
-            if ((event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
+            const isInsideFilterContainer = event.target.closest('.right-slider-header');
+            if ((event.target.tagName == 'HEADER' || event.target.tagName == 'NAV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
                 this.showFilter = false;
                 this.showColumnSelector= false;
             }
@@ -322,6 +366,7 @@ const app = Vue.createApp({
 
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
+                    this.productValuesTotal = data.product_values_total;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
@@ -329,6 +374,7 @@ const app = Vue.createApp({
                     if (storedCheckedRows) {
                         this.checkedRows = JSON.parse(storedCheckedRows);
                     }
+                    this.isLoading=true;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -448,22 +494,16 @@ const app = Vue.createApp({
             }
         }
     },
-    template: `<div>
+    template: `
     
-    <div class=" toolbar pim-padding">
+    <nav class=" toolbar pim-padding">
     
-        <div class="saved-filter-container">
-<!--        <select class="btn" v-model="filter_no" @change="controlFilters">-->
-<!--            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>-->
-<!--            <template v-for="(fvalue, fkey) in filters">-->
-<!--              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>-->
-<!--            </template>-->
-<!--        </select>-->
+
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
-        </div>
-        </div>
+        </nav>
+     
 
     
     
@@ -474,19 +514,29 @@ const app = Vue.createApp({
     </div>
      
         <div class="pim-padding ">   
+        <span v-if="itemNo >0">{{itemNo}} items selected </span> 
+        <template v-if="itemNo < totalRows">
+ &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(1)">Select All</a>
+        </template>
+        <template v-else>
+        &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(0)">UnSelect All</a>
+        </template>
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
-          
           <table class="pimtable  display homepage-table">
             <thead>
               <tr>
                 <th class="hidden">S.N</th>
-                <th>
+                <th col="checkbox">
                 <input type="checkbox" v-model="selectAllChecked[currentPage]" @change="selectAllRows(currentPage)"> </th>               </th>
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                <div class="box-container">
+                  <i class="fa fa-arrow-up"></i>
+                 <div class="box-content">A-Z</div>
+                </div>
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
-                </th>               
+                 </th>               
               </tr>
             </thead>
             <tbody>
@@ -537,7 +587,8 @@ const app = Vue.createApp({
           </div>
 
            <div class="mt-3 row">
-                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">               
+                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
+                
                 <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
                     <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
                     <template v-if="currentPage==index+1">                 
