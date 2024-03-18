@@ -5,21 +5,24 @@ const myapp = Vue.createApp({
             custname:'',
             contact:'',
             address:'',
+            email:'',
             searchQuery: '',
-            searchCode: [],
+            items: [],
             itemdetail: false,
 
         };
     },
     methods: {
         searchItems() {
+            console.log(this.searchQuery);
             axios.get('https://pim.samsgroup.info/autofill/resultlist.php', { params: { 
                 query: this.searchQuery,
+                db:'customer',
                 col1: 'code',
                 col2: 'company',
                 cola: 'contact',
                 colb: 'email',
-                colc: 'address1',
+                colc: 'address_1',
                 cold: 'city',
                 cole: 'state',
                 } 
@@ -33,10 +36,11 @@ const myapp = Vue.createApp({
                 });
         },
         selectItem(item) {
-            this.searchQuery = item.sku;
-            this.searchCode = []; // Clear search results
-            this.price = item.wholesale_aud;
-            this.productname = item.product_title;
+            this.searchQuery = item.val;
+            this.items = []; // Clear search results
+            this.contact = item.contact;
+            this.email = item.email;
+            this.address = item.address_1 + ' ' + item.city + ' ' + item.state;
         },
 
     },
