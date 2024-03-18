@@ -17,15 +17,18 @@ export default {
             showInput:0,
             editForm:-1,
             filter_no:0,
-            filterList:[]
+            filterList:[],
+            deletedId:[],
+            showFilterValidation:false
         };
     },
     mounted() {
         this.fetchAllColumns();
-        this.updateStatus(0)
+        this.updateStatus(-1)
     },
     methods: {
         async  controlFilters() {
+            this.showFilterValidation=false;
             this.showInput=1;
             const dataToSend = {
                 filter_no: this.filter_no
@@ -54,35 +57,88 @@ export default {
             this.showInput=1;
         },
         async updateStatus(value) {
-            try {
 
-                const response = await fetch('update_filter_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        value: value,
-                        filter_name:this.filter_name,
-                        product_details:this.productDetails,
-                        filter_no:this.filter_no
-                    }),
-                });
+            if(value==0)
+            {
+                // Display a confirmation dialog
+                const confirmed = window.confirm(`Are you sure you want to remove `+this.filter_name);
 
-                const data = await response.json();
+                if (confirmed) {
+                    try {
+                        const response = await fetch('update_filter_status.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                value: value,
+                                filter_name: this.filter_name,
+                                product_details: this.productDetails,
+                                filter_no: this.filter_no,
+                                deletedId: this.deletedId
+                            }),
+                        });
 
-                if (data.success) {
-                    this.initializeData()
-                    this.$emit('filters-updated');
-                    this.showInput =0;
-                    this.filter_name ='';
-                    this.filter_no=0;
-                    this.showInput=0;
-                } else {
-                    console.error('Error updating status:', data.error);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.initializeData()
+                            this.$emit('filters-updated');
+
+                                this.showInput = 0;
+                                this.filter_name = '';
+                                this.filter_no = 0;
+                                this.showInput = 0;
+
+
+                        } else {
+                            console.error('Error updating status:', data.error);
+                        }
+                    } catch (error) {
+                        console.error('Error updating status:', error);
+                    }
                 }
-            } catch (error) {
-                console.error('Error updating status:', error);
+            }
+            else{
+                if(value==1 && this.filter_name =='') {
+                    this.showFilterValidation = true;
+                    return;
+                }
+                try {
+                    const response = await fetch('update_filter_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            value: value,
+                            filter_name: this.filter_name,
+                            product_details: this.productDetails,
+                            filter_no: this.filter_no,
+                            deletedId: this.deletedId
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.initializeData()
+                        this.$emit('filters-updated');
+                        if (value == 1) {
+                            this.controlFilters()
+                        } else {
+                            this.showInput = 0;
+                            this.filter_name = '';
+                            this.filter_no = 0;
+                            this.showInput = 0;
+                        }
+
+                    } else {
+                        console.error('Error updating status:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                }
             }
         },
         //v2
@@ -225,10 +281,6 @@ export default {
                     this.indexVal = -1;
                 }
 
-                // Display a confirmation dialog
-                const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
-
-                if (confirmed) {
                     const response = await fetch('./products/delete_product_filter.php', {
                         method: 'POST',
                         headers: {
@@ -242,6 +294,8 @@ export default {
                     });
                     const data = await response.json();
                     if (data.success) {
+                        this.deletedId.push(productDetId);
+                        console.log(this.deletedId)
                         console.log('filters deleted successfully!');
                         this.initializeData()
                         this.$emit('filters-updated');
@@ -249,9 +303,7 @@ export default {
                     } else {
                         console.error('Error deleting filter:', data.error);
                     }
-                } else {
-                    console.log('Deletion canceled by the user.');
-                }
+
             } catch (error) {
                 console.error('Error deleting channel:', error);
             }
@@ -327,7 +379,7 @@ export default {
                 })
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch tooltip details');
+                    throw new Error('Failed to fetch filter details');
                 }
                 const data = await response.json();
                 this.filter_name = data;
@@ -338,6 +390,7 @@ export default {
         },
 
         initializeData() {
+            this.showFilterValidation=false;
             this.channelAttribute = [],
                 this.indexCheck = 0,
                 this.columns = [],
@@ -366,8 +419,8 @@ export default {
      
           
 
-             <input  class="card" v-if="productDetails.length>0" type="text" v-model="filter_name"  class="form-control" placeholder="Name your filter" required>                        
-
+             <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" placeholder="Name your filter" required>                        
+               <span v-if="showFilterValidation == true">Please Enter Filter Name</span>
 
         
         <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
@@ -717,23 +770,18 @@ export default {
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
       
-       <template v-if="filter_no ==0">
-           
+       <template v-if="filter_no ==0">          
            <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
-            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
+           <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
        </template>
-       <template v-else>
-           
+       <template v-else>          
                 <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update </a>
                 <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
                 <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
        </template>
 </div>
 <div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
-      
-    
                 <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
-            
 </div>
   `,
 };

@@ -29,6 +29,7 @@ const app = Vue.createApp({
             selectedRows: [],
             pageSize:100,
             selectAllChecked:{},
+            itemNo:0,
             exportRows: [], // Array to store data for export
             checkedRows: {} // Object to track checked rows
         };
@@ -67,6 +68,7 @@ const app = Vue.createApp({
                     this.exportRows.splice(index, 1);
                 }
             }
+            this.itemNo= this.exportRows.length;
         },
         selectAllRows(current_page) {
             const startIndex = 0;
@@ -89,7 +91,26 @@ const app = Vue.createApp({
                     }
                 }
             }
+            this.itemNo=this.exportRows.length;
 
+        },
+        SelectAllPagesRow()
+        {
+            const startIndex = 0;
+            const endIndex = this.totalRows;
+            const totalPages = parseInt(endIndex/100);
+
+            for (let i = startIndex; i < totalPages; i++) {
+               this.selectAllChecked[i]=true;
+            }
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const sku = this.productValuesTotal[i]['sku'];
+                this.checkedRows[sku] = true;
+                this.exportRows.push(this.productValues[i]);
+            }
+            console.log(this.exportRows)
+            this.itemNo=this.exportRows.length;
         },
         exportToCSV() {
             if (this.exportRows.length === 0) {
@@ -322,6 +343,7 @@ const app = Vue.createApp({
 
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
+                    this.productValuesTotal = data.product_values_total;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
@@ -468,6 +490,8 @@ const app = Vue.createApp({
     </div>
      
         <div class="pim-padding ">   
+        <span v-if="itemNo >0">{{itemNo}} items selected </span> 
+<!-- &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow">Select All</a>-->
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>

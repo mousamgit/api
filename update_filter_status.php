@@ -41,13 +41,18 @@ if($value ==0)
 }
 elseif ($value == -1)
 {
-    $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
-    $con->query($sql);
+    $filter_no= $data['filter_no'];
+    $con->query("update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'");
+    if(count($data['deletedId'])>0)
+    {
+        $deleted_id_string = implode(",",$data['deletedId']);
+        $sql="update user_filter_details set status =1 where id in (".$deleted_id_string.") and user_name ='".$user_name."'";
+        $con->query($sql);
+    }
     $success=true;
 }
 else
 {
-
     $filterConditions = [];
     $groupedConditions = [];
     $filterConditionCombined = '';
