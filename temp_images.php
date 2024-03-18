@@ -136,9 +136,11 @@ $(function() {
                     {
                         if ($value != "No Image")
                         {
+                            $version = Date("Y.m.d.G.i.s");
+                            $value1 = $value . "?v=" . $version;
                             echo "<td><label for ='".$value."'>
                                 <div style='display:table-cell; vertical-align:middle; padding-right:20px;'> <input type='checkbox' value='".$keys[$i].":".$value."' name='check[]' id='".$value."' class='".$keys[$i]."' /> </div>
-                                <div class='image-box' style='display:table-cell; vertical-align:middle;'><img src='https://pim.samsgroup.info/temp-images/".$value."'></div>
+                                <div class='image-box' style='display:table-cell; vertical-align:middle;'><img src='https://pim.samsgroup.info/temp-images/".$value1."'></div>
                                 <div style='text-align:center; width:100%; font-size:10px; margin-top:10px;'><a href='/delete_tempimage.php?id=".$value."' class='delete_button' style='color:red;'><i class='fa-solid fa-trash-can'></i> Delete this image</a></div>
                                 </label>
                                 </td>";
