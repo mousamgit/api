@@ -22,11 +22,11 @@ export default {
     },
     mounted() {
         this.fetchAllColumns();
-
+        this.updateStatus(0)
     },
     methods: {
         async  controlFilters() {
-
+            this.showInput=1;
             const dataToSend = {
                 filter_no: this.filter_no
             };
@@ -77,6 +77,7 @@ export default {
                     this.showInput =0;
                     this.filter_name ='';
                     this.filter_no=0;
+                    this.showInput=0;
                 } else {
                     console.error('Error updating status:', data.error);
                 }
@@ -190,6 +191,7 @@ export default {
         },
 
         addChannelCondition(op_value, condition_type, previous_row) {
+            this.showInput=1;
             this.op_show_value = op_value;
             this.showAttributeMid = previous_row['id'];
             this.selectedValues=[];
@@ -352,17 +354,23 @@ export default {
     },
     template: `
     <div class="right-menu filters background-secondary-bg">
-        <div class="flex-row vcenter filter-header">
-            <span class="sub-heading">FILTERS</span>
-        </div>
-          <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
+        
+          <div class="card" v-if="productDetails.length==0">
                              <select class="btn" v-model="filter_no" @change="controlFilters">
-                                <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
+                                <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
                                 <template v-for="(fvalue, fkey) in filters">
                                    <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
                                 </template>
                              </select>                           
           </div>
+          
+           <div class="card" v-if="productDetails.length>0">
+             <label for="filter-name">Filter Name</label>
+             <input type="text" v-model="filter_name"  class="form-control" required>                        
+          </div>
+          <div class="flex-row vcenter filter-header">
+            <span class="sub-heading">FILTERS</span>
+        </div>
         
         <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
 
@@ -375,8 +383,7 @@ export default {
                         </a>
                    
         </div>
-                          
-
+ 
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
@@ -713,24 +720,15 @@ export default {
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
       
        <template v-if="filter_no ==0">
-            <template class="filter-input" v-if="showInput==1">
-                <input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" placeholder="Enter Filter Name and Save" class="form-control" required>
-                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Add New Filter</a>
-            </template>
-            <template class="filter-input" v-else>
-                <a class="btn btn-primary mt-3"  @click="handleInput()">Add New Filter</a>
-            </template>       
-            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear New Filter</a>
+           
+           <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
+            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
        </template>
        <template v-else>
-            <template class="filter-input" v-if="showInput==1">
-                <input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" placeholder="Enter Filter Name and Save" class="form-control" required>
-                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update {{filter_name}} Filter</a>
-            </template>
-            <template class="filter-input" v-else>
-                <a class="btn btn-primary mt-3"  @click="handleInput()">Update {{filter_name}} Filter</a>
-            </template>       
-            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear {{filter_name}} Filter</a>
+           
+                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update </a>
+                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
+                <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
        </template>
 </div>
   `,

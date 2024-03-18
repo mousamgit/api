@@ -25,20 +25,130 @@ const app = Vue.createApp({
             tableWidth: 0,
             filter_no:0,
             showColumnSelector: false,
-            columns: []
+            columns: [],
+            selectedRows: [],
+            pageSize:100,
+            selectAllChecked:{},
+            itemNo:0,
+            exportRows: [], // Array to store data for export
+            checkedRows: {} // Object to track checked rows
         };
     },
     mounted() {
+        this.clearCheckedState()
         this.fetchUserColumns();
         this.fetchProducts();
         document.addEventListener('click', this.handleClickOutside);
     },
+    computed: {
+        isExportDisabled() {
+            return this.exportRows.length === 0;
+        }
+    },
     beforeDestroy() {
-        // Remove the event listener when the component is destroyed
         document.removeEventListener('click', this.handleClickOutside);
     },
 
+
     methods: {
+        clearCheckedState() {
+            this.checkedRows = {};
+            this.selectAllChecked = {};
+            this.exportRows = [];
+            localStorage.removeItem('checkedRows');
+        },
+        toggleRowSelection(sku) {
+            this.checkedRows[sku] = !this.checkedRows[sku];
+            localStorage.setItem('checkedRows', JSON.stringify(this.checkedRows));
+            if (this.checkedRows[sku]) {
+                this.exportRows.push(this.productValues.find(row => row.sku === sku));
+            } else {
+                const index = this.exportRows.findIndex(row => row.sku === sku);
+                if (index !== -1) {
+                    this.exportRows.splice(index, 1);
+                }
+            }
+            this.itemNo= this.exportRows.length;
+        },
+        selectAllRows(current_page) {
+            const startIndex = 0;
+            const endIndex = Math.min(startIndex + this.pageSize, this.productValues.length);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const sku = this.productValues[i]['sku'];
+                this.checkedRows[sku] = this.selectAllChecked[current_page];
+
+                if (this.selectAllChecked[current_page]) {
+                    // If Select All is checked, add the row to exportRows
+                    if (!this.exportRows.some(row => row['sku'] === sku)) {
+                        this.exportRows.push(this.productValues[i]);
+                    }
+                } else {
+                    // If Select All is unchecked, remove the row from exportRows (if exists)
+                    const exportIndex = this.exportRows.findIndex(row => row['sku'] === sku);
+                    if (exportIndex !== -1) {
+                        this.exportRows.splice(exportIndex, 1);
+                    }
+                }
+            }
+            this.itemNo=this.exportRows.length;
+
+        },
+        SelectAllPagesRow()
+        {
+            const startIndex = 0;
+            const endIndex = this.totalRows;
+            const totalPages = parseInt(endIndex/100);
+
+            for (let i = startIndex; i < totalPages; i++) {
+               this.selectAllChecked[i]=true;
+            }
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const sku = this.productValuesTotal[i]['sku'];
+                this.checkedRows[sku] = true;
+                this.exportRows.push(this.productValues[i]);
+            }
+            console.log(this.exportRows)
+            this.itemNo=this.exportRows.length;
+        },
+        exportToCSV() {
+            if (this.exportRows.length === 0) {
+                // Export cannot proceed if there are no rows to export
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
+            const columnNames = this.columnValues; // Get the column names in the correct order
+
+            this.exportRows.forEach(row => {
+                const rowData = columnNames.map(colName => {
+                    let value = row[colName];
+                    if (typeof value === 'string' && value.includes(',')) {
+                        // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
+                csvContent += rowData.join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+
+            const now = new Date();
+            const formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
+            const filename = "export_filter_" + formattedDateTime + ".csv";
+
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            this.clearCheckedState();
+        },
+
+        getHeaderRowCSV() {
+            return this.columnValues.map(colName => '"' + colName + '"').join(","); // Surround column names with double quotes
+        },
         updateColumns(selectedColumns, selectedStatus) {
             if (selectedStatus == true) {
                 selectedStatus = 1;
@@ -60,7 +170,7 @@ const app = Vue.createApp({
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Failed to order columns');
+                            throw new Error('Failed to save columns');
                         }
                         return response.json();
                     })
@@ -80,9 +190,9 @@ const app = Vue.createApp({
             }
         },
         toggleCheckbox(column) {
-            column.selected = !column.selected; 
-            this.updateColumns(column.column_name, column.selected); 
-          },
+            column.selected = !column.selected;
+            this.updateColumns(column.column_name, column.selected);
+        },
         toggleColumnSelector() {
             this.showColumnSelector = !this.showColumnSelector;
         },
@@ -96,8 +206,8 @@ const app = Vue.createApp({
             }
         },
         handleClickOutside(event) {
-            const isInsideFilterContainer = event.target.closest('.filter-container');
-            if ((event.target.tagName == 'DIV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
+            const isInsideFilterContainer = event.target.closest('.right-slider-header');
+            if ((event.target.tagName == 'HEADER' || event.target.tagName == 'NAV' || event.target.tagName == 'TABLE' || event.target.tagName == 'TR' || event.target.tagName == 'TD' || event.target.tagName == 'TH') && !isInsideFilterContainer) {
                 this.showFilter = false;
                 this.showColumnSelector= false;
             }
@@ -165,6 +275,7 @@ const app = Vue.createApp({
             this.fetchProducts();
         },
         nextPage() {
+
             this.initializeData();
             this.currentPage++;
             this.fetchProducts();
@@ -229,11 +340,17 @@ const app = Vue.createApp({
                 },
             }).then(response => response.json())
                 .then(data => {
+
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
+                    this.productValuesTotal = data.product_values_total;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
+                    const storedCheckedRows = localStorage.getItem('checkedRows');
+                    if (storedCheckedRows) {
+                        this.checkedRows = JSON.parse(storedCheckedRows);
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -304,26 +421,7 @@ const app = Vue.createApp({
                 console.error('Error updating database:', error);
             }
         },
-        exportToCSV() {
-            let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
-            const rows = this.productValuesTotal.map(row => {
-                return this.columnValues.map(colName => row[colName]);
-            });
-            csvContent += rows.map(e => e.join(",")).join("\n");
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            // Get current date and time
-            var now = new Date();
-            var formattedDateTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + now.getHours() + '-' + now.getMinutes() + '-' + now.getSeconds();
-            var filename = "export_filter_" + formattedDateTime + ".csv";
-            link.setAttribute("download", filename);
-            document.body.appendChild(link);
-            link.click();
-        },
-        getHeaderRowCSV() {
-            return this.columnValues.map(colName => '"' + colName + '"').join(","); // Surround column names with double quotes
-        },
+
         cancelEdit() {
             this.initializeData();
             this.fetchProducts();
@@ -372,37 +470,35 @@ const app = Vue.createApp({
             }
         }
     },
-    template: `<div>
+    template: `
     
-    <div class=" toolbar pim-padding">
+    <nav class=" toolbar pim-padding">
     
-        <div class="saved-filter-container">
-        <select class="btn" v-model="filter_no" @change="controlFilters">
-            <option value="0"  selected><a class="btn" >All Product   <i class="fa-solid fa-caret-down"></i></a> </option>
-            <template v-for="(fvalue, fkey) in filters">
-              <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
-            </template>
-        </select>
+
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
-        </div>
-        </div>
+        </nav>
+     
 
     
     
     </div>
     
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
-    <product-filters :productDetails="productDetails" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
+    <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
      
         <div class="pim-padding ">   
+        <span v-if="itemNo >0">{{itemNo}} items selected </span> 
+<!-- &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow">Select All</a>-->
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
               <tr>
                 <th class="hidden">S.N</th>
+                <th col="checkbox">
+                <input type="checkbox" v-model="selectAllChecked[currentPage]" @change="selectAllRows(currentPage)"> </th>               </th>
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
@@ -414,6 +510,9 @@ const app = Vue.createApp({
             
               <tr v-for="(row,rowIndex) in productValues">
               <td class="hidden">{{rowIndex+1}}</td>
+              <td>
+                <input type="checkbox" :id="currentPage" :checked="checkedRows[row['sku']]"  @change="toggleRowSelection(row['sku'])">
+              </td>
                <template v-for="(colName,colIndex) in columnValues">
                <td  :col="colName">              
                 <div v-if="rIndex==rowIndex && colIndex==cIndex">
@@ -483,7 +582,7 @@ const app = Vue.createApp({
               </div>
               <div class="text-muted col-md-4 text-end">
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
-                <a class="icon-btn" @click="exportToCSV" title="Export to CSV"><i class="fa fa-download" aria-hidden="true"></i></a>
+                <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
               </div>
         </div>
         </div>
@@ -497,9 +596,7 @@ const app = Vue.createApp({
        
             </div>
         </div>
-
       </div>
-
 `,
 });
 app.mount('#index');

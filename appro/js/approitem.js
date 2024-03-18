@@ -34,7 +34,7 @@ myapp.component('approitem', {
             <div class="autofill">
             <ul v-if="searchSku.length > 0">
                 <li v-for="result in searchSku" :key="result.id" @click="selectItem(result)">
-                    {{ result.sku }}
+                    {{ result.val }}
                 </li>
             </ul>
             </div>
@@ -48,9 +48,15 @@ myapp.component('approitem', {
 
     `,
     methods: {
-
         searchItems() {
-            axios.get('../searchsku.php', { params: { query: this.searchQuery } })
+            axios.get('https://pim.samsgroup.info/autofill/resultlist.php', { params: { 
+                query: this.searchQuery,
+                db:'pim',
+                col1: 'sku',
+                cola: 'wholesale_aud',
+                colb: 'product_title',
+                } 
+            })
                 .then(response => {
                     this.searchSku = response.data;
                     console.log(this.searchSku);
@@ -60,7 +66,7 @@ myapp.component('approitem', {
                 });
         },
         selectItem(item) {
-            this.searchQuery = item.sku;
+            this.searchQuery = item.val;
             this.searchSku = []; // Clear search results
             this.itemdetail = true;
             this.price = item.wholesale_aud;

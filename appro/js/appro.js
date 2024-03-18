@@ -9,8 +9,7 @@ const myapp = Vue.createApp({
             itemcode:'',
             itemprice:0,
             itemquantity:0,
-            searchCustomer:[],
-            customername: '',
+
             totals: [],
             quantitytotals:[],
         };
@@ -39,20 +38,7 @@ const myapp = Vue.createApp({
             if(this.editingCell[0] == row && this.editingCell[1] == col){                return true;            }
             else{                return false;            }
           },
-        searchname() {
-            axios.get('../searchcustomer.php', { params: { query: this.customername } })
-                .then(response => {
-                    this.searchCustomer = response.data;
-                  })
-                .catch(error => {
-                    console.error('Error searching items:', error);
-                });
-        },
-        selectCustomer(customer){
-            this.customername = customer.customer;
-            this.searchCustomer = []; // Clear search results
 
-        },
         additem() {
             // Create a new app instance for the rowfilter component
             const itemApp = Vue.createApp({});

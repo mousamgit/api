@@ -1,19 +1,16 @@
 <?php
-    include 'login_checking.php';
-    include 'functions.php';
-    require 'connect.php';
+    include '../login_checking.php';
+    include '../functions.php';
+    require '../connect.php';
 ?>
 <html>
     <head>
-        <?php include 'header.php'; ?>
+        <?php include '../header.php'; ?>
         <title> SGA PIM - Add a Repair Job </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
-        <script>
-    const myapp = Vue.createApp({});
-</script>
-        <script src="./autofill/autofill.js"></script>
+        <script src="./repair.js" ></script>
 
         <script>
             $(function() {
@@ -63,7 +60,8 @@
                 <div class="form-row">
                     <div class="cell-l">Job Number:</div> 
                     <div class="cell-r">
-                        <input type="text" name="job_number" id="job_number" placeholder="Enter a Repair Number *" required>
+                        <input type="text" name="job_number" id="job_number" placeholder="Enter a Repair Number *" >
+
                         <!-- <autofill  :col1="'job_number'"  :db="'repairs'"  :placeholder="'Enter a Repair Number * '"  :inputname="'job_number'" :req="true"></autofill> -->
                     </div>
                 </div>
@@ -78,19 +76,28 @@
                 <div class="form-row subheader" style="margin-top: 80px;"><span>Customer Details</span></div>
                 <div class="form-row">
                     <div class="cell-l">Customer Code:</div> 
-                    <div class="cell-r"><input type="text" name="cust_code" id="cust_code" placeholder="Enter Customer Code *" required></div>
+                    <div class="cell-r">
+                        <input type="text" name="cust_code" id="cust_code" placeholder="Enter Customer Code *" required autocomplete="off"  v-model="searchQuery" @input="searchItems">
+                    <div class="autofill">
+                        <ul v-if="items.length > 0">
+                            <li v-for="item in items" @click="selectItem(item)">
+                                {{ item.val }}
+                            </li>
+                        </ul>
+                        </div>
+                </div>
                 </div>
                 <div class="form-row">
                     <div class="cell-l">Customer Name:</div>
-                    <div class="cell-r"><input type="text" name="cust_name" id="cust_name" placeholder="Enter Customer Name" ></div>
+                    <div class="cell-r"><input type="text" name="cust_name" id="cust_name" placeholder="Enter Customer Name" v-model="this.contact"></div>
                 </div>
                 <div class="form-row">
                     <div class="cell-l"><label>Contact Details:</div>
-                    <div class="cell-r"><input type="text" name="contact" id="contact" placeholder="Enter Contact Number or Email" ></div>
+                    <div class="cell-r"><input type="text" name="contact" id="contact" placeholder="Enter Contact Number or Email" v-model="this.email"></div>
                 </div>
                 <div class="form-row">
                     <div class="cell-l"><label>Contact Address:</div>
-                    <div class="cell-r"><input type="text" name="address" id="address" placeholder="Customer Address" ></div>
+                    <div class="cell-r"><input type="text" name="address" id="address" placeholder="Customer Address" v-model="this.address"></div>
                 </div>
                 <div class="form-row subheader" style="margin-top: 80px;"><span>Product Details</span></div>
                 <div class="form-row">

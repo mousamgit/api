@@ -56,12 +56,13 @@ header{background-color: #222; width: 100%; height: 50px; color:#fff; position: 
 header a{ color:#fff}
 .data_body{padding: 10px 50px;}
 
-.icon-btn{ float: right;  padding:10px;}
+.icon-btn{ padding:10px;}
 .pimtable{  width:100% !important;  text-align: left; font-size: 12px;     border: #e1e1e1 solid 1px;  margin-bottom: 20px;}
 .pimtable thead tr{background: #efefef;}
 .pimtable tbody tr:nth-child(even) {background: #efefef;}
 .pimtable .img-cell{background: #fff;}
 .pimtable .img-cell img{width:80px;}
+.pimtable th[col="checkbox"]{width:30px;}
 .pimtable td, .pimtable th{padding:5px 10px;}
 .pimtable .tabledata{cursor: pointer;}
 .pimtable .tabledata i{display: none;}
@@ -75,6 +76,7 @@ header a{ color:#fff}
 .filter-form select{margin-right: 30px;}
 .filter-btn-container{margin-top: 20px;}
 .inputnumber{width: 50px;    margin-right: 10px;}
+
 
 /* The side navigation menu */
 .header-menu{width:100%;}
@@ -344,10 +346,10 @@ header a{ color:#fff}
   .form-cell{margin-bottom: 20px;}
   .item-row{margin-bottom:20px;}
 
-  .appro-form .autofill{position: absolute;    background: #fff;  border-radius: 10px;    margin-top: 5px; box-shadow:0 0 10px -5px; padding:20px 0;}
-  .appro-form .autofill ul{list-style: none; padding:0px; margin:0;}
-  .appro-form .autofill ul li{padding: 5px 20px; cursor: pointer;}
-  .appro-form .autofill ul li:hover{background-color: #e1e1e1; }
+  .autofill{position: absolute;    background: #fff!important;  border-radius: 10px;    margin-top: 5px; box-shadow:0 0 10px -5px!important;   padding:20px 0;}
+  .autofill ul{list-style: none; padding:0px; margin:0;}
+  .autofill ul li{padding: 5px 20px; cursor: pointer;}
+  .autofill ul li:hover{background-color: #e1e1e1; }
   .itemtable .firstrow{  font-weight: bold;  background-color: #f2f2f2;  color: #333;  border-bottom: 1px solid #ddd;}
   .itemtable .cell{border: 1px solid #ddd; width:20%; height:50px;     padding: 12px;}
   .itemtable .cell input{border:0; margin:0;}
@@ -387,7 +389,7 @@ header a{ color:#fff}
   .homepage-table th{ position: sticky;   top: 0;     padding-top: 15px;    padding-bottom: 15px; }
   .homepage-table td, .homepage-table th{border-right:1px solid #fff;}
   .homepage-table td img{width:100px;}
-  .toolbar{ z-index: 1; width: 100%; background-color: #fff;  padding:20px 25px 5px ;}
+  .toolbar{ z-index: 1; width: 100%; background-color: #fff;  padding:20px 25px 5px ;  text-align: right;}
   .right-slider-container{    padding: 100px 20px 20px;  position: fixed;    right: -400px;    top: 0;    width: 400px;    max-width: 90%;    height: 100%; z-index: 2; overflow-y: scroll;}
   .right-slider-container.is-open{right:0;}
 
@@ -405,7 +407,7 @@ header a{ color:#fff}
   .select-btn{border: 1px solid rgba(0, 0, 0, .125);  background-color: #fff;  border-radius: 0.25rem;  padding:5px 15px;     float: left;    margin-right: 5px;  font-size: 14px;  margin-top: 5px; cursor: pointer;}
   .select-btn label{cursor: pointer;}
   .select-btn.selected{background-color: #222; color:#fff;}
-
+  select.card::before{    content: "\2b";     font-family: var(--fa-style-family, "Font Awesome 6 Free");  font-weight: 900;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}

@@ -17,14 +17,11 @@ include 'functions.php';
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
+
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-
-            <div id="index">
-                <index></index>
-            </div>
-
+<div id="index"><index></index></div>
 <script type="module" src="./homepage/js/index.js" defer></script>
 </body>
 </html>

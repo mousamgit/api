@@ -1,5 +1,5 @@
 export default {
-    props: ['productDetails', 'showFilters'],
+    props: ['productDetails', 'showFilters','filters'],
     data() {
         return {
             channelAttribute: [],
@@ -15,43 +15,130 @@ export default {
             showManualValidationMessage:0,
             filter_name:'',
             showInput:0,
-            editForm:-1 //v2
+            editForm:-1,
+            filter_no:0,
+            filterList:[],
+            deletedId:[],
+            showFilterValidation:false
         };
     },
     mounted() {
         this.fetchAllColumns();
+        this.updateStatus(-1)
     },
     methods: {
+        async  controlFilters() {
+            this.showFilterValidation=false;
+            this.showInput=1;
+            const dataToSend = {
+                filter_no: this.filter_no
+            };
+
+            try {
+                const response = await fetch('./control_user_filters.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update database');
+                }
+                this.initializeData()
+                this.$emit('filters-updated');
+                this.getFilterDetails(this.filter_no)
+            } catch (error) {
+                console.error('Error updating database:', error);
+            }
+        },
         handleInput(){
             this.showInput=1;
         },
         async updateStatus(value) {
-            try {
 
-                const response = await fetch('update_filter_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        value: value,
-                        filter_name:this.filter_name,
-                        product_details:this.productDetails
-                    }),
-                });
+            if(value==0)
+            {
+                // Display a confirmation dialog
+                const confirmed = window.confirm(`Are you sure you want to remove `+this.filter_name);
 
-                const data = await response.json();
+                if (confirmed) {
+                    try {
+                        const response = await fetch('update_filter_status.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                value: value,
+                                filter_name: this.filter_name,
+                                product_details: this.productDetails,
+                                filter_no: this.filter_no,
+                                deletedId: this.deletedId
+                            }),
+                        });
 
-                if (data.success) {
-                    this.initializeData()
-                    this.$emit('filters-updated');
-                    this.showInput =0;
-                    this.filter_name ='';
-                } else {
-                    console.error('Error updating status:', data.error);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.initializeData()
+                            this.$emit('filters-updated');
+
+                                this.showInput = 0;
+                                this.filter_name = '';
+                                this.filter_no = 0;
+                                this.showInput = 0;
+
+
+                        } else {
+                            console.error('Error updating status:', data.error);
+                        }
+                    } catch (error) {
+                        console.error('Error updating status:', error);
+                    }
                 }
-            } catch (error) {
-                console.error('Error updating status:', error);
+            }
+            else{
+                if(value==1 && this.filter_name =='') {
+                    this.showFilterValidation = true;
+                    return;
+                }
+                try {
+                    const response = await fetch('update_filter_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            value: value,
+                            filter_name: this.filter_name,
+                            product_details: this.productDetails,
+                            filter_no: this.filter_no,
+                            deletedId: this.deletedId
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.initializeData()
+                        this.$emit('filters-updated');
+                        if (value == 1) {
+                            this.controlFilters()
+                        } else {
+                            this.showInput = 0;
+                            this.filter_name = '';
+                            this.filter_no = 0;
+                            this.showInput = 0;
+                        }
+
+                    } else {
+                        console.error('Error updating status:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                }
             }
         },
         //v2
@@ -160,6 +247,7 @@ export default {
         },
 
         addChannelCondition(op_value, condition_type, previous_row) {
+            this.showInput=1;
             this.op_show_value = op_value;
             this.showAttributeMid = previous_row['id'];
             this.selectedValues=[];
@@ -193,10 +281,6 @@ export default {
                     this.indexVal = -1;
                 }
 
-                // Display a confirmation dialog
-                const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
-
-                if (confirmed) {
                     const response = await fetch('./products/delete_product_filter.php', {
                         method: 'POST',
                         headers: {
@@ -210,6 +294,8 @@ export default {
                     });
                     const data = await response.json();
                     if (data.success) {
+                        this.deletedId.push(productDetId);
+                        console.log(this.deletedId)
                         console.log('filters deleted successfully!');
                         this.initializeData()
                         this.$emit('filters-updated');
@@ -217,9 +303,7 @@ export default {
                     } else {
                         console.error('Error deleting filter:', data.error);
                     }
-                } else {
-                    console.log('Deletion canceled by the user.');
-                }
+
             } catch (error) {
                 console.error('Error deleting channel:', error);
             }
@@ -280,8 +364,33 @@ export default {
                 console.error('Error fetching attributes:', error);
             }
         },
+        async  getFilterDetails(filter_no) {
+            const dataToSend = {
+                filter_no: filter_no
+            };
+
+            try {
+                const response = await fetch('./users/get_user_filter_details.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                })
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch filter details');
+                }
+                const data = await response.json();
+                this.filter_name = data;
+
+            } catch (error) {
+                console.error('Error updating database:', error);
+            }
+        },
 
         initializeData() {
+            this.showFilterValidation=false;
             this.channelAttribute = [],
                 this.indexCheck = 0,
                 this.columns = [],
@@ -297,25 +406,35 @@ export default {
 
     },
     template: `
-    <div>
-        <div class="flex-row vcenter right-slider-header">
-            <span class="sub-heading">FILTERS</span>
-        </div>
+    <div class="flex-row vcenter right-slider-header"><span class="sub-heading">FILTERS</span> </div>
+    <div class=" test right-menu filters background-secondary-bg">
+
+        
+                             <select class="card" v-model="filter_no" @change="controlFilters"  v-if="productDetails.length==0">
+                                <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
+                                <template v-for="(fvalue, fkey) in filters">
+                                   <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
+                                </template>
+                             </select>                           
+     
+          
+
+             <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" placeholder="Name your filter" required>                        
+               <span v-if="showFilterValidation == true">Please Enter Filter Name</span>
+
         
         <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
 
-
-                        <!-- Left column for Attributes -->
                         <div>
                             New Condition
                         </div>
 
-                            <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
+                        <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
                                 <i class="fa fa-plus"></i>
-                            </a>
+                        </a>
+                   
         </div>
-
-
+ 
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
@@ -644,20 +763,25 @@ export default {
                                             </div>
 
                                         </div>
+
                             </div>
                     
-
+                            </div>
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
-<template class="filter-input" v-if="showInput==1">
-<input type="text" v-model="filter_name" @keyup.enter="updateStatus(1)" placeholder="Enter Filter Name and Save" class="form-control" required>
-<a class="btn btn-primary mt-3" @click="updateStatus(1)">Save Filters</a>
-</template>
-<template class="filter-input" v-else>
-<a class="btn btn-primary mt-3"  @click="handleInput()">Save Filters</a>
-</template>
-
-<a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear Filters</a>
+      
+       <template v-if="filter_no ==0">          
+           <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
+           <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
+       </template>
+       <template v-else>          
+                <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update </a>
+                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
+                <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
+       </template>
+</div>
+<div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
+                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
 </div>
   `,
 };
