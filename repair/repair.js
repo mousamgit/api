@@ -14,7 +14,6 @@ const myapp = Vue.createApp({
     },
     methods: {
         searchItems() {
-            console.log(this.searchQuery);
             axios.get('https://pim.samsgroup.info/autofill/resultlist.php', { params: { 
                 query: this.searchQuery,
                 db:'customer',
