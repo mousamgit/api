@@ -22,7 +22,7 @@ include '../login_checking.php';
 <div id="app" class="pim-padding">
     <h1>test</h1>
     <form action="" method="post" class="appro-form form-design">
-        <autofill  :col1="'code'" :col2="'company'" :db="'customer'" :inputname="'test'"></autofill>
+        <autofill  :col1="'code'" :col2="'company'" :db="'customer'" :inputname="'test'"  :placeholder="'Enter a keyword * '"  :req="true"></autofill>
         
     </form>
 

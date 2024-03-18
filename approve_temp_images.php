@@ -11,9 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Open Sans', sans-serif; text-align:center; }
+    body { font-family: 'Open Sans', sans-serif; }
     .top-bar { display:block; padding:20px; text-align:left; background-color:#fafafa; margin-bottom:100px;}
-    .main-box { width:50%; margin:0 auto; padding:50px; text-align:center; }
+    .main-box { width:90%; margin:0 auto; padding:50px; text-align:center; }
     table {border: 1px solid #000; width:100%;}
     th, td { width: 12.5%; height: 12.5%; border: 1px solid #000; padding:10px;}
     input[type=checkbox] { height:20px; width:20px; }
@@ -24,11 +24,14 @@
     .warning { color:red; font-size:8px; }
   </style>
 </head>
-<body>
 <?php include 'topbar.php'; ?>
-<h2>Check Images and Upload</h2>
+<body>
+
+<h2>Images added successfully</h2>
 
 <div class="main-box">
+  <center>
+
 <?php
 include ('connect.php');
 $pieces = $_POST['check'];
@@ -51,8 +54,10 @@ foreach ($pieces as $key => $value)
       $temp = $_SERVER['DOCUMENT_ROOT']."/temp-images/".$values[1];
       $targetFolder = $_SERVER['DOCUMENT_ROOT']."-images/".$values[1];
       rename($temp, $targetFolder);
+      $version = Date("Y.m.d.G.i.s");
       $newImage = "https://samsgroup.info/pim-images/".$values[1];
-      echo "<div class='image-box'><img src='".$newImage."' width=150px> ".$values[1]." has been updated. Link: <a href='".$newImage."' target='_blank' style='font-size:12px;'>".$newImage."</a></div>";
+      $newImage1 = "https://samsgroup.info/pim-images/".$values[1]."?v=".$version;
+      echo "<div class='image-box' style='max-width:100% !important;'><img src='".$newImage1."' width=150px> ".$values[1]." has been updated. Link: <a href='".$newImage."' target='_blank' style='font-size:12px;'>".$newImage."</a></div>";
 
       $newrecord = $newImage;
       $logsku = $values[0];
@@ -66,6 +71,7 @@ foreach ($pieces as $key => $value)
 }
 
 ?>
+</center>
 </div>
 </body>
 </html>
