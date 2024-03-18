@@ -30,6 +30,7 @@ const app = Vue.createApp({
             pageSize:100,
             selectAllChecked:{},
             itemNo:0,
+            isLoading:false,
             exportRows: [], // Array to store data for export
             checkedRows: {} // Object to track checked rows
         };
@@ -52,6 +53,7 @@ const app = Vue.createApp({
 
     methods: {
         clearCheckedState() {
+            this.itemNo=0
             this.checkedRows = {};
             this.selectAllChecked = {};
             this.exportRows = [];
@@ -94,42 +96,55 @@ const app = Vue.createApp({
             this.itemNo=this.exportRows.length;
 
         },
-        SelectAllPagesRow()
+        SelectAllPagesRow(value)
         {
-            const startIndex = 0;
-            const endIndex = this.totalRows;
-            const totalPages = parseInt(endIndex/100);
+            if(value==1)
+            {
+                this.exportRows=[];
+                const startIndex = 0;
+                const endIndex = this.totalRows;
+                const totalPages = parseInt(endIndex/100);
+                for (let i = startIndex; i < totalPages; i++) {
+                    this.selectAllChecked[i]=true;
+                }
 
-            for (let i = startIndex; i < totalPages; i++) {
-               this.selectAllChecked[i]=true;
+                for (let i = startIndex; i < endIndex; i++) {
+                    const sku = this.productValuesTotal[i]['sku'];
+                    this.checkedRows[sku] = true;
+                    this.exportRows.push(this.productValuesTotal[i]);
+                }
+
+                this.itemNo=this.exportRows.length;
+            }
+            else{
+                this.clearCheckedState();
             }
 
-            for (let i = startIndex; i < endIndex; i++) {
-                const sku = this.productValuesTotal[i]['sku'];
-                this.checkedRows[sku] = true;
-                this.exportRows.push(this.productValues[i]);
-            }
-            console.log(this.exportRows)
-            this.itemNo=this.exportRows.length;
         },
         exportToCSV() {
             if (this.exportRows.length === 0) {
+                alert("Please Select Products To Export")
                 // Export cannot proceed if there are no rows to export
                 return;
             }
+
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
             const columnNames = this.columnValues; // Get the column names in the correct order
-
+            console.log(this.exportRows);
             this.exportRows.forEach(row => {
-                const rowData = columnNames.map(colName => {
-                    let value = row[colName];
-                    if (typeof value === 'string' && value.includes(',')) {
-                        // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
-                        value = '"' + value.replace(/"/g, '""') + '"';
-                    }
-                    return value;
-                });
-                csvContent += rowData.join(",") + "\n";
+                if(row)
+                {
+                    const rowData = columnNames.map(colName => {
+                        let value = row[colName];
+                        if (typeof value === 'string' && value.includes(',')) {
+                            // If the value contains a comma, enclose it in double quotes and escape any existing double quotes
+                            value = '"' + value.replace(/"/g, '""') + '"';
+                        }
+                        return value;
+                    });
+                    csvContent += rowData.join(",") + "\n";
+                }
+
             });
 
             const encodedUri = encodeURI(csvContent);
@@ -351,6 +366,7 @@ const app = Vue.createApp({
                     if (storedCheckedRows) {
                         this.checkedRows = JSON.parse(storedCheckedRows);
                     }
+                    this.isLoading=true;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -471,18 +487,13 @@ const app = Vue.createApp({
         }
     },
     template: `
-    
     <nav class=" toolbar pim-padding">
     
-
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
         </nav>
      
-
-    
-    
     </div>
     
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
@@ -491,7 +502,12 @@ const app = Vue.createApp({
      
         <div class="pim-padding ">   
         <span v-if="itemNo >0">{{itemNo}} items selected </span> 
-<!-- &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow">Select All</a>-->
+        <template v-if="itemNo < totalRows">
+ &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(1)">Select All</a>
+        </template>
+        <template v-else>
+        &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(0)">UnSelect All</a>
+        </template>
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
