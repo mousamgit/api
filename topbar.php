@@ -76,8 +76,8 @@
             echo '<nav class="drawer-navigation drawer-border">';
             echo '<button class="drawer-dropdown-toggle" ><span>Repair Centre</span><i class="fa-solid fa-caret-down"></i></button>';
             echo '<nav class="drawer-navigation drawer-border" id="drawer-dropdown-sales">';
-            echo '<a class="drawer-list-item"  href="/add_repairjob.php"><span>Add a Repair</span></a> ';
-            echo '<a class="drawer-list-item"  href="/repairs.php"><span>Repair Log</span></a>';
+            echo '<a class="drawer-list-item"  href="/repair/add_repairjob.php"><span>Add a Repair</span></a> ';
+            echo '<a class="drawer-list-item"  href="/repair/repairs.php"><span>Repair Log</span></a>';
             echo '</nav> </nav>';
         }
         ?>

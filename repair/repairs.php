@@ -1,23 +1,23 @@
 <?php
-  include 'login_checking.php';
-  include 'functions.php';
-  require ('connect.php');
+  include '../login_checking.php';
+  include '../functions.php';
+  require ('../connect.php');
 
   $query = " SELECT * from repairs ORDER BY `repairs`.`id` DESC";
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 ?>
 <html>
   <head>
-    <?php include 'header.php'; ?>
+    <?php include '../header.php'; ?>
     <title> SGA PIM - Repairs</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
   </head>
-  <?php include 'topbar.php'; ?>
+  <?php include '../topbar.php'; ?>
   <div class="pim-padding">
   <div style="float:left; width:50%;"> <h3>Repair Centre</h3> </div>
-  <div style="float:right; width:49%; text-align:right"><a class="task_button" href="/add_repairjob.php"><i class="fa-solid fa-plus"></i> Log a Repair</a></div>
+  <div style="float:right; width:49%; text-align:right"><a class="task_button" href="./add_repairjob.php"><i class="fa-solid fa-plus"></i> Log a Repair</a></div>
   <br><br><br><br>
   <div style="width:100%;">
   <table id="myTable" class="producttable">
