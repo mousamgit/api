@@ -102,15 +102,16 @@ const app = Vue.createApp({
                     }
                 default:
                     if(columnValue=='DESC'){
-                        return 'High To Low'
+                        return 'A-Z'
                     }else{
-                        return 'Low To High'
+                        return 'Z-A'
                     }
             }
         },
         updateFetchColumns(column_name,column_value){
             this.orderColumnName = column_name;
             this.orderColumnValue = column_value;
+            this.fetchProducts();
 
         },
         clearCheckedState() {
