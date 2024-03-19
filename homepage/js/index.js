@@ -56,7 +56,7 @@ const app = Vue.createApp({
 
 
     methods: {
-         getDataTypeValue(columnName) {
+         getDataTypeValue(columnName,columnValue) {
             switch (columnName) {
                 case 'carat':
                 case 'purchase_cost_aud':
@@ -83,19 +83,35 @@ const app = Vue.createApp({
                 case 'client_jim077_price':
                 case 'product_id':
                 case 'variant_id':
-                    return 'number';
+                    if(columnValue=='DESC'){
+                        return 'High To Low'
+                    }else{
+                        return 'Low To High'
+                    }
                 case 'modified_date':
-                    return 'date';
+                    if(columnValue=='DESC'){
+                        return 'A-Z'
+                    }else{
+                        return 'Z-A'
+                    }
                 case 'client_tags':
-                    return 'text';
+                    if(columnValue=='DESC'){
+                        return 'A-Z'
+                    }else{
+                        return 'Z-A'
+                    }
                 default:
-                    return 'string';
+                    if(columnValue=='DESC'){
+                        return 'High To Low'
+                    }else{
+                        return 'Low To High'
+                    }
             }
         },
         updateFetchColumns(column_name,column_value){
-                this.orderColumnName= column_name;
-                this.orderColumnValue= column_value;
-                this.fetchProducts();
+            this.orderColumnName = column_name;
+            this.orderColumnValue = column_value;
+
         },
         clearCheckedState() {
             this.itemNo=0
@@ -578,14 +594,14 @@ const app = Vue.createApp({
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 <div class="box-container">
-                  <i class="fa fa-angle-down"></i>
+                  
                   <template v-if="dataTypeValue=='varchar'">
-                        <template v-if="orderColumnValue=='ASC'"><div class="box-content" @click="updateFetchColumns(colName,DESC)">Z-A</div></template>
-                        <template v-else><div class="box-content" @click="updateFetchColumns(colName,ASC)">A-Z</div></template>      
+                        <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
+                        <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
                   </template>
                   <template v-else>
-                   <template v-if="orderColumnValue=='ASC'"><div class="box-content" @click="updateFetchColumns(colName,DESC)">High To Low</div></template>
-                   <template v-else><div class="box-content" @click="updateFetchColumns(colName,ASC)">Low To High</div></template>  
+                   <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
+                   <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
                   </template>
                  
                 </div>

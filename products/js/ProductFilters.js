@@ -92,6 +92,7 @@ export default {
                         if (data.success) {
                             this.initializeData()
                             this.$emit('filters-updated');
+
                                 this.showInput = 0;
                                 this.filter_name = '';
                                 this.filter_no = 0;
@@ -130,9 +131,11 @@ export default {
                     const data = await response.json();
 
                     if (data.success) {
+
                         this.initializeData()
                         this.$emit('filters-updated');
                         if (value == 1) {
+                            this.filter_no=data.filter_no;
                             this.controlFilters()
                         } else {
                             localStorage.removeItem('deletedId');
