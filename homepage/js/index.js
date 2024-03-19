@@ -563,7 +563,7 @@ const app = Vue.createApp({
     
     <nav class=" toolbar pim-padding">
     
-
+        <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
@@ -580,8 +580,7 @@ const app = Vue.createApp({
      
         <div class="pim-padding ">   
         
-          &nbsp;&nbsp;<input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow">
-           &nbsp;&nbsp;<span v-if="itemNo >0">{{itemNo}} items selected </span> 
+         
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
