@@ -7,6 +7,7 @@ ini_set('display_errors', '1');
 require_once('./connect.php');
 require_once('./login_checking.php');
 require_once('./functions.php');
+$filter_no=0;
 
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
@@ -190,7 +191,7 @@ else
 if ($success==true) {
     $sql4="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
     $con->query($sql4);
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true,'filter_no'=>$filter_no]);
 } else {
     echo json_encode(['success' => false, 'error' => $con->error]);
 }

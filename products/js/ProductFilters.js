@@ -92,6 +92,7 @@ export default {
                         if (data.success) {
                             this.initializeData()
                             this.$emit('filters-updated');
+
                                 this.showInput = 0;
                                 this.filter_name = '';
                                 this.filter_no = 0;
@@ -130,9 +131,11 @@ export default {
                     const data = await response.json();
 
                     if (data.success) {
+
                         this.initializeData()
                         this.$emit('filters-updated');
                         if (value == 1) {
+                            this.filter_no=data.filter_no;
                             this.controlFilters()
                         } else {
                             localStorage.removeItem('deletedId');
@@ -427,23 +430,12 @@ export default {
                                 </template>
                              </select>                           
      
-          
-
-             <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" placeholder="Name your filter" required>                        
-               <span v-if="showFilterValidation == true">Please Enter Filter Name</span>
+<i  v-if="productDetails.length==0" class="fa fa-chevron-down" aria-hidden="true"></i>
+             <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" :class="{ 'err-box': showFilterValidation }" placeholder="Name your filter" required>                        
+           
 
         
-        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
-
-                        <div>
-                            New Condition
-                        </div>
-
-                        <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
-                                <i class="fa fa-plus"></i>
-                        </a>
-                   
-        </div>
+        <a class="card add-condition" v-if="productDetails.length==0 && channelAttribute.length==0"  @click="addChannelCondition('AND','normal',[])">New Condition<i class="fa fa-plus"></i></a>
  
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
