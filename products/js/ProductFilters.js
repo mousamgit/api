@@ -427,23 +427,12 @@ export default {
                                 </template>
                              </select>                           
      
-          
-
+<i  v-if="productDetails.length==0" class="fa fa-chevron-down" aria-hidden="true"></i>
              <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" placeholder="Name your filter" required>                        
                <span v-if="showFilterValidation == true">Please Enter Filter Name</span>
 
         
-        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
-
-                        <div>
-                            New Condition
-                        </div>
-
-                        <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
-                                <i class="fa fa-plus"></i>
-                        </a>
-                   
-        </div>
+        <a class="card add-condition" v-if="productDetails.length==0 && channelAttribute.length==0"  @click="addChannelCondition('AND','normal',[])">New Condition<i class="fa fa-plus"></i></a>
  
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">

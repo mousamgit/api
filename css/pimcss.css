@@ -407,8 +407,12 @@ header a{ color:#fff}
   .select-btn{border: 1px solid rgba(0, 0, 0, .125);  background-color: #fff;  border-radius: 0.25rem;  padding:5px 15px;     float: left;    margin-right: 5px;  font-size: 14px;  margin-top: 5px; cursor: pointer;}
   .select-btn label{cursor: pointer;}
   .select-btn.selected{background-color: #222; color:#fff;}
-  select.card::before{    content: "\2b";     font-family: var(--fa-style-family, "Font Awesome 6 Free");  font-weight: 900;}
-  select.card+i {display: none;}
+  select.card{appearance: none; cursor: pointer;}
+  select.card+ i {display: block;     position: absolute;    margin-top: -40px;    padding: 0;    right: 35px;}
+
+  .selectbox{    float: left;    padding: 5px 10px;}
+  .selectbox span{padding:10px; font-size:12px;}
+  .add-condition i{position: absolute;    right: 15px;    font-size: 18px;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}
