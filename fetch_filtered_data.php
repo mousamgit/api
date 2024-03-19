@@ -43,7 +43,6 @@ class ProductDetailHandler {
     private function getProducts() {
         $products = [];
         $productQuery = $this->con->query("SELECT * FROM products where id=" . $this->productId);
-
         if ($productQuery->num_rows > 0) {
             while ($row = $productQuery->fetch_assoc()) {
                 $products[] = $row;
@@ -67,12 +66,21 @@ class ProductDetailHandler {
     }
 
     private function getProductValues() {
+        $order_column_name='sku';
+        $order_column_value='ASC';
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if(count($data)>0)
+        {
+            $order_column_name = $data['order_column_name'];
+            $order_column_value = $data['order_column_value'];
+        }
+
         $productValues = [];
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
         $offset = (($_GET['page'] ?? 1) - 1) * $this->itemsPerPage;
-
-        $productDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != '' LIMIT $offset, $this->itemsPerPage");
+        $productDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != '' order by ".$order_column_name." ".$order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
         if ($productDetailQuery->num_rows > 0) {
             while ($row = $productDetailQuery->fetch_assoc()) {
                 $productValues[] = $row;

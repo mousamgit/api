@@ -24,9 +24,18 @@ export default {
     },
     mounted() {
         this.fetchAllColumns();
-        this.updateStatus(-1)
+        this.triggerOnPageLoad();
+        this.updateStatus(-1);
     },
     methods: {
+        triggerOnPageLoad() {
+            const storedDeletedIds = localStorage.getItem('deletedId');
+            if (storedDeletedIds) {
+                this.deletedId = JSON.parse(storedDeletedIds);
+                localStorage.removeItem('deletedId');
+                this.updateStatus(-1)
+            }
+        },
         async  controlFilters() {
             this.showFilterValidation=false;
             this.showInput=1;
@@ -57,7 +66,6 @@ export default {
             this.showInput=1;
         },
         async updateStatus(value) {
-
             if(value==0)
             {
                 // Display a confirmation dialog
@@ -84,13 +92,10 @@ export default {
                         if (data.success) {
                             this.initializeData()
                             this.$emit('filters-updated');
-
                                 this.showInput = 0;
                                 this.filter_name = '';
                                 this.filter_no = 0;
                                 this.showInput = 0;
-
-
                         } else {
                             console.error('Error updating status:', data.error);
                         }
@@ -100,6 +105,9 @@ export default {
                 }
             }
             else{
+                if(value==1){
+                    this.deletedId=[];
+                }
                 if(value==1 && this.filter_name =='') {
                     this.showFilterValidation = true;
                     return;
@@ -127,6 +135,7 @@ export default {
                         if (value == 1) {
                             this.controlFilters()
                         } else {
+                            localStorage.removeItem('deletedId');
                             this.showInput = 0;
                             this.filter_name = '';
                             this.filter_no = 0;
@@ -295,6 +304,7 @@ export default {
                     const data = await response.json();
                     if (data.success) {
                         this.deletedId.push(productDetId);
+                        localStorage.setItem('deletedId', JSON.stringify(this.deletedId));
                         console.log(this.deletedId)
                         console.log('filters deleted successfully!');
                         this.initializeData()

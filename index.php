@@ -17,7 +17,33 @@ include 'functions.php';
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
+    <style>
+        .box-container {
+            position: relative;
+            display: inline-block;
+            padding: 0px;
+            border: 1px solid #ccc;
+            border-radius: 0px;
+        }
 
+        .box-content {
+            min-width:50px;
+            display: none; /* Hide the box content by default */
+            position: absolute;
+            top: 20px; /* Position the box above the container */
+            left: 100%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 0px;
+            border: 1px solid #ccc;
+            border-radius: 0px;
+            z-index: 999; /* Set a high z-index value to ensure the box appears on top */
+        }
+
+        .box-container:hover .box-content {
+            display: block; /* Show the box content on hover */
+        }
+    </style>
 </head>
 <body>
 <?php include 'topbar.php'; ?>

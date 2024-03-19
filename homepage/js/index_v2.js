@@ -54,12 +54,7 @@ const app = Vue.createApp({
 
 
     methods: {
-        showTooltip(colName) {
-            // You can set tooltip content based on colName or any other logic
-            this.tooltipContent = "Tooltip content for " + colName;
-            // Set the index to display the tooltip
-            this.showTooltipIndex = index;
-        },
+
         clearCheckedState() {
             this.itemNo=0
             this.checkedRows = {};
