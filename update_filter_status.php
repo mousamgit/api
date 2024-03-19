@@ -41,7 +41,6 @@ if($value ==0)
 }
 elseif ($value == -1)
 {
-
     $filter_no= $data['filter_no'];
     $con->query("update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'");
     if(count($data['deletedId'])>0)
