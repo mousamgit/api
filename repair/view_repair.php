@@ -1,12 +1,12 @@
 <?php
-    include 'login_checking.php';
-    include 'functions.php';
-    require 'connect.php';
+    include '../login_checking.php';
+    include '../functions.php';
+    require '../connect.php';
     $id = $_GET['id'];
 ?>
 <html>
     <head>
-        <?php include 'header.php'; ?>
+        <?php include '../header.php'; ?>
         <title> SGA PIM - View Repair Job </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
@@ -44,7 +44,7 @@
         </script>
     </head>
     <body>
-    <?php include 'topbar.php'; ?>
+    <?php include '../topbar.php'; ?>
     <?php 
         $query = " SELECT * from repairs WHERE id = '".$id."'";
         $result = mysqli_query($con, $query) or die(mysqli_error($con));
@@ -52,9 +52,9 @@
       while($row = mysqli_fetch_assoc($result)){ ?>
 
     <div class="pim-padding">
-        <form action="update_repairjob.php" class="form-design" method="post" enctype="multipart/form-data">
-        <div style="float:left; width:50%;"><a href="https://pim.samsgroup.info/repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div>
-        <div style="float:right; text-align: right; width: 49%"><a class="delete_button" href="/delete_repair.php?id=<?php echo $id; ?>"><i class="fa-solid fa-trash"></i> Delete this Repair</a></div><br>
+        <form action="./update_repairjob.php" class="form-design" method="post" enctype="multipart/form-data">
+        <div style="float:left; width:50%;"><a href="./repairs.php"><i class="fa-solid fa-left-long"></i> View All Repairs</a></div>
+        <div style="float:right; text-align: right; width: 49%"><a class="delete_button" href="./delete_repair.php?id=<?php echo $id; ?>"><i class="fa-solid fa-trash"></i> Delete this Repair</a></div><br>
         
         <br>
             <div class="form-row header"> Repair Job <?php echo $row[job_number]; ?></div>
@@ -249,7 +249,7 @@
                     ?>
                  </tbody>
             </table>
-            <form action="update_repairnotes.php" method="post" enctype="multipart/form-data">
+            <form action="./update_repairnotes.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" id="id" name="id" value="<?php echo $id;?>">
                 <input type="hidden" id="jobnumber" name="jobnumber" value="<?php echo $jobnumber;?>">
                 <input type="hidden" id="user" name="user" value="<?php echo $username;?>">
