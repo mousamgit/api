@@ -413,6 +413,9 @@ header a{ color:#fff}
   .selectbox{    float: left;    padding: 5px 10px;}
   .selectbox span{padding:10px; font-size:12px;}
   .add-condition i{position: absolute;    right: 15px;    font-size: 18px;}
+  .err-box{border: var(--main-color) 1px solid;}
+  .err-box::placeholder{color: var(--main-color); }
+
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}
