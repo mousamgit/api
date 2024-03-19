@@ -39,10 +39,10 @@
                         if ($row[repair_type] == "watch") { $depcolor = '#b58946';} else { $depcolor = '#c792d1';}
                         if ($row[status] == "pending approval") { $statcolor = '#ed9c77';} 
                         elseif ($row[status] == "shipped") { $statcolor = '#c4c2c2';} else { $statcolor = '#fff';}
-                        echo "<tr class='clickable-row' data-href='https://pim.samsgroup.info/view_repair.php?id=".$row[id]."'>";
+                        echo "<tr class='clickable-row' data-href='./view_repair.php?id=".$row[id]."'>";
                         echo "<td>".$row[id]."</td>";
                         echo "<td>".$row[added_date]."</td>";
-                        echo "<td><a href='https://pim.samsgroup.info/view_repair.php?id=".$row[id]."'>".$row[job_number]."</a></td>";
+                        echo "<td><a href='./view_repair.php?id=".$row[id]."'>".$row[job_number]."</a></td>";
                         echo "<td>".$row[cust_code]."</td>";
                         echo "<td>".$row[due_date]."</td>";
                         echo "<td style='color:$depcolor; font-weight:bold;'>".strtoupper($row[repair_type])."</td>";

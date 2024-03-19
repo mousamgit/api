@@ -1,7 +1,7 @@
 <?php
-    include 'login_checking.php';
-    include 'functions.php';
-    require 'connect.php';
+    include '../login_checking.php';
+    include '../functions.php';
+    require '../connect.php';
 
     $id = $_GET['id'];
 
@@ -11,7 +11,7 @@
         $result = mysqli_query($con, $sql) or die(mysqli_error($con));
     }
 
-   header('Location: https://pim.samsgroup.info/repairs.php');
+   header('Location: https://pim.samsgroup.info/repair/repairs.php');
    exit();
 
 

@@ -408,6 +408,7 @@ header a{ color:#fff}
   .select-btn label{cursor: pointer;}
   .select-btn.selected{background-color: #222; color:#fff;}
   select.card::before{    content: "\2b";     font-family: var(--fa-style-family, "Font Awesome 6 Free");  font-weight: 900;}
+  select.card+i {display: none;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}

@@ -1,7 +1,7 @@
 <?php
-    include 'login_checking.php';
-    include 'functions.php';
-    require 'connect.php';
+    include '../login_checking.php';
+    include '../functions.php';
+    require '../connect.php';
 
     if(isset($_POST['id'])) $id=$_POST['id'];
     if(isset($_POST['job_number'])) $job_number=$_POST['job_number'];
@@ -109,7 +109,7 @@
         $result = mysqli_query($con, $sql) or die(mysqli_error($con));
     }
 
-    header('Location: https://pim.samsgroup.info/view_repair.php?id='.$id);
+    header('Location: https://pim.samsgroup.info/repair/view_repair.php?id='.$id);
     exit();
 
 ?>
