@@ -593,18 +593,18 @@ const app = Vue.createApp({
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
-                <div class="box-container">
+                
                   
-                  <template v-if="dataTypeValue=='varchar'">
+                  <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
                         <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                         <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
-                  </template>
-                  <template v-else>
+                  </a>
+                  <a v-else class="sorting-btn">
                    <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                    <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
-                  </template>
+                  </a>
                  
-                </div>
+                
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                  </th>                
               </tr>
