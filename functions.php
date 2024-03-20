@@ -236,6 +236,29 @@ function addtoLog($logsku, $logheader, $newrecord,$username)
     $logsql = " INSERT into pimlog (date,time,sku,field,oldrecord,newrecord,user) VALUES ('$date','$time','$logsku','$logheader','$oldrecord','$newrecord','$username')";
     $logresult = mysqli_query($con,$logsql) or die(mysqli_error($con)); 
 }
+function valueexist($db, $prkey, $keyvalue){
+    require('connect.php');
+    // Construct the SQL query
+
+    $escapedDb = mysqli_real_escape_string($con, $db);
+    $escapedKey = mysqli_real_escape_string($con, $prkey);
+ 
+
+    $sql = "SELECT COUNT(*) as count FROM `$escapedDb` WHERE `$escapedKey` = '$keyvalue'";
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        if ($row['count'] > 0) {
+            return  true;
+        } else {
+            return  false;
+        }
+    } else {
+        // Handle query error (you might want to log or display an error message)
+        return 'not found';
+    }
+}
 function searchdata($sql){
     require('connect.php');
 
