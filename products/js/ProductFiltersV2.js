@@ -17,15 +17,34 @@ export default {
             showInput:0,
             editForm:-1,
             filter_no:0,
-            filterList:[]
+            filterList:[],
+            deletedId:[],
+            showFilterValidation:false
         };
     },
     mounted() {
         this.fetchAllColumns();
-        this.updateStatus(0)
+        // this.triggerOnPageLoad();
+        // this.updateStatus(-1);
     },
+
     methods: {
+        removeSelectedValue(index) {
+            // this.selectedValues.splice(index, 1);
+            this.selectedValues.splice(index, 1)
+            alert(this.selectedValues);
+            this.updateSelectedValues();
+        },
+        triggerOnPageLoad() {
+            const storedDeletedIds = localStorage.getItem('deletedId');
+            if (storedDeletedIds) {
+                this.deletedId = JSON.parse(storedDeletedIds);
+                localStorage.removeItem('deletedId');
+                this.updateStatus(-1)
+            }
+        },
         async  controlFilters() {
+            this.showFilterValidation=false;
             this.showInput=1;
             const dataToSend = {
                 filter_no: this.filter_no
@@ -54,35 +73,91 @@ export default {
             this.showInput=1;
         },
         async updateStatus(value) {
-            try {
+            if(value==0)
+            {
+                // Display a confirmation dialog
+                const confirmed = window.confirm(`Are you sure you want to remove `+this.filter_name);
 
-                const response = await fetch('update_filter_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        value: value,
-                        filter_name:this.filter_name,
-                        product_details:this.productDetails,
-                        filter_no:this.filter_no
-                    }),
-                });
+                if (confirmed) {
+                    try {
+                        const response = await fetch('update_filter_status.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                value: value,
+                                filter_name: this.filter_name,
+                                product_details: this.productDetails,
+                                filter_no: this.filter_no,
+                                deletedId: this.deletedId
+                            }),
+                        });
 
-                const data = await response.json();
+                        const data = await response.json();
 
-                if (data.success) {
-                    this.initializeData()
-                    this.$emit('filters-updated');
-                    this.showInput =0;
-                    this.filter_name ='';
-                    this.filter_no=0;
-                    this.showInput=0;
-                } else {
-                    console.error('Error updating status:', data.error);
+                        if (data.success) {
+                            this.initializeData()
+                            this.$emit('filters-updated');
+
+                            this.showInput = 0;
+                            this.filter_name = '';
+                            this.filter_no = 0;
+                            this.showInput = 0;
+                        } else {
+                            console.error('Error updating status:', data.error);
+                        }
+                    } catch (error) {
+                        console.error('Error updating status:', error);
+                    }
                 }
-            } catch (error) {
-                console.error('Error updating status:', error);
+            }
+            else{
+                if(value==1){
+                    this.deletedId=[];
+                }
+                if(value==1 && this.filter_name =='') {
+                    this.showFilterValidation = true;
+                    return;
+                }
+                try {
+                    const response = await fetch('update_filter_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            value: value,
+                            filter_name: this.filter_name,
+                            product_details: this.productDetails,
+                            filter_no: this.filter_no,
+                            deletedId: this.deletedId
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+
+                        this.initializeData()
+                        this.$emit('filters-updated');
+                        if (value == 1) {
+                            this.filter_no=data.filter_no;
+                            this.controlFilters()
+                        } else {
+                            localStorage.removeItem('deletedId');
+                            this.showInput = 0;
+                            this.filter_name = '';
+                            this.filter_no = 0;
+                            this.showInput = 0;
+                        }
+
+                    } else {
+                        console.error('Error updating status:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                }
             }
         },
         //v2
@@ -131,7 +206,8 @@ export default {
 
         },
         updateSelectedValues(index) {
-            this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
+            const nonEmptyValues = this.selectedValues.filter(value => value.trim() !== ""); // Filter out empty values
+            this.channelAttribute[index].attribute_condition = "(" + nonEmptyValues.map(value => `"${value}"`).join(',') + ")";
         },
         nextPage() {
             this.currentPage++;
@@ -164,6 +240,7 @@ export default {
             // Update the attribute_name and data_type properties separately
             this.channelAttribute[index].attribute_name = att_name;
             this.channelAttribute[index].data_type = d_type;
+
             console.log(this.channelAttribute)
         },
 
@@ -225,33 +302,30 @@ export default {
                     this.indexVal = -1;
                 }
 
-                // Display a confirmation dialog
-                const confirmed = window.confirm(`Are you sure you want to remove this filter?`);
-
-                if (confirmed) {
-                    const response = await fetch('./products/delete_product_filter.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            productId: productId,
-                            productDetId: productDetId,
-                            indexVal: this.indexVal
-                        }),
-                    });
-                    const data = await response.json();
-                    if (data.success) {
-                        console.log('filters deleted successfully!');
-                        this.initializeData()
-                        this.$emit('filters-updated');
-                        this.showFilter=true;
-                    } else {
-                        console.error('Error deleting filter:', data.error);
-                    }
+                const response = await fetch('./products/delete_product_filter.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        productDetId: productDetId,
+                        indexVal: this.indexVal
+                    }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.deletedId.push(productDetId);
+                    localStorage.setItem('deletedId', JSON.stringify(this.deletedId));
+                    console.log(this.deletedId)
+                    console.log('filters deleted successfully!');
+                    this.initializeData()
+                    this.$emit('filters-updated');
+                    this.showFilter=true;
                 } else {
-                    console.log('Deletion canceled by the user.');
+                    console.error('Error deleting filter:', data.error);
                 }
+
             } catch (error) {
                 console.error('Error deleting channel:', error);
             }
@@ -327,7 +401,7 @@ export default {
                 })
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch tooltip details');
+                    throw new Error('Failed to fetch filter details');
                 }
                 const data = await response.json();
                 this.filter_name = data;
@@ -338,6 +412,7 @@ export default {
         },
 
         initializeData() {
+            this.showFilterValidation=false;
             this.channelAttribute = [],
                 this.indexCheck = 0,
                 this.columns = [],
@@ -352,37 +427,24 @@ export default {
 
 
     },
-    template: `
-    <div class="right-menu filters background-secondary-bg">
+    template: `=
+    <div class="flex-row vcenter right-slider-header"><span class="sub-heading">FILTERS</span> </div>
+    <div class=" test right-menu filters background-secondary-bg">
+
         
-          <div class="card" v-if="productDetails.length==0">
-                             <select class="btn" v-model="filter_no" @change="controlFilters">
+                             <select class="card" v-model="filter_no" @change="controlFilters"  v-if="productDetails.length==0">
                                 <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
                                 <template v-for="(fvalue, fkey) in filters">
                                    <option :value="fvalue.id"><a class="btn" >{{fvalue['filter_name']}}   </a> </option>
                                 </template>
                              </select>                           
-          </div>
-          
-           <div class="card" v-if="productDetails.length>0">
-             <label for="filter-name">Filter Name</label>
-             <input type="text" v-model="filter_name"  class="form-control" required>                        
-          </div>
-          <div class="flex-row vcenter filter-header">
-            <span class="sub-heading">FILTERS</span>
-        </div>
+     
+<i  v-if="productDetails.length==0" class="fa fa-chevron-down" aria-hidden="true"></i>
+             <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" :class="{ 'err-box': showFilterValidation }" placeholder="Name your filter" required>                        
+           
+
         
-        <div class="card" v-if="productDetails.length==0 && channelAttribute.length==0">
-
-                        <div>
-                            New Condition
-                        </div>
-
-                        <a class="position-absolute add-icon" @click="addChannelCondition('AND','normal',[])">
-                                <i class="fa fa-plus"></i>
-                        </a>
-                   
-        </div>
+        <a class="card add-condition" v-if="productDetails.length==0 && channelAttribute.length==0"  @click="addChannelCondition('AND','normal',[])">New Condition<i class="fa fa-plus"></i></a>
  
                             <div class="form-group selected-filters">
                                 <div v-for="(productDet,index) in productDetails" class="filter-condition">
@@ -525,15 +587,17 @@ export default {
                                     </div>
                                     <div class="editForm" v-if="showAttFilter==0 && editForm===index">
                                     <form @submit.prevent="submitForm">
+                                    
                                         <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
                                             <div>
                                                 <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
                                                 <label class="delete-icon position-absolute top-0 end-0">
                                                     <a @click="refreshAttributeAgain">
                                                         <i class="fa fa-times animation-mode" aria-hidden="true"></i>
-                                                    </a>
+                                                    </a> 
                                                 </label>
-                                                <select class="form-control" @change="handleChangeAttribute(index)" required="">
+                                               
+                                                <select class="form-control" v-model="cAttribute.attribute" @change="handleChangeAttribute(index)" required="">
                                                     <template v-for="column in columns">
                                                         <template v-if="column.column_name == productDet.attribute_name">
                                                             <option :value="column.column_name+ ',' +column.data_type" selected>{{column.column_name}}</option>
@@ -555,7 +619,14 @@ export default {
                                                                 <option value="IS NULL" :selected="productDet.filter_type === 'IS NULL'">is empty</option>
                                                             </select>
                                                             <template v-if="cAttribute.filter_type == '=' || cAttribute.filter_type == '!='">
+                                                                <div class="selected-items">
                                                                 <input type="text" v-model="cAttribute.attribute_condition" class="form-control" readonly required>
+                                                                <template v-for="(value, vsindex) in selectedValues" :key="vsindex">
+                                                                    <div class="selected-value">
+                                                                      <input type="text" v-model="selectedValues[vsindex]" class="form-control" readonly>
+                                                                      <button @click="removeSelectedValue(vsindex)" class="remove-btn">×</button>
+                                                                    </div>
+                                                                </template>
                                                                 <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                 <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
@@ -564,6 +635,21 @@ export default {
                                                                         <label :for="'checkbox_' + vindex">{{ value }} </label>
                                                                     </li>
                                                                 </ul>
+<!--                                                                     <p>hello</p>-->
+<!--                                                                                 <div class="custom-select">-->
+<!--                                                                                  <div class="selected-items">-->
+<!--                                                                                  <div v-for="(selectedItem, index) in selectedItems" :key="index" class="selected-item">-->
+<!--                                                                                    {{ selectedItem.column_name }}-->
+<!--                                                                                     <span @click="removeSelectedItem(selectedItem)" class="remove-btn">X</span>-->
+<!--                                                                                   </div>-->
+<!--                                                                                </div>-->
+<!--                                                                                 <input type="text" v-model="searchInput" @input="filterOptions" placeholder="Search options">-->
+<!--                                                                                   <div class="options" v-show="isOpen">-->
+<!--                                                                                    <div v-for="(option, index) in filteredOptions" :key="index" @click="toggleSelection(option)" class="option">-->
+<!--                                                                                                        {{ option.column_name }}-->
+<!--                                                                                   </div>-->
+<!--                                                                           </div>-->
+<!--                                                                       </div>                           -->
                                                             </template>
                                                             <template v-else-if="cAttribute.filter_type == 'includes' || cAttribute.filter_type == 'dont_includes'">
                                                                 <input type="text" v-model="cAttribute.attribute_condition" class="form-control" required>
@@ -715,21 +801,22 @@ export default {
 
                             </div>
                     
-
+                            </div>
 </div>
 <div class="submit-form" v-if="productDetails.length>0 && showAttributeMid == 0">
       
-       <template v-if="filter_no ==0">
-           
+       <template v-if="filter_no ==0">          
            <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
-            <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
+           <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
        </template>
-       <template v-else>
-           
+       <template v-else>          
                 <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update </a>
                 <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
                 <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
        </template>
+</div>
+<div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
+                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
 </div>
   `,
 };

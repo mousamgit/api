@@ -23,21 +23,29 @@ export default {
         };
     },
     mounted() {
-
         this.fetchAllColumns();
-        this.triggerOnPageLoad();
-        this.updateStatus(-1);
+        console.log(this.filter_no)
+        // this.triggerOnPageLoad();
+        // this.updateStatus(-1);
+    },
+    computed: {
+        sortedAttributeValues() {
+            const selected = this.selectedValues.slice();
+            const unselected = this.attribute_values.filter(value => !selected.includes(value));
+
+            return selected.concat(unselected);
+        }
     },
 
     methods: {
-        triggerOnPageLoad() {
-            const storedDeletedIds = localStorage.getItem('deletedId');
-            if (storedDeletedIds) {
-                this.deletedId = JSON.parse(storedDeletedIds);
-                localStorage.removeItem('deletedId');
-                this.updateStatus(-1)
-            }
-        },
+        // triggerOnPageLoad() {
+        //     const storedDeletedIds = localStorage.getItem('deletedId');
+        //     if (storedDeletedIds) {
+        //         this.deletedId = JSON.parse(storedDeletedIds);
+        //         localStorage.removeItem('deletedId');
+        //         this.updateStatus(-1)
+        //     }
+        // },
         async  controlFilters() {
             this.showFilterValidation=false;
             this.showInput=1;
@@ -108,9 +116,7 @@ export default {
                 }
             }
             else{
-                if(value==1){
-                    this.deletedId=[];
-                }
+
                 if(value==1 && this.filter_name =='') {
                     this.showFilterValidation = true;
                     return;
@@ -140,7 +146,7 @@ export default {
                             this.filter_no=data.filter_no;
                             this.controlFilters()
                         } else {
-                            localStorage.removeItem('deletedId');
+                            // localStorage.removeItem('deletedId');
                             this.showInput = 0;
                             this.filter_name = '';
                             this.filter_no = 0;
@@ -201,7 +207,8 @@ export default {
 
         },
         updateSelectedValues(index) {
-            this.channelAttribute[index].attribute_condition = "("+this.selectedValues.map(value => `"${value}"`).join(',')+")";
+            const nonEmptyValues = this.selectedValues.filter(value => value.trim() !== ""); // Filter out empty values
+            this.channelAttribute[index].attribute_condition = "(" + nonEmptyValues.map(value => `"${value}"`).join(',') + ")";
         },
         nextPage() {
             this.currentPage++;
@@ -234,6 +241,7 @@ export default {
             // Update the attribute_name and data_type properties separately
             this.channelAttribute[index].attribute_name = att_name;
             this.channelAttribute[index].data_type = d_type;
+
             console.log(this.channelAttribute)
         },
 
@@ -308,9 +316,9 @@ export default {
                     });
                     const data = await response.json();
                     if (data.success) {
-                        this.deletedId.push(productDetId);
-                        localStorage.setItem('deletedId', JSON.stringify(this.deletedId));
-                        console.log(this.deletedId)
+                        // this.deletedId.push(productDetId);
+                        // localStorage.setItem('deletedId', JSON.stringify(this.deletedId));
+                        // console.log(this.deletedId)
                         console.log('filters deleted successfully!');
                         this.initializeData()
                         this.$emit('filters-updated');
@@ -494,7 +502,7 @@ export default {
                                                                                      <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                                      <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                                      <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                                       <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                       <li v-for="(value, vindex) in sortedAttributeValues" :key="vindex" >
                                                                                           <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
                                                                                           <label :for="'checkbox_' + vindex">{{ value }}</label>
                                                                                         </li>    
@@ -530,7 +538,7 @@ export default {
                                                                             <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                             <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition" >
                                                                             <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                                <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                <li v-for="(value, vindex) in sortedAttributeValues" :key="vindex" >
                                                                                           <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
                                                                                           <label :for="'checkbox_' + vindex">{{ value }}</label>
                                                                                 </li> 
@@ -587,8 +595,9 @@ export default {
                                                 <label class="delete-icon position-absolute top-0 end-0">
                                                     <a @click="refreshAttributeAgain">
                                                         <i class="fa fa-times animation-mode" aria-hidden="true"></i>
-                                                    </a>
+                                                    </a> 
                                                 </label>
+                                               
                                                 <select class="form-control" v-model="cAttribute.attribute" @change="handleChangeAttribute(index)" required="">
                                                     <template v-for="column in columns">
                                                         <template v-if="column.column_name == productDet.attribute_name">
@@ -615,7 +624,7 @@ export default {
                                                                 <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                 <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex">
+                                                                    <li v-for="(value, vindex) in sortedAttributeValues" :key="vindex">
                                                                         <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)" :checked="selectedValues.includes(value)">
                                                                         <label :for="'checkbox_' + vindex">{{ value }} </label>
                                                                     </li>
@@ -650,7 +659,7 @@ export default {
                                                                 <span v-if="showManualValidationMessage==1" class="alert-danger">Search and Tick Condition below</span>
                                                                 <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex">
+                                                                    <li v-for="(value, vindex) in sortedAttributeValues" :key="vindex">
                                                                         <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)" :checked="selectedValues.includes(value)">
                                                                         <label :for="'checkbox_' + vindex">{{ value }}</label>
                                                                     </li>
@@ -706,7 +715,7 @@ export default {
                                                                                   <span v-if="showManualValidationMessage==1" class="danger">Search and Tick Condition below</span>
                                                                                   <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">
                                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                                   <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                   <li v-for="(value, vindex) in sortedAttributeValues" :key="vindex" >
                                                                                       <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
                                                                                       <label :for="'checkbox_' + vindex">{{ value }}</label>
                                                                                     </li>
@@ -741,7 +750,7 @@ export default {
                                                                                 <span v-if="showManualValidationMessage==1" class="alert-danger">Search and Tick Condition below</span>
                                                                                 <input type="text" v-model="cAttribute.attribute_current" @keyup="getAttributeValue(index,cAttribute.attribute_name,cAttribute.attribute_current)" class="form-control" placeholder="Search condition">   
                                                                                 <ul v-if="index == indexCheck && (cAttribute.filter_type == '=' || cAttribute.filter_type == '!=')" class="autocomplete-suggestions">
-                                                                                    <li v-for="(value, vindex) in attribute_values" :key="vindex" >
+                                                                                    <li v-for="(value, vindex) in sortedAttributeValues" :key="vindex" >
                                                                                           <input type="checkbox" :id="'checkbox_' + vindex" :value="value" v-model="selectedValues" @change="updateSelectedValues(index)">
                                                                                           <label :for="'checkbox_' + vindex">{{ value }}</label>
                                                                                     </li> 
@@ -777,7 +786,7 @@ export default {
       
        <template v-if="filter_no ==0">          
            <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
-           <a class="btn btn-primary mt-3" @click="updateStatus(0)">Clear</a>
+           <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
        </template>
        <template v-else>          
                 <a class="btn btn-primary mt-3" @click="updateStatus(1)">Update </a>

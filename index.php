@@ -18,10 +18,6 @@ include 'functions.php';
     <script type="module" src="./products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
     <style>
-
-
-
-
     </style>
 </head>
 <body>

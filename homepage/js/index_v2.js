@@ -1,4 +1,4 @@
-import ProductFilters from '../../products/js/ProductFilters.js';
+import ProductFilters from '../../products/js/ProductFiltersV2.js';
 
 const app = Vue.createApp({
     data() {
@@ -31,10 +31,12 @@ const app = Vue.createApp({
             selectAllChecked:{},
             itemNo:0,
             isLoading:false,
-            showTooltipIndex: null,
-            tooltipContent: "",
             exportRows: [], // Array to store data for export
-            checkedRows: {} // Object to track checked rows
+            checkedRows: {}, // Object to track checked rows
+            selectAllCheckbox: false,
+            dataTypeValue:'varchar',
+            orderColumnName:'sku',
+            orderColumnValue:'ASC'
         };
     },
     mounted() {
@@ -54,11 +56,68 @@ const app = Vue.createApp({
 
 
     methods: {
-
+        getDataTypeValue(columnName,columnValue) {
+            switch (columnName) {
+                case 'carat':
+                case 'purchase_cost_aud':
+                case 'purchase_cost_usd':
+                case 'manufacturing_cost_aud':
+                case 'wholesale_aud':
+                case 'wholesale_usd':
+                case 'stone_price_wholesale_aud':
+                case 'retail_aud':
+                case 'retail_usd':
+                case 'stone_price_retail_aud':
+                case 'master_qty':
+                case 'warehouse_qty':
+                case 'mdqty':
+                case 'psqty':
+                case 'usdqty':
+                case 'allocated_qty':
+                case 'shopify_qty':
+                case 'centre_stone_qty':
+                case 'sales_percentage':
+                case 'lot_number':
+                case 'client_jim309_qty':
+                case 'client_jim077_qty':
+                case 'client_jim077_price':
+                case 'product_id':
+                case 'variant_id':
+                    if(columnValue=='DESC'){
+                        return 'High To Low'
+                    }else{
+                        return 'Low To High'
+                    }
+                case 'modified_date':
+                    if(columnValue=='DESC'){
+                        return 'A-Z'
+                    }else{
+                        return 'Z-A'
+                    }
+                case 'client_tags':
+                    if(columnValue=='DESC'){
+                        return 'A-Z'
+                    }else{
+                        return 'Z-A'
+                    }
+                default:
+                    if(columnValue=='DESC'){
+                        return 'A-Z'
+                    }else{
+                        return 'Z-A'
+                    }
+            }
+        },
+        updateFetchColumns(column_name,column_value){
+            this.orderColumnName = column_name;
+            this.orderColumnValue = column_value;
+            this.fetchProducts();
+        },
         clearCheckedState() {
             this.itemNo=0
             this.checkedRows = {};
             this.selectAllChecked = {};
+            this.selectAllCheckbox = {};
             this.exportRows = [];
             localStorage.removeItem('checkedRows');
         },
@@ -98,6 +157,13 @@ const app = Vue.createApp({
             }
             this.itemNo=this.exportRows.length;
 
+        },
+        selectAllPagesRow() {
+            if (this.selectAllCheckbox) {
+                this.SelectAllPagesRow(1); // Select All
+            } else {
+                this.SelectAllPagesRow(0); // Unselect All
+            }
         },
         SelectAllPagesRow(value)
         {
@@ -351,14 +417,18 @@ const app = Vue.createApp({
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
         async fetchProducts() {
+            let dataToSend = {
+                'order_column_name': this.orderColumnName,
+                'order_column_value': this.orderColumnValue
+            }
             const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(dataToSend)
             }).then(response => response.json())
                 .then(data => {
-
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
                     this.productValuesTotal = data.product_values_total;
@@ -493,7 +563,7 @@ const app = Vue.createApp({
     
     <nav class=" toolbar pim-padding">
     
-
+        <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
 
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
@@ -509,13 +579,8 @@ const app = Vue.createApp({
     </div>
      
         <div class="pim-padding ">   
-        <span v-if="itemNo >0">{{itemNo}} items selected </span> 
-        <template v-if="itemNo < totalRows">
- &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(1)">Select All</a>
-        </template>
-        <template v-else>
-        &nbsp;<a class="btn btn-primary" @click="SelectAllPagesRow(0)">UnSelect All</a>
-        </template>
+        
+         
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
@@ -523,15 +588,24 @@ const app = Vue.createApp({
                 <th class="hidden">S.N</th>
                 <th col="checkbox">
                 <input type="checkbox" v-model="selectAllChecked[currentPage]" @change="selectAllRows(currentPage)"> </th>               </th>
+                 
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
-                <div class="box-container">
-                  <i class="fa fa-arrow-up"></i>
-                 <div class="box-content">A-Z</div>
-                </div>
+                
+                  
+                  <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
+                        <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
+                        <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
+                  </a>
+                  <a v-else class="sorting-btn">
+                   <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
+                   <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
+                  </a>
+                 
+                
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
-                 </th>               
+                 </th>                
               </tr>
             </thead>
             <tbody>
