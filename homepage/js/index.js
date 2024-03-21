@@ -112,7 +112,6 @@ const app = Vue.createApp({
             this.orderColumnName = column_name;
             this.orderColumnValue = column_value;
             this.fetchProducts();
-
         },
         clearCheckedState() {
             this.itemNo=0

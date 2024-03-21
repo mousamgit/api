@@ -23,10 +23,12 @@ export default {
         };
     },
     mounted() {
+
         this.fetchAllColumns();
         this.triggerOnPageLoad();
         this.updateStatus(-1);
     },
+
     methods: {
         triggerOnPageLoad() {
             const storedDeletedIds = localStorage.getItem('deletedId');
@@ -578,6 +580,7 @@ export default {
                                     </div>
                                     <div class="editForm" v-if="showAttFilter==0 && editForm===index">
                                     <form @submit.prevent="submitForm">
+                                    
                                         <div v-for="(cAttribute, index) in channelAttribute" :key="index" class="channel-condition card">
                                             <div>
                                                 <label for="attribute" class="form-label">SELECT ATTRIBUTE:</label>
@@ -586,7 +589,7 @@ export default {
                                                         <i class="fa fa-times animation-mode" aria-hidden="true"></i>
                                                     </a>
                                                 </label>
-                                                <select class="form-control" @change="handleChangeAttribute(index)" required="">
+                                                <select class="form-control" v-model="cAttribute.attribute" @change="handleChangeAttribute(index)" required="">
                                                     <template v-for="column in columns">
                                                         <template v-if="column.column_name == productDet.attribute_name">
                                                             <option :value="column.column_name+ ',' +column.data_type" selected>{{column.column_name}}</option>
