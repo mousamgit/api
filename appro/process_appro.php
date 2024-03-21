@@ -5,7 +5,7 @@ include '../functions.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Process other form fields (customer info)
-$customerName = $_POST['customer_name'];
+$customerName = mysqli_real_escape_string($con, $_POST['customer_name']);
 $approID = $_POST['appro_id'];
 $orderNumber = $_POST['order_number'];
 $status = $_POST['status'];
