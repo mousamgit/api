@@ -17,7 +17,7 @@
             if(isset($_POST['job_number'])) $job_number=$_POST['job_number'];
             if(isset($_POST['reference_number'])) $reference_number=$_POST['reference_number'];
             if(isset($_POST['due_date'])) $date=$_POST['due_date'];
-            if(isset($_POST['cust_code'])) $cust_code=$_POST['cust_code'];
+            if(isset($_POST['cust_code'])) $cust_code=mysqli_real_escape_string($con, $_POST['cust_code']);
             if(isset($_POST['cust_name'])) $cust_name=$_POST['cust_name'];
             if(isset($_POST['contact'])) $contact=$_POST['contact'];
             if(isset($_POST['product'])) $product=$_POST['product'];
@@ -26,7 +26,7 @@
             if(isset($_POST['watch-tasks'])) $watch_tasks=$_POST['watch-tasks'];
             if(isset($_POST['taskprice'])) $taskprice=$_POST['taskprice'];
             if(isset($_POST['notes'])) $notes=$_POST['notes'];
-            if(isset($_POST['address'])) $address=$_POST['address'];
+            if(isset($_POST['address'])) $address=mysqli_real_escape_string($con, $_POST['address']);
             if(isset($_POST['user'])) $user=$_POST['user'];
             if(isset($_POST['status'])) $status=$_POST['status'];
 
