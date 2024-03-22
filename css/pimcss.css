@@ -78,7 +78,8 @@ body .body-content{margin-top:50px;}
 .filter-form select{margin-right: 30px;}
 .filter-btn-container{margin-top: 20px;}
 .inputnumber{width: 50px;    margin-right: 10px;}
-
+.autocomplete-suggestions{  list-style: none;  max-height: 300px;  overflow: scroll;  background: #fff;  padding: 25px;}
+.autocomplete-suggestions li input{margin-right:15px;}
 
 /* The side navigation menu */
 .header-menu{width:100%;}

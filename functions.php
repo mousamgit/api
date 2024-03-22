@@ -1,5 +1,20 @@
 <?php
 //require('./connect.php');
+// function checkingUser($allowed){
+//     require('connect.php');
+//     session_start();
+//     if (!isset($_SESSION['username'])) {
+//         header("Location: https://pim.samsgroup.info/login.php");
+//         exit();
+//     }
+//     else{
+//         $userType = getValue('users', 'username', $_SESSION['username'], 'type');
+//         // for ($i = 0; $i < $arrayLength; $i++) {
+//         //     echo "Index $i: " . $myArray[$i] . "<br>";
+//         // }
+        
+//     }
+// }
 function valuefromString($string, $symbol, $element){
     $keyParts = explode($symbol, $string);
     return $keyParts[$element];

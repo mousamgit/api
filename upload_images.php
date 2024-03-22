@@ -1,6 +1,6 @@
 <?php
 include 'login_checking.php';
-    include 'functions.php';
+include 'functions.php';
 ?>
 <html lang="en">
 
