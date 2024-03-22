@@ -23,6 +23,7 @@ a{cursor: pointer; text-decoration: none; }
     line-height: 1.3;
 }
 a.disabled{    pointer-events: none; color:#666;}
+a.button-red:hover{color:#fff}
 .btn:hover, .btn.active{    color: #fff;    background-color: #ccc;    border:#ccc 1px solid;}
 .white-btn{border: var(--light-grey) 1px solid; color: var(--main-color); background-color: #fff;     border-radius: 0.25rem;}
 .white-btn:hover{background-color: var(--main-color); color:#fff;}
@@ -55,6 +56,7 @@ header{background-color: #222; width: 100%; height: 50px; color:#fff; position: 
 .welcome_info{float: left;}
 header a{ color:#fff}
 .data_body{padding: 10px 50px;}
+body .body-content{margin-top:50px;}
 
 .icon-btn{ padding:10px;}
 .pimtable{  width:100% !important;  text-align: left; font-size: 12px;     border: #e1e1e1 solid 1px;  margin-bottom: 20px;}
@@ -347,7 +349,7 @@ header a{ color:#fff}
   .item-row{margin-bottom:20px;}
 
   .autofill{position: absolute;    background: #fff!important;  border-radius: 10px;    margin-top: 5px; box-shadow:0 0 10px -5px!important;   padding:20px 0;}
-  .autofill ul{list-style: none; padding:0px; margin:0;}
+  .autofill ul{list-style: none; padding:0px; margin:0; max-height: 600px; overflow: scroll;}
   .autofill ul li{padding: 5px 20px; cursor: pointer;}
   .autofill ul li:hover{background-color: #e1e1e1; }
   .itemtable .firstrow{  font-weight: bold;  background-color: #f2f2f2;  color: #333;  border-bottom: 1px solid #ddd;}
@@ -421,6 +423,9 @@ header a{ color:#fff}
   .err-box{border: var(--main-color) 1px solid;}
   .err-box::placeholder{color: var(--main-color); }
 
+  .updatevideo .updated{display: none;}
+  .updatevideo table{margin-top:30px; margin-top:30px;}
+  .updatevideo td{padding: 5px 10px;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}

@@ -216,7 +216,7 @@ function updateValue($db, $prkey,$keyvalue, $attribute, $value)
 
     // Execute query
     if ($con->query($query) === TRUE) {
-        echo "Record updated successfully";
+        echo "<span class='updated'>Record updated successfully</span>";
     } else {
         echo "Error updating record: " . $con->error;
     }
