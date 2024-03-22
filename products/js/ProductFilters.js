@@ -24,7 +24,7 @@ export default {
     },
     mounted() {
         this.fetchAllColumns();
-        console.log(this.filter_no)
+
         // this.triggerOnPageLoad();
         // this.updateStatus(-1);
     },
@@ -431,8 +431,6 @@ export default {
     template: `
     <div class="flex-row vcenter right-slider-header"><span class="sub-heading">FILTERS</span> </div>
     <div class=" test right-menu filters background-secondary-bg">
-
-        
                              <select class="card" v-model="filter_no" @change="controlFilters"  v-if="productDetails.length==0">
                                 <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
                                 <template v-for="(fvalue, fkey) in filters">
