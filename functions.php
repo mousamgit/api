@@ -1,20 +1,46 @@
 <?php
 //require('./connect.php');
-// function checkingUser($allowed){
-//     require('connect.php');
-//     session_start();
-//     if (!isset($_SESSION['username'])) {
-//         header("Location: https://pim.samsgroup.info/login.php");
-//         exit();
-//     }
-//     else{
-//         $userType = getValue('users', 'username', $_SESSION['username'], 'type');
-//         // for ($i = 0; $i < $arrayLength; $i++) {
-//         //     echo "Index $i: " . $myArray[$i] . "<br>";
-//         // }
+function loginChecking($allowed){
+    session_start();
+    if (!isset($_SESSION["username"])) {
+        header("Location: https://pim.samsgroup.info/login.php");
+        exit();
+    }
+    if (!checkType($allowed)){
+        header("Location: https://pim.samsgroup.info/notallowed.php");
+        exit();
+    }
+}
+
+function checkType($allowed){
+    
+    require('connect.php');
+    $userType = getValue('users', 'username', $_SESSION['username'], 'type');
+    $access = false;
+
+    if($allowed == 'all'){
+        $access = true;
+    }
+    else{
         
-//     }
-// }
+        for ($i = 0; $i < count($allowed); $i++) {
+            if($allowed[$i] == $userType){
+                $access = true;
+            }
+        }
+    }
+    return $access;
+}
+function checkLevel($allowed){
+    require('connect.php');
+    $userLevel = getValue('users', 'username', $_SESSION['username'], 'level');
+    if($userLevel <= $allowed){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 function valuefromString($string, $symbol, $element){
     $keyParts = explode($symbol, $string);
     return $keyParts[$element];
