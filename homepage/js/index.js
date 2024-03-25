@@ -1,6 +1,11 @@
 import ProductFilters from '../../products/js/ProductFilters.js';
 
 const app = Vue.createApp({
+    props: {
+        urlsku: {
+            type: String,
+          },
+      },
     data() {
         return {
             productDetails: [],
@@ -417,6 +422,7 @@ const app = Vue.createApp({
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
         async fetchProducts() {
+            
             let dataToSend = {
                 'order_column_name': this.orderColumnName,
                 'order_column_value': this.orderColumnValue
@@ -429,6 +435,7 @@ const app = Vue.createApp({
                 body: JSON.stringify(dataToSend)
             }).then(response => response.json())
                 .then(data => {
+                    console.log('urlsku:'+this.urlsku);
                     this.productDetails = data.product_details;
                     this.productValues = data.product_values;
                     this.productValuesTotal = data.product_values_total;
