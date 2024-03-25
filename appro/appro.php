@@ -1,7 +1,8 @@
 <?php
-include '../login_checking.php';
+
 include '../functions.php';
-require('../connect.php');
+loginChecking('all');
+
     $approid = $_GET['id'];
     $username = $_SESSION["username"];
 
