@@ -1,4 +1,5 @@
-import ProductFilters from '../../products/js/ProductFilters.js';
+import ProductFilters from '../../products/js/ProductFilters.js?v=2';
+import ProductFilterForm from '../../products/js/ProductFilterForm.js?v=2';
 
 const app = Vue.createApp({
     data() {
@@ -519,11 +520,7 @@ const app = Vue.createApp({
             console.log('filters updated event received in parent component');
             this.initializeData();
             this.initializePagination();
-            this.fetchProducts().then(() => {
-                console.log('Products fetched successfully');
-            }).catch(error => {
-                console.error('Error fetching products:', error);
-            });
+            console.log(this.fetchProducts());
         },
         handleDragStart(index) {
             this.draggedIndex = index;
@@ -573,8 +570,9 @@ const app = Vue.createApp({
     
     
     </div>
-    
+  
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
+    
     <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
      
@@ -703,3 +701,4 @@ const app = Vue.createApp({
 });
 app.mount('#index');
 app.component('product-filters', ProductFilters);
+app.component('product-filter-form', ProductFilterForm);
