@@ -430,6 +430,13 @@ body .body-content{margin-top:50px;}
   .updatevideo table{margin-top:30px; margin-top:30px;}
   .updatevideo td{padding: 5px 10px;}
 
+  /* account page */
+  .account-nav{margin-bottom: 15px;}
+  .account-nav .tab{margin-right: 15px;}
+  .account-nav .tab.active{border-bottom: 1px solid #e1e1e1;}
+  .role-buttons .tab{display: block; border-bottom: 1px solid #e1e1e1;}
+  .role-buttons .tab.active{font-weight: 600;}
+
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}
     #search-form{padding:7px 20px;}

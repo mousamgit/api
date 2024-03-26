@@ -84,20 +84,19 @@ $(document).ready(function(){
         $('.home-table-container').css('max-height',tableheight+'px');
       }
       
-
-    //   $('.show-filter').click(function(){
-    //     $('.filter-container').addClass('is-open');
-    //     });
+      //tabs
+      $('.tab').on('click', function() {
+        var tabId = $(this).attr('nav');
+        // Remove active class from all tabs and tab panes
+        $(this).parent().children('.tab').removeClass('active');
+        $(this).parent().next().children('.tab-pane').removeClass('active');
+        // $('.tab-pane').removeClass('active');
         
-
-    //     $(document).on('click', function(event) {
-    //         if (!$(event.target).closest('.filter-container').length &&
-    //         !$(event.target).hasClass('show-filter') &&
-    //         !$(event.target).closest('.filter-container').find('button').length &&
-    //         !$(event.target).is('a')) {
-    //         $('.filter-container').removeClass('is-open');
-    //     }
-    //     });
+        // Add active class to the clicked tab and corresponding tab pane
+        $(this).addClass('active');
+        $(this).parent().next().children('.tab-pane[tab="'+tabId+'"]').addClass('active');
+        // $('#' + tabId).addClass('active');
+      });
 
 
 });
