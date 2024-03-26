@@ -347,7 +347,7 @@ export default {
                                             </a>
                                         </span>
                                         <div v-if="productDet.op_value== 'OR' && productDet.id != productDetails[0].id && showAttributeMid==productDetails[index-1].id">
-                                          {
+                                         
                                             <product-filter-form :showAttributeFirst="0" :selectedValues="selectedValues" :productDetailValue="productDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
                                         </div>
                                         <center v-if="productDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
@@ -359,7 +359,6 @@ export default {
                                                         <span class="text-default mt-5" v-if="productDet.filter_type !=''">&nbsp;{{ getEmptyPrinted(productDet.filter_type) }}</span>
                                                         <span class="text-default" v-if="productDet.range_to !=''">&nbsp; {{productDet.range_from}} to {{productDet.range_to}}</span>
                                                         <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
-                                                    
                                                 </div>
                                                 <div class="delete-icon position-absolute end-0" data-test-id="delete">
                                                     <a @click="deleteFilter(productDet.id,productDet.product_id,index)">
@@ -368,7 +367,6 @@ export default {
                                                 </div>
                                     </div>
                                     <div class="editForm" v-if="showAttFilter==0 && editForm===index">
-                                  
                                         <product-filter-form :showAttributeFirst="1" :selectedValues="selectedValues"  :productDetailValue="productDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
                                     </div>
                                 </div>
