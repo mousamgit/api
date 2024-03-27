@@ -433,7 +433,9 @@ body .body-content{margin-top:50px;}
   /* account page */
   .account-nav{margin-bottom: 15px;}
   .account-nav .tab{margin-right: 15px;}
-  .account-nav .tab.active{border-bottom: 1px solid #e1e1e1;}
+  .account-nav .tab.active{border-bottom: 3px solid #e1e1e1;}
+  .role-buttons{width:300px; max-width: 25%; float: left;}
+  .tab-content{width: 75%; float: left;}
   .role-buttons .tab{display: block; border-bottom: 1px solid #e1e1e1;}
   .role-buttons .tab.active{font-weight: 600;}
 

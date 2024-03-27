@@ -66,19 +66,30 @@
                 
                     // Display tab panes using the fetched data
                     $rolenum = 1;
-                    echo '<div class="row"><div class="role-buttons col-md-3">';
+                    echo '<div class="role-buttons ">';
                     foreach ($roles as $role) {
                         echo '<a class="tab" nav="' . $rolenum . '">' . $role['role'] . '<i class="fa fa-caret-right" aria-hidden="true"></i></a>';
                         $rolenum++;
                     }
                     echo '</div>';
-                    echo '<div class="tab-content col-md-9">';
+                    echo '<div class="tab-content"> ';
                     $contentnum = 1;
                     foreach ($roles as $role) {
-                        echo '<div class="tab-pane" tab="' . $contentnum . '">' . $role['role'] . $role['addproduct'] . $role['deleteproduct'] . '</div>';
+                        echo '<div class="tab-pane" tab="' . $contentnum . '">';
+                        echo '<form action="update_permission.php" method="post">';
+                        
+                        echo '<label for="role">role</label>';
+                        echo '<input type="text" name="role" value="'.$role['role'] .'">';
+                        echo '<label for="addproduct">addproduct</label>';
+                        echo '<input type="checkbox" name = "addproduct" class="" ';
+                        if  ($role['addproduct']){ echo 'checked';}
+                        echo '>';
+                        echo '<input type="submit" value="Update">';
+                        echo '</form></div>';
+                        // echo  $role['role'] . $role['addproduct'] . $role['deleteproduct'] . '</div>';
                         $contentnum++;
                     }
-                    echo '</div></div>';
+                    echo '</div>';
 
                     // Free the result set
                     mysqli_free_result($result1);
