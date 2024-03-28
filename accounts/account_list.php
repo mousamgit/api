@@ -54,13 +54,17 @@
             <?php
                 require('../connect.php');
                 $sqlrole = "SELECT * FROM permissions";
-                $result1 = mysqli_query($con, $sqlrole);
+                $roleresult = mysqli_query($con, $sqlrole);
+
+                $pimQuery = getQuery('pim',1);
+                $pimresult = getResult($pimQuery , 1);
+                $pimrow = mysqli_fetch_assoc($pimresult);
 
                 // Check if the query was successful
-                if ($result1) {
+                if ($roleresult) {
 
                     $roles = [];
-                    while ($row = mysqli_fetch_assoc($result1)) {
+                    while ($row = mysqli_fetch_assoc($roleresult)) {
                         $roles[] = $row;
                     }
                 
@@ -85,16 +89,13 @@
                         echo '<div class="row">';
                         showcheckbox('addproduct',$role);
                         showcheckbox('deleteproduct',$role);
-                        showcheckbox('editproduct',$role);
                         echo '</div>';
                         echo '</div>';
 
                         echo '<div class="fields-sec">';
-                        echo '<h3>Logs</h3>';
+                        echo '<h3>Editable Columns</h3>';
                         echo '<div class="row">';
-                        showcheckbox('productlog',$role);
-                        showcheckbox('approlog',$role);
-                        showcheckbox('repairlog',$role);
+                        showcolumns($pimrow);
                         echo '</div>';
                         echo '</div>';
 
@@ -108,7 +109,7 @@
                     echo '</div>';
 
                     // Free the result set
-                    mysqli_free_result($result1);
+                    mysqli_free_result($roleresult);
                 } else {
                     // Handle query errors
                     echo 'Error executing the query: ' . mysqli_error($con);
@@ -125,6 +126,19 @@
                     echo '>';
                     echo '<label for="'.$field.'">'.$field.'</label>';
                     echo '</div>';
+                }
+                function showcolumns($pimrow){
+                    foreach ($pimrow as $colName => $val) {
+                        $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
+                        $checked = '';
+                        // $usercol =  getValue('users', 'username', $_SESSION['username'], 'type');
+                        $selectedcol = explode(',', str_replace('"', '', $usercol));
+                        if (in_array($colName, $selectedcol)) {
+                            $checked = 'checked';
+                        }
+                
+                        echo '<div class="col-md-2"><input type="checkbox" value="'.$colName.'" name="editproduct[]" class="" '.$checked.'>'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</div>'; 
+                    } // show column headers
                 }
             ?>
         </div>

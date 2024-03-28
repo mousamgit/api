@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fields = [
         'addproduct' => $_POST['addproduct'],
         'deleteproduct' => $_POST['deleteproduct'],
-        'editproduct' => $_POST['editproduct'],
         // Add more fields as needed
     ];
     
