@@ -438,6 +438,8 @@ body .body-content{margin-top:50px;}
   .tab-content{width: 75%; float: left;}
   .role-buttons .tab{display: block; border-bottom: 1px solid #e1e1e1;}
   .role-buttons .tab.active{font-weight: 600;}
+  .permission-form label{margin-left: 15px;}
+  .fields-sec{padding:0 50px; margin-bottom: 50px;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}

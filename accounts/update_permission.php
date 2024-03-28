@@ -6,10 +6,23 @@ include '../functions.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $role = $_POST['role'];
-$addproduct = truefalse($_POST['addproduct']);
 
+    $fields = [
+        'addproduct' => $_POST['addproduct'],
+        'deleteproduct' => $_POST['deleteproduct'],
+        'editproduct' => $_POST['editproduct'],
+        // Add more fields as needed
+    ];
     
-updateValue('permissions','role',$role,'addproduct',$addproduct);
+
+    foreach ($fields as $field => $value) {
+        $roleValue = truefalse($value);
+        updateValue('permissions', 'role', $role, $field, $roleValue);
+    }
+
+
+
+
 echo "New record created successfully";
 header("Location: https://pim.samsgroup.info/accounts/account_list.php");
 

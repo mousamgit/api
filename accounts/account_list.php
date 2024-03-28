@@ -19,7 +19,7 @@
     <nav class="account-nav tabs">
         <a class="tab" nav="1">Info</a>
         <a class="tab active" nav="2">Accounts</a>
-        <a class="tab" nav="3">Role</a>
+        <a class="tab" nav="3">Roles</a>
     </nav>
     <div class="tab-content">
         <div class="tab-pane" tab="1">
@@ -76,15 +76,31 @@
                     $contentnum = 1;
                     foreach ($roles as $role) {
                         echo '<div class="tab-pane" tab="' . $contentnum . '">';
-                        echo '<form action="update_permission.php" method="post">';
+                        echo '<form action="update_permission.php" method="post" class="permission-form">';
                         
-                        echo '<label for="role">role</label>';
-                        echo '<input type="text" name="role" value="'.$role['role'] .'">';
-                        echo '<label for="addproduct">addproduct</label>';
-                        echo '<input type="checkbox" name = "addproduct" class="" ';
-                        if  ($role['addproduct']){ echo 'checked';}
-                        echo '>';
-                        echo '<input type="submit" value="Update">';
+                        echo '<label class="hidden" for="role">role</label>';
+                        echo '<input type="text" class="hidden" name="role" value="'.$role['role'] .'">';
+                        echo '<div class="fields-sec">';
+                        echo '<h3>Products</h3>';
+                        echo '<div class="row">';
+                        showcheckbox('addproduct',$role);
+                        showcheckbox('deleteproduct',$role);
+                        showcheckbox('editproduct',$role);
+                        echo '</div>';
+                        echo '</div>';
+
+                        echo '<div class="fields-sec">';
+                        echo '<h3>Logs</h3>';
+                        echo '<div class="row">';
+                        showcheckbox('productlog',$role);
+                        showcheckbox('approlog',$role);
+                        showcheckbox('repairlog',$role);
+                        echo '</div>';
+                        echo '</div>';
+
+                        echo '<div class="fields-sec">';
+                        echo '<input type="submit" class="btn" value="Update">';
+                        echo '</div>';
                         echo '</form></div>';
                         // echo  $role['role'] . $role['addproduct'] . $role['deleteproduct'] . '</div>';
                         $contentnum++;
@@ -100,6 +116,16 @@
 
                 // Close the database connection
                 mysqli_close($con);
+
+                function showcheckbox($field,$role){
+                    echo '<div class="col-md-4">';
+
+                    echo '<input type="checkbox" name = "'.$field.'" class="" ';
+                    if  ($role[$field]){ echo 'checked';}
+                    echo '>';
+                    echo '<label for="'.$field.'">'.$field.'</label>';
+                    echo '</div>';
+                }
             ?>
         </div>
     </div>
