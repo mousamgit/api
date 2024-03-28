@@ -1,98 +1,94 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-function authenticateShopify($apiKey, $password, $storeUrl) {
-    return base64_encode("$apiKey:$password");
-}
 
-function fetchProductDataFromPim() {
-    require('connect.php');
-    // Fetch my pim data
-    $sql = "SELECT * from pim limit 10";
-    $result = $con->query($sql);
-    $products = array();
+class ShopifyAPI {
+    private $storeUrl;
+    private $accessToken;
 
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $products[] = $row;
-        }
+    public function __construct($storeUrl, $accessToken) {
+        $this->storeUrl = $storeUrl;
+        $this->accessToken = $accessToken;
     }
 
-    $con->close();
+    private function makeRequest($method, $endpoint, $data = null) {
+        $url = "https://{$this->storeUrl}/admin/api/2024-01/{$endpoint}.json";
 
-    return $products;
-}
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "X-Shopify-Access-Token: {$this->accessToken}"
+        ));
 
-function doesProductExistInShopify($sku='04-16G', $auth, $baseUrl) {
-    $url = "$baseUrl/products.json?sku=$sku";
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        "Content-Type: application/json",
-        "Authorization: Basic $auth"
-    ));
-    $response = curl_exec($ch);
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+        if ($method == 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        }
 
-    // Product exists if status code is 200 (OK) and response contains data
-    return $statusCode == 200 && !empty(json_decode($response, true)['products']);
-}
+        $response = curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-function updateProductsInShopify($products, $auth, $baseUrl) {
-
-    foreach ($products as $product) {
-        $sku = $product['sku'];
-        $brand = $product['brand'];
-        $title = $product['product_title'];
-        $retail_price = $product['retail_aud'];
-
-        // Check if product already exists in Shopify
-        $productExists = doesProductExistInShopify($sku, $auth, $baseUrl);
-
-        if ($productExists) {
-           //my update case
-            echo "Product with SKU $sku exists. Updating...\n";
-
+        curl_close($ch);
+        if ($statusCode == 200 || $statusCode == 201) {
+            return json_decode($response, true);
         } else {
-            //my create case
-            echo "Product with SKU $sku does not exist. Creating...\n";
-
+            return false;
         }
-         $payload=fetchProductDataFromPim();
-         echo $payload; die;
-         $url = "$baseUrl/products.json";
-         $ch = curl_init($url);
-         curl_setopt($ch, CURLOPT_POST, true);
-         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-             "Content-Type: application/json",
-             "Authorization: Basic $auth"
-         ));
-         $response = curl_exec($ch);
-         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-         curl_close($ch);
+    }
+
+    public function postData($productData) {
+        return $this->makeRequest('POST', 'products', $productData);
+    }
+
+    public function getData($attribute) {
+        return $this->makeRequest('GET', $attribute);
     }
 }
 
-function main() {
-    $apiKey = "your_api_key";
-    $password = "your_password";
-    $storeUrl = "sga-development.myshopify.com";
+function main($request) {
+    //$request = (object) ['method' => 'POST'];
+    $storeUrl = "sga-development.myshopify.com"; // Your Shopify store URL
+    $accessToken = "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"; // Your access token generated through Shopify app
 
-    // Authentication part
-    $auth = authenticateShopify($apiKey, $password, $storeUrl);
-    $baseUrl = "https://$storeUrl/admin/api/2021-10";
+    // Create ShopifyAPI object
+    $shopifyAPI = new ShopifyAPI($storeUrl, $accessToken);
+    // Check if the request method is POST
+    if ($request->method == 'POST') {
+        // Example of creating a new product
+        $newProductData = [
+            "product" => [
+                "title" => "post test fdddpm Mousam Test ProductTitle",
+                "body_html" => "<p>post Mousam Test gorgeous blend of natural Australian Argyle pink diamonds with fine white diamonds. </p>",
+                "vendor" => "post TEst Pink Kimberley Diamonds",
+                "product_type" => "post code  Mousam Earrings",
+            ]
+        ];
+        $createdProduct = $shopifyAPI->postData($newProductData);
+        if ($createdProduct !== false) {
+            echo "Successfully created a new product:\n";
+            print_r($newProductData);
+        } else {
+            echo "Failed to create a new product.\n";
+        }
+    }
+    elseif ($request->method == 'GET') {
+        // Example of fetching product data from Shopify
+        $products = $shopifyAPI->getData('products');
 
-    //my pim data
-    $products = fetchProductDataFromPim();
-
-    // Update my pim data to shopify store
-    updateProductsInShopify($products, $auth, $baseUrl);
+        if ($products !== false) {
+            echo "Successfully fetched products data from Shopify:\n";
+            print_r($products);
+        } else {
+            echo "Failed to fetch products data from Shopify.\n";
+        }
+    }
+    else {
+        echo "Unsupported request method.\n";
+    }
 }
 
-// Execute main function
-main();
-
+// Example usage
+$request = (object) ['method' => $_SERVER['REQUEST_METHOD']]; // Simulating a GET request
+main($request);
 ?>
