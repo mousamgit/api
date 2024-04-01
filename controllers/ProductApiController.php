@@ -6,6 +6,8 @@ require_once(__DIR__ . '../../vendor/autoload.php');
 require_once(__DIR__ . '../../bootstrap/app.php');
 
 use models\User;
+use models\Products;
+use config\DB;
 
 
 class ProductApiController
@@ -61,7 +63,6 @@ class ProductApiController
 
     public function getProducts()
     {
-        $users = DB::select("");
 
         $products = $this->getData('products');
 
@@ -76,15 +77,15 @@ class ProductApiController
 
     public function createProduct()
     {
+        $products = Products::take(10)->get();
+        $users= DB::select("select * from users");
+        dd($users);
+
         $newProductData = [
-            "product" => [
-                "title" => "fdsaf test fdddpm Mousam Test ProductTitle",
-                "body_html" => "<p>fdasf Mousam Test gorgeous blend of natural Australian Argyle pink diamonds with fine white diamonds. </p>",
-                "vendor" => "fdasf Pink Kimberley Diamonds",
-                "product_type" => "fdsaf code  Mousam Earrings",
-            ]
+           $products
         ];
         $createdProduct = $this->postData($newProductData);
+        dd($createdProduct);
         if ($createdProduct !== false) {
             echo "Successfully created a new product:\n";
             print_r($newProductData);

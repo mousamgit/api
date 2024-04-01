@@ -16,8 +16,8 @@ function route($method, $path, $controllerMethod) {
 }
 
 // Define API routes
-route('GET', '/api/fetch_products', 'ProductApiController@getProducts');
-route('POST', '/api/create_products', 'ProductApiController@createProduct');
+route('GET', '/api/get_products', 'ProductApiController@getProducts');
+route('GET', '/api/create_products', 'ProductApiController@createProduct');
 
 // Handle invalid routes
 echo "404 Not Found\n";

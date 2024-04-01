@@ -32,6 +32,7 @@ class ComposerStaticInit4b3f46cc5aaf35ab7ec7e7f8a4a9721e
         'c' => 
         array (
             'controllers\\' => 12,
+            'config\\' => 7,
         ),
         'S' => 
         array (
@@ -83,6 +84,10 @@ class ComposerStaticInit4b3f46cc5aaf35ab7ec7e7f8a4a9721e
         'controllers\\' => 
         array (
             0 => __DIR__ . '/../..' . '/controllers',
+        ),
+        'config\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/config',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
