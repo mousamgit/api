@@ -85,8 +85,6 @@ export default {
                 }
             },
 
-
-
             //c
             refreshAttributeAgain() {
                 this.$emit('form-updated');
@@ -95,7 +93,6 @@ export default {
             //c
             async submitForm() {
                 try {
-
                     console.log(this.channelAttribute);
                     if ((this.channelAttribute[0].attribute_condition.trim() == '' || this.channelAttribute[0].attribute_condition.trim() == '()') && (!(this.channelAttribute[0].filter_type == 'IS NOT NULL' || this.channelAttribute[0].filter_type == 'IS NULL')) && (this.channelAttribute[0].filter_type != 'between')){
                         this.showManualValidationMessage=1
