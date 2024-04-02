@@ -85,8 +85,6 @@ export default {
                 }
             },
 
-
-
             //c
             refreshAttributeAgain() {
                 this.$emit('form-updated');
