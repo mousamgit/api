@@ -340,7 +340,7 @@ body .body-content{margin-top:50px;}
   /* product page */
   .media-content .col-md-3{padding:15px; text-align: center;   }
   .media-content aside{ padding: 15px;    color: #fff;    background: #222;     position: absolute;    bottom: 0px;    width: 100%;     z-index: 1;}
-  .img-border{border: 1px solid #e1e1e1;     height: 100%;    position: relative;}
+  .img-border{border: 1px solid #e1e1e1;    position: relative;}
 
   #sirv360 .sirv-spin-container{ aspect-ratio: 1 / 1; height:unset!important;}
   #sirv360 .sirv-controls {    position: absolute;    bottom: 80px;    width: 100%;    padding: 0 70px;}
@@ -429,6 +429,17 @@ body .body-content{margin-top:50px;}
   .updatevideo .updated{display: none;}
   .updatevideo table{margin-top:30px; margin-top:30px;}
   .updatevideo td{padding: 5px 10px;}
+
+  /* account page */
+  .account-nav{margin-bottom: 15px;}
+  .account-nav .tab{margin-right: 15px;}
+  .account-nav .tab.active{border-bottom: 3px solid #e1e1e1;}
+  .role-buttons{width:300px; max-width: 25%; float: left;}
+  .tab-content{width: 75%; float: left;}
+  .role-buttons .tab{display: block; border-bottom: 1px solid #e1e1e1;}
+  .role-buttons .tab.active{font-weight: 600;}
+  .permission-form label{margin-left: 15px;}
+  .fields-sec{padding:0 50px; margin-bottom: 50px;}
 
   @media (max-width: 767px)  {
     .pim-padding{padding:10px 20px;}

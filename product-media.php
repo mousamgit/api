@@ -8,7 +8,7 @@
             $imagename = $imagearray[$i];
             if($row[$imagename] != ""){
                 $image=true;
-                echo '<div class="col-md-3"><div class="img-border"><img src="'.$row[$imagename].'"><aside class="title">Product '.$imagename.'</aside></div></div>';
+                echo '<div class="col-md-3"><div class="img-border"><img src="'.$row[$imagename].'"><aside class="title">Product '.$imagename.'&nbsp;&nbsp;&nbsp;<button onclick="copyText(\''.$row[$imagename].'\')"><i class="fa-solid fa-copy"></i></button></aside></div></div>';
             }
         }
 
@@ -35,4 +35,12 @@
 
       <div class="showing-noimg <?php if($image){ echo 'd-none';}?>">No Media or Images</div>
     </p>
+
+    <script>
+        function copyText(link) {
+     
+            /* Copy text into clipboard */
+            navigator.clipboard.writeText(link);
+        }
+    </script>
 </section>

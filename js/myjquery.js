@@ -56,27 +56,30 @@ $(document).ready(function(){
     });
 
     //show 360 spin
-    brand = $('#sirv360').attr('brand');
-    sku = $('#sirv360').attr('sku');
-
-    if(brand == 'Pink Kimberley' || brand == 'Pink Kimberley Diamonds'){
-        spinsrc = "https://samsgroup.sirv.com/products/" + sku + "/" + sku + ".spin";
-      }
-      if(brand == 'Sapphire Dreams'){
-        spinsrc = "https://samsgroup.sirv.com/SD-Product/Sapphire%20Dreams%20Products/" + sku + "/" + sku + ".spin";
-      }       
-      $.ajax( spinsrc, {
-        statusCode: {
-          404: function() {
-
-            },
-          200: function() {
-              $('.sirv-container').append('<div class="Sirv" id="sirv-spin" data-src="'+spinsrc+'"></div>');
-              $('.showing-noimg').hide();
-              $('#sirv360').removeClass('d-none');
+    if($('#sirv360').length>0){
+        brand = $('#sirv360').attr('brand').toLowerCase();
+        sku = $('#sirv360').attr('sku');
+    
+        if(brand == 'pink kimberley' || brand == 'pink kimberley diamonds' || brand == 'argyle pink diamonds' ){
+            spinsrc = "https://samsgroup.sirv.com/products/" + sku + "/" + sku + ".spin";
           }
-        }
-      });
+          if(brand == 'sapphire dreams' || brand == 'loose sapphires'){
+            spinsrc = "https://samsgroup.sirv.com/SD-Product/Sapphire%20Dreams%20Products/" + sku + "/" + sku + ".spin";
+          }       
+          $.ajax( spinsrc, {
+            statusCode: {
+              404: function() {
+    
+                },
+              200: function() {
+                  $('.sirv-container').append('<div class="Sirv" id="sirv-spin" data-src="'+spinsrc+'"></div>');
+                  $('.showing-noimg').hide();
+                  $('#sirv360').removeClass('d-none');
+              }
+            }
+          });
+    }
+    
       if($('.home-table-container').length>0){
         var tableheight = window.innerHeight - 270;
         // var containerTop = $('.home-table-container').getBoundingClientRect().top;
@@ -84,20 +87,19 @@ $(document).ready(function(){
         $('.home-table-container').css('max-height',tableheight+'px');
       }
       
-
-    //   $('.show-filter').click(function(){
-    //     $('.filter-container').addClass('is-open');
-    //     });
+      //tabs
+      $('.tab').on('click', function() {
+        var tabId = $(this).attr('nav');
+        // Remove active class from all tabs and tab panes
+        $(this).parent().children('.tab').removeClass('active');
+        $(this).parent().next().children('.tab-pane').removeClass('active');
+        // $('.tab-pane').removeClass('active');
         
-
-    //     $(document).on('click', function(event) {
-    //         if (!$(event.target).closest('.filter-container').length &&
-    //         !$(event.target).hasClass('show-filter') &&
-    //         !$(event.target).closest('.filter-container').find('button').length &&
-    //         !$(event.target).is('a')) {
-    //         $('.filter-container').removeClass('is-open');
-    //     }
-    //     });
+        // Add active class to the clicked tab and corresponding tab pane
+        $(this).addClass('active');
+        $(this).parent().next().children('.tab-pane[tab="'+tabId+'"]').addClass('active');
+        // $('#' + tabId).addClass('active');
+      });
 
 
 });
