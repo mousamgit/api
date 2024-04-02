@@ -55,6 +55,21 @@ $(document).ready(function(){
         $('.header-search-close').hide();
     });
 
+    //select all boxes
+    $('.selectall').click(function(){
+        if($(this).prop("checked")){
+            $(this).closest('.checkboxes-container').find('input[type="checkbox"]').each(function(){
+                $(this).prop("checked", true);
+            });
+        }
+        else{
+            $(this).closest('.checkboxes-container').find('input[type="checkbox"]').each(function(){
+                $(this).prop("checked", false);
+            });
+        }
+ 
+    });
+
     //show 360 spin
     if($('#sirv360').length>0){
         brand = $('#sirv360').attr('brand').toLowerCase();

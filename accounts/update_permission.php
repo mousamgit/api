@@ -8,15 +8,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $_POST['role'];
 
     $fields = [
-        'addproduct' => $_POST['addproduct'],
-        'deleteproduct' => $_POST['deleteproduct'],
-        // Add more fields as needed
+        'addproduct' => truefalse($_POST['addproduct']),
+        'deleteproduct' => truefalse($_POST['deleteproduct']),
+        'editproduct' => readCheckBox($_POST['editproduct']),
+        'showcolumns' => readCheckBox($_POST['showcolumns']),
+
     ];
-    
+
+
+    // updateValue('permissions', 'role', $role, 'editproduct', $selectedColumnsArray);
 
     foreach ($fields as $field => $value) {
-        $roleValue = truefalse($value);
-        updateValue('permissions', 'role', $role, $field, $roleValue);
+        updateValue('permissions', 'role', $role, $field, $value);
     }
 
 
@@ -35,6 +38,16 @@ else{
 function truefalse($value){
     if($value){ return 1;}
     else{return 0;}
+}
+function readCheckBox($value){
+    $selectedColumnsArray = '';
+    if (isset($value) && is_array($value)) {
+        // Loop through the selected checkboxes
+        foreach ($value as $selectedColumn) {
+            $selectedColumnsArray .= '"'.$selectedColumn.'",';
+        }
+    }
+    return $selectedColumnsArray;
 }
 
 ?>
