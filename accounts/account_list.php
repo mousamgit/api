@@ -92,10 +92,19 @@
                         echo '</div>';
                         echo '</div>';
 
-                        echo '<div class="fields-sec">';
+                        echo '<div class="fields-sec checkboxes-container">';
+                        echo '<h3>Show Columns</h3>';
+                        echo '<div class="row">';
+                        showcolumns($pimrow, $role['role'], 'showcolumns');
+                        echo '<div class="col-md-12"><input type="checkbox" value="" class="selectall"> Select All</div>';
+                        echo '</div>';
+                        echo '</div>';
+
+                        echo '<div class="fields-sec checkboxes-container">';
                         echo '<h3>Editable Columns</h3>';
                         echo '<div class="row">';
-                        showcolumns($pimrow);
+                        showcolumns($pimrow, $role['role'], 'editproduct');
+                        echo '<div class="col-md-12"><input type="checkbox" value="" class="selectall"> Select All</div>';
                         echo '</div>';
                         echo '</div>';
 
@@ -127,17 +136,17 @@
                     echo '<label for="'.$field.'">'.$field.'</label>';
                     echo '</div>';
                 }
-                function showcolumns($pimrow){
+                function showcolumns($pimrow,$role,$cols){
                     foreach ($pimrow as $colName => $val) {
                         $escapedColName = htmlspecialchars($colName, ENT_QUOTES, 'UTF-8');
                         $checked = '';
-                        // $usercol =  getValue('users', 'username', $_SESSION['username'], 'type');
-                        $selectedcol = explode(',', str_replace('"', '', $usercol));
+                        $rolecol =  getValue('permissions', 'role', $role, $cols);
+                        $selectedcol = explode(',', str_replace('"', '', $rolecol));
                         if (in_array($colName, $selectedcol)) {
                             $checked = 'checked';
                         }
                 
-                        echo '<div class="col-md-2"><input type="checkbox" value="'.$colName.'" name="editproduct[]" class="" '.$checked.'>'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</div>'; 
+                        echo '<div class="col-md-3"><input type="checkbox" value="'.$colName.'" name="'.$cols.'[]" class="" '.$checked.'>'.mb_convert_case(str_replace("_"," ",$colName), MB_CASE_TITLE).'</div>'; 
                     } // show column headers
                 }
             ?>
