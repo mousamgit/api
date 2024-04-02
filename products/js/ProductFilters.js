@@ -57,9 +57,6 @@ export default {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    // this.deletedId.push(productDetId);
-                    // localStorage.setItem('deletedId', JSON.stringify(this.deletedId));
-                    // console.log(this.deletedId)
                     console.log('filters deleted successfully!');
                     this.initializeData()
                     this.$emit('filters-updated');
@@ -70,7 +67,7 @@ export default {
                 }
 
             } catch (error) {
-                console.error('Error deleting channel:', error);
+                console.error('Error deleting filter:', error);
             }
         },
         async  controlFilters() {
@@ -372,11 +369,11 @@ export default {
                                 </div>
                                 <div class="form-group filter-clauses">
                                             <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
-                                                <template v-if="productDetails.length==0">
-                                                    
+                                                <template v-if="productDetails.length==0"> 
                                                     <product-filter-form :showAttributeFirst="0" :selectedValues="selectedValues"  :productDetailValue="[]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
                                                 </template>
-                                                <template v-else><product-filter-form showAttributeFirst="0" :selectedValues="selectedValues" :productDetailValue="productDetails[0]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
+                                                <template v-else>
+                                                    <product-filter-form showAttributeFirst="0" :selectedValues="selectedValues" :productDetailValue="productDetails[0]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
                                                 </template>
                                             </fieldset>
                                             <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
@@ -394,8 +391,7 @@ export default {
                     
                             </div>
 </div>
-<div class="submit-form" v-if="productDetails.length>0">
-      
+<div class="submit-form" v-if="productDetails.length>0">     
        <template v-if="filter_no ==0">          
            <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
            <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
@@ -407,7 +403,7 @@ export default {
        </template>
 </div>
 <div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
-                <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
+  <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
 </div>
   `,
 };
