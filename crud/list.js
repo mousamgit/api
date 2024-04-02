@@ -186,7 +186,6 @@ export default {
         exportToCSV() {
             if (this.exportRows.length === 0) {
                 alert("Please Select Products To Export")
-                // Export cannot proceed if there are no rowValues to export
                 return;
             }
 
