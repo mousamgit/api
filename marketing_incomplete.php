@@ -17,7 +17,7 @@
 <form class="form-horizontal" action="update_descriptions.php" method="post" name="update_descriptions" enctype="multipart/form-data">
 <?php
   require ('connect.php');
-  $query = 'SELECT * FROM pim WHERE ( (description = "" or description IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds" OR brand = "Shopify CL") AND type <> "loose diamonds" AND type <> "loose sapphires") OR ( (tags = "" or tags IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds") AND type <> "loose diamonds" AND type <> "loose sapphires" AND brand <> "white diamond jewellery") ORDER BY pim.product_title ASC;';
+  $query = 'SELECT * FROM pim WHERE ( (description = "" or description IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds" OR brand = "Shopify CL") AND type <> "loose diamonds" AND type <> "loose sapphires") OR ( (tags = "" or tags IS NULL) AND image1 <> "" AND shopify_qty > 0 AND retail_aud > 0 AND (brand = "Pink Kimberley Diamonds" OR brand = "Sapphire Dreams" OR brand = "Blush Pink Diamonds") AND type <> "loose diamonds" AND type <> "loose sapphires" AND brand <> "white diamond jewellery") GROUP BY sku  ORDER BY pim.product_title ASC;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/marketing/marketing-incomplete.csv';

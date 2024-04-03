@@ -80,7 +80,7 @@ class ProductDetailHandler {
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
         $offset = (($_GET['page'] ?? 1) - 1) * $this->itemsPerPage;
-        $productDetailQuery = $this->con->query("SELECT DISTINCT id," . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != '' order by ".$order_column_name." ".$order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
+        $productDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != ''GROUP BY sku order by ".$order_column_name." ".$order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
         if ($productDetailQuery->num_rows > 0) {
             while ($row = $productDetailQuery->fetch_assoc()) {
                 $productValues[] = $row;
