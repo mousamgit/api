@@ -2,8 +2,16 @@
 
 class listDetailHandler {
     private $con;
+    private $db_name='';
     private $listId;
     private $itemsPerPage = 100;
+
+    private $primary_table='products';
+    private $key_name='id';
+    private $filter_table = 'product_filter';
+    private $filter_page_name = 'products';
+    private $order_column_name = 'id';
+    private $order_column_value = 'ASC';
 
     public function __construct() {
         // Error reporting
@@ -15,6 +23,8 @@ class listDetailHandler {
         require_once('./login_checking.php');
         $this->con = $con;
 
+
+
         // Getting the referring URL
         $currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
@@ -24,6 +34,15 @@ class listDetailHandler {
 
         // Extracting the channel_id parameter
         $this->listId = $queryParameters['id'] ?? 0;
+
+        $data = json_decode(file_get_contents("php://input"), true);
+        $this->primary_table = $data['primary_table'];
+        $this->filter_table = $data['filter_table'];
+        $this->key_name = $data['key_name'];
+        $this->filter_page_name = 'products';
+        $this->column_table = $data['column_table'];
+        $this->order_column_name = $data['order_column_name'];
+        $this->order_column_value = $data['order_column_value'];
     }
 
     public function getlistDetails() {
@@ -48,13 +67,11 @@ class listDetailHandler {
                 $lists[] = $row;
             }
         }
-
         return $lists;
     }
 
     private function getlistFilter() {
         $listFilter = [];
-
         $listFilterQuery = $this->con->query("SELECT * FROM product_filter where status=1 and product_id=" . $this->listId . " and user_name = '".$_SESSION['username']."' order by index_no ASC");
 
         if ($listFilterQuery->num_rows > 0) {
@@ -80,7 +97,12 @@ class listDetailHandler {
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
         $offset = (($_GET['page'] ?? 1) - 1) * $this->itemsPerPage;
-        $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != ''GROUP BY sku order by ".$order_column_name." ".$order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
+
+
+
+            $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM ".$this->primary_table." " . $filterConditionCombined . " AND ".$this->key_name." != '' GROUP BY ".$this->key_name." order by ".$this->order_column_name." ".$this->order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
+
+
         if ($listDetailQuery->num_rows > 0) {
             while ($row = $listDetailQuery->fetch_assoc()) {
                 $listValues[] = $row;
@@ -90,14 +112,14 @@ class listDetailHandler {
     }
 
     private function getTotalRows() {
-        $totalRowsQuery = $this->con->query("select DISTINCT sku FROM pim " . $this->getFilterConditionCombined());
+        $totalRowsQuery = $this->con->query("select DISTINCT ".$this->key_name." FROM  ".$this->primary_table. "   " . $this->getFilterConditionCombined());
         return $totalRowsQuery->num_rows;
     }
     private function getTotalRowValues() {
         $listValuesTotal =[];
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
-        $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM pim " . $filterConditionCombined . " AND sku != '' ");
+        $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM  ".$this->primary_table. "   " . $filterConditionCombined . " AND ".$this->key_name." != '' ");
         if ($listDetailQuery->num_rows > 0) {
             while ($row = $listDetailQuery->fetch_assoc()) {
                 $listValuesTotal[] = $row;
@@ -107,18 +129,26 @@ class listDetailHandler {
     }
 
     private function getColumnValuesRow() {
+        require_once('./connect.php');
         $columnValuesRow = [];
+        $userOrderedColumns = $this->con->query("SELECT COLUMN_NAME as column_name,DATA_TYPE as data_type
+                       FROM information_schema.columns
+                       WHERE table_schema = 'u288902296_pim' AND table_name = '".$this->column_table."'");
+        if($this->primary_table == 'pim')
+        {
+            $userOrderedColumns = $this->con->query("SELECT column_name FROM  ".$this->column_table. "   WHERE user_name = '".$_SESSION['username']."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
 
-        $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
+        }
 
         if ($userOrderedColumns->num_rows > 0) {
             while ($row = $userOrderedColumns->fetch_assoc()) {
                 $columnValuesRow[]=$row['column_name'];
             }
         }
-        if(!in_array('sku',$columnValuesRow))
-        {
-            array_unshift($columnValuesRow, 'sku');
+        if($this->primary_table == 'pim') {
+            if (!in_array('sku', $columnValuesRow)) {
+                array_unshift($columnValuesRow, 'sku');
+            }
         }
 
 
@@ -200,8 +230,7 @@ class listDetailHandler {
             $filterConditionCombined = 'WHERE 1=1';
         }
         $filterConditionCombined = str_replace("AND () OR", "AND", $filterConditionCombined);
-
-        return $filterConditionCombined;
+        return $this->filter_table=='product_filter'?$filterConditionCombined:'where 1=1';
     }
 }
 

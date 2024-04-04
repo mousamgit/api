@@ -27,7 +27,7 @@ include 'functions.php';
 <body>
 <?php include 'topbar.php'; ?>
 <div id="list">
-    <list :urlsku="'test'" :primary_table="'pim'" :key_name="'sku'" :filter_table="'product_filter'"></list>
+    <list :urlsku="'test'" :primary_table="'customer'" :key_name="'id'" :filter_table="'no_filter'" :column_table="'customer'"></list>
 </div>
 <script type="module" src="./crud/list.js" defer></script>
 

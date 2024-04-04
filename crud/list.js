@@ -2,7 +2,7 @@ import listFilters from '../../crud/listFilters.js?v=2';
 import listFilterForm from '../../crud/listFilterForm.js?v=2';
 
 const List = {
-    props: ['urlsku','primary_table','key_name','filter_table'],
+    props: ['urlsku','primary_table','key_name','filter_table','column_table'],
     data() {
         return {
             listDetails: [],
@@ -37,7 +37,7 @@ const List = {
             checkedRows: {}, // Object to track checked rows
             selectAllCheckbox: false,
             dataTypeValue:'varchar',
-            orderColumnName:'sku',
+            orderColumnName:this.key_name,
             orderColumnValue:'ASC'
         };
     },
@@ -141,17 +141,17 @@ const List = {
             const endIndex = Math.min(startIndex + this.pageSize, this.listValues.length);
 
             for (let i = startIndex; i < endIndex; i++) {
-                const sku = this.listValues[i]['sku'];
+                const sku = this.listValues[i][this.key_name];
                 this.checkedRows[sku] = this.selectAllChecked[current_page];
 
                 if (this.selectAllChecked[current_page]) {
                     // If Select All is checked, add the row to exportRows
-                    if (!this.exportRows.some(row => row['sku'] === sku)) {
+                    if (!this.exportRows.some(row => row[this.key_name] === sku)) {
                         this.exportRows.push(this.listValues[i]);
                     }
                 } else {
                     // If Select All is unchecked, remove the row from exportRows (if exists)
-                    const exportIndex = this.exportRows.findIndex(row => row['sku'] === sku);
+                    const exportIndex = this.exportRows.findIndex(row => row[this.key_name] === sku);
                     if (exportIndex !== -1) {
                         this.exportRows.splice(exportIndex, 1);
                     }
@@ -180,7 +180,7 @@ const List = {
                 }
 
                 for (let i = startIndex; i < endIndex; i++) {
-                    const sku = this.listValuesTotal[i]['sku'];
+                    const sku = this.listValuesTotal[i][this.key_name];
                     this.checkedRows[sku] = true;
                     this.exportRows.push(this.listValuesTotal[i]);
                 }
@@ -347,8 +347,8 @@ const List = {
         initializePagination()
         {
             this.currentPage=1,
-                this.itemsPerPage= 100,
-                this.totalRows=0
+            this.itemsPerPage= 100,
+            this.totalRows=0
         },
         firstPage(){
             this.initializeData();
@@ -425,7 +425,8 @@ const List = {
                 'order_column_value': this.orderColumnValue,
                 'primary_table':this.primary_table,
                 'key_name':this.key_name,
-                'filter_table':this.filter_table
+                'filter_table':this.filter_table,
+                'column_table':this.column_table
             }
             const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
@@ -493,7 +494,7 @@ const List = {
         },
         async saveEdit() {
             this.formData.table='pim'
-            this.formData.pr_key='sku';
+            this.formData.pr_key=this.key_name;
             try {
                 const response = await fetch('./updatetablevalue.php', {
                     method: 'POST',
@@ -617,19 +618,19 @@ const List = {
               <tr v-for="(row,rowIndex) in listValues">
               <td class="hidden">{{rowIndex+1}}</td>
               <td>
-                <input type="checkbox" :id="currentPage" :checked="checkedRows[row['sku']]"  @change="toggleRowSelection(row['sku'])">
+                <input type="checkbox" :id="currentPage" :checked="checkedRows[row[key_name]]"  @change="toggleRowSelection(row[key_name])">
               </td>
                <template v-for="(colName,colIndex) in columnValues">
                <td  :col="colName">              
                 <div v-if="rIndex==rowIndex && colIndex==cIndex">
-                <input type="hidden" v-model="formData.sku" value="row['sku']">
+                <input type="hidden" v-model="formData.sku" value="row[key_name]">
                 <input type="hidden" v-model="formData.columnName" value="colName">
                 <input type="hidden" v-model="formData.oldValue" value="row[colName]">
                 <input id="editInput" type="text" v-model="formData.editedValue" value="row[colName]" @keydown.tab.prevent="saveEdit()" @mouseleave="saveEdit()" @keyup.enter="saveEdit()">
                 </div>
                 <div v-else>
-                <template v-if="colName == 'sku'">
-                 <a :href="getlistUrl(row['sku'])">{{ row['sku'] }} </a>
+                <template v-if="colName == key_name">
+                 <a :href="getlistUrl(row[key_name])">{{ row[key_name] }} </a>
                 </template>
                 
                 <template v-else-if="colName.includes('imag')">
@@ -642,7 +643,7 @@ const List = {
                 </template>
                 <template v-else>
                 
-                <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
+                <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row[key_name],colName)">
                     {{ row[colName] }} <i class="fa fa-pencil" aria-hidden="true"></i></i>
                 </a>
                 
