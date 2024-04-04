@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     updateValue('users','username',$username,'columns',$value);
 }
 
-mergeDups(1,1000);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

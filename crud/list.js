@@ -588,7 +588,7 @@ export default {
             </tbody>
           </table>
           </div>
-
+        <div class="table-footer">
            <div class="mt-3 row">
                 <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
                
@@ -611,6 +611,7 @@ export default {
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
                 <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
               </div>
+        </div>
         </div>
         </div>
         <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showColumnSelector }" >
