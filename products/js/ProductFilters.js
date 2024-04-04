@@ -238,7 +238,6 @@ export default {
             }
         },
 
-
         addChannelCondition(op_value, condition_type, previous_row) {
             this.showInput=1;
             this.op_show_value = op_value;

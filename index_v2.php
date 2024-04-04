@@ -26,7 +26,9 @@ include 'functions.php';
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div id="index"><index :urlsku="'test'"></index></div>
-<script type="module" src="./homepage/js/index_v2.js" defer></script>
+<div id="list">
+    <list :urlsku="'test'" :primaryTable="pim" :filterTable="product_filter" :primaryKey="sku""></list>
+</div>
+<script type="module" src="./crud/list.js" defer></script>
 </body>
 </html>

@@ -1,13 +1,5 @@
-import list from '../../crud/list.js';
-import ProductFilters from '../../products/js/ProductFilters.js?v=2';
-import ProductFilterForm from '../../products/js/ProductFilterForm.js?v=2';
-
-const app = Vue.createApp({
-    props: {
-        urlsku: {
-            type: String,
-        },
-    },
+export default {
+    props: ['table'],
     data() {
         return {
             productDetails: [],
@@ -427,7 +419,8 @@ const app = Vue.createApp({
 
             let dataToSend = {
                 'order_column_name': this.orderColumnName,
-                'order_column_value': this.orderColumnValue
+                'order_column_value': this.orderColumnValue,
+                'table':this.table
             }
             const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
@@ -525,6 +518,7 @@ const app = Vue.createApp({
             this.fetchProducts();
         },
         handleFiltersUpdated() {
+            console.log('filters updated event received in parent component');
             this.initializeData();
             this.initializePagination();
             console.log(this.fetchProducts());
@@ -561,29 +555,136 @@ const app = Vue.createApp({
                 }
 
             }
-        },
-        handleUpdatedData(value)
-        {
-            console.log(value)
-            this.orderColumnName=value.column_name
-            this.orderColumnValue=value.column_value
-            this.currentPage=value.current_page
-            this.fetchProducts();
         }
     },
     template: `
-  
-   
-    <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">   
-     <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
-    </div>
-     <d-list :table="pim"></d-list>
-
+    
+    <nav class=" toolbar pim-padding">
+    
+        <div class="selectbox">
+         <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> 
+        </div>
+        <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
+        <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
+        </nav>
      
-        
+        <div class="pim-padding">
+          <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
+          <table class="pimtable  display homepage-table">
+            <thead>
+              <tr>
+                <th class="hidden">S.N</th>
+                <th col="checkbox">
+                <input type="checkbox" v-model="selectAllChecked[currentPage]" @change="selectAllRows(currentPage)"> </th>               </th>
+                 
+                 <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
+                :draggable="true" @dragstart="handleDragStart(index)" 
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                
+                  
+                  <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
+                        <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
+                        <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
+                  </a>
+                  <a v-else class="sorting-btn">
+                   <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
+                   <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
+                  </a>
+                {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
+                 </th>                
+              </tr>
+            </thead>
+            <tbody>
+            
+              <tr v-for="(row,rowIndex) in productValues">
+              <td class="hidden">{{rowIndex+1}}</td>
+              <td>
+                <input type="checkbox" :id="currentPage" :checked="checkedRows[row['sku']]"  @change="toggleRowSelection(row['sku'])">
+              </td>
+               <template v-for="(colName,colIndex) in columnValues">
+               <td  :col="colName">              
+                <div v-if="rIndex==rowIndex && colIndex==cIndex">
+                <input type="hidden" v-model="formData.sku" value="row['sku']">
+                <input type="hidden" v-model="formData.columnName" value="colName">
+                <input type="hidden" v-model="formData.oldValue" value="row[colName]">
+                <input id="editInput" type="text" v-model="formData.editedValue" value="row[colName]" @keydown.tab.prevent="saveEdit()" @mouseleave="saveEdit()" @keyup.enter="saveEdit()">
+                </div>
+                <div v-else>
+                <template v-if="colName == 'sku'">
+                 <a :href="getProductUrl(row['sku'])">{{ row['sku'] }} </a>
+                </template>
+                
+                <template v-else-if="colName.includes('imag')">
+                  <template v-if="row[colName]">
+                  <a :href="row[colName]" target="_blank">
+                  <img :src="row[colName]" :alt="row['product_title']">
+                  </a>
+                  </template>
+                  <template v-else> <img src="/css/no-image.png?v=1" alt="no image"> </template>
+                </template>
+                <template v-else>
+                
+                <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
+                    {{ row[colName] }} <i class="fa fa-pencil" aria-hidden="true"></i></i>
+                </a>
+                
+                </div>
+                </template>
+                </td>
+                </template>
+                
+               
+               
+              </tr>
+              
+            </tbody>
+          </table>
+          </div>
+
+           <div class="mt-3 row">
+                <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
+                
+                <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
+                    <template v-for="(value,index) in totalPages(totalRows,itemsPerPage)" :key="index" >
+                    <template v-if="currentPage==index+1">                 
+                    <option :value="index+1" selected>Page {{ index +1 }}</option>
+                    </template>                   
+                    <template v-else>
+                    <option :value="index+1">Page {{ index +1 }}</option>
+                    </template>
+                </select>
+
+                <a class="page-btn" @click="firstPage" :class="{ 'disabled': currentPage === 1 }" ><i class="fa fa-step-backward" aria-hidden="true"></i></a>
+                <a class="page-btn" @click="prevPage" :class="{ 'disabled': currentPage === 1 }"><i class="fa fa-caret-left" aria-hidden="true"></i></a>
+                <span v-if="this.currentPage>3">...</span>
+                <a class="page-btn"  v-for="(page, index) in visiblePages(totalRows,itemsPerPage)"  :key="index" :class="{ 'active': currentPage == page }"  @click="gotoPage(page)">{{page}}</a>
+                <span v-if="this.currentPage<totalPages(totalRows,itemsPerPage)-2">...</span>
+                <a class="page-btn" @click="nextPage" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }" ><i class="fa fa-caret-right" aria-hidden="true"></i></a>
+                <a class="page-btn" @click="lastPage(totalRows,itemsPerPage)" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }"><i class="fa fa-step-forward" aria-hidden="true"></i></a>
+                
+
+
+              </div>
+              <div class="text-muted col-md-4 text-center p-2">
+                {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} / {{totalRows}} records
+              </div>
+              <div class="text-muted col-md-4 text-end">
+                <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
+                <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
+              </div>
+        </div>
+        </div>
+        <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showColumnSelector }" >
+            <div class="ui-widget-content">
+              <div class="flex-row vcenter right-slider-header" tabindex="0"><span class="sub-heading">Columns</span></div>
+                <div class="select-btn" v-for="(column, index) in columns" :key="index" @click="toggleCheckbox(column)" :class="{'selected': column.selected }">
+                  <input type="checkbox" class="button-menu-item-checkbox hidden" v-model="column.selected"  @change="updateColumns(column.column_name,column.selected)">
+                  <label> &nbsp; {{ column.column_name }}</label>
+                </div>
+       
+            </div>
+        </div>
+      </div>
 `,
-});
-app.mount('#index');
-app.component('d-list', d-list);
-app.component('product-filters', ProductFilters);
-app.component('product-filter-form', ProductFilterForm);
+};
+
