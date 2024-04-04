@@ -121,7 +121,6 @@ export default {
 
   },
   template: `
-
 <div  style="padding-right: 48px;padding-bottom: 0px;padding-left: 48px;">
     <div class="row">
     <div class="container mt-5">

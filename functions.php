@@ -333,4 +333,41 @@ function duplicatedcheck($db, $colname, $value){
         return false; 
     }
 }
+
+function mergeDups($from, $to){
+    require('connect.php');
+
+    // Fetch rows from the database based on the specified range
+    $query = "SELECT * FROM pimnew WHERE sku BETWEEN $from AND $to";
+    $result = mysqli_query($con, $query);
+
+    $mergedRows = array();
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        if (isset($mergedRows[$row['sku']])) {
+            foreach ($row as $key => $value) {
+                if ($key !== 'sku') {
+                    $mergedRows[$row['sku']][$key] = $value;
+                }
+            }
+        } else {
+            $mergedRows[$row['sku']] = $row;
+        }
+    }
+
+    foreach ($mergedRows as $sku => $mergedRow) {
+        $updateQuery = "UPDATE pimtemp SET ";
+        $setValues = array();
+        foreach ($mergedRow as $key => $value) {
+            // Build the SET part of the SQL query
+            $setValues[] = "$key = '" . mysqli_real_escape_string($con, $value) . "'";
+        }
+        $updateQuery .= implode(", ", $setValues);
+        $updateQuery .= " WHERE sku = '" . mysqli_real_escape_string($con, $sku) . "'";
+
+        // Execute the update query
+        mysqli_query($con, $updateQuery);
+    }
+}
+
 ?>
