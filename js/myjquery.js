@@ -70,6 +70,8 @@ $(document).ready(function(){
  
     });
 
+
+
     //show 360 spin
     if($('#sirv360').length>0){
         brand = $('#sirv360').attr('brand').toLowerCase();
@@ -117,4 +119,22 @@ $(document).ready(function(){
       });
 
 
+});
+$(window).on("load", function() {
+    //fix table width
+    if($('.pimtable').length>0){
+        $('.pimtable th').each(function(index) {
+            var maxColumnWidth = 0;
+        
+            $('.pimtable tbody tr').each(function() {
+              var cellContentWidth = $(this).find('td').eq(index).text().length * 10; // Adjust the multiplier as needed
+              maxColumnWidth = Math.max(maxColumnWidth, cellContentWidth);
+              console.log(maxColumnWidth+','+cellContentWidth);
+            });
+        
+            $('.pimtable td').filter(function() {
+              return $(this).index() === index;
+            }).css('width', maxColumnWidth + 'px');
+          });
+    }
 });

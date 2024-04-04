@@ -7,5 +7,5 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://kit.fontawesome.com/3b69b64e72.js" crossorigin="anonymous"></script>
-<script src="https://samsgroup.info/pim/js/myjquery.js" ></script>
+
 
