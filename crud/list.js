@@ -478,33 +478,9 @@ const List = {
             }, 0);
 
         },
-        async  getTooltipDetails(filter_no) {
-            const dataToSend = {
-                filter_no: filter_no
-            };
 
-            try {
-                const response = await fetch('./fetch_tooltip_details.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                })
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tooltip details');
-                }
-                const data = await response.json();
-                console.log('list', data);
-                this.filterList = data;
-
-            } catch (error) {
-                console.error('Error updating database:', error);
-            }
-        },
         async saveEdit() {
-            this.formData.table='pim'
+            this.formData.table=this.primary_table
             this.formData.pr_key=this.key_name;
             try {
                 const response = await fetch('./updatetablevalue.php', {
@@ -552,7 +528,8 @@ const List = {
                 this.columnValues.splice(index, 0, removed);
                 this.draggedIndex = null;
                 const dataToSend = {
-                    column_values: this.columnValues
+                    column_values: this.columnValues,
+                    table_name:this.primary_table
                 };
                 try {
                     const response =  fetch('./save_column_order_values.php', {
@@ -575,18 +552,12 @@ const List = {
         }
     },
     template: `
-    
-    <nav class=" toolbar pim-padding">
-    
+    <nav class=" toolbar pim-padding">    
         <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
           
         <a class="icon-btn show-filter" v-if="show_filter_button==true" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
-        </nav>
-     
-
-    
-    
+    </nav>
     </div>
   
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
