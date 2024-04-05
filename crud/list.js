@@ -248,7 +248,7 @@ const List = {
             }
 
             try {
-                fetch('./users/save_user_columns.php', {
+                fetch('./users/save_user_columns_v2.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -439,7 +439,7 @@ const List = {
                 'filter_table':this.filter_table,
                 'column_table':this.column_table
             }
-            const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
+            const response = await fetch('./fetch_filtered_data_v2.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
