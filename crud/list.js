@@ -2,7 +2,7 @@ import listFilters from '../../crud/listFilters.js?v=2';
 import listFilterForm from '../../crud/listFilterForm.js?v=2';
 
 const List = {
-    props: ['urlsku','primary_table','key_name','filter_table','column_table'],
+    props: ['urlsku','primary_table','key_name','filter_table','column_table','show_filter_button'],
     data() {
         return {
             listDetails: [],
@@ -569,8 +569,8 @@ const List = {
     
         <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
-
-        <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
+          
+        <a class="icon-btn show-filter" v-if="show_filter_button==true" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
         </nav>
      
 
