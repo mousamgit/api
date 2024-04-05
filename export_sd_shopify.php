@@ -88,10 +88,10 @@
         // Create handle
         $handle = "";
         if( strtolower($row['type']) == "loose sapphires" )
-          if ( strtolower($row['treatment']) == "unheated") { $handle = $row['shape']."-".$row['colour'].$row['edl']."-australian-sapphire-".$row['sku']; }
+          if ( strtolower($row['treatment']) == "unheated") { $handle = $row['shape']."-".$row['colour'].str_replace("nh","unheated",$row['treatment'])."-australian-sapphire-".$row['sku']; }
           else { $handle = $row['shape']."-".$row['colour']."-australian-sapphire-".$row['sku']; }
         else{
-          if ( strtolower($row['treatment']) == "unheated") {$handle = $title_mod."-".$row['colour']."-".$row['edl3']."-".str_replace("  "," ",str_replace("&","",$row['metal_composition']))."-".$type_mod."-".$row['sku']; }
+          if ( strtolower($row['treatment']) == "unheated") {$handle = $title_mod."-".$row['colour']."-".$row['treatment']."-".str_replace("  "," ",str_replace("&","",$row['metal_composition']))."-".$type_mod."-".$row['sku']; }
           else {$handle = $title_mod."-".$row['colour']."-".str_replace("  "," ",str_replace("&","",$row['metal_composition']))."-".$type_mod."-".$row['sku'];}
         } $handle = str_replace([" ","--"],"-",strtolower($handle));
 

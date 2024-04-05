@@ -66,7 +66,7 @@ else { $productTitle .= mb_convert_case($getData[19], MB_CASE_TITLE); }
 
 //Treatments
 $treatment="";
-if ( preg_match("/NH/i", $getData[97]) > 0 ) { $treatment .= "Unheated"; }
+if ( preg_match("/NH/i", $getData[87]) > 0 ) { $treatment .= "Unheated"; }
 
 // Shopify Qty Calculations
 $shopifyqty = 0; $whshopify = 0; $mdshopify = 0; $psshopify = 0; $allocatedshopify = 0;
