@@ -23,7 +23,7 @@
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sga-shopify.csv';
   $fp = fopen($filepath, 'w');
 
-  $headers = array("Variant SKU","Command","Handle","Body HTML","Inventory Available:Home","Inventory Available:MD","Inventory Available:PS","Status","Tags","Tags Command","Title","Type","Variant Barcode","Variant Command","Variant Cost","Variant Inventory Policy","Variant Inventory Tracker","Variant Price","Vendor","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Image Src","Image Command","Variant Image","Metafield:custom.argyle_colour","Metafield:custom.certification","Metafield:custom.product_caratprice","Metafield:custom.product_rrp","Metafield:custom.specifications","Metafield:custom.stone_carat","Metafield:custom.stone_clarity","Metafield:custom.stone_colour","Metafield:custom.stone_measurement","Metafield:custom.stone_shape","Metafield:custom.table_specifications","Variant Fullfilment Service","ID");
+  $headers = array("Variant SKU","Command","Handle","Body HTML","Inventory Available:Home","Inventory Available:MD","Inventory Available:PS","Status","Tags","Tags Command","Title","Type","Variant Barcode","Variant Command","Variant Cost","Variant Inventory Policy","Variant Inventory Tracker","Variant Price","Vendor","Option1 Name","Option1 Value","Option2 Name","Option2 Value","Option3 Name","Option3 Value","Image Src","Image Command","Variant Image","Metafield:custom.argyle_colour","Metafield:custom.certification","Metafield:custom.product_caratprice","Metafield:custom.product_rrp","Metafield:custom.specifications","Metafield:custom.stone_carat","Metafield:custom.stone_clarity","Metafield:custom.stone_colour","Metafield:custom.stone_measurement","Metafield:custom.stone_shape","Metafield:custom.table_specifications","Variant Fullfilment Service","Variant ID");
   $header_length = count($headers);
   $csv_header = '';
   for ($i = 0; $i < $header_length; $i++) { $csv_header .= '"' . $headers[$i] . '",'; }
@@ -282,7 +282,7 @@
             37 => $row['shape'],
             38 => $table_specifications,
             39 => "manual",
-            40 => $row['ws_product_id'],
+            41 => $row['ws_variant_id'],
 
           );
 
