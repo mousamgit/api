@@ -2,7 +2,7 @@
 
 
 <!-- Navigation Drawer -->
-<script src="https://samsgroup.info/pim/js/myjquery.js" ></script>
+
 <div class="layout-drawer">
     <div class="drawer-header drawer-header-cover" style="background-color: #ae1930; color: #000;">
         <div class="drawer-user">
