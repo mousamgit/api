@@ -28,7 +28,7 @@ include 'functions.php';
 <?php include 'topbar.php'; ?>
 <div id="list">
 <!--    remember passing value below in primary-table,key_name,filter_table,column_table is compulsary and should match exactly with tables otherwise will render blank-->
-    <list :urlsku="'test'" :primary_table="'customer'" :key_name="'code'" :filter_table="'customer'" :column_table="'customer'" :show_filter_button="true"></list>
+    <list :urlsku="'test'" :primary_table="'customer'" :key_name="'code'" :filter_table="'customer'" :column_table="'user_columns'" :show_filter_button="true"></list>
 </div>
 <script type="module" src="./crud/list.js" defer></script>
 

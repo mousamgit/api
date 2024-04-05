@@ -194,7 +194,7 @@ const List = {
         },
         exportToCSV() {
             if (this.exportRows.length === 0) {
-                alert("Please Select lists To Export")
+                alert("Please Select Items From Table To Export")
                 // Export cannot proceed if there are no rows to export
                 return;
             }
@@ -243,7 +243,8 @@ const List = {
             }
             let dataToSend = {
                 'column_name': selectedColumns,
-                'selectedStatus': selectedStatus
+                'selectedStatus': selectedStatus,
+                'table_name': this.primary_table
             }
 
             try {
@@ -283,8 +284,18 @@ const List = {
             this.showColumnSelector = !this.showColumnSelector;
         },
         async fetchUserColumns() {
+            const dataToSend = {
+                table_name: this.primary_table
+            };
+
             try {
-                const response = await fetch('./users/fetch_columns_user_wise.php');
+                const response = await fetch('./users/fetch_columns_user_wise.php',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
                 const data = await response.json();
                 this.columns = data;
             } catch (error) {

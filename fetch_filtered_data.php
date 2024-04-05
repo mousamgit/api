@@ -97,10 +97,7 @@ class listDetailHandler {
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
         $offset = (($_GET['page'] ?? 1) - 1) * $this->itemsPerPage;
-
-
-
-            $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM ".$this->primary_table." " . $filterConditionCombined . " AND ".$this->key_name." != '' GROUP BY ".$this->key_name." order by ".$this->order_column_name." ".$this->order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
+        $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM ".$this->primary_table." " . $filterConditionCombined . " AND ".$this->key_name." != '' GROUP BY ".$this->key_name." order by ".$this->order_column_name." ".$this->order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
 
 
         if ($listDetailQuery->num_rows > 0) {
@@ -131,25 +128,15 @@ class listDetailHandler {
     private function getColumnValuesRow() {
         require_once('./connect.php');
         $columnValuesRow = [];
-        $userOrderedColumns = $this->con->query("SELECT COLUMN_NAME as column_name,DATA_TYPE as data_type
-                       FROM information_schema.columns
-                       WHERE table_schema = 'u288902296_pim' AND table_name = '".$this->column_table."'");
-        if($this->primary_table == 'pim')
-        {
-            $userOrderedColumns = $this->con->query("SELECT column_name FROM  ".$this->column_table. "   WHERE user_name = '".$_SESSION['username']."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
+        $userOrderedColumns = $this->con->query("SELECT column_name FROM  ".$this->column_table. "   WHERE user_name = '".$_SESSION['username']."' AND table_name='".$this->primary_table."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
 
-        }
-
-        if ($userOrderedColumns->num_rows > 0) {
             while ($row = $userOrderedColumns->fetch_assoc()) {
                 $columnValuesRow[]=$row['column_name'];
             }
-        }
-        if($this->primary_table == 'pim') {
-            if (!in_array('sku', $columnValuesRow)) {
-                array_unshift($columnValuesRow, 'sku');
+
+            if (!in_array($this->key_name, $columnValuesRow)) {
+                array_unshift($columnValuesRow, $this->key_name);
             }
-        }
 
 
         return $columnValuesRow;
