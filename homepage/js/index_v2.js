@@ -577,13 +577,13 @@ const app = Vue.createApp({
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">   
      <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
-     <list :rowValues="productValues" :rowValuesTotal="productValuesTotal" :totalRows="totalRows" :columnValues="columnValues" @data-updated="handleUpdatedData"></list>
+     <d-list :table="pim"></d-list>
 
      
         
 `,
 });
 app.mount('#index');
-app.component('list', list);
+app.component('d-list', d-list);
 app.component('product-filters', ProductFilters);
 app.component('product-filter-form', ProductFilterForm);

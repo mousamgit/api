@@ -13,8 +13,8 @@ require_once('../functions.php');
 $data = json_decode(file_get_contents("php://input"), true);
 $user_name= $_SESSION['username'];
 $user_id = getValue('users','username', $user_name,'id');
-
 $user_name = $_SESSION['username'];
+
 $user_filter_data = $con->query("select filter_name from user_filters where id= ".$data['filter_no']." and user_id=".$user_id);
 
 $detail_data ='';

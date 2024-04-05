@@ -567,19 +567,25 @@ const app = Vue.createApp({
     
     <nav class=" toolbar pim-padding">
     
-        <div class="selectbox">
-         <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> 
-        </div>
+        <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
+
         <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
         </nav>
- 
+     
+
+    
+    
+    </div>
   
-    <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">   
-     <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
+    <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
+    
+    <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
     </div>
      
-        <div class="pim-padding">
+        <div class="pim-padding ">   
+        
+         
           <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
           <table class="pimtable  display homepage-table">
             <thead>
@@ -601,6 +607,8 @@ const app = Vue.createApp({
                    <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                    <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
                   </a>
+                 
+                
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                  </th>                
               </tr>
@@ -662,7 +670,7 @@ const app = Vue.createApp({
                     </template>                   
                     <template v-else>
                     <option :value="index+1">Page {{ index +1 }}</option>
-                    </template>
+                    </template>                   
                 </select>
 
                 <a class="page-btn" @click="firstPage" :class="{ 'disabled': currentPage === 1 }" ><i class="fa fa-step-backward" aria-hidden="true"></i></a>

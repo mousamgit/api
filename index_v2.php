@@ -26,7 +26,11 @@ include 'functions.php';
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div id="index"><index :urlsku="'test'"></index></div>
-<script type="module" src="./homepage/js/index_v2.js" defer></script>
+<div id="list">
+<!--    remember passing value below in primary-table,key_name,filter_table,column_table is compulsary and should match exactly with tables otherwise will render blank-->
+    <list :urlsku="'test'" :primary_table="'customer'" :key_name="'code'" :filter_table="'customer'" :column_table="'user_columns'" :show_filter_button="true"></list>
+</div>
+<script type="module" src="./crud/list.js" defer></script>
+
 </body>
 </html>
