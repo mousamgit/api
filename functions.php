@@ -254,7 +254,6 @@ function updateValue($db, $prkey,$keyvalue, $attribute, $value)
 
     // Update query
     $query = "UPDATE `$escapedDb` SET `$escapedAttribute` = '$value' WHERE `$escapedKey` = '$keyvalue'";
-
     // Execute query
     if ($con->query($query) === TRUE) {
         echo "<span class='updated'>Record updated successfully</span>";
