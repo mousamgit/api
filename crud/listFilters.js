@@ -1,6 +1,6 @@
 
 export default {
-    props: ['listDetails', 'showFilters','filters'],
+    props: ['listDetails', 'showFilters','filters','primary_table'],
     data() {
         return {
             channelAttribute: [],
@@ -44,20 +44,20 @@ export default {
                     this.indexVal = -1;
                 }
 
-                const response = await fetch('./lists/delete_list_filter.php', {
+                const response = await fetch('./crud/delete_list_filter.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        listId: listId,
-                        listDetId: listDetId,
-                        indexVal: this.indexVal
+                        productId: listId,
+                        productDetId: listDetId,
+                        indexVal: this.indexVal,
+                        table_name:this.primary_table
                     }),
                 });
                 const data = await response.json();
                 if (data.success) {
-                    console.log('filters deleted successfully!');
                     this.initializeData()
                     this.$emit('filters-updated');
                     this.$emit('form-updated');
@@ -74,7 +74,8 @@ export default {
             this.showFilterValidation=false;
             this.showInput=1;
             const dataToSend = {
-                filter_no: this.filter_no
+                filter_no: this.filter_no,
+                table_name: this.primary_table
             };
 
             try {
@@ -117,6 +118,7 @@ export default {
                                 filter_name: this.filter_name,
                                 list_details: this.listDetails,
                                 filter_no: this.filter_no,
+                                table_name:this.primary_table,
                                 deletedId: this.deletedId
                             }),
                         });
@@ -156,6 +158,7 @@ export default {
                             filter_name: this.filter_name,
                             list_details: this.listDetails,
                             filter_no: this.filter_no,
+                            table_name:this.primary_table,
                             deletedId: this.deletedId
                         }),
                     });
@@ -335,7 +338,7 @@ export default {
                                         </span>
                                         <div v-if="listDet.op_value== 'OR' && listDet.id != listDetails[0].id && showAttributeMid==listDetails[index-1].id">
                                          
-                                            <list-filter-form :showAttributeFirst="0" :selectedValues="selectedValues" :listDetailValue="listDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
+                                            <list-filter-form :primary_table="primary_table" :showAttributeFirst="0" :selectedValues="selectedValues" :listDetailValue="listDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                         </div>
                                         <center v-if="listDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(listDet.attribute_name !='' && index !=0)">---------- {{listDet.op_value}} ----------</span>
                                     </span></center>
@@ -354,16 +357,16 @@ export default {
                                                 </div>
                                     </div>
                                     <div class="editForm" v-if="showAttFilter==0 && editForm===index">
-                                        <list-filter-form :showAttributeFirst="1" :selectedValues="selectedValues"  :listDetailValue="listDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
+                                        <list-filter-form :primary_table="primary_table" :showAttributeFirst="1" :selectedValues="selectedValues"  :listDetailValue="listDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                     </div>
                                 </div>
                                 <div class="form-group filter-clauses">
                                             <fieldset v-if="(listDetails.length>0 && (showAttributeMid == listDetails[listDetails.length-1].id)) || (listDetails.length==0)">
                                                 <template v-if="listDetails.length==0"> 
-                                                    <list-filter-form :showAttributeFirst="0" :selectedValues="selectedValues"  :listDetailValue="[]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
+                                                    <list-filter-form :primary_table="primary_table" :showAttributeFirst="0" :selectedValues="selectedValues"  :listDetailValue="[]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                                 </template>
                                                 <template v-else>
-                                                    <list-filter-form showAttributeFirst="0" :selectedValues="selectedValues" :listDetailValue="listDetails[0]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
+                                                    <list-filter-form :primary_table="primary_table" :showAttributeFirst="0" :selectedValues="selectedValues" :listDetailValue="listDetails[0]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                                 </template>
                                             </fieldset>
                                             <div class="operators" v-if="listDetails.length>0 && channelAttribute.length==0">

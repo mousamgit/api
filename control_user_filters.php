@@ -11,17 +11,18 @@ require_once('./functions.php');
 
 // Get the POST data from the Vue.js application
 $data = json_decode(file_get_contents("php://input"), true);
+$table_name= $data['table_name'];
 
 $success=false;
 
 $user_name = $_SESSION['username'];
-$con->query("update product_filter set status=0 where user_name='".$_SESSION['username']."'");
+$con->query("update table_filter set status=0 where table_name='".$table_name."' and user_name='".$_SESSION['username']."'");
 
-$updated_product_detail_id = $con->query("select id from user_filter_details where status=1 and filter_no=".$data['filter_no']);
+$updated_product_detail_id = $con->query("select id from user_filter_details where table_name='".$table_name."' and status=1 and filter_no=".$data['filter_no']);
 
 if ($updated_product_detail_id->num_rows > 0) {
     while ($prevAttributeValue = $updated_product_detail_id->fetch_assoc()) {
-        $con->query("update product_filter set status =1 where id=".$prevAttributeValue['id']);
+        $con->query("update table_filter set status =1 where table_name='".$table_name."' and id=".$prevAttributeValue['id']);
     }
     $success=true;
 }

@@ -2,7 +2,7 @@ import listFilters from '../../crud/listFilters.js?v=2';
 import listFilterForm from '../../crud/listFilterForm.js?v=2';
 
 const List = {
-    props: ['urlsku','primary_table','key_name','filter_table','column_table','show_filter_button'],
+    props: ['urlsku','primary_table','key_name','show_filter_button'],
     data() {
         return {
             listDetails: [],
@@ -38,7 +38,7 @@ const List = {
             selectAllCheckbox: false,
             dataTypeValue:'varchar',
             orderColumnName:this.key_name,
-            orderColumnValue:'ASC'
+            orderColumnValue:'ASC',
         };
     },
     mounted() {
@@ -58,57 +58,35 @@ const List = {
 
 
     methods: {
-        getDataTypeValue(columnName,columnValue) {
-            switch (columnName) {
-                case 'carat':
-                case 'purchase_cost_aud':
-                case 'purchase_cost_usd':
-                case 'manufacturing_cost_aud':
-                case 'wholesale_aud':
-                case 'wholesale_usd':
-                case 'stone_price_wholesale_aud':
-                case 'retail_aud':
-                case 'retail_usd':
-                case 'stone_price_retail_aud':
-                case 'master_qty':
-                case 'warehouse_qty':
-                case 'mdqty':
-                case 'psqty':
-                case 'usdqty':
-                case 'allocated_qty':
-                case 'shopify_qty':
-                case 'centre_stone_qty':
-                case 'sales_percentage':
-                case 'lot_number':
-                case 'client_jim309_qty':
-                case 'client_jim077_qty':
-                case 'client_jim077_price':
-                case 'list_id':
-                case 'variant_id':
-                    if(columnValue=='DESC'){
-                        return 'High To Low'
-                    }else{
-                        return 'Low To High'
-                    }
-                case 'modified_date':
+
+        async getDataTypeValue(columnName,columnValue) {
+            try {
+                    const response = await fetch('./crud/get_column_data_type.php?table_name=' +this.primary_table+' &column_name=' + columnName);
+
+                    const data = await response.json();
                     if(columnValue=='DESC'){
                         return 'A-Z'
                     }else{
                         return 'Z-A'
                     }
-                case 'client_tags':
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
+                    if(data=='varchar')
+                    {
+                        if(columnValue=='DESC'){
+                            return 'A-Z'
+                        }else{
+                            return 'Z-A'
+                        }
                     }else{
-                        return 'Z-A'
+                        if(columnValue=='DESC'){
+                            return 'High To Low'
+                        }else{
+                            return 'Low To High'
+                        }
                     }
-                default:
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
-                    }else{
-                        return 'Z-A'
-                    }
+            } catch (error) {
+                console.error('Error fetching values:', error);
             }
+
         },
         updateFetchColumns(column_name,column_value){
             this.orderColumnName = column_name;
@@ -248,7 +226,7 @@ const List = {
             }
 
             try {
-                fetch('./users/save_user_columns.php', {
+                fetch('./users/save_user_columns_v2.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -289,7 +267,7 @@ const List = {
             };
 
             try {
-                const response = await fetch('./users/fetch_columns_user_wise.php',{
+                const response = await fetch('./users/fetch_columns_user_wise_v2.php',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -372,7 +350,6 @@ const List = {
             this.fetchlists();
         },
         nextPage() {
-
             this.initializeData();
             this.currentPage++;
             this.fetchlists();
@@ -398,34 +375,6 @@ const List = {
             this.formData={}
         },
 
-        async  controlFilters() {
-
-            const dataToSend = {
-                filter_no: this.filter_no
-            };
-
-            try {
-                const response = await fetch('./control_user_filters.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to update database');
-                }
-
-                this.initializeData();
-                this.initializePagination();
-                this.fetchlists();
-
-
-            } catch (error) {
-                console.error('Error updating database:', error);
-            }
-        },
         convertToTitleCase(str) {
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
@@ -435,11 +384,9 @@ const List = {
                 'order_column_name': this.key_name,
                 'order_column_value': this.orderColumnValue,
                 'primary_table':this.primary_table,
-                'key_name':this.key_name,
-                'filter_table':this.filter_table,
-                'column_table':this.column_table
+                'key_name':this.key_name
             }
-            const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
+            const response = await fetch('./fetch_filtered_data_v2.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -478,33 +425,9 @@ const List = {
             }, 0);
 
         },
-        async  getTooltipDetails(filter_no) {
-            const dataToSend = {
-                filter_no: filter_no
-            };
 
-            try {
-                const response = await fetch('./fetch_tooltip_details.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                })
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tooltip details');
-                }
-                const data = await response.json();
-                console.log('list', data);
-                this.filterList = data;
-
-            } catch (error) {
-                console.error('Error updating database:', error);
-            }
-        },
         async saveEdit() {
-            this.formData.table='pim'
+            this.formData.table=this.primary_table
             this.formData.pr_key=this.key_name;
             try {
                 const response = await fetch('./updatetablevalue.php', {
@@ -552,10 +475,11 @@ const List = {
                 this.columnValues.splice(index, 0, removed);
                 this.draggedIndex = null;
                 const dataToSend = {
-                    column_values: this.columnValues
+                    column_values: this.columnValues,
+                    table_name:this.primary_table
                 };
                 try {
-                    const response =  fetch('./save_column_order_values.php', {
+                    const response =  fetch('./save_column_order_values_v2.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -575,23 +499,17 @@ const List = {
         }
     },
     template: `
-    
-    <nav class=" toolbar pim-padding">
-    
+    <nav class=" toolbar pim-padding">    
         <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
           
         <a class="icon-btn show-filter" v-if="show_filter_button==true" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
-        </nav>
-     
-
-    
-    
+    </nav>
     </div>
   
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     
-    <list-filters :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
+    <list-filters :primary_table="primary_table" :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
     </div>
      
         <div class="pim-padding ">   
@@ -609,7 +527,7 @@ const List = {
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 
-                  
+                  {{getDataTypeValue(colName,'ASC')}}
                   <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
                         <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                         <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
@@ -618,8 +536,6 @@ const List = {
                    <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                    <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
                   </a>
-                 
-                
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                  </th>                
               </tr>
@@ -663,8 +579,6 @@ const List = {
                 </td>
                 </template>
                 
-               
-               
               </tr>
               
             </tbody>
