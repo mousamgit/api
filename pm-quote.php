@@ -10,6 +10,8 @@
 <html>
     <head>
         <?php include 'header.php'; ?>
+        <script src="../js/pimjs.js" ></script>
+        <script src="../js/components/sirvSpin.js" ></script>
         <title> Quote for Perth Mint </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
@@ -145,6 +147,7 @@
     </head>
     
     <body>
+        <div id="app">
     <div class="logo"><img src="sga-logo.jpg"></div>
     <div class="info-area">
         <b>Quote prepared for:</b> The Perth Mint<br>
@@ -185,19 +188,7 @@
                                     }
                                 ?>
                                 <li class="splide__slide">
-                                    <div class="sirv360" brand="<?php  echo $row[brand];  ?>" sku="<?php  echo $v;  ?>">
-                                    <?php
-                                        $brand = strtolower($row[brand]);
-                                        if($brand  == 'pink kimberley' || $brand  == 'pink kimberley diamonds' || $brand  == 'argyle pink diamonds' || $brand  == 'blush pink diamonds' ){
-                                            echo '<iframe src="https://samsgroup.sirv.com/products/'.$v.'/'.$v.'.spin" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>';
-                                        }
-                                        if($brand  == 'sapphire dreams' || $brand  == 'loose sapphires'){
-                                            echo '<iframe src="https://samsgroup.sirv.com/SD-Product/Sapphire%20Dreams%20Products/'.$v.'/'.$v.'.spin" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>';
-                                        }
-
-                                    ?>
-
-                                    </div>
+                                    <sirvspin sku="<?php  echo $v;  ?>" brand="<?php echo $row[brand]; ?>"></sirvspin>
                                 </li>
                             </ul>
                         </div>
@@ -215,7 +206,7 @@
                                         }
                                     }
                                 ?>
-                                <li class="splide__slide"><img src="360spinicon-1000.jpg"></li>
+                                <li class="splide__slide spinicon"><img src="360spinicon-1000.jpg"></li>
                             </ul>
                         </div>
                     </section>
@@ -246,8 +237,11 @@
     <div class="info-area">
        <b>Please note:<b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.
     </div>
+</div>
+<script>
+const callmyapp = myapp.mount('#app');
 
-
+</script>
 <script>
 //accordion
   var accordion = (function(){
