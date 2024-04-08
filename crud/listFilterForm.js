@@ -8,10 +8,13 @@ export default {
             indexCheck: 0,
             attribute_values: [],
             showAttFilter: 1,
-            op_show_value:'AND'
+            op_show_value:'AND',
+            rootURL:''
         };
     },
     mounted() {
+        const { protocol, host } = window.location;
+        this.rootURL = `${protocol}//${host}`;
         this.fetchAllColumns();
         if(this.showAttributeFirst==1)
         {
@@ -68,7 +71,7 @@ export default {
             try {
                 if (attributeCondition.length > 0) {
                     // Make an AJAX request to  PHP file to fetch attributes
-                    const response = await fetch('./crud/fetch_attribute_values.php?table_name=' +this.primary_table+' &attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
+                    const response = await fetch(this.rootURL+'/crud/fetch_attribute_values.php?table_name=' +this.primary_table+' &attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
 
                     // Parse the JSON response
                     const data = await response.json();
@@ -97,7 +100,7 @@ export default {
                     this.channelAttribute[0].attribute_condition='';
                 } else {
                     this.showManualValidationMessage=0
-                    const response = await fetch('crud/save_list_filter.php', {
+                    const response = await fetch(this.rootURL+'/crud/save_list_filter.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -132,7 +135,7 @@ export default {
                     table_name: this.primary_table
                 };
                 // Make an AJAX request to your PHP file to fetch attributes
-                const response = await fetch('./crud/fetch_all_filter_columns.php',{
+                const response = await fetch(this.rootURL+'/crud/fetch_all_filter_columns.php',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -180,7 +183,7 @@ export default {
                                                 </select>
                                                 <div v-if="showAttribute==1">
                                                     <div class="mb-3">
-                                                        <template v-if="cAttribute.data_type == 'varchar'">
+                                                        <template v-if="cAttribute.data_type == 'varchar' || cAttribute.data_type == 'text' || cAttribute.data_type == 'longtext'">
                                                             <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
                                                                 <option value="includes" :selected="listDetailValue.filter_type === 'includes'">includes</option>
                                                                 <option value="dont_includes" :selected="listDetailValue.filter_type === 'dont_includes'">doesn't include</option>
@@ -206,7 +209,7 @@ export default {
                                                                 <input type="text" v-model="cAttribute.attribute_condition" class="form-control" required>
                                                             </template>
                                                         </template>
-                                                        <template v-if="cAttribute.data_type != 'varchar'">
+                                                        <template v-if="cAttribute.data_type !== 'varchar' && cAttribute.data_type !== 'text' && cAttribute.data_type !== 'longtext'">
                                                             <select v-model="cAttribute.filter_type" id="filter-type" class="form-control">
                                                                 <option value="=">equal to</option>
                                                                 <option value="!=">not equal to</option>

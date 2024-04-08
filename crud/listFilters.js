@@ -3,6 +3,7 @@ export default {
     props: ['listDetails', 'showFilters','filters','primary_table'],
     data() {
         return {
+            rootURL:'',
             channelAttribute: [],
             indexCheck: 0,
             columns: [],
@@ -24,6 +25,8 @@ export default {
         };
     },
     mounted() {
+        const { protocol, host } = window.location;
+        this.rootURL = `${protocol}//${host}`;
     },
     computed: {
         sortedAttributeValues() {
@@ -44,7 +47,7 @@ export default {
                     this.indexVal = -1;
                 }
 
-                const response = await fetch('./crud/delete_list_filter.php', {
+                const response = await fetch(this.rootURL+'/crud/delete_list_filter.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -79,7 +82,7 @@ export default {
             };
 
             try {
-                const response = await fetch('./control_user_filters.php', {
+                const response = await fetch(this.rootURL+'/control_user_filters.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -108,7 +111,7 @@ export default {
 
                 if (confirmed) {
                     try {
-                        const response = await fetch('update_filter_status.php', {
+                        const response = await fetch(this.rootURL+'/update_filter_status.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -148,7 +151,7 @@ export default {
                     return;
                 }
                 try {
-                    const response = await fetch('update_filter_status.php', {
+                    const response = await fetch(this.rootURL+'/update_filter_status.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -260,7 +263,7 @@ export default {
             };
 
             try {
-                const response = await fetch('./users/get_user_filter_details.php', {
+                const response = await fetch(this.rootURL+'/users/get_user_filter_details.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

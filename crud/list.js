@@ -5,6 +5,7 @@ const List = {
     props: ['urlsku','primary_table','key_name','show_filter_button'],
     data() {
         return {
+            rootURL:'',
             listDetails: [],
             listValues:[],
             listValuesTotal:[],
@@ -42,6 +43,8 @@ const List = {
         };
     },
     mounted() {
+        const { protocol, host } = window.location;
+        this.rootURL = `${protocol}//${host}`
         this.clearCheckedState()
         this.fetchUserColumns();
         this.fetchlists();
@@ -59,33 +62,26 @@ const List = {
 
     methods: {
 
-        async getDataTypeValue(columnName,columnValue) {
-            try {
-                    const response = await fetch('./crud/get_column_data_type.php?table_name=' +this.primary_table+' &column_name=' + columnName);
+         getDataTypeValue(columnName,columnValue) {
+             for (const column of this.columns) {
+                 if (column.column_name === columnName) {
 
-                    const data = await response.json();
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
-                    }else{
-                        return 'Z-A'
-                    }
-                    if(data=='varchar')
-                    {
-                        if(columnValue=='DESC'){
+                     if(column.data_type=='varchar' || column.data_type=='text' || column.data_type=='longtext')
+                     {
+                          if(columnValue=='DESC'){
                             return 'A-Z'
-                        }else{
-                            return 'Z-A'
-                        }
-                    }else{
-                        if(columnValue=='DESC'){
+                          }else{
+                          return 'Z-A'
+                          }
+                      }else{
+                          if(columnValue=='DESC'){
                             return 'High To Low'
-                        }else{
+                          }else{
                             return 'Low To High'
-                        }
-                    }
-            } catch (error) {
-                console.error('Error fetching values:', error);
-            }
+                          }
+                      }
+                 }
+             }
 
         },
         updateFetchColumns(column_name,column_value){
@@ -226,7 +222,7 @@ const List = {
             }
 
             try {
-                fetch('./users/save_user_columns_v2.php', {
+                fetch(this.rootURL+'/users/save_user_columns_v2.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -267,7 +263,7 @@ const List = {
             };
 
             try {
-                const response = await fetch('./users/fetch_columns_user_wise_v2.php',{
+                const response = await fetch(this.rootURL+'/users/fetch_columns_user_wise_v2.php',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -386,7 +382,7 @@ const List = {
                 'primary_table':this.primary_table,
                 'key_name':this.key_name
             }
-            const response = await fetch('./fetch_filtered_data_v2.php?page=' + this.currentPage,  {
+            const response = await fetch(this.rootURL+'/fetch_filtered_data_v2.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -430,7 +426,7 @@ const List = {
             this.formData.table=this.primary_table
             this.formData.pr_key=this.key_name;
             try {
-                const response = await fetch('./updatetablevalue.php', {
+                const response = await fetch(this.rootURL+'/updatetablevalue.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -479,7 +475,7 @@ const List = {
                     table_name:this.primary_table
                 };
                 try {
-                    const response =  fetch('./save_column_order_values_v2.php', {
+                    const response =  fetch(this.rootURL+'/save_column_order_values_v2.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -527,7 +523,7 @@ const List = {
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 
-                  {{getDataTypeValue(colName,'ASC')}}
+                 
                   <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
                         <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                         <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
