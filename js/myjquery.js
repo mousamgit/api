@@ -122,6 +122,9 @@ $(document).ready(function(){
 
 });
 $(window).on("load", function() {
+    $('.no-spin-container').each(function(){
+        $(this).closest('.imgcontainer').find('.spinicon').hide();
+    });
     //fix table width
     if($('.pimtable').length>0){
         $('.pimtable th').each(function(index) {
