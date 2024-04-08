@@ -1,6 +1,6 @@
 <?php
     include 'functions.php';
-    $sku = array("TPR2103","TPR2105","TPR2140","STA0037","TDR1959","TPR2138","TPR2143","TPR2160","TPR2134");
+    $sku = array("TPR2103","TPR2105","TPR2140","STA0037","TDR1959","TPR2138","TPR2143","TPR2160","TPR2134","BPR-RDSPB0101");
     require ('connect.php');
 
 
@@ -98,6 +98,7 @@
             .desktop-only { display: inline-block; }
             .logo { margin:0 auto; width:10%;}
             .info-area { margin:0 auto; width:80vw; font-size: 1em; letter-spacing: .1em; padding: 1.5em 1.5em; margin-top:2em; margin-bottom: 2em; line-height: 1.5em;}
+            .producttable { margin: 150px auto !important; }
             @media screen and (min-width: 801px) {
                 .accordion__item > .accordion-header:after {
                 content: "\f107";
@@ -114,9 +115,19 @@
                     transform: rotate(-180deg);
                 }
             }
-            @media screen and (max-width: 800px) {
+            @media screen and (max-width: 800px) and (min-width: 601px) {
                 .accordion { width: 100%; }
-                .imgcontainer { width:100%; margin: 0 auto; height: 50vh; }
+                .imgcontainer { width:100%; margin: 0 auto; height: 60vh; }
+                .accordion-body__contents { padding: 0.5em; } 
+                .desktop-only { display:none; }
+                .mobile-only { display: inline-block; }
+                .total{position:-webkit-sticky; position:sticky; bottom:0; width:100%;}
+                .logo { margin:0 auto; width:25%;}
+                .info-area { width: 100%; font-size:0.8em; }
+            }
+            @media screen and (max-width: 600px) {
+                .accordion { width: 100%; }
+                .imgcontainer { width:100%; margin: 0 auto; height: 40vh; }
                 .accordion-body__contents { padding: 0.5em; } 
                 .desktop-only { display:none; }
                 .mobile-only { display: inline-block; }
@@ -164,7 +175,6 @@
                         <div class="splide__track">
                             <ul class="splide__list">
                                 <?php
-                                    $image=false; 
                                     $imagearray= array("image1", "image2", "image3", "image4", "image5", "image6", "packaging_image");
                                     for ($i = 0; $i < count($imagearray); $i++) {
                                         $imagename = $imagearray[$i];
@@ -178,7 +188,7 @@
                                     <div class="sirv360" brand="<?php  echo $row[brand];  ?>" sku="<?php  echo $v;  ?>">
                                     <?php
                                         $brand = strtolower($row[brand]);
-                                        if($brand  == 'pink kimberley' || $brand  == 'pink kimberley diamonds' || $brand  == 'argyle pink diamonds' ){
+                                        if($brand  == 'pink kimberley' || $brand  == 'pink kimberley diamonds' || $brand  == 'argyle pink diamonds' || $brand  == 'blush pink diamonds' ){
                                             echo '<iframe src="https://samsgroup.sirv.com/products/'.$v.'/'.$v.'.spin" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>';
                                         }
                                         if($brand  == 'sapphire dreams' || $brand  == 'loose sapphires'){
@@ -188,8 +198,24 @@
                                     ?>
 
                                     </div>
-
                                 </li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section id="thumbnail-carousel<?php echo $count;?>" class="splide" style="margin-top:20px; height:100px;">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <?php
+                                    $imagearray= array("image1", "image2", "image3", "image4", "image5", "image6", "packaging_image");
+                                    for ($i = 0; $i < count($imagearray); $i++) {
+                                        $imagename = $imagearray[$i];
+                                        if($row[$imagename] != ""){
+                                            $image=true;
+                                            echo '<li class="splide__slide"><img src="'.$row[$imagename].'" alt=""></li>';
+                                        }
+                                    }
+                                ?>
+                                <li class="splide__slide"><img src="360spinicon-1000.jpg"></li>
                             </ul>
                         </div>
                     </section>
@@ -197,11 +223,10 @@
                     <table class="sga-table producttable">
                         <thead><tr><td colspan="1000">Details</td></tr></thead>
                         <tbody>
-                        <tr><td class="l"> SKU: </td> <td><?php echo $v; ?></td></tr>
-                        <tr><td class="l"> Specifications: </td> <td><?php echo $row[specifications]; ?></td></tr>
-                        <tr><td class="l"> Wholesale PPC ex GST: </td> <td>AU$ <?php echo number_format($row[wholesale_aud], 2,'.',','); ?></td></tr>
-                        <tr><td class="l"> Stone Price ex GST: </td> <td>AU$ <?php echo number_format($row[stone_price_wholesale_aud], 2,'.',','); ?></td></tr>
-                        
+                            <tr><td class="l"> SKU: </td> <td><?php echo $v; ?></td></tr>
+                            <tr><td class="l"> Specifications: </td> <td><?php echo $row[specifications]; ?></td></tr>
+                            <tr><td class="l"> Wholesale PPC ex GST: </td> <td>AU$ <?php echo number_format($row[wholesale_aud], 2,'.',','); ?></td></tr>
+                            <tr><td class="l"> Stone Price ex GST: </td> <td>AU$ <?php echo number_format($row[stone_price_wholesale_aud], 2,'.',','); ?></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -278,12 +303,20 @@ $(document).ready(function(){
   accordion.init({ speed: 300, oneOpen: true });
 });
 </script>
-    <?php 
-        for ($i = 1; $i <= $count; $i++) {
-            echo "<script>new Splide('#image-carousel".$i."', {rewind: true, type: 'fade', }).mount();</script>";
-        }
-    ?>
+<script>
 
+        document.addEventListener( 'DOMContentLoaded', function () {
+            <?php 
+                for ($i = 1; $i <= $count; $i++) {
+                    echo "var main".$i." = new Splide('#image-carousel".$i."', {pagination: false, arrows: false, rewind: true, type: 'fade',  });";
+                    echo "var thumbnails".$i." = new Splide( '#thumbnail-carousel".$i."', { arrows: false, fixedWidth  : 100, fixedHeight : 100, gap: 10, rewind: true, pagination: false, isNavigation: true, breakpoints : { 600: { fixedWidth : 54, fixedHeight: 54, }, }, } );";
+                    echo "main".$i.".sync(thumbnails".$i.");";
+                    echo "main".$i.".mount();";
+                    echo "thumbnails".$i.".mount();";
+                }
+            ?>
+        } );
+</script>
 <script type="text/javascript">
   const lightbox = GLightbox({ touchNavigation: true, });
 </script>
