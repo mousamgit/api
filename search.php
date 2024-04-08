@@ -2,9 +2,9 @@
   include 'login_checking.php';
   include 'functions.php';
   require ('connect.php');
-  if(isset($_POST['search-term'])) 
+  if(isset($_GET['val'])) 
   {
-    $searchterm=$_POST['search-term'];
+    $searchterm=$_GET['val'];
   }
   elseif (isset($_GET["var"]))
   {
@@ -39,8 +39,8 @@
     
     <div class="search-div desktop-only">
     <button  onclick="toggle_div('select_columns');" style="display:inline-block;">Edit Columns</button>    
-        <form action="search.php" method="post" name="searchpim" style="display:inline-block;">
-            <input type="text" class="search-input" name="search-term" placeholder="Search another SKU or Product Name"></input>
+        <form action="search.php" method="get" name="searchpim" style="display:inline-block;">
+            <input type="text" class="search-input" name="val" placeholder="Search another SKU or Product Name"></input>
             <input type="submit" class="search-submit" value="Submit">
             
         </form>

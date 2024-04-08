@@ -101,10 +101,10 @@
     <a class="header-search-close">
     <span>s</span><i class="fa-solid fa-times fa-xl menu-icon"></i>
     </a>
-    <form id="search-form" action="search.php" method="post" name="searchpim">
+    <form id="search-form" action="search.php" method="get" name="searchpim">
         <label for="fname">search:</label>
         <input type="submit" value="Search">
-        <input type="text" id="search-field" name="search-term" placeholder="Type in SKU or Product Name"></input>
+        <input type="text" id="search-field" name="val" placeholder="Type in SKU or Product Name"></input>
     </form>
     </div>
 
