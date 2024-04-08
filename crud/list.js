@@ -38,7 +38,7 @@ const List = {
             selectAllCheckbox: false,
             dataTypeValue:'varchar',
             orderColumnName:this.key_name,
-            orderColumnValue:'ASC'
+            orderColumnValue:'ASC',
         };
     },
     mounted() {
@@ -58,57 +58,35 @@ const List = {
 
 
     methods: {
-        getDataTypeValue(columnName,columnValue) {
-            switch (columnName) {
-                case 'carat':
-                case 'purchase_cost_aud':
-                case 'purchase_cost_usd':
-                case 'manufacturing_cost_aud':
-                case 'wholesale_aud':
-                case 'wholesale_usd':
-                case 'stone_price_wholesale_aud':
-                case 'retail_aud':
-                case 'retail_usd':
-                case 'stone_price_retail_aud':
-                case 'master_qty':
-                case 'warehouse_qty':
-                case 'mdqty':
-                case 'psqty':
-                case 'usdqty':
-                case 'allocated_qty':
-                case 'shopify_qty':
-                case 'centre_stone_qty':
-                case 'sales_percentage':
-                case 'lot_number':
-                case 'client_jim309_qty':
-                case 'client_jim077_qty':
-                case 'client_jim077_price':
-                case 'list_id':
-                case 'variant_id':
-                    if(columnValue=='DESC'){
-                        return 'High To Low'
-                    }else{
-                        return 'Low To High'
-                    }
-                case 'modified_date':
+
+        async getDataTypeValue(columnName,columnValue) {
+            try {
+                    const response = await fetch('./crud/get_column_data_type.php?table_name=' +this.primary_table+' &column_name=' + columnName);
+
+                    const data = await response.json();
                     if(columnValue=='DESC'){
                         return 'A-Z'
                     }else{
                         return 'Z-A'
                     }
-                case 'client_tags':
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
+                    if(data=='varchar')
+                    {
+                        if(columnValue=='DESC'){
+                            return 'A-Z'
+                        }else{
+                            return 'Z-A'
+                        }
                     }else{
-                        return 'Z-A'
+                        if(columnValue=='DESC'){
+                            return 'High To Low'
+                        }else{
+                            return 'Low To High'
+                        }
                     }
-                default:
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
-                    }else{
-                        return 'Z-A'
-                    }
+            } catch (error) {
+                console.error('Error fetching values:', error);
             }
+
         },
         updateFetchColumns(column_name,column_value){
             this.orderColumnName = column_name;
@@ -372,7 +350,6 @@ const List = {
             this.fetchlists();
         },
         nextPage() {
-
             this.initializeData();
             this.currentPage++;
             this.fetchlists();
@@ -550,7 +527,7 @@ const List = {
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 
-                  
+                  {{getDataTypeValue(colName,'ASC')}}
                   <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
                         <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                         <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
@@ -559,8 +536,6 @@ const List = {
                    <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                    <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
                   </a>
-                 
-                
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                  </th>                
               </tr>
@@ -604,8 +579,6 @@ const List = {
                 </td>
                 </template>
                 
-               
-               
               </tr>
               
             </tbody>
