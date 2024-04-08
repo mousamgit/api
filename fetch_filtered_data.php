@@ -109,7 +109,7 @@ class ProductDetailHandler {
     private function getColumnValuesRow() {
         $columnValuesRow = [];
 
-        $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
+        $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND table_name='pim' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
 
         if ($userOrderedColumns->num_rows > 0) {
             while ($row = $userOrderedColumns->fetch_assoc()) {

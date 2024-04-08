@@ -2,7 +2,7 @@ import listFilters from '../../crud/listFilters.js?v=2';
 import listFilterForm from '../../crud/listFilterForm.js?v=2';
 
 const List = {
-    props: ['urlsku','primary_table','key_name','filter_table','column_table','show_filter_button'],
+    props: ['urlsku','primary_table','key_name','show_filter_button'],
     data() {
         return {
             listDetails: [],
@@ -289,7 +289,7 @@ const List = {
             };
 
             try {
-                const response = await fetch('./users/fetch_columns_user_wise.php',{
+                const response = await fetch('./users/fetch_columns_user_wise_v2.php',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -398,34 +398,6 @@ const List = {
             this.formData={}
         },
 
-        async  controlFilters() {
-
-            const dataToSend = {
-                filter_no: this.filter_no
-            };
-
-            try {
-                const response = await fetch('./control_user_filters.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to update database');
-                }
-
-                this.initializeData();
-                this.initializePagination();
-                this.fetchlists();
-
-
-            } catch (error) {
-                console.error('Error updating database:', error);
-            }
-        },
         convertToTitleCase(str) {
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
@@ -435,9 +407,7 @@ const List = {
                 'order_column_name': this.key_name,
                 'order_column_value': this.orderColumnValue,
                 'primary_table':this.primary_table,
-                'key_name':this.key_name,
-                'filter_table':this.filter_table,
-                'column_table':this.column_table
+                'key_name':this.key_name
             }
             const response = await fetch('./fetch_filtered_data_v2.php?page=' + this.currentPage,  {
                 method: 'POST',
@@ -532,7 +502,7 @@ const List = {
                     table_name:this.primary_table
                 };
                 try {
-                    const response =  fetch('./save_column_order_values.php', {
+                    const response =  fetch('./save_column_order_values_v2.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -562,7 +532,7 @@ const List = {
   
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     
-    <list-filters :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
+    <list-filters :primary_table="primary_table" :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
     </div>
      
         <div class="pim-padding ">   

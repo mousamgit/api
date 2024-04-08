@@ -9,8 +9,6 @@ class listDetailHandler {
 
     private $primary_table='products';
     private $key_name='id';
-    private $filter_table = 'product_filter';
-    private $filter_page_name = 'products';
     private $order_column_name = 'id';
     private $order_column_value = 'ASC';
 
@@ -35,13 +33,9 @@ class listDetailHandler {
 
         // Extracting the channel_id parameter
         $this->listId = $queryParameters['id'] ?? 0;
-
         $data = json_decode(file_get_contents("php://input"), true);
         $this->primary_table = $data['primary_table'];
-        $this->filter_table = $data['filter_table'];
         $this->key_name = $data['key_name'];
-        $this->filter_page_name = 'products';
-        $this->column_table = $data['column_table'];
         $this->order_column_name = $data['order_column_name'];
         $this->order_column_value = $data['order_column_value'];
     }
@@ -73,7 +67,7 @@ class listDetailHandler {
 
     private function getlistFilter() {
         $listFilter = [];
-        $listFilterQuery = $this->con->query("SELECT * FROM product_filter where status=1 and product_id=" . $this->listId . " and user_name = '".$_SESSION['username']."' order by index_no ASC");
+        $listFilterQuery = $this->con->query("SELECT * FROM table_filter where status=1 and table_name='". $this->primary_table."' and user_name = '".$_SESSION['username']."' order by index_no ASC");
 
         if ($listFilterQuery->num_rows > 0) {
             while ($row = $listFilterQuery->fetch_assoc()) {
@@ -84,20 +78,15 @@ class listDetailHandler {
     }
 
     private function getlistValues() {
-        $order_column_name='sku';
-        $order_column_value='ASC';
         $data = json_decode(file_get_contents("php://input"), true);
-
-        if(count($data)>0)
-        {
-            $order_column_name = $data['order_column_name'];
-            $order_column_value = $data['order_column_value'];
-        }
+        $order_column_name = $this->order_column_name;
+        $order_column_value = $this->order_column_value;
 
         $listValues = [];
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
         $offset = (($_GET['page'] ?? 1) - 1) * $this->itemsPerPage;
+
         $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM ".$this->primary_table." " . $filterConditionCombined . " AND ".$this->key_name." != '' GROUP BY ".$this->key_name." order by ".$this->order_column_name." ".$this->order_column_value." LIMIT ".$offset.", ".$this->itemsPerPage."");
 
 
@@ -129,7 +118,7 @@ class listDetailHandler {
     private function getColumnValuesRow() {
         require_once('./connect.php');
         $columnValuesRow = [];
-        $userOrderedColumns = $this->con->query("SELECT column_name FROM  ".$this->column_table. "   WHERE user_name = '".$_SESSION['username']."' AND table_name='".$this->primary_table."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC;");
+        $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND table_name='".$this->primary_table."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC");
 
         while ($row = $userOrderedColumns->fetch_assoc()) {
             $columnValuesRow[]=$row['column_name'];
@@ -149,8 +138,9 @@ class listDetailHandler {
         $filter_names =[];
         $user_id = getValue('users', 'username', $_SESSION['username'], 'id');
 
-        $query="select id,filter_name from user_filters where user_id=".$user_id;
-        $filters=$con->query($query);
+        $query="select id,filter_name from user_filters where user_id=".$user_id." and id in 
+        (select filter_no from user_filter_details where table_name='".$this->primary_table."')";
+        $filters=$this->con->query($query);
         if($filters->num_rows>0)
         {
             while($row=$filters->fetch_assoc())
@@ -166,7 +156,7 @@ class listDetailHandler {
         $groupedConditions = [];
         $filterConditionCombined = '';
         $whereValue = 'WHERE 1=1 AND';
-        $filterFetch = $this->con->query("SELECT * FROM product_filter WHERE status=1 and product_id=" . $this->listId . " and user_name='".$_SESSION['username']."' ORDER BY index_no ASC");
+        $filterFetch = $this->con->query("SELECT * FROM table_filter WHERE status=1 and table_name='". $this->primary_table."' and user_name='".$_SESSION['username']."' ORDER BY index_no ASC");
 
         if ($filterFetch->num_rows > 0) {
             while ($prevAttributeValue = $filterFetch->fetch_assoc()) {
@@ -218,7 +208,7 @@ class listDetailHandler {
             $filterConditionCombined = 'WHERE 1=1';
         }
         $filterConditionCombined = str_replace("AND () OR", "AND", $filterConditionCombined);
-        return $this->filter_table=='product_filter'?$filterConditionCombined:'where 1=1';
+        return $filterConditionCombined;
     }
 }
 

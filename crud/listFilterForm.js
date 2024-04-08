@@ -1,5 +1,5 @@
 export default {
-    props: ['channelAttribute','listDetailValue','selectedValues','showAttributeFirst'],
+    props: ['channelAttribute','listDetailValue','selectedValues','showAttributeFirst','primary_table'],
     data() {
         return {
             showAttribute: 0,
@@ -68,7 +68,7 @@ export default {
             try {
                 if (attributeCondition.length > 0) {
                     // Make an AJAX request to  PHP file to fetch attributes
-                    const response = await fetch('./fetch_attribute_values.php?attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
+                    const response = await fetch('./crud/fetch_attribute_values.php?table_name=' +this.primary_table+' &attribute_name=' + attributeName + '&attribute_condition=' + attributeCondition);
 
                     // Parse the JSON response
                     const data = await response.json();
@@ -88,7 +88,7 @@ export default {
             this.$emit('form-updated');
             this.showFilter=true;
         },
-        //c
+
         async submitForm() {
             try {
                 console.log(this.channelAttribute);
@@ -97,13 +97,14 @@ export default {
                     this.channelAttribute[0].attribute_condition='';
                 } else {
                     this.showManualValidationMessage=0
-                    const response = await fetch('lists/save_list_filter.php', {
+                    const response = await fetch('crud/save_list_filter.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            attribute: this.channelAttribute
+                            attribute: this.channelAttribute,
+                            table_name:this.primary_table
                         }),
                     });
 
@@ -127,15 +128,24 @@ export default {
         //c
         async fetchAllColumns() {
             try {
+                const dataToSend = {
+                    table_name: this.primary_table
+                };
                 // Make an AJAX request to your PHP file to fetch attributes
-                const response = await fetch('./channels/fetch_all_pim_columns.php');
-                // Parse the JSON response
+                const response = await fetch('./crud/fetch_all_filter_columns.php',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
                 const data = await response.json();
                 // Update the attributes data
                 this.columns = data;
 
             } catch (error) {
-                console.error('Error fetching attributes:', error);
+                console.error('Error fetching filter columns:', error);
             }
         },
         initializeData() {

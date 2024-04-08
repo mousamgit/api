@@ -1,3 +1,5 @@
+
+
 <?php
 
 error_reporting(E_ALL);
@@ -14,26 +16,28 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 $user_name = $_SESSION['username'];
 $column_name= $data['column_name'];
+$table_name= $data['table_name'];
 $order_no = maxOrderNo('user_columns');
 $success=false;
 
 if($data['selectedStatus'] == 1)
 {
-    $check_query=$con->query("select id from user_columns where user_name ='".$user_name."' and column_name='".$column_name."'");
+    $check_query=$con->query("select id from user_columns where user_name ='".$user_name."' and table_name='".$table_name."' and column_name='".$column_name."'");
     if($check_query->num_rows>0)
     {
-        $con->query("update user_columns set status =1, order_no=".$order_no." where user_name='".$user_name."' and column_name='".$column_name."'");
+        $con->query("update user_columns set status =1, order_no=".$order_no." where user_name='".$user_name."' and table_name='".$table_name."' and column_name='".$column_name."'");
     }
     else
     {
-        $con->query("INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `status`)
-                VALUES ('$user_name', '$column_name', $order_no, 1)");
+
+        $con->query("INSERT INTO user_columns (`user_name`, `column_name`, `order_no`, `table_name` ,`status`)
+                VALUES ('$user_name', '$column_name', $order_no,'$table_name', 1)");
     }
     $success = true;
 }
 else
 {
-    $con->query("update user_columns set status =0 where user_name= '".$_SESSION['username']."' and column_name='".$column_name."'");
+    $con->query("update user_columns set status =0 where user_name= '".$_SESSION['username']."' and table_name='".$table_name."' and column_name='".$column_name."'");
     $success = true;
 }
 if ($success == true) {

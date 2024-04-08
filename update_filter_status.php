@@ -13,8 +13,6 @@ $filter_no=0;
 $data = json_decode(file_get_contents("php://input"), true);
 
 
-// Extract channel data
-$productId = 0;
 $user_name = $_SESSION['username'];
 
 // Getting the referring URL
@@ -28,10 +26,11 @@ parse_str($urlParts['query'] ?? '', $queryParameters);
 
 // Extracting the channel_id parameter
 $value = $data['value'];
+$table_name= $data['table_name'];
 
 if($value ==0)
 {
-    $sql="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
+    $sql="update table_filter set status =0 where table_name= '".$table_name."' and user_name ='".$user_name."'";
     $con->query($sql);
 
     $sql_filter_update_1 = "DELETE from user_filters where id=".$data['filter_no'];
@@ -43,13 +42,13 @@ if($value ==0)
 elseif ($value == -1)
 {
     $filter_no= $data['filter_no'];
-    $con->query("update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'");
-    if(count($data['deletedId'])>0)
-    {
-        $deleted_id_string = implode(",",$data['deletedId']);
-        $sql="update user_filter_details set status =1 where id in (".$deleted_id_string.") and user_name ='".$user_name."'";
-        $con->query($sql);
-    }
+    $con->query("update table_filter set status =0 where table_name= '".$table_name."' and user_name ='".$user_name."'");
+//    if(count($data['deletedId'])>0)
+//    {
+//        $deleted_id_string = implode(",",$data['deletedId']);
+//        $sql="update user_filter_details set status =1 where id in (".$deleted_id_string.") and user_name ='".$user_name."'";
+//        $con->query($sql);
+//    }
     $success=true;
 }
 else
@@ -58,7 +57,7 @@ else
     $groupedConditions = [];
     $filterConditionCombined = '';
     $whereValue = 'WHERE 1=1 AND';
-    $filterFetch = $con->query("SELECT * FROM product_filter WHERE status =1 and user_name = '".$_SESSION['username']."' and product_id=" . $productId . " ORDER BY index_no ASC");
+    $filterFetch = $con->query("SELECT * FROM table_filter WHERE status =1 and user_name = '".$_SESSION['username']."' and table_name= '".$table_name."'  ORDER BY index_no ASC");
     $filter_id_array =[];
 
     if ($filterFetch->num_rows > 0) {
@@ -112,11 +111,11 @@ else
         if ($con->query($sql) === TRUE) {
             $filter_no = $con->insert_id;
 
-            $filterFetchNew = $con->query("SELECT * FROM product_filter WHERE status =1 and user_name = '" . $_SESSION['username'] . "' and product_id=" . $productId . " ORDER BY index_no ASC");
+            $filterFetchNew = $con->query("SELECT * FROM table_filter WHERE status =1 and user_name = '" . $_SESSION['username'] . "' and table_name= '".$table_name."'  ORDER BY index_no ASC");
             if ($filterFetchNew->num_rows > 0) {
 
                 while ($prevAttributeValue = $filterFetchNew->fetch_assoc()) {
-                    $productId = 0;
+
                     $filter_type = $prevAttributeValue['filter_type'];
                     $attribute_name = $prevAttributeValue['attribute_name'];
                     $attribute_condition = $prevAttributeValue['attribute_condition'];
@@ -128,8 +127,8 @@ else
                     $user_name = $prevAttributeValue['user_name'];
                     $filter_id_product = $prevAttributeValue['id'];
 
-                    $sql1 = "INSERT INTO user_filter_details (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`,`user_name`,`id`,`filter_no`) 
-                      VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type_value','$op_value','$index_no','$user_name','$filter_id_product','$filter_no')";
+                    $sql1 = "INSERT INTO user_filter_details (`table_name`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`,`user_name`,`id`,`filter_no`) 
+                      VALUES ('$table_name', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type_value','$op_value','$index_no','$user_name','$filter_id_product','$filter_no')";
                     $con->query($sql1);
 
                 }
@@ -155,11 +154,11 @@ else
                     }
                 }
 
-                $filterFetchNew = $con->query("SELECT * FROM product_filter WHERE status =1 and user_name = '".$_SESSION['username']."' and product_id=" . $productId . " ORDER BY index_no ASC");
+                $filterFetchNew = $con->query("SELECT * FROM table_filter WHERE status =1 and user_name = '".$_SESSION['username']."' and table_name= '".$table_name."'  ORDER BY index_no ASC");
                 if ($filterFetchNew->num_rows > 0) {
 
                     while ($prevAttributeValue= $filterFetchNew->fetch_assoc()) {
-                        $productId = 0;
+
                         $filter_type = $prevAttributeValue['filter_type'];
                         $attribute_name = $prevAttributeValue['attribute_name'];
                         $attribute_condition = $prevAttributeValue['attribute_condition'];
@@ -172,8 +171,8 @@ else
                         $filter_id_product = $prevAttributeValue['id'];
                         if(!in_array($filter_id_product,$id))
                         {
-                            $sql1 = "INSERT INTO user_filter_details (`product_id`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`,`user_name`,`id`,`filter_no`) 
-                      VALUES ('$productId', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type_value','$op_value','$index_no','$user_name','$filter_id_product','$filter_no')";
+                            $sql1 = "INSERT INTO user_filter_details (`table_name`, `filter_type`, `attribute_name`, `attribute_condition`, `range_from`,`range_to`,`data_type_value`,`op_value`,`index_no`,`user_name`,`id`,`filter_no`) 
+                      VALUES ('$table_name', '$filter_type', '$attribute_name', '$attribute_condition', '$range_from','$range_to','$data_type_value','$op_value','$index_no','$user_name','$filter_id_product','$filter_no')";
                             $con->query($sql1);
                         }
 
@@ -189,7 +188,7 @@ else
 
 }
 if ($success==true) {
-    $sql4="update product_filter set status =0 where product_id =".$productId." and user_name ='".$user_name."'";
+    $sql4="update table_filter set status =0 where table_name= '".$table_name."' and user_name ='".$user_name."'";
     $con->query($sql4);
     echo json_encode(['success' => true,'filter_no'=>$filter_no]);
 } else {

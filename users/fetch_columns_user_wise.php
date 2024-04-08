@@ -7,12 +7,9 @@ require_once('../login_checking.php');
 
 $channels = [];
 $channel_attribute = [];
-$data = json_decode(file_get_contents("php://input"), true);
-
-$table_name= $data['table_name'];
 
 
-$selected_columns = $con->query("select column_name from user_columns where user_name ='".$_SESSION['username']."' and status =1 and table_name='".$table_name."'");
+$selected_columns = $con->query("select column_name from user_columns where user_name ='".$_SESSION['username']."' and status =1");
 $column_names=[];
 if ($selected_columns->num_rows > 0) {
     while ($row = $selected_columns->fetch_assoc()) {
@@ -22,7 +19,7 @@ if ($selected_columns->num_rows > 0) {
 
 $result = $con->query("SELECT COLUMN_NAME as column_name,DATA_TYPE as data_type,false as selected
                        FROM information_schema.columns
-                       WHERE table_schema = '".$name."' AND table_name = '".$table_name."' ORDER BY COLUMN_NAME ASC");
+                       WHERE table_schema = '".$name."' AND table_name = 'pim' ORDER BY COLUMN_NAME ASC");
 
 $columns=[];
 if ($result->num_rows > 0) {
