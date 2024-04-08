@@ -76,7 +76,7 @@ $(document).ready(function(){
     if($('#sirv360').length>0){
         brand = $('#sirv360').attr('brand').toLowerCase();
         sku = $('#sirv360').attr('sku');
-    
+
         if(brand == 'pink kimberley' || brand == 'pink kimberley diamonds' || brand == 'argyle pink diamonds' ){
             spinsrc = "https://samsgroup.sirv.com/products/" + sku + "/" + sku + ".spin";
           }
@@ -96,6 +96,7 @@ $(document).ready(function(){
             }
           });
     }
+
     
       if($('.home-table-container').length>0){
         var tableheight = window.innerHeight - 270;

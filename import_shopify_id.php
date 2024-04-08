@@ -9,7 +9,7 @@
   </style>
 </head>
 <body>
-<div style="margin: 0 auto; width:600px; padding:20px; background-color:#F9F6F0; text-align:center;">
+<div style="margin: 0 auto; width:800px; padding:20px; background-color:#F9F6F0; text-align:center;">
 <?php
 $startScriptTime=microtime(TRUE);
  function importCsvFile($filedirect){
@@ -68,7 +68,7 @@ $startScriptTime=microtime(TRUE);
               $product_id = $line[$productIDColumnIndex];
               $variant_id = $line[$variantIDColumnIndex];
   
-              $sql = "UPDATE pim SET ws_product_id = '" . mysqli_real_escape_string($con, $product_id) . "' WHERE sku = '" . mysqli_real_escape_string($con, $sku) . "';";
+              $sql = "UPDATE pim SET ws_product_id = '" . mysqli_real_escape_string($con, $product_id) . "', ws_variant_id = '" . mysqli_real_escape_string($con, $variant_id) . "' WHERE sku = '" . mysqli_real_escape_string($con, $sku) . "';";
               $result = mysqli_query($con, $sql);
               
               echo "SQL query: $sql<br>";
@@ -89,7 +89,7 @@ importCsvFile($filedirect1);
 importCsvFile($filedirect2);
 importCsvFile($filedirect3);
 
-echo "<br><h1>Wholesale Product ID Updated!</h1>";
+echo "<br><h1>Wholesale Product ID & Variant ID Updated!</h1>";
 $filedirect4 = dirname($_SERVER['DOCUMENT_ROOT']).'/pim/matrixify-export/SGA_Export.csv';
 
 importCsvFile2($filedirect4);
