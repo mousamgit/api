@@ -2,7 +2,7 @@
 
 
 <?php
-    include './functions.php';
+    include '../functions.php';
     loginChecking(array('admin', 'sales'));
     $username = $_SESSION["username"];
 ?>
@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include './header.php'; ?>
+    <?php include '../header.php'; ?>
 
     <title>Appro List</title>
 </head>
