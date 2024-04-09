@@ -10,6 +10,7 @@
     if(isset($_POST['specifications'])) $columns .= "specifications,";
     if(isset($_POST['tags'])) $columns .= "tags,";
     if(isset($_POST['wholesale'])) $columns .= "wholesale,";
+    if(isset($_POST['image1'])) $columns .= "image1,";
     if(isset($_POST['user'])) $user=$_POST['user'];
     if(isset($_POST['searchterm'])) $searchterm=$_POST['searchterm'];
     $columns = rtrim($columns,',');

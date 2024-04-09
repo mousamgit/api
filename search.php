@@ -64,6 +64,7 @@
                     <input type="checkbox" name="product_title" value="product_title" <?php if(in_array("product_title",$columns)){ echo "checked"; } ?>> Product Title&nbsp;&nbsp;&nbsp;
                     <input type="checkbox" name="quantities" value="quantities" <?php if(in_array("quantities",$columns)){ echo "checked"; } ?>> Quantities&nbsp;&nbsp;&nbsp;
                     <input type="checkbox" name="retail" value="retail" <?php if(in_array("retail",$columns)){ echo "checked"; } ?>> Retail Prices<br>
+                    <input type="checkbox" name="image1" value="image1" <?php if(in_array("image1",$columns)){ echo "checked"; } ?>> Thumbnail&nbsp;&nbsp;&nbsp;
                     <input type="checkbox" name="specifications" value="specifications" <?php if(in_array("specifications",$columns)){ echo "checked"; } ?>> Specifications&nbsp;&nbsp;&nbsp;
                     <input type="checkbox" name="tags" value="tags" <?php if(in_array("tags",$columns)){ echo "checked"; } ?>> Tags&nbsp;&nbsp;&nbsp;
                     <input type="checkbox" name="wholesale" value="wholesale" <?php if(in_array("wholesale",$columns)){ echo "checked"; } ?>> Wholesale Prices<br><br>
@@ -76,6 +77,7 @@
                 <tr>
                     <th class="desktop-only">SKU</th>
                     <?php if(in_array("product_title",$columns)){ ?> <th class="desktop-only">Product Name</th> <?php } ?>
+                    <?php if(in_array("image1",$columns)){ ?> <th class="desktop-only">Thumbnail</th> <?php } ?>
                     <?php if(in_array("quantities",$columns)){ ?> <th class="desktop-only">Quantities</th> <?php } ?>
                     <?php if(in_array("specifications",$columns)){ ?> <th class="desktop-only">Specifications</th> <?php } ?>
                     <?php if(in_array("tags",$columns)){ ?> <th class="desktop-only">Tags</th> <?php } ?>
@@ -93,6 +95,7 @@
 
                             echo "<td class='desktop-only'><b><a href='https://pim.samsgroup.info/product.php?sku=".$row[sku]."'>". $row[sku] ."</a></b></td>";
                             if(in_array("product_title",$columns)){ echo "<td class='desktop-only'>". $row[product_title] ."</td>"; }
+                            if(in_array("image1",$columns)){ echo "<td class='desktop-only'><img src=". $row[image1] ." width=200px></td>"; }
                             if(in_array("quantities",$columns)){ echo "<td class='desktop-only'> WH: ". $row[warehouse_qty] ."<br> MD: ". $row[mdqty] . "<br> PS: ". $row[psqty] . "</td>"; }
                             if(in_array("specifications",$columns)){ echo "<td class='desktop-only'>". $row[specifications] ."</td>"; }
                             if(in_array("tags",$columns)){ echo "<td class='desktop-only'>". $row[tags] ."</td>"; }

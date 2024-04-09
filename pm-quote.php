@@ -1,6 +1,6 @@
 <?php
     include 'functions.php';
-    $sku = array("TPR2103","TPR2105","TPR2140","STA0037","TDR1959","TPR2138","TPR2143","TPR2160","TPR2134","BPR-RDSPB0101");
+    $sku = array("TPR2103","TPR2105","TPR2140","STA0037","TDR1959","TPR2138","TPR2143","TPR2160","TPR2134");
     require ('connect.php');
 
 
