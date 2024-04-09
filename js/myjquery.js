@@ -100,6 +100,9 @@ $(window).on("load", function() {
     $('.no-spin-container').each(function(){
         $(this).closest('.imgcontainer').find('.spinicon').hide();
     });
+    $('.no-cert').each(function(){
+        $(this).closest('.cert-container').hide();
+    });
     //fix table width
     if($('.pimtable').length>0){
         $('.pimtable th').each(function(index) {

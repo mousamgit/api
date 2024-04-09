@@ -12,6 +12,7 @@
         <?php include 'header.php'; ?>
         <script src="../js/pimjs.js" ></script>
         <script src="../js/components/sirvSpin.js" ></script>
+        <script src="../js/components/certLink.js" ></script>
         <title> Quote for Perth Mint </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
@@ -219,8 +220,12 @@
                             <tr><td class="l"> Wholesale PPC ex GST: </td> <td>AU$ <?php echo number_format($row[wholesale_aud], 2,'.',','); ?></td></tr>
                             <tr><td class="l"> Stone Price ex GST: </td> <td>AU$ <?php echo number_format($row[stone_price_wholesale_aud], 2,'.',','); ?></td></tr>
                             <?php
-                            if(valueexist('pim', 'sku', $v)){
-                                echo '<tr><td class="l"> Stone Cert: </td> <td><a target="_blank" href="https://samsgroup.info/php/cert-a5-pdf.php?sku='.$v.'&brand='.$row[brand].'">Click Here to view PDF</a></td></tr>';
+
+                            if(strtolower($row[brand])  == 'pink kimberley' || strtolower($row[brand])  == 'pink kimberley diamonds' || strtolower($row[brand])  == 'argyle pink diamonds' || strtolower($row[brand])  == 'blush pink diamonds' ){
+                                echo '<tr class="cert-container"><td class="l"> Stone Cert: </td> <td><certLink sku="'.$v.'" ></certLink></td></tr>';
+                            }
+                            elseif(valueexist('pim', 'sku', $v)){
+                                echo '<tr class="cert-container"><td class="l"> Stone Cert: </td> <td><a target="_blank" href="https://samsgroup.info/php/cert-a5-pdf.php?sku='.$v.'&brand='.$row[brand].'">Click Here to view PDF</a></td></tr>';
                             }
                             ?>
                         </tbody>
@@ -241,10 +246,8 @@
 
     <div class="info-area">
        <b>Please note:</b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.
-        <div class="d-none">
-        <sirvspin sku="TPR2105" brand="Argyle pink diamonds" :multispins="false"></sirvspin>
-        </div>
     </div>
+    <div class="d-none"></div>
 </div>
 <script>
 const callmyapp = myapp.mount('#app');
