@@ -218,6 +218,11 @@
                             <tr><td class="l"> Specifications: </td> <td><?php echo $row[specifications]; ?></td></tr>
                             <tr><td class="l"> Wholesale PPC ex GST: </td> <td>AU$ <?php echo number_format($row[wholesale_aud], 2,'.',','); ?></td></tr>
                             <tr><td class="l"> Stone Price ex GST: </td> <td>AU$ <?php echo number_format($row[stone_price_wholesale_aud], 2,'.',','); ?></td></tr>
+                            <?php
+                            if(valueexist('pim', 'sku', $v)){
+                                echo '<tr><td class="l"> Stone Cert: </td> <td><a target="_blank" href="https://samsgroup.info/php/cert-a5-pdf.php?sku='.$v.'&brand='.$row[brand].'">Click Here to view PDF</a></td></tr>';
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
