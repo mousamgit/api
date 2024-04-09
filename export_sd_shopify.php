@@ -17,7 +17,7 @@
   include_once ('connect.php');
   include_once ('mkdir.php');
 
-  $query = 'SELECT * FROM pim WHERE ((image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND description<> "" AND description IS NOT NULL AND sync_shopify=1 AND brand = "Sapphire Dreams" AND collections != "SDL" AND collections != "SDM") OR (image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND sync_shopify=1 AND type = "loose sapphires" AND collections != "SDL" AND collections != "SDM"));';
+  $query = 'SELECT * FROM pim WHERE ((image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND description<> "" AND description IS NOT NULL AND sync_shopify=1 AND brand = "Sapphire Dreams" AND collections != "SDL" AND collections != "SDM") OR (image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND sync_shopify=1 AND type = "loose sapphires" AND collections != "SDL" AND collections != "SDM"))ORDER BY product_title ASC;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sd-shopify.csv';
@@ -88,10 +88,10 @@
         // Create handle
         $handle = "";
         if( strtolower($row['type']) == "loose sapphires" )
-          if ( strtolower($row['treatment']) == "unheated") { $handle = $row['shape']."-".$row['colour'].$row['edl']."-australian-sapphire-".$row['sku']; }
+          if ( strtolower($row['treatment']) == "unheated") { $handle = $row['shape']."-".$row['colour'].str_replace("nh","unheated",$row['treatment'])."-australian-sapphire-".$row['sku']; }
           else { $handle = $row['shape']."-".$row['colour']."-australian-sapphire-".$row['sku']; }
         else{
-          if ( strtolower($row['treatment']) == "unheated") {$handle = $title_mod."-".$row['colour']."-".$row['edl3']."-".str_replace("  "," ",str_replace("&","",$row['metal_composition']))."-".$type_mod."-".$row['sku']; }
+          if ( strtolower($row['treatment']) == "unheated") {$handle = $title_mod."-".$row['colour']."-".$row['treatment']."-".str_replace("  "," ",str_replace("&","",$row['metal_composition']))."-".$type_mod."-".$row['sku']; }
           else {$handle = $title_mod."-".$row['colour']."-".str_replace("  "," ",str_replace("&","",$row['metal_composition']))."-".$type_mod."-".$row['sku'];}
         } $handle = str_replace([" ","--"],"-",strtolower($handle));
 

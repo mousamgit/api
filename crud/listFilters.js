@@ -1,8 +1,9 @@
 
 export default {
-    props: ['productDetails', 'showFilters','filters'],
+    props: ['listDetails', 'showFilters','filters','primary_table'],
     data() {
         return {
+            rootURL:'',
             channelAttribute: [],
             indexCheck: 0,
             columns: [],
@@ -24,6 +25,8 @@ export default {
         };
     },
     mounted() {
+        const { protocol, host } = window.location;
+        this.rootURL = `${protocol}//${host}`;
     },
     computed: {
         sortedAttributeValues() {
@@ -35,29 +38,29 @@ export default {
     },
 
     methods: {
-        async deleteFilter(productDetId, productId, indexVal) {
+        async deleteFilter(listDetId, listId, indexVal) {
 
             try {
                 if (indexVal == 0) {
-                    this.indexVal = productDetId;
+                    this.indexVal = listDetId;
                 } else {
                     this.indexVal = -1;
                 }
 
-                const response = await fetch('./products/delete_product_filter.php', {
+                const response = await fetch(this.rootURL+'/crud/delete_list_filter.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        productId: productId,
-                        productDetId: productDetId,
-                        indexVal: this.indexVal
+                        productId: listId,
+                        productDetId: listDetId,
+                        indexVal: this.indexVal,
+                        table_name:this.primary_table
                     }),
                 });
                 const data = await response.json();
                 if (data.success) {
-                    console.log('filters deleted successfully!');
                     this.initializeData()
                     this.$emit('filters-updated');
                     this.$emit('form-updated');
@@ -74,11 +77,12 @@ export default {
             this.showFilterValidation=false;
             this.showInput=1;
             const dataToSend = {
-                filter_no: this.filter_no
+                filter_no: this.filter_no,
+                table_name: this.primary_table
             };
 
             try {
-                const response = await fetch('./control_user_filters.php', {
+                const response = await fetch(this.rootURL+'/control_user_filters.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -107,7 +111,7 @@ export default {
 
                 if (confirmed) {
                     try {
-                        const response = await fetch('update_filter_status.php', {
+                        const response = await fetch(this.rootURL+'/update_filter_status.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -115,8 +119,9 @@ export default {
                             body: JSON.stringify({
                                 value: value,
                                 filter_name: this.filter_name,
-                                product_details: this.productDetails,
+                                list_details: this.listDetails,
                                 filter_no: this.filter_no,
+                                table_name:this.primary_table,
                                 deletedId: this.deletedId
                             }),
                         });
@@ -127,10 +132,10 @@ export default {
                             this.initializeData()
                             this.$emit('filters-updated');
 
-                                this.showInput = 0;
-                                this.filter_name = '';
-                                this.filter_no = 0;
-                                this.showInput = 0;
+                            this.showInput = 0;
+                            this.filter_name = '';
+                            this.filter_no = 0;
+                            this.showInput = 0;
                         } else {
                             console.error('Error updating status:', data.error);
                         }
@@ -146,7 +151,7 @@ export default {
                     return;
                 }
                 try {
-                    const response = await fetch('update_filter_status.php', {
+                    const response = await fetch(this.rootURL+'/update_filter_status.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -154,8 +159,9 @@ export default {
                         body: JSON.stringify({
                             value: value,
                             filter_name: this.filter_name,
-                            product_details: this.productDetails,
+                            list_details: this.listDetails,
                             filter_no: this.filter_no,
+                            table_name:this.primary_table,
                             deletedId: this.deletedId
                         }),
                     });
@@ -185,9 +191,9 @@ export default {
             }
         },
         //v2
-        editFilter(productDet,index)
+        editFilter(listDet,index)
         {
-            let attribute_condition_value = productDet.attribute_condition.slice(1, -1).split(',');
+            let attribute_condition_value = listDet.attribute_condition.slice(1, -1).split(',');
             attribute_condition_value = attribute_condition_value.map(function(value) {
                 value = value.trim();
 
@@ -210,16 +216,16 @@ export default {
             this.showAttFilter =0;
             this.editForm=index;
             this.channelAttribute = [{
-                id: productDet.id,
-                attribute_name: productDet.attribute_name,
-                data_type: productDet.data_type_value,
-                filter_type: productDet.filter_type,
-                attribute: productDet.attribute_name +','+productDet.data_type_value,
-                attribute_condition: productDet.attribute_condition,
+                id: listDet.id,
+                attribute_name: listDet.attribute_name,
+                data_type: listDet.data_type_value,
+                filter_type: listDet.filter_type,
+                attribute: listDet.attribute_name +','+listDet.data_type_value,
+                attribute_condition: listDet.attribute_condition,
                 attribute_current: '',
-                rangeFrom: productDet.range_from,
-                rangeTo:productDet.range_to,
-                operator: productDet.op_value,
+                rangeFrom: listDet.range_from,
+                rangeTo:listDet.range_to,
+                operator: listDet.op_value,
                 condition_type: 'abc',
                 previous_row: [],
                 type:'edit'
@@ -227,16 +233,7 @@ export default {
 
         },
 
-        nextPage() {
-            this.currentPage++;
-            this.fetchProducts();
-        },
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-                this.fetchProducts();
-            }
-        },
+
 
         addChannelCondition(op_value, condition_type, previous_row) {
             this.showInput=1;
@@ -266,7 +263,7 @@ export default {
             };
 
             try {
-                const response = await fetch('./users/get_user_filter_details.php', {
+                const response = await fetch(this.rootURL+'/users/get_user_filter_details.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -321,65 +318,65 @@ export default {
     template: `
     <div class="flex-row vcenter right-slider-header"><span class="sub-heading">FILTERS</span> </div> 
     <div class=" test right-menu filters background-secondary-bg">
-                             <select class="card" v-model="filter_no" @change="controlFilters"  v-if="productDetails.length==0">
+                             <select class="card" v-model="filter_no" @change="controlFilters"  v-if="listDetails.length==0">
                                 <option value="0"  selected><a class="btn" >All Filter   <i class="fa-solid fa-caret-down"></i></a> </option>
                                 <template v-for="(fvalue, fkey) in filters">
                                    <option :value="fvalue.id"><a class="btn" >{{ fvalue['filter_name'] }}   </a> </option>
                                 </template>
                              </select>                           
      
-<i  v-if="productDetails.length==0" class="fa fa-chevron-down" aria-hidden="true"></i>
-        <input  class="card" v-if="productDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" :class="{ 'err-box': showFilterValidation }" placeholder="Name your filter" required>     
+<i  v-if="listDetails.length==0" class="fa fa-chevron-down" aria-hidden="true"></i>
+        <input  class="card" v-if="listDetails.length>0" @keyup="showFilterValidation=false" type="text" v-model="filter_name"  class="form-control" :class="{ 'err-box': showFilterValidation }" placeholder="Name your filter" required>     
        
-        <a class="card add-condition" v-if="productDetails.length==0 && channelAttribute.length==0"  @click="addChannelCondition('AND','normal',[])">New Condition<i class="fa fa-plus"></i></a>
+        <a class="card add-condition" v-if="listDetails.length==0 && channelAttribute.length==0"  @click="addChannelCondition('AND','normal',[])">New Condition<i class="fa fa-plus"></i></a>
  
                             <div class="form-group selected-filters">
                             
-                                <div v-if="productDetails.length>0" v-for="(productDet,index) in productDetails" class="filter-condition">
+                                <div v-if="listDetails.length>0" v-for="(listDet,index) in listDetails" class="filter-condition">
                                     <span class="" v-if="showAttFilter==1">
-                                        <span v-if="productDet.op_value == 'OR' && productDet.id != productDetails[0].id">
-                                            <a class="btn white-btn" @click="addChannelCondition('AND','middle',productDetails[index-1])" data-test-id="and">
+                                        <span v-if="listDet.op_value == 'OR' && listDet.id != listDetails[0].id">
+                                            <a class="btn white-btn" @click="addChannelCondition('AND','middle',listDetails[index-1])" data-test-id="and">
                                                 <strong>AND</strong>
                                             </a>
                                         </span>
-                                        <div v-if="productDet.op_value== 'OR' && productDet.id != productDetails[0].id && showAttributeMid==productDetails[index-1].id">
+                                        <div v-if="listDet.op_value== 'OR' && listDet.id != listDetails[0].id && showAttributeMid==listDetails[index-1].id">
                                          
-                                            <product-filter-form :showAttributeFirst="0" :selectedValues="selectedValues" :productDetailValue="productDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
+                                            <list-filter-form :primary_table="primary_table" :showAttributeFirst="0" :selectedValues="selectedValues" :listDetailValue="listDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                         </div>
-                                        <center v-if="productDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(productDet.attribute_name !='' && index !=0)">---------- {{productDet.op_value}} ----------</span>
+                                        <center v-if="listDet.op_value == 'OR'"><span class="value text-ellipsis" v-if="(listDet.attribute_name !='' && index !=0)">---------- {{listDet.op_value}} ----------</span>
                                     </span></center>
                                 
-                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1" @click="editFilter(productDet,index)">
+                                    <div class="filter-clauses card position-relative" v-if="showAttFilter==1" @click="editFilter(listDet,index)">
                                                 <div class="flex-grow-1">
-                                                        <span class="alternative emphasis filter-field ">{{productDet.attribute_name}} </span> 
-                                                        <span class="text-default mt-5" v-if="productDet.filter_type !=''">&nbsp;{{ getEmptyPrinted(productDet.filter_type) }}</span>
-                                                        <span class="text-default" v-if="productDet.range_to !=''">&nbsp; {{productDet.range_from}} to {{productDet.range_to}}</span>
-                                                        <span class="text-default" v-if="productDet.attribute_condition !='' && productDet.attribute_condition != productDet.filter_type">&nbsp; {{getEmptyPrinted(productDet.attribute_condition)}} </span>
+                                                        <span class="alternative emphasis filter-field ">{{listDet.attribute_name}} </span> 
+                                                        <span class="text-default mt-5" v-if="listDet.filter_type !=''">&nbsp;{{ getEmptyPrinted(listDet.filter_type) }}</span>
+                                                        <span class="text-default" v-if="listDet.range_to !=''">&nbsp; {{listDet.range_from}} to {{listDet.range_to}}</span>
+                                                        <span class="text-default" v-if="listDet.attribute_condition !='' && listDet.attribute_condition != listDet.filter_type">&nbsp; {{getEmptyPrinted(listDet.attribute_condition)}} </span>
                                                 </div>
                                                 <div class="delete-icon position-absolute end-0" data-test-id="delete">
-                                                    <a @click="deleteFilter(productDet.id,productDet.product_id,index)">
+                                                    <a @click="deleteFilter(listDet.id,listDet.list_id,index)">
                                                         <i class="fa fa-times animation-mode" aria-hidden="true"></i>
                                                     </a>
                                                 </div>
                                     </div>
                                     <div class="editForm" v-if="showAttFilter==0 && editForm===index">
-                                        <product-filter-form :showAttributeFirst="1" :selectedValues="selectedValues"  :productDetailValue="productDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
+                                        <list-filter-form :primary_table="primary_table" :showAttributeFirst="1" :selectedValues="selectedValues"  :listDetailValue="listDetails[index]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                     </div>
                                 </div>
                                 <div class="form-group filter-clauses">
-                                            <fieldset v-if="(productDetails.length>0 && (showAttributeMid == productDetails[productDetails.length-1].id)) || (productDetails.length==0)">
-                                                <template v-if="productDetails.length==0"> 
-                                                    <product-filter-form :showAttributeFirst="0" :selectedValues="selectedValues"  :productDetailValue="[]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
+                                            <fieldset v-if="(listDetails.length>0 && (showAttributeMid == listDetails[listDetails.length-1].id)) || (listDetails.length==0)">
+                                                <template v-if="listDetails.length==0"> 
+                                                    <list-filter-form :primary_table="primary_table" :showAttributeFirst="0" :selectedValues="selectedValues"  :listDetailValue="[]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                                 </template>
                                                 <template v-else>
-                                                    <product-filter-form showAttributeFirst="0" :selectedValues="selectedValues" :productDetailValue="productDetails[0]" :channelAttribute="channelAttribute" @form-updated="handleForm"></product-filter-form>
+                                                    <list-filter-form :primary_table="primary_table" :showAttributeFirst="0" :selectedValues="selectedValues" :listDetailValue="listDetails[0]" :channelAttribute="channelAttribute" @form-updated="handleForm"></list-filter-form>
                                                 </template>
                                             </fieldset>
-                                            <div class="operators" v-if="productDetails.length>0 && channelAttribute.length==0">
-                                                <a class="btn white-btn" @click="addChannelCondition('AND','normal',productDetails[productDetails.length - 1])" data-test-id="and">
+                                            <div class="operators" v-if="listDetails.length>0 && channelAttribute.length==0">
+                                                <a class="btn white-btn" @click="addChannelCondition('AND','normal',listDetails[listDetails.length - 1])" data-test-id="and">
                                                     <strong>AND</strong>
                                                 </a>
-                                                <a class="btn white-btn" @click="addChannelCondition('OR','group',productDetails[productDetails.length - 1])" data-test-id="or">
+                                                <a class="btn white-btn" @click="addChannelCondition('OR','group',listDetails[listDetails.length - 1])" data-test-id="or">
                                                     <strong>OR</strong>
                                                 </a>
                                             </div>
@@ -390,7 +387,7 @@ export default {
                     
                             </div>
 </div>
-<div class="submit-form" v-if="productDetails.length>0">     
+<div class="submit-form" v-if="listDetails.length>0">     
        <template v-if="filter_no ==0">          
            <a class="btn btn-primary mt-3"  @click="updateStatus(1)">Create</a>         
            <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
@@ -401,7 +398,7 @@ export default {
                 <a class="btn btn-danger mt-3" @click="updateStatus(0)">Delete</a>
        </template>
 </div>
-<div class="submit-form" v-if="productDetails.length==0 && filter_no != 0">
+<div class="submit-form" v-if="listDetails.length==0 && filter_no != 0">
   <a class="btn btn-primary mt-3" @click="updateStatus(-1)">Clear</a>
 </div>
   `,

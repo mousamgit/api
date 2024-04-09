@@ -78,8 +78,8 @@ $sgaWholesaleQuery = 'SELECT * FROM pim WHERE (image1 <> "" && image1 IS NOT NUL
 updateSync($con, $sgaWholesaleQuery);
 
 // Update retail_exclusive status to true for all SD stones only, jewellery is manual therefore excluded
-$sdsOnlyQuery = 'SELECT * FROM pim WHERE (image1 <> "" && image1 IS NOT NULL && retail_aud > 0 && shopify_qty > 0 && collections <> "melee" && brand = "sapphire dreams" && type LIKE "%loose%" && retail_exclusive <> 1)'; 
-updateRetailExclusiveOne($con, $sdsOnlyQuery);
+//$sdsOnlyQuery = 'SELECT * FROM pim WHERE (image1 <> "" && image1 IS NOT NULL && retail_aud > 0 && shopify_qty > 0 && collections <> "melee" && brand = "sapphire dreams" && type LIKE "%loose%" && retail_exclusive <> 1)'; 
+//updateRetailExclusiveOne($con, $sdsOnlyQuery);
 
 // Turn off retail exclusive true to false for all SD Jewellery items that are shopify qty <= 0 and appro qty is > 0
 $sdjQuery = 'SELECT * FROM pim WHERE (brand = "sapphire dreams" AND shopify_qty <= 0 AND retail_exclusive = 1 AND allocated_qty > 0)';

@@ -30,7 +30,7 @@ $filedirect = dirname($_SERVER['DOCUMENT_ROOT']).'/files/'.$filename;
 
 $file = file_get_contents($filedirect);
 
-$sql = "SELECT sku, deletion FROM pim";
+$sql = "SELECT sku, deletion, brand FROM pim";
 $result = mysqli_query($con, $sql);
 
 $count = 1;
@@ -47,17 +47,19 @@ echo "</thead>";
 echo "</tr>";
 
 while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-  if (strpos($file, $row[sku]) == false) {
-    echo "<tr>";
-    if ($row[deletion] == 0)
-    {
-      echo "<td align=center>".$count."</td><td>".$row[sku]."</td><td align=center><input type='checkbox' id='checkbox' value='".$row[sku]."' name='checkbox[]'></td>";
+  if (strtolower($row[brand]) != "shopify cl" ){
+    if (strpos($file, $row[sku]) == false) {
+        echo "<tr>";
+        if ($row[deletion] == 0)
+        {
+          echo "<td align=center>".$count." ".$row[brand]."</td><td>".$row[sku]."</td><td align=center><input type='checkbox' id='checkbox' value='".$row[sku]."' name='checkbox[]'></td>";
+        }
+        else{
+          echo "<td align=center>".$count."</td><td>".$row[sku]."</td><td align=center>Marked for Deletion</td>";
+        }
+        $count++;
+        echo "</tr>";
     }
-    else{
-      echo "<td align=center>".$count."</td><td>".$row[sku]."</td><td align=center>Marked for Deletion</td>";
-    }
-    $count++;
-    echo "</tr>";
   }
 }
 echo "</table></center><br>";

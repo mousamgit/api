@@ -1,17 +1,14 @@
-import ProductFilters from '../../products/js/ProductFilters.js?v=2';
-import ProductFilterForm from '../../products/js/ProductFilterForm.js?v=2';
+import listFilters from '../../crud/listFilters.js?v=2';
+import listFilterForm from '../../crud/listFilterForm.js?v=2';
 
-const app = Vue.createApp({
-    props: {
-        urlsku: {
-            type: String,
-          },
-      },
+const List = {
+    props: ['urlsku','primary_table','key_name','show_filter_button'],
     data() {
         return {
-            productDetails: [],
-            productValues:[],
-            productValuesTotal:[],
+            rootURL:'',
+            listDetails: [],
+            listValues:[],
+            listValuesTotal:[],
             showFilters: 9,
             isEditing:0,
             rIndex:-1,
@@ -41,14 +38,16 @@ const app = Vue.createApp({
             checkedRows: {}, // Object to track checked rows
             selectAllCheckbox: false,
             dataTypeValue:'varchar',
-            orderColumnName:'sku',
-            orderColumnValue:'ASC'
+            orderColumnName:this.key_name,
+            orderColumnValue:'ASC',
         };
     },
     mounted() {
+        const { protocol, host } = window.location;
+        this.rootURL = `${protocol}//${host}`
         this.clearCheckedState()
         this.fetchUserColumns();
-        this.fetchProducts();
+        this.fetchlists();
         document.addEventListener('click', this.handleClickOutside);
     },
     computed: {
@@ -62,62 +61,33 @@ const app = Vue.createApp({
 
 
     methods: {
+
          getDataTypeValue(columnName,columnValue) {
-            switch (columnName) {
-                case 'carat':
-                case 'purchase_cost_aud':
-                case 'purchase_cost_usd':
-                case 'manufacturing_cost_aud':
-                case 'wholesale_aud':
-                case 'wholesale_usd':
-                case 'stone_price_wholesale_aud':
-                case 'retail_aud':
-                case 'retail_usd':
-                case 'stone_price_retail_aud':
-                case 'master_qty':
-                case 'warehouse_qty':
-                case 'mdqty':
-                case 'psqty':
-                case 'usdqty':
-                case 'allocated_qty':
-                case 'shopify_qty':
-                case 'centre_stone_qty':
-                case 'sales_percentage':
-                case 'lot_number':
-                case 'client_jim309_qty':
-                case 'client_jim077_qty':
-                case 'client_jim077_price':
-                case 'product_id':
-                case 'variant_id':
-                    if(columnValue=='DESC'){
-                        return 'High To Low'
-                    }else{
-                        return 'Low To High'
-                    }
-                case 'modified_date':
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
-                    }else{
-                        return 'Z-A'
-                    }
-                case 'client_tags':
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
-                    }else{
-                        return 'Z-A'
-                    }
-                default:
-                    if(columnValue=='DESC'){
-                        return 'A-Z'
-                    }else{
-                        return 'Z-A'
-                    }
-            }
+             for (const column of this.columns) {
+                 if (column.column_name === columnName) {
+
+                     if(column.data_type=='varchar' || column.data_type=='text' || column.data_type=='longtext')
+                     {
+                          if(columnValue=='DESC'){
+                            return 'A-Z'
+                          }else{
+                          return 'Z-A'
+                          }
+                      }else{
+                          if(columnValue=='DESC'){
+                            return 'High To Low'
+                          }else{
+                            return 'Low To High'
+                          }
+                      }
+                 }
+             }
+
         },
         updateFetchColumns(column_name,column_value){
             this.orderColumnName = column_name;
             this.orderColumnValue = column_value;
-            this.fetchProducts();
+            this.fetchlists();
         },
         clearCheckedState() {
             this.itemNo=0
@@ -131,7 +101,7 @@ const app = Vue.createApp({
             this.checkedRows[sku] = !this.checkedRows[sku];
             localStorage.setItem('checkedRows', JSON.stringify(this.checkedRows));
             if (this.checkedRows[sku]) {
-                this.exportRows.push(this.productValues.find(row => row.sku === sku));
+                this.exportRows.push(this.listValues.find(row => row.sku === sku));
             } else {
                 const index = this.exportRows.findIndex(row => row.sku === sku);
                 if (index !== -1) {
@@ -142,20 +112,20 @@ const app = Vue.createApp({
         },
         selectAllRows(current_page) {
             const startIndex = 0;
-            const endIndex = Math.min(startIndex + this.pageSize, this.productValues.length);
+            const endIndex = Math.min(startIndex + this.pageSize, this.listValues.length);
 
             for (let i = startIndex; i < endIndex; i++) {
-                const sku = this.productValues[i]['sku'];
+                const sku = this.listValues[i][this.key_name];
                 this.checkedRows[sku] = this.selectAllChecked[current_page];
 
                 if (this.selectAllChecked[current_page]) {
                     // If Select All is checked, add the row to exportRows
-                    if (!this.exportRows.some(row => row['sku'] === sku)) {
-                        this.exportRows.push(this.productValues[i]);
+                    if (!this.exportRows.some(row => row[this.key_name] === sku)) {
+                        this.exportRows.push(this.listValues[i]);
                     }
                 } else {
                     // If Select All is unchecked, remove the row from exportRows (if exists)
-                    const exportIndex = this.exportRows.findIndex(row => row['sku'] === sku);
+                    const exportIndex = this.exportRows.findIndex(row => row[this.key_name] === sku);
                     if (exportIndex !== -1) {
                         this.exportRows.splice(exportIndex, 1);
                     }
@@ -184,9 +154,9 @@ const app = Vue.createApp({
                 }
 
                 for (let i = startIndex; i < endIndex; i++) {
-                    const sku = this.productValuesTotal[i]['sku'];
+                    const sku = this.listValuesTotal[i][this.key_name];
                     this.checkedRows[sku] = true;
-                    this.exportRows.push(this.productValuesTotal[i]);
+                    this.exportRows.push(this.listValuesTotal[i]);
                 }
 
                 this.itemNo=this.exportRows.length;
@@ -198,7 +168,7 @@ const app = Vue.createApp({
         },
         exportToCSV() {
             if (this.exportRows.length === 0) {
-                alert("Please Select Products To Export")
+                alert("Please Select Items From Table To Export")
                 // Export cannot proceed if there are no rows to export
                 return;
             }
@@ -247,11 +217,12 @@ const app = Vue.createApp({
             }
             let dataToSend = {
                 'column_name': selectedColumns,
-                'selectedStatus': selectedStatus
+                'selectedStatus': selectedStatus,
+                'table_name': this.primary_table
             }
 
             try {
-                fetch('./users/save_user_columns.php', {
+                fetch(this.rootURL+'/users/save_user_columns.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -267,7 +238,7 @@ const app = Vue.createApp({
                     .then(data => {
                         if (data.success) {
                             this.fetchUserColumns();
-                            this.fetchProducts();
+                            this.fetchlists();
                         } else {
                             console.error('Error updating database:', data.error);
                         }
@@ -287,8 +258,18 @@ const app = Vue.createApp({
             this.showColumnSelector = !this.showColumnSelector;
         },
         async fetchUserColumns() {
+            const dataToSend = {
+                table_name: this.primary_table
+            };
+
             try {
-                const response = await fetch('./users/fetch_columns_user_wise.php');
+                const response = await fetch(this.rootURL+'/users/fetch_columns_user_wise.php',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
                 const data = await response.json();
                 this.columns = data;
             } catch (error) {
@@ -305,8 +286,8 @@ const app = Vue.createApp({
 
             }
         },
-        getProductUrl(sku){
-            return('/product.php?sku='+sku);
+        getlistUrl(sku){
+            return('/list.php?sku='+sku);
         },
         handleMouseDown(event) {
             this.isDragging = true;
@@ -331,7 +312,7 @@ const app = Vue.createApp({
         changePage()
         {
             this.initializeData()
-            this.fetchProducts();
+            this.fetchlists();
         },
         totalPages(totalRows,itemsPerPage){
             return Math.ceil(totalRows / itemsPerPage);
@@ -351,36 +332,35 @@ const app = Vue.createApp({
         initializePagination()
         {
             this.currentPage=1,
-                this.itemsPerPage= 100,
-                this.totalRows=0
+            this.itemsPerPage= 100,
+            this.totalRows=0
         },
         firstPage(){
             this.initializeData();
             this.currentPage = 1;
-            this.fetchProducts();
+            this.fetchlists();
         },
         lastPage(totalRows,itemsPerPage){
             this.initializeData();
             this.currentPage = Math.ceil(totalRows / itemsPerPage);
-            this.fetchProducts();
+            this.fetchlists();
         },
         nextPage() {
-
             this.initializeData();
             this.currentPage++;
-            this.fetchProducts();
+            this.fetchlists();
         },
         prevPage() {
             if (this.currentPage > 1) {
                 this.initializeData();
                 this.currentPage--;
-                this.fetchProducts();
+                this.fetchlists();
             }
         },
         gotoPage(page) {
             this.initializeData();
             this.currentPage = page;
-            this.fetchProducts();
+            this.fetchlists();
         },
         initializeData()
         {
@@ -391,44 +371,18 @@ const app = Vue.createApp({
             this.formData={}
         },
 
-        async  controlFilters() {
-
-            const dataToSend = {
-                filter_no: this.filter_no
-            };
-
-            try {
-                const response = await fetch('./control_user_filters.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to update database');
-                }
-
-                this.initializeData();
-                this.initializePagination();
-                this.fetchProducts();
-
-
-            } catch (error) {
-                console.error('Error updating database:', error);
-            }
-        },
         convertToTitleCase(str) {
             return str.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         },
-        async fetchProducts() {
-            
+        async fetchlists() {
+
             let dataToSend = {
-                'order_column_name': this.orderColumnName,
-                'order_column_value': this.orderColumnValue
+                'order_column_name': this.key_name,
+                'order_column_value': this.orderColumnValue,
+                'primary_table':this.primary_table,
+                'key_name':this.key_name
             }
-            const response = await fetch('./fetch_filtered_data.php?page=' + this.currentPage,  {
+            const response = await fetch(this.rootURL+'/fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -437,9 +391,9 @@ const app = Vue.createApp({
             }).then(response => response.json())
                 .then(data => {
                     console.log('urlsku:'+this.urlsku);
-                    this.productDetails = data.product_details;
-                    this.productValues = data.product_values;
-                    this.productValuesTotal = data.product_values_total;
+                    this.listDetails = data.list_details;
+                    this.listValues = data.list_values;
+                    this.listValuesTotal = data.list_values_total;
                     this.totalRows = data.total_rows;
                     this.columnValues = data.column_values_row;
                     this.filters = data.filter_names;
@@ -467,36 +421,12 @@ const app = Vue.createApp({
             }, 0);
 
         },
-        async  getTooltipDetails(filter_no) {
-            const dataToSend = {
-                filter_no: filter_no
-            };
 
-            try {
-                const response = await fetch('./fetch_tooltip_details.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                })
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tooltip details');
-                }
-                const data = await response.json();
-                console.log('list', data);
-                this.filterList = data;
-
-            } catch (error) {
-                console.error('Error updating database:', error);
-            }
-        },
         async saveEdit() {
-            this.formData.table='pim'
-            this.formData.pr_key='sku';
+            this.formData.table=this.primary_table
+            this.formData.pr_key=this.key_name;
             try {
-                const response = await fetch('./updatetablevalue.php', {
+                const response = await fetch(this.rootURL+'/updatetablevalue.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -510,7 +440,7 @@ const app = Vue.createApp({
                 }
                 if (this.rIndex !== -1 && this.cIndex !== -1) {
                     console.log(this.formData.editedValue)
-                    this.productValues[this.rIndex][this.columnValues[this.cIndex]] = this.formData.editedValue;
+                    this.listValues[this.rIndex][this.columnValues[this.cIndex]] = this.formData.editedValue;
                 }
                 this.initializeData();
                 console.log('Database updated successfully');
@@ -521,13 +451,13 @@ const app = Vue.createApp({
 
         cancelEdit() {
             this.initializeData();
-            this.fetchProducts();
+            this.fetchlists();
         },
         handleFiltersUpdated() {
             console.log('filters updated event received in parent component');
             this.initializeData();
             this.initializePagination();
-            console.log(this.fetchProducts());
+            console.log(this.fetchlists());
         },
         handleDragStart(index) {
             this.draggedIndex = index;
@@ -541,10 +471,11 @@ const app = Vue.createApp({
                 this.columnValues.splice(index, 0, removed);
                 this.draggedIndex = null;
                 const dataToSend = {
-                    column_values: this.columnValues
+                    column_values: this.columnValues,
+                    table_name:this.primary_table
                 };
                 try {
-                    const response =  fetch('./save_column_order_values.php', {
+                    const response =  fetch(this.rootURL+'/save_column_order_values.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -564,23 +495,17 @@ const app = Vue.createApp({
         }
     },
     template: `
-    
-    <nav class=" toolbar pim-padding">
-    
+    <nav class=" toolbar pim-padding">    
         <div class="selectbox"> <input type="checkbox" v-model="selectAllCheckbox" @change="selectAllPagesRow"><span v-if="itemNo >0">{{itemNo}} items selected </span> </div>
         <a class="icon-btn btn-col" title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
-
-        <a class="icon-btn show-filter" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
-        </nav>
-     
-
-    
-    
+          
+        <a class="icon-btn show-filter" v-if="show_filter_button==true" @click="showHideFilter" title="Filter"><i class="fa fa-filter" aria-hidden="true"></i></a>
+    </nav>
     </div>
   
     <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showFilter }" ref="filterContainer">
     
-    <product-filters :productDetails="productDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></product-filters>
+    <list-filters :primary_table="primary_table" :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
     </div>
      
         <div class="pim-padding ">   
@@ -598,7 +523,7 @@ const app = Vue.createApp({
                 :draggable="true" @dragstart="handleDragStart(index)" 
                 @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
                 
-                  
+                 
                   <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
                         <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                         <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-up" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>      
@@ -607,43 +532,41 @@ const app = Vue.createApp({
                    <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
                    <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
                   </a>
-                 
-                
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                  </th>                
               </tr>
             </thead>
             <tbody>
             
-              <tr v-for="(row,rowIndex) in productValues">
+              <tr v-for="(row,rowIndex) in listValues">
               <td class="hidden">{{rowIndex+1}}</td>
               <td>
-                <input type="checkbox" :id="currentPage" :checked="checkedRows[row['sku']]"  @change="toggleRowSelection(row['sku'])">
+                <input type="checkbox" :id="currentPage" :checked="checkedRows[row[key_name]]"  @change="toggleRowSelection(row[key_name])">
               </td>
                <template v-for="(colName,colIndex) in columnValues">
                <td  :col="colName">              
                 <div v-if="rIndex==rowIndex && colIndex==cIndex">
-                <input type="hidden" v-model="formData.sku" value="row['sku']">
+                <input type="hidden" v-model="formData.sku" value="row[key_name]">
                 <input type="hidden" v-model="formData.columnName" value="colName">
                 <input type="hidden" v-model="formData.oldValue" value="row[colName]">
                 <input id="editInput" type="text" v-model="formData.editedValue" value="row[colName]" @keydown.tab.prevent="saveEdit()" @mouseleave="saveEdit()" @keyup.enter="saveEdit()">
                 </div>
                 <div v-else>
-                <template v-if="colName == 'sku'">
-                 <a :href="getProductUrl(row['sku'])">{{ row['sku'] }} </a>
+                <template v-if="colName == key_name">
+                 <a :href="getlistUrl(row[key_name])">{{ row[key_name] }} </a>
                 </template>
                 
                 <template v-else-if="colName.includes('imag')">
                   <template v-if="row[colName]">
                   <a :href="row[colName]" target="_blank">
-                  <img :src="row[colName]" :alt="row['product_title']">
+                  <img :src="row[colName]" :alt="row['list_title']">
                   </a>
                   </template>
                   <template v-else> <img src="/css/no-image.png?v=1" alt="no image"> </template>
                 </template>
                 <template v-else>
                 
-                <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row['sku'],colName)">
+                <a class="editfield" @click="changeEditValue(rowIndex,colIndex,row[colName],row[colName],row[key_name],colName)">
                     {{ row[colName] }} <i class="fa fa-pencil" aria-hidden="true"></i></i>
                 </a>
                 
@@ -652,8 +575,6 @@ const app = Vue.createApp({
                 </td>
                 </template>
                 
-               
-               
               </tr>
               
             </tbody>
@@ -685,7 +606,7 @@ const app = Vue.createApp({
 
               </div>
               <div class="text-muted col-md-4 text-center p-2">
-                {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + productValues.length }} / {{totalRows}} records
+                {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + listValues.length }} / {{totalRows}} records
               </div>
               <div class="text-muted col-md-4 text-end">
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
@@ -705,7 +626,14 @@ const app = Vue.createApp({
         </div>
       </div>
 `,
+};
+
+const app = Vue.createApp({
+    components: {
+        List
+    }
 });
-app.mount('#index');
-app.component('product-filters', ProductFilters);
-app.component('product-filter-form', ProductFilterForm);
+
+app.mount('#list');
+app.component('list-filters', listFilters);
+app.component('list-filter-form', listFilterForm);
