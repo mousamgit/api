@@ -26,6 +26,7 @@ const myapp = Vue.createApp({
             return this.totals.reduce((acc, cur) => acc + cur, 0);
           },
           calculateQty() {
+            console.log(this.quantitytotals);
             return this.quantitytotals.reduce((acc, cur) => acc + cur, 0);
           },
 
