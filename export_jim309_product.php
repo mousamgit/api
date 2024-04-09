@@ -85,7 +85,7 @@
           if ( $row['treatment'] != "" ) { $tags .= $row['treatment'].", "; }
           if ( $row['client_tags'] != "" ) { $tags .= $row['client_tags'].", "; }
           if ( $row['client_jim309_qty'] > 0 ) { $tags .= "MELBOURNE_JWLR_STOCK"; }
-          if ( $row['client_jim309_qty'] <= 0 & $row['client_sgastock'] != 1 ) { $tags .= "SGA_STOCK";}
+          if ( $row['client_jim309_qty'] <= 0 & $row['client_sgastock'] == 1 ) { $tags .= "SGA_STOCK";}
 
           //if SGA Stock >= 3 qty = 1 else 0
           if ( $row['client_jim309_qty'] >= 1 ) { $inventoryQty = $row['client_jim309_qty'];}
