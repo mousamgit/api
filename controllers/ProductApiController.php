@@ -68,7 +68,7 @@ class ProductApiController
 
         if ($products !== false) {
             echo "Successfully fetched products data from Shopify:\n";
-            print_r($products);
+            dd($products);
         } else {
             echo "Failed to fetch products data from Shopify.\n";
         }
