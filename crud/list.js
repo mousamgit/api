@@ -222,7 +222,7 @@ const List = {
             }
 
             try {
-                fetch(this.rootURL+'/users/save_user_columns_v2.php', {
+                fetch(this.rootURL+'/users/save_user_columns.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -263,7 +263,7 @@ const List = {
             };
 
             try {
-                const response = await fetch(this.rootURL+'/users/fetch_columns_user_wise_v2.php',{
+                const response = await fetch(this.rootURL+'/users/fetch_columns_user_wise.php',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -382,7 +382,7 @@ const List = {
                 'primary_table':this.primary_table,
                 'key_name':this.key_name
             }
-            const response = await fetch(this.rootURL+'/fetch_filtered_data_v2.php?page=' + this.currentPage,  {
+            const response = await fetch(this.rootURL+'/fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -475,7 +475,7 @@ const List = {
                     table_name:this.primary_table
                 };
                 try {
-                    const response =  fetch(this.rootURL+'/save_column_order_values_v2.php', {
+                    const response =  fetch(this.rootURL+'/save_column_order_values.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
