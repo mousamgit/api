@@ -1,5 +1,4 @@
 <?php
-
 header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -28,7 +27,7 @@ include '../functions.php';
 <?php include '../topbar.php'; ?>
 <div id="list">
     <!--         both key name and primary table are compulsary-->
-    <list :urlsku="'test'" :primary_table="'appro'" :key_name="'id'" :show_filter_button="true"></list>
+    <list :urlsku="'test'" :primary_table="'customer'" :key_name="'code'" :show_filter_button="true"></list>
 </div>
 <script type="module" src="../crud/list.js" defer></script>
 

@@ -6,6 +6,9 @@ myapp.component('sirvspin', {
           },
           brand:{
             type: String,
+          },
+          multispins:{
+            type: Boolean,
           }
     },
     data() {
@@ -15,6 +18,10 @@ myapp.component('sirvspin', {
     },
     mounted() {
         this.checkUrlExists(); // Call the method when the component is mounted
+        const script = document.createElement('script');
+        script.src = 'https://scripts.sirv.com/sirv.js';
+        script.async = true;
+        document.body.appendChild(script);
     },  
     computed: {
         sirvurl(){
@@ -27,8 +34,23 @@ myapp.component('sirvspin', {
         }
     },
     template: /*html*/ ` 
-    <div v-if="urlExists" class="sirv360" :url="sirvurl">
-        <iframe  :src="sirvurl"  width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+    <div v-if="urlExists" class="sirv360" :multi="multispins" :url="urlExists">
+        <iframe  v-if="multispins" :src="sirvurl"  width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+        <div  v-else class="sirv-container">
+            <div class="Sirv" id="sirv-spin" :data-src="sirvurl"></div>
+            <div class="sirv-controls ">
+            <a onclick="Sirv.instance('sirv-spin').play(-1); return false;" href="#" class="button flaticon-keyboard54" title="Left"></a>
+            <a id="pause-button-sirv-spin" onclick="Sirv.instance('sirv-spin').pause(); return false;" href="#" class="button flaticon-pause44" title="Pause"></a>
+            <a id="play-button-sirv-spin" onclick="Sirv.instance('sirv-spin').play(); return false;" href="#" class="button flaticon-play106" title="Play"></a>
+            <a onclick="Sirv.instance('sirv-spin').play(1); return false;" href="#" class="button flaticon-keyboard53" title="Right"></a>
+            <a onclick="Sirv.instance('sirv-spin').zoomIn(); return false;" href="#" class="button flaticon-round57" title="Zoom In"></a>
+            <a onclick="Sirv.instance('sirv-spin').zoomOut(); return false;" href="#" class="button flaticon-round56" title="Zoom Out"></a>
+            <a onclick="Sirv.instance('sirv-spin').fullscreen('sirv-spin'); return false;" href="#" class="button flaticon-move26" title="Full Screen"></a>
+            <div class="clear"></div>
+            </div>
+            <link rel="stylesheet" href="https://demo.sirv.com/sirv-controls/sirv-controls.css">
+
+        </div>     
     </div>
     <div v-else class="no-spin-container">
     <img src="../../css/noimg.jpg" alt="Image Not Found" @error="handleImgError">

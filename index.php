@@ -26,7 +26,10 @@ include 'functions.php';
 </head>
 <body>
 <?php include 'topbar.php'; ?>
-<div id="index"><index :urlsku="'test'"></index></div>
-<script type="module" src="./homepage/js/index.js" defer></script>
+<div id="list">
+    <!--         both key name and primary table are compulsary-->
+    <list :urlsku="'test'" :primary_table="'pim'" :key_name="'sku'" :show_filter_button="true"></list>
+</div>
+<script type="module" src="./crud/list.js" defer></script>
 </body>
 </html>

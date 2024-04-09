@@ -15,9 +15,12 @@
     <title> SGA PIM - SKU: <?php echo $sku; ?> </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="./js/pimjs.js" ></script>
+    <script src="./js/components/sirvSpin.js" ></script>
     <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />-->
   </head>
   <body>
+  <div id="app">
   <?php include 'topbar.php'; ?>
 
   <?php 
@@ -55,6 +58,7 @@
   <?php } ?>
 
   
-
+    </div>
+    <script>const callmyapp = myapp.mount('#app');</script>
   </body>
 </html>

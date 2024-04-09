@@ -188,7 +188,7 @@
                                     }
                                 ?>
                                 <li class="splide__slide">
-                                    <sirvspin sku="<?php  echo $v;  ?>" brand="<?php echo $row[brand]; ?>"></sirvspin>
+                                    <sirvspin sku="<?php  echo $v;  ?>" brand="<?php echo $row[brand]; ?>" :multispins="true"></sirvspin>
                                 </li>
                             </ul>
                         </div>
@@ -240,7 +240,10 @@
 
 
     <div class="info-area">
-       <b>Please note:<b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.
+       <b>Please note:</b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.
+        <div class="d-none">
+        <sirvspin sku="TPR2105" brand="Argyle pink diamonds" :multispins="false"></sirvspin>
+        </div>
     </div>
 </div>
 <script>
