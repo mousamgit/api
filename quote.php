@@ -2,6 +2,7 @@
     include 'functions.php';
     require ('connect.php');
     $id=$_GET['id'];
+  
 
     $quotequery = " SELECT * from quote WHERE id = '".$id."'";
     $quoteresult = mysqli_query($con, $quotequery) or die(mysqli_error($con));
@@ -260,7 +261,8 @@
 
 
     <div class="info-area">
-       <b>Please note:</b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.
+       <b>Please note:</b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.<br>
+       <span style="font-size: 8px;"><?php echo $encryptedid; ?></span>
     </div>
     <div class="d-none"></div>
 </div>
