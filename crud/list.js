@@ -513,7 +513,7 @@ const List = {
     <list-filters :primary_table="primary_table" :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
     </div>
      
-        <div class="pim-padding ">   
+          
         
          
           <div class="overflow-container" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
@@ -586,8 +586,8 @@ const List = {
             </tbody>
           </table>
           </div>
-
-           <div class="mt-3 row">
+            <div  class="bottombar">
+           <div class="mt-3 row ">
                 <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
                 
                 <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
@@ -618,7 +618,7 @@ const List = {
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
                 <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
               </div>
-        </div>
+              </div>
         </div>
         <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showColumnSelector }" >
             <div class="ui-widget-content">

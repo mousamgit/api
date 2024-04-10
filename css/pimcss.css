@@ -387,11 +387,12 @@ body .body-content{margin-top:50px;}
 
   /* homepage */
   .list-table.pimtable { width: max-content; border:none; border-collapse: collapse;}
-  .overflow-container{ overflow-x: scroll;}
+  .overflow-container{ overflow-x: scroll; width:100%; padding:0;}
   .saved-filter-container select{width:200px;}
   .table-responsive{    overflow-y: scroll; max-height:1200px;}
+  .bottombar{position: fixed; bottom: 0;     width: 100%;}
 
-  .list-table th{ position: sticky;   top: 0;     padding-top: 15px;    padding-bottom: 15px; }
+  .list-table th{ position: sticky;   top: 0;      background: #efefef;   padding-top: 15px;    padding-bottom: 15px; }
   .list-table th[col="specifications"], .list-table th[col="description"]{min-width:400px;}
   .list-table td, .list-table th{border-right:1px solid #fff;}
   .list-table td img{width:100px;}
