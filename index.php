@@ -24,11 +24,11 @@ include 'functions.php';
     <style>
     </style>
 </head>
-<body>
+<body page="homepage">
 <?php include 'topbar.php'; ?>
 <div id="list">
     <!--         both key name and primary table are compulsary-->
-    <list :urlsku="'test'" :primary_table="'pim'" :key_name="'sku'" :show_filter_button="true"></list>
+    <list :urlsku="'test'" :primary_table="'pim'" :key_name="'sku'" :show_filter_button="true" ></list>
 </div>
 <script type="module" src="./crud/list.js" defer></script>
 </body>

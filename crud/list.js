@@ -61,7 +61,12 @@ const List = {
 
 
     methods: {
-
+         clacwidth(name,short,long){
+            if (long.includes(name)) {return 400;}
+            else if  (short.includes(name)) {return 35;}
+            else if  (name.length<6) {return 115;}
+            else{return name.length*6+80}
+         },
          getDataTypeValue(columnName,columnValue) {
              for (const column of this.columns) {
                  if (column.column_name === columnName) {
@@ -511,8 +516,8 @@ const List = {
         <div class="pim-padding ">   
         
          
-          <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
-          <table class="pimtable  display homepage-table">
+          <div class="overflow-container" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
+          <table class="pimtable  display list-table">
             <thead>
               <tr>
                 <th class="hidden">S.N</th>
@@ -521,7 +526,8 @@ const List = {
                  
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
-                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" 
+                :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit', minWidth: clacwidth(colName,['checkbox'],['description', 'specifications']) + 'px' }">
                 
                  
                   <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">

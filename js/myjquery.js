@@ -1,6 +1,9 @@
 $(document).ready(function(){
 
     spinsrc = '';
+    var w400 = [['homepage','description'],['homepage','specifications']];
+
+    
 
     var $document = $(document),
         $header = {
@@ -104,17 +107,20 @@ $(window).on("load", function() {
         $(this).closest('.cert-container').hide();
     });
     //fix table width
-    if($('.pimtable').length>0){
-        $('.pimtable th').each(function(index) {
+
+
+    if($('.list-table').length>0){
+        $('.list-table th').each(function(index) {
+            console.log('th length'+$(this).text()+$(this).text().length);
             var maxColumnWidth = 0;
         
-            $('.pimtable tbody tr').each(function() {
+            $('.list-table tr').each(function() {
               var cellContentWidth = $(this).find('td').eq(index).text().length * 10; // Adjust the multiplier as needed
               maxColumnWidth = Math.max(maxColumnWidth, cellContentWidth);
               console.log(maxColumnWidth+','+cellContentWidth);
             });
         
-            $('.pimtable td').filter(function() {
+            $('.list-table td').filter(function() {
               return $(this).index() === index;
             }).css('width', maxColumnWidth + 'px');
           });
