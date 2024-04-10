@@ -386,16 +386,17 @@ body .body-content{margin-top:50px;}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 
   /* homepage */
-  .homepage-table.pimtable { width: max-content; border:none; border-collapse: collapse;}
-  .home-table-container{ overflow-x: scroll;}
+  .list-table.pimtable { width: max-content; border:none; border-collapse: collapse;}
+  .overflow-container{ overflow-x: scroll;}
   .saved-filter-container select{width:200px;}
   .table-responsive{    overflow-y: scroll; max-height:1200px;}
-  .homepage-table th[col="specifications"], .homepage-table th[col="description"]{width:400px;}
-  .homepage-table th{ position: sticky;   top: 0;     padding-top: 15px;    padding-bottom: 15px; }
-  .homepage-table td, .homepage-table th{border-right:1px solid #fff;}
-  .homepage-table td img{width:100px;}
-  .homepage-table th:hover .sorting-btn{display: inline-block;}
-  .sorting-btn{padding:0 5px; display: none;}
+
+  .list-table th{ position: sticky;   top: 0;     padding-top: 15px;    padding-bottom: 15px; }
+  .list-table th[col="specifications"], .list-table th[col="description"]{min-width:400px;}
+  .list-table td, .list-table th{border-right:1px solid #fff;}
+  .list-table td img{width:100px;}
+  .list-table th:hover .sorting-btn{display: inline-block;}
+  .sorting-btn{padding:0; display: none;}
   .box-content { min-width: 50px;    display: none;    position: absolute;    top: 40px;    left: 0;    background-color: #fff;    padding: 5px 10px;    border: 1px solid #ccc;}
   .sorting-btn:hover .box-content {    display: block; }
 
