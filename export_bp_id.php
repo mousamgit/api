@@ -13,10 +13,10 @@
 
 <?php
   include_once ('connect.php');
-  $query = 'SELECT * FROM pim WHERE (brand = "Pink Kimberley Diamonds" AND type NOT LIKE "%loose%");';
+  $query = 'SELECT * FROM pim WHERE (brand = "Blush Pink Diamonds" AND type NOT LIKE "%loose%");';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
-  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/production/pk-id.csv';
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/production/bp-id.csv';
   $fp = fopen($filepath, 'w');
 
   $headers = array("Model","Description","Specification","Disclaimer");
@@ -32,23 +32,19 @@
 
     //edl1 - edl8
     $specification = $row['edl1'];
-    if ($row['edl2'] != "") { $specification .= "&nbsp".$row['edl2'];}
-    if ($row['edl3'] != "") { $specification .= "&nbsp".$row['edl3'];}
-    if ($row['edl4'] != "") { $specification .= "&nbsp".$row['edl4'];}
-    if ($row['edl5'] != "") { $specification .= "&nbsp".$row['edl5'];}
-    if ($row['edl6'] != "") { $specification .= "&nbsp".$row['edl6'];}
-    if ($row['edl7'] != "") { $specification .= "&nbsp".$row['edl7'];}
-    if ($row['edl8'] != "") { $specification .= "&nbsp".$row['edl8'];}
-
-    //disclaimer
-    if (strpos( $specification, "blue")) { $disclaimer = "PINK AND BLUE DIAMONDS FROM THE ARGYLE DIAMOND MINE IN THE EAST KIMBERLEY REGION OF WESTERN AUSTRALIA";}
-    else { $disclaimer = "PINK DIAMONDS FROM THE ARGYLE DIAMOND MINE IN THE EAST KIMBERLEY REGION OF WESTERN AUSTRALIA";}
+    if ($row['edl2'] != "") { $specification .= "\n".$row['edl2'];}
+    if ($row['edl3'] != "") { $specification .= "\n".$row['edl3'];}
+    if ($row['edl4'] != "") { $specification .= "\n".$row['edl4'];}
+    if ($row['edl5'] != "") { $specification .= "\n".$row['edl5'];}
+    if ($row['edl6'] != "") { $specification .= "\n".$row['edl6'];}
+    if ($row['edl7'] != "") { $specification .= "\n".$row['edl7'];}
+    if ($row['edl8'] != "") { $specification .= "\n".$row['edl8'];}
 
     $content = array (
         0 => $row['sku'],
         1 => $row['edl9'],
         2 => $specification,
-        3 => $disclaimer,    
+        3 => "PINK DIAMONDS FROM THE ARGYLE DIAMOND MINE IN THE EAST KIMBERLEY REGION OF WESTERN AUSTRALIA",    
       );
     
       fputcsv($fp, $content);
@@ -57,9 +53,9 @@
 fclose($fp);
 $count = mysqli_num_rows($result);
 date_default_timezone_set('Australia/Sydney');
-echo "<center><h2>PK Jewellery ID CARD updated!</h2><br>";
+echo "<center><h2>BP Jewellery ID CARD updated!</h2><br>";
 echo "Total of ".$count." Products Exported<br><br>";
-echo "<a href='https://pim.samsgroup.info/production/pk-id.csv'><b>View on Web</a><br><br>";
+echo "<a href='https://pim.samsgroup.info/production/bp-id.csv'><b>View on Web</a><br><br>";
 echo date("Y-m-d G:i a")."<br>";
 $endScriptTime=microtime(TRUE);
 $totalScriptTime=$endScriptTime-$startScriptTime;
