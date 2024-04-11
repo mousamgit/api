@@ -165,11 +165,11 @@ class ProductApiController
                     $tags .= "argylecertified";
                 }
             }
-                dd($purchase_cost);
+
             $productData = [
                 "product" =>
                  [
-                'title' => 'pcc'.$row['product_title'],
+                'title' => 'mtest2'.$row['product_title'],
                 'body_html' => $row['description'],
                 'vendor' => $row['brand'],
                 'product_type' => $row['type'],
@@ -197,8 +197,7 @@ class ProductApiController
                         'inventory_policy'=>'deny',
                         'fulfillment_service'=>'manual',
                         'inventory_management'=>'shopify',
-                        'unit_cost'=>$purchase_cost,
-                        'compare_at_price' => $purchase_cost+2,
+                        'cost'=>$purchase_cost+1,
                     ]
                     ]
                 ];

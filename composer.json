@@ -1,5 +1,3 @@
-
-
 {
     "autoload": {
         "psr-4": {
@@ -10,9 +8,7 @@
         "files": ["helpers.php"]
     },
     "require": {
-        "illuminate/database": "^8.83"
+        "illuminate/database": "^8.83",
+        "shopify/shopify-api": "^4.3"
     }
 }
-
-
-
