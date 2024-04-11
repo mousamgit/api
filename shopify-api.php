@@ -12,7 +12,7 @@ class ShopifyAPI {
     }
 
     private function makeRequest($method, $endpoint, $data = null) {
-        $url = "https://{$this->storeUrl}/admin/api/2024-01/{$endpoint}.json";
+        $url = "https://{$this->storeUrl}/admin/api/2024-04/{$endpoint}.json";
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -67,7 +67,7 @@ function main($request) {
         $createdProduct = $shopifyAPI->postData($newProductData);
         if ($createdProduct !== false) {
             echo "Successfully created a new product:\n";
-            print_r($newProductData);
+            dd($newProductData);
         } else {
             echo "Failed to create a new product.\n";
         }
@@ -78,7 +78,7 @@ function main($request) {
 
         if ($products !== false) {
             echo "Successfully fetched products data from Shopify:\n";
-            print_r($products);
+            dd($products);
         } else {
             echo "Failed to fetch products data from Shopify.\n";
         }

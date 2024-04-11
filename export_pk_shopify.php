@@ -60,7 +60,6 @@
       if ($row['deletion'] == 1) { $command= "DELETE"; }
     }else { $command = "DELETE";}
 
-
     // Stone price vs item price
     $itemprice = "";
     if( strtolower($row['type']) == "loose diamonds" ){ $itemprice = $row['stone_price_retail_aud']; } else{ $itemprice = $row['retail_aud']; }
