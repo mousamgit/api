@@ -17,6 +17,7 @@ function route($method, $path, $controllerMethod) {
 
 // My Web routes
 route('GET', '/', 'HomepageController@index');
+route('GET', '/get_list_details', 'HomepageController@getlistDetails');
 
 // Handle invalid routes
 echo "404 Not Found\n";

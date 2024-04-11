@@ -1,11 +1,13 @@
 
 <?php
+ini_set('memory_limit', '1000M');
 
 class listDetailHandler {
     private $con;
     private $db_name='';
     private $listId;
     private $itemsPerPage = 100;
+    private $data_for_shopify = false;
 
     private $primary_table='products';
     private $key_name='id';
@@ -13,6 +15,7 @@ class listDetailHandler {
     private $order_column_value = 'ASC';
 
     public function __construct() {
+
         // Error reporting
         error_reporting(E_ALL);
         ini_set('display_errors', '1');
@@ -38,6 +41,8 @@ class listDetailHandler {
         $this->key_name = $data['key_name'];
         $this->order_column_name = $data['order_column_name'];
         $this->order_column_value = $data['order_column_value'];
+        $this->data_for_shopify = $data['data_for_shopify'];
+
     }
 
     public function getlistDetails() {
@@ -107,11 +112,13 @@ class listDetailHandler {
         $filterConditionCombined = $this->getFilterConditionCombined();
         $columnValuesRow = $this->getColumnValuesRow();
         $listDetailQuery = $this->con->query("SELECT DISTINCT " . implode(',', $columnValuesRow) . " FROM  ".$this->primary_table. "   " . $filterConditionCombined . " AND ".$this->key_name." != '' ");
+
         if ($listDetailQuery->num_rows > 0) {
             while ($row = $listDetailQuery->fetch_assoc()) {
                 $listValuesTotal[] = $row;
             }
         }
+
         return $listValuesTotal;
     }
 
@@ -119,7 +126,12 @@ class listDetailHandler {
         require_once('./connect.php');
         $columnValuesRow = [];
         $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND table_name='".$this->primary_table."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC");
-
+        if($this->data_for_shopify==true)
+        {
+            $userOrderedColumns=$this->con->query("SELECT COLUMN_NAME as column_name
+                       FROM information_schema.columns
+                       WHERE table_schema = 'u288902296_pim' AND table_name = 'pim'");
+        }
         while ($row = $userOrderedColumns->fetch_assoc()) {
             $columnValuesRow[]=$row['column_name'];
         }
@@ -127,7 +139,6 @@ class listDetailHandler {
         if (!in_array($this->key_name, $columnValuesRow)) {
             array_unshift($columnValuesRow, $this->key_name);
         }
-
 
         return $columnValuesRow;
     }

@@ -6,7 +6,8 @@
             "models\\": "models/",
             "controllers\\": "controllers/",
             "config\\": "config/"
-        }
+        },
+        "files": ["helpers.php"]
     },
     "require": {
         "illuminate/database": "^8.83"

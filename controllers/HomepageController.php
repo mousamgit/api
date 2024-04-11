@@ -7,6 +7,9 @@ require_once(__DIR__ . '../../bootstrap/app.php');
 
 class HomepageController
 {
-    private function index()
+    public function index()
     {
+        return View('homepage.index');
+    }
+
 }

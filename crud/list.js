@@ -2,7 +2,7 @@ import listFilters from '../../crud/listFilters.js?v=2';
 import listFilterForm from '../../crud/listFilterForm.js?v=2';
 
 const List = {
-    props: ['urlsku','primary_table','key_name','show_filter_button'],
+    props: ['urlsku','primary_table','key_name','show_filter_button','shopify_export'],
     data() {
         return {
             rootURL:'',
@@ -75,9 +75,9 @@ const List = {
                           }
                       }else{
                           if(columnValue=='DESC'){
-                            return 'High To Low'
-                          }else{
                             return 'Low To High'
+                          }else{
+                            return 'High To Low'
                           }
                       }
                  }
@@ -87,6 +87,7 @@ const List = {
         updateFetchColumns(column_name,column_value){
             this.orderColumnName = column_name;
             this.orderColumnValue = column_value;
+
             this.fetchlists();
         },
         clearCheckedState() {
@@ -165,6 +166,44 @@ const List = {
                 this.clearCheckedState();
             }
 
+        },
+        exportToShopify() {
+            if (this.exportRows.length === 0) {
+                alert("Please Select Items From Table To Export")
+                // Export cannot proceed if there are no rows to export
+                return;
+            }
+            try {
+                let dataToSend = {
+                        'exportRows':this.exportRows
+                    }
+                fetch(this.rootURL+'/api/create_products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to save columns');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                           alert('hello');
+                        } else {
+                            console.error('Error :', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating database:', error);
+                    });
+            } catch (error) {
+                console.error('Error updating database:', error);
+            }
+            this.clearCheckedState();
         },
         exportToCSV() {
             if (this.exportRows.length === 0) {
@@ -287,7 +326,7 @@ const List = {
             }
         },
         getlistUrl(sku){
-            return('/list.php?sku='+sku);
+            return('/product.php?sku='+sku);
         },
         handleMouseDown(event) {
             this.isDragging = true;
@@ -377,10 +416,11 @@ const List = {
         async fetchlists() {
 
             let dataToSend = {
-                'order_column_name': this.key_name,
+                'order_column_name': this.orderColumnName,
                 'order_column_value': this.orderColumnValue,
                 'primary_table':this.primary_table,
-                'key_name':this.key_name
+                'key_name':this.key_name,
+                'data_for_shopify':this.shopify_export?this.shopify_export:false
             }
             const response = await fetch(this.rootURL+'/fetch_filtered_data.php?page=' + this.currentPage,  {
                 method: 'POST',
@@ -530,7 +570,7 @@ const List = {
                   </a>
                   <a v-else class="sorting-btn">
                    <template v-if="orderColumnValue=='ASC'"><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'ASC')}}</div></template>
-                   <template v-else><span @click="updateFetchColumns(colName,'DESC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
+                   <template v-else><span @click="updateFetchColumns(colName,'ASC')"><i class="fa fa-angle-down" ></i></span><div class="box-content" >{{getDataTypeValue(colName,'DESC')}}</div></template>  
                   </a>
                 {{ convertToTitleCase(colName) }} &nbsp; <a @click="updateColumns(colName,false)"><i class="fa fa-close"></i></a>
                  </th>                
@@ -602,8 +642,6 @@ const List = {
                 <a class="page-btn" @click="nextPage" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }" ><i class="fa fa-caret-right" aria-hidden="true"></i></a>
                 <a class="page-btn" @click="lastPage(totalRows,itemsPerPage)" :class="{ 'disabled': currentPage >= totalPages(totalRows,itemsPerPage) }"><i class="fa fa-step-forward" aria-hidden="true"></i></a>
                 
-
-
               </div>
               <div class="text-muted col-md-4 text-center p-2">
                 {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ (currentPage - 1) * itemsPerPage + listValues.length }} / {{totalRows}} records
@@ -611,6 +649,8 @@ const List = {
               <div class="text-muted col-md-4 text-end">
                 <a class="icon-btn btn-col"  title="Columns" @click="toggleColumnSelector"><i class="fa fa-columns" aria-hidden="true"></i></a>
                 <a class="icon-btn" @click="exportToCSV" title="Export to CSV" :disabled="isExportDisabled"><i class="fa fa-download" aria-hidden="true"></i></a>
+                
+                <a class="icon-btn" v-if="shopify_export == true"  @click="exportToShopify" title="Export to Shopify" :disabled="isExportDisabled">Export To Shopify</a>
               </div>
         </div>
         </div>
