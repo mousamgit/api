@@ -18,6 +18,7 @@ const myapp = Vue.createApp({
           calculateTotal(quantity, price,discount) {
             const qty = Number(quantity);
             const total = price * quantity*(1-discount/100);
+  
             this.totals.push(total);
             this.quantitytotals.push(qty);
             return total;
@@ -26,11 +27,15 @@ const myapp = Vue.createApp({
             return this.totals.reduce((acc, cur) => acc + cur, 0);
           },
           calculateQty() {
+           
             return this.quantitytotals.reduce((acc, cur) => acc + cur, 0);
           },
 
           editdata(row, col) {
             // Set the editingCell to the combination of colName and row
+            this.quantitytotals = [];
+            this.totals = [];
+     
             this.editingCell = [row,col];
           },
         

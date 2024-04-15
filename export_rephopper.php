@@ -51,7 +51,7 @@
     //name
     $name = "";
 
-    if ($row['sales_percentage'] > 0) {$name .= "[SPECIAL" . $row['sales_percentage'] . "%]";}
+    if ($row['sales_percentage'] > 0) {$name .= "[SPECIAL" . $row['sales_percentage'] . "%] ";}
     if (strtolower($row['type']) === "loose sapphires") {
         if (strtolower($row['collections']) === "sds") {
             $name .= "AU Sapphire " . $row['colour'] . " " . $row['shape'] . " " . $row['carat'] . "ct " . $row['measurement'];} 

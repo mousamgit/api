@@ -17,7 +17,7 @@
   include_once ('connect.php');
   include_once ('mkdir.php');
 
-  $query = 'SELECT * FROM pim WHERE ((image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND description<> "" AND description IS NOT NULL AND sync_shopify=1 AND brand = "Sapphire Dreams" AND collections != "SDL" AND collections != "SDM") OR (image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND sync_shopify=1 AND type = "loose sapphires" AND collections != "SDL" AND collections != "SDM"))ORDER BY product_title ASC;';
+  $query = 'SELECT * FROM pim WHERE ((image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND description<> "" AND description IS NOT NULL AND retail_exclusive = 1 AND brand = "Sapphire Dreams" AND collections != "SDL" AND collections != "SDM") OR (image1<> "" AND image1 IS NOT NULL AND retail_aud > 0 AND retail_exclusive = 1 AND type = "loose sapphires" AND collections != "SDL" AND collections != "SDM"))ORDER BY product_title ASC;';
   $result = mysqli_query($con, $query) or die(mysqli_error($con));
 
   $filepath = dirname($_SERVER['DOCUMENT_ROOT']) . '/export/sd-shopify.csv';

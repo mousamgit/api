@@ -1,10 +1,26 @@
 <?php
     include 'functions.php';
-    $sku = array("TPR2103","TPR2105","TPR2140","STA0037","TDR1959","TPR2138","TPR2143","TPR2160","TPR2134");
     require ('connect.php');
+    $id=$_GET['id'];
+  
 
-
-
+    $quotequery = " SELECT * from quote WHERE id = '".$id."'";
+    $quoteresult = mysqli_query($con, $quotequery) or die(mysqli_error($con));
+    while($row = mysqli_fetch_assoc($quoteresult)){
+        $sku = explode(",",$row[sku]);
+        $code = $row[customer];
+        $user = $row[user];
+        $date = $row[date];
+    }
+    $custquery = " SELECT * from customer WHERE code = '".$code."'";
+    $custresult = mysqli_query($con, $custquery) or die(mysqli_error($con));
+    while($row = mysqli_fetch_assoc($custresult)){
+        $customer = $row[company];
+    }
+    switch ($user)
+    {
+        case "mark":  $rep = "Mark Dimmock"; $repcontact = "+61 498 166 167"; $repemail = "mark@samsgroup.com.au"; break;
+    }
 ?>
 
 <html>
@@ -13,7 +29,7 @@
         <script src="../js/pimjs.js" ></script>
         <script src="../js/components/sirvSpin.js" ></script>
         <script src="../js/components/certLink.js" ></script>
-        <title> Quote for Perth Mint </title>
+        <title> Quote for <?php echo $customer; ?></title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
@@ -151,11 +167,12 @@
         <div id="app">
     <div class="logo"><img src="sga-logo.jpg"></div>
     <div class="info-area">
-        <b>Quote prepared for:</b> The Perth Mint<br>
-        <b>Sales Representative:</b> Mark Dimmock<br>
-        <b>Contact Number:</b> +61 498 166 167<br>
-        <b>Contact Email:</b> <a href="mailto:mark@samsgroup.com.au">mark@samsgroup.com.au</a><br>
-        <b>Date:</b> Friday, 5 April 2024<br>
+        <b>Quote prepared for:</b> <?php echo $customer; ?><br>
+        <b>Quote ID:</b> <?php echo $id; ?><br>
+        <b>Sales Representative:</b> <?php echo $rep; ?> <br>
+        <b>Contact Number:</b> <?php echo $repcontact; ?> <br>
+        <b>Contact Email:</b> <a href="mailto:<?php echo $repemail; ?>"><?php echo $repemail; ?></a><br>
+        <b>Date:</b> <?php echo date('j F Y',strtotime($date)); ?><br>
     </div>
     <?php     
         foreach($sku as $v)
@@ -245,7 +262,8 @@
 
 
     <div class="info-area">
-       <b>Please note:</b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.
+       <b>Please note:</b> Prices listed are only active for the next 3 business days. Other details, images and specifications may change at any time.<br>
+       <span style="font-size: 8px;"><?php echo $encryptedid; ?></span>
     </div>
     <div class="d-none"></div>
 </div>

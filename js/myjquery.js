@@ -2,6 +2,8 @@ $(document).ready(function(){
 
     spinsrc = '';
 
+    
+
     var $document = $(document),
         $header = {
             drawerToggle : $('.header-drawer-toggle')
@@ -73,11 +75,11 @@ $(document).ready(function(){
 
 
     
-      if($('.home-table-container').length>0){
-        var tableheight = window.innerHeight - 270;
-        // var containerTop = $('.home-table-container').getBoundingClientRect().top;
+      if($('.overflow-container').length>0){
+        var tableheight = window.innerHeight - 170;
+        // var containerTop = $('.overflow-container').getBoundingClientRect().top;
         console.log('tableheight'+tableheight);
-        $('.home-table-container').css('max-height',tableheight+'px');
+        $('.overflow-container').css('max-height',tableheight+'px');
       }
       
       //tabs
@@ -100,20 +102,8 @@ $(window).on("load", function() {
     $('.no-spin-container').each(function(){
         $(this).closest('.imgcontainer').find('.spinicon').hide();
     });
-    //fix table width
-    if($('.pimtable').length>0){
-        $('.pimtable th').each(function(index) {
-            var maxColumnWidth = 0;
-        
-            $('.pimtable tbody tr').each(function() {
-              var cellContentWidth = $(this).find('td').eq(index).text().length * 10; // Adjust the multiplier as needed
-              maxColumnWidth = Math.max(maxColumnWidth, cellContentWidth);
-              console.log(maxColumnWidth+','+cellContentWidth);
-            });
-        
-            $('.pimtable td').filter(function() {
-              return $(this).index() === index;
-            }).css('width', maxColumnWidth + 'px');
-          });
-    }
+    $('.no-cert').each(function(){
+        $(this).closest('.cert-container').hide();
+    });
+
 });

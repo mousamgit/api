@@ -62,13 +62,38 @@ class ProductApiController
 
     public function postData($productData)
     {
+
+input VariantInput {
+        sku: String!
+        price: Float!
+        inventoryPolicy: String
+    fulfillmentService: String
+    inventoryManagement: String
+    cost: Float
+    inventoryQuantity: Int
+    # Add other variant fields here
+}
+
         $mutation = '
     mutation CreateProduct($input: ProductInput!) {
         productCreate(input: $input) {
+              title: String!
+              descriptionHtml: String
+              vendor: String
+              productType: String
+              handle: String
+              tags: [String]
+              status: String
+              variants: [VariantInput]   # Add this line to include the variants field
             product {
                 id
                 title
-                body_html            
+                description
+                vendor
+                productType,
+                handle,
+                tags,
+                status,          
             }
             userErrors {
                 field
@@ -121,16 +146,36 @@ class ProductApiController
                     node {
                         id
                         title
-                        description
+                        descriptionHtml
                         vendor
                         productType,
                         handle,
                         tags,
                         status,
-                        compareAtPriceRange,
-                        featuredImage,
+                         variants {
+                            edges {
+                                node {
+                                    id
+                                    sku
+                                    price
+                                    inventoryPolicy
+                                    fulfillmentService
+                                    inventoryManagement
+                                    cost
+                                    inventoryQuantity
+                                }
+                            }
+                        }
+                            images {
+                                edges {
+                                    node {
+                                        id
+                                        src
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
             }
         }';
 
@@ -199,21 +244,23 @@ class ProductApiController
         {
 
             //check images
-            $imageURL = "";
-            if($row['image1'] != "") { $imageURL .= $row['image1'].";";}
-            if($row['image2'] != "") { $imageURL .= $row['image2'].";";}
-            if($row['image3'] != "") { $imageURL .= $row['image3'].";";}
-            if($row['image4'] != "") { $imageURL .= $row['image4'].";";}
-            if($row['image5'] != "") { $imageURL .= $row['image5'].";";}
-            if($row['image6'] != "") { $imageURL .= $row['image6'].";";}
+            $imageURL = [];
+            if($row['image1'] != "") { $imageURL[] = $row['image1'];}
+            if($row['image2'] != "") { $imageURL[] = $row['image2'];}
+            if($row['image3'] != "") { $imageURL[] = $row['image3'];}
+            if($row['image4'] != "") { $imageURL[] = $row['image4'];}
+            if($row['image5'] != "") { $imageURL[] = $row['image5'];}
+            if($row['image6'] != "") { $imageURL[] = $row['image6'];}
             if($row['packaging_image'] != "") { $imageURL .= $row['packaging_image'];}
+
+
 
             //Status - draft if steve, discontinued, wholesale only
             $status = "";
-            if ( preg_match("/steve/i", strtolower($row['collections_2']))) { $status = "draft"; }
-            elseif ( preg_match("/discontinued/i", strtolower($row['collections_2']))) { $status = "draft"; }
-            elseif ( preg_match("/wholesale_only/i", strtolower($row['collections_2']))) { $status = "draft"; }
-            else { $status = "active"; }
+            if ( preg_match("/steve/i", strtolower($row['collections_2']))) { $status = "DRAFT"; }
+            elseif ( preg_match("/discontinued/i", strtolower($row['collections_2']))) { $status = "DRAFT"; }
+            elseif ( preg_match("/wholesale_only/i", strtolower($row['collections_2']))) { $status = "DRAFT"; }
+            else { $status = "ACTIVE"; }
 
             //Command - delete if 0 stock or marked for deletion (deletion = 1), MERGE if in stock but status is draft, MERGE if everything passes
             $command = "";
@@ -265,15 +312,29 @@ class ProductApiController
             }
 
             $productData = [
-                        'title' => 'apr15'.$row['product_title'],
-                        'body_html' => $row['description']
+                        'title' => 'yesyes'.$key.' '.$row['product_title'],
+                        'descriptionHtml' => $row['description'],
+                        'vendor' => $row['brand'],
+                        'productType' => $row['type'],
+                        'handle' => $handle,
+                        'tags' => $tags,
+                        'status' => $status,
+                        'variants' => [
+                            [
+                            'sku'=>$row['sku'],
+                            'price'=>$itemprice,
+                            'inventoryPolicy'=>'deny',
+                            'fulfillmentService'=>'manual',
+                            'inventoryManagement'=>'shopify',
+                            'cost'=>$purchase_cost,
+                            'inventoryQuantity'=>80
+                            ],
+                        ]
             ];
-
 
             //save data to product shopify
             $productResponse = $this->postData($productData);
-
-
+            dd($productResponse);
 
 //            //Check if product creation was successful
 //            if ($productResponse !== false && isset($productResponse['product'])) {
@@ -306,7 +367,7 @@ class ProductApiController
 //                $variantsResponse = $this->putData($productId, $variantsData);
 //                dd($variantsResponse);
 //
-            dd($productResponse);
+//            dd($productResponse);
                 if ($productResponse !== false) {
                     $success=true;
                 } else {

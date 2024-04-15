@@ -61,7 +61,12 @@ const List = {
 
 
     methods: {
-
+         clacwidth(name,short,long){
+            if (long.includes(name)) {return 400;}
+            else if  (short.includes(name)) {return 35;}
+            else if  (name.length<6) {return 115;}
+            else{return name.length*6+80}
+         },
          getDataTypeValue(columnName,columnValue) {
              for (const column of this.columns) {
                  if (column.column_name === columnName) {
@@ -548,11 +553,11 @@ const List = {
     <list-filters :primary_table="primary_table" :listDetails="listDetails" :filters="filters" :showFilters="showFilters" @filters-updated="handleFiltersUpdated"></list-filters>
     </div>
      
-        <div class="pim-padding ">   
+          
         
          
-          <div class="overflow-container home-table-container table-responsive" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
-          <table class="pimtable  display homepage-table">
+          <div class="overflow-container" ref="overflowContainer"  @mousedown="handleMouseDown"        @mousemove="handleMouseMove"        @mouseup="handleMouseUp">
+          <table class="pimtable  display list-table">
             <thead>
               <tr>
                 <th class="hidden">S.N</th>
@@ -561,7 +566,8 @@ const List = {
                  
                  <th :col="colName" v-for="(colName, index) in columnValues" :key="index" 
                 :draggable="true" @dragstart="handleDragStart(index)" 
-                @dragover="handleDragOver(index)" @drop="handleDrop(index)" :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit' }">
+                @dragover="handleDragOver(index)" @drop="handleDrop(index)" 
+                :style="{ backgroundColor: draggedIndex === index ? 'lightblue' : 'inherit', minWidth: clacwidth(colName,['checkbox'],['description', 'specifications']) + 'px' }">
                 
                  
                   <a v-if="dataTypeValue=='varchar'"  class="sorting-btn">
@@ -620,8 +626,8 @@ const List = {
             </tbody>
           </table>
           </div>
-
-           <div class="mt-3 row">
+            <div  class="bottombar">
+           <div class="mt-3 row ">
                 <div class="btn-group pagination-container col-md-4" role="group" aria-label="Pagination">
                 
                 <select v-model="currentPage" @change="changePage" class="page-dropdown hidden">
@@ -652,7 +658,7 @@ const List = {
                 
                 <a class="icon-btn" v-if="shopify_export == true"  @click="exportToShopify" title="Export to Shopify" :disabled="isExportDisabled">Export To Shopify</a>
               </div>
-        </div>
+              </div>
         </div>
         <div class="bg-light shadow right-slider-container animation-mode" :class="{ 'is-open': showColumnSelector }" >
             <div class="ui-widget-content">
