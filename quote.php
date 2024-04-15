@@ -29,7 +29,7 @@
         <script src="../js/pimjs.js" ></script>
         <script src="../js/components/sirvSpin.js" ></script>
         <script src="../js/components/certLink.js" ></script>
-        <title> Quote for Perth Mint </title>
+        <title> Quote for <?php echo $customer; ?></title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
@@ -168,6 +168,7 @@
     <div class="logo"><img src="sga-logo.jpg"></div>
     <div class="info-area">
         <b>Quote prepared for:</b> <?php echo $customer; ?><br>
+        <b>Quote ID:</b> <?php echo $id; ?><br>
         <b>Sales Representative:</b> <?php echo $rep; ?> <br>
         <b>Contact Number:</b> <?php echo $repcontact; ?> <br>
         <b>Contact Email:</b> <a href="mailto:<?php echo $repemail; ?>"><?php echo $repemail; ?></a><br>
