@@ -5,50 +5,53 @@ namespace controllers;
 require_once(__DIR__ . '../../vendor/autoload.php');
 require_once(__DIR__ . '../../bootstrap/app.php');
 
+use http\Env\Request;
+use models\User;
+use models\Products;
+use config\DB;
+
+
 class ProductApiController
 {
 
     private $storeUrl;
     private $accessToken;
 
+
     public function __construct()
     {
         $this->storeUrl = "sga-development.myshopify.com";
         $this->accessToken = "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";
     }
-
     public function mypimdata()
     {
         return View('shopify.mypimdata');
     }
 
-    private function makeGraphQLRequest($query, $variables = [])
+    private function makeRequest($method, $endpoint, $data = null)
     {
-
-        $url = "https://{$this->storeUrl}/admin/api/2024-04/graphql.json";
-        $headers = [
-            "Content-Type: application/json",
-            "X-Shopify-Access-Token: {$this->accessToken}"
-        ];
-
-        // Prepare the request payload
-        $data = [
-            'query' => $query,
-            'variables' => $variables
-        ];
+        $url = "https://{$this->storeUrl}/admin/api/2024-04/{$endpoint}.json";
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "X-Shopify-Access-Token: {$this->accessToken}"
+        ));
+
+        if ($method == 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        }
+        elseif ($method == 'PUT') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        }
 
         $response = curl_exec($ch);
-
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         curl_close($ch);
-
         if ($statusCode == 200 || $statusCode == 201) {
             return json_decode($response, true);
         } else {
@@ -59,134 +62,33 @@ class ProductApiController
         }
     }
 
-
     public function postData($productData)
     {
-        $mutation = '
-    mutation CreateProduct($input: ProductInput!) {
-        productCreate(input: $input) {
-            product {
-                id
-                title
-                body_html            
-            }
-            userErrors {
-                field
-                message
-            }
-        }
+        return $this->makeRequest('POST', 'products', $productData);
     }
-';
-        $variables = ['input' => $productData];
-
-
-        return $this->makeGraphQLRequest($mutation, $variables);
-    }
-
-    public function putData($productId, $productData)
+    public function putData($productId,$productData)
     {
-        $mutation = '
-    mutation CreateProduct($input: ProductInput!) {
-        productCreate(input: $input) {
-            product {
-                id
-                title
-            }
-            userErrors {
-                field
-                message
-            }
-        }
-    }
-';
-
-
-        return $this->makeGraphQLRequest($mutation, ['id' => $productId, 'input' => $productData]);
+        return $this->makeRequest('PUT', "products/{$productId}", $productData);
     }
 
-    public function getData($query)
+    public function getData($attribute)
     {
-        $storeUrl = $this->storeUrl;
-        $accessToken = $this->accessToken;
 
-        $url = "https://{$storeUrl}/admin/api/2024-04/graphql.json";
-        $headers = [
-            "Content-Type: application/json",
-            "X-Shopify-Access-Token: {$accessToken}"
-        ];
-
-        $query = '{
-            products(first: 3) {
-                edges {
-                    node {
-                        id
-                        title
-                        description
-                        vendor
-                        productType,
-                        handle,
-                        tags,
-                        status,
-                        compareAtPriceRange,
-                        featuredImage,
-                    }
-                }
-            }
-        }';
-
-        $data = [
-            'query' => $query
-        ];
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        $response = curl_exec($ch);
-
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        curl_close($ch);
-
-        if ($statusCode == 200 || $statusCode == 201) {
-            $responseData = json_decode($response, true);
-            dd($responseData);
-            // Process the response data as needed
-        } else {
-            echo "Error: HTTP status code {$statusCode}\n";
-            echo "Response: {$response}\n";
-        }
-    }
-
-    public function getQuantityUpdates($productId)
-    {
-        $query = '
-            product(id: "'.$productId.'") {
-                variants {
-                    sku
-                    # Add other variant fields you need here
-                }
-            }
-        ';
-
-        return $this->getData($query);
+        return $this->makeRequest('GET', $attribute);
     }
 
     public function getProducts()
     {
-        $query = 'products(first: 10) {
-            edges {
-                node {
-                    id
-                    title
-                    # Add other product fields you need here
-                }
-            }
-        }';
 
-        return $this->getData($query);
+        $products = $this->getData('products');
+
+        if ($products !== false) {
+            echo "Successfully fetched products data from Shopify:\n";
+            dd($products);
+        } else {
+            echo "Failed to fetch products data from Shopify.\n";
+        }
+
     }
 
     public function createProduct()
@@ -265,54 +167,53 @@ class ProductApiController
             }
 
             $productData = [
-                        'title' => 'apr15'.$row['product_title'],
-                        'body_html' => $row['description']
+                "product" =>
+                    [
+                        'title' => 'mtest2'.$row['product_title'],
+                        'body_html' => $row['description'],
+                        'vendor' => $row['brand'],
+                        'product_type' => $row['type'],
+                        'handle' => $handle,
+                        'tags' => $tags,
+                        'status' => $status,
+                        'compare_at_price' => $purchase_cost,
+                    ]
             ];
 
-
-            //save data to product shopify
+            //save mousam test data to product shopify
             $productResponse = $this->postData($productData);
 
 
+            //Check if product creation was successful
+            if ($productResponse !== false && isset($productResponse['product'])) {
+                $productId = $productResponse['product']['id'];
 
-//            //Check if product creation was successful
-//            if ($productResponse !== false && isset($productResponse['product'])) {
-//                //$productId = $productResponse['product']['id'];
-//                $productId = 7815135166639;
-//                $inventory_quantity = 50; // Example: Total quantity in stock
-//                $inventory_commitment = 10; // Example: Quantity committed to pending orders
-//                $inventory_available = $inventory_quantity - $inventory_commitment; // Calculate available quantity
-//                $inventory_on_hand = $inventory_quantity; // On hand quantity, assuming all inventory is available
-//
-//
-//                $variantsData=[
-//                    'product'=>[
-//                        'variant'=>[
-//                            'product_id'=>$productId,
-//                            'sku'=>$row['sku'],
-//                            'price'=>$itemprice,
-//                            'inventory_policy'=>'deny',
-//                            'fulfillment_service'=>'manual',
-//                            'inventory_management'=>'shopify',
-//                            'cost'=>$purchase_cost,
-//                            'inventory_quantity_on_hand'=>50,
-//                            'committed'=>2,
-//                            'inventory_quantity'=>48
-//                        ]
-//                    ]
-//                ];
-//
-//                //variant data insertion
-//                $variantsResponse = $this->putData($productId, $variantsData);
-//                dd($variantsResponse);
-//
-            dd($productResponse);
-                if ($productResponse !== false) {
+                $variantsData=[
+                    'product'=>[
+                        'variant'=>[
+                            'product_id'=>$productId,
+                            'sku'=>$row['sku'],
+                            'price'=>$itemprice,
+                            'inventory_policy'=>'deny',
+                            'fulfillment_service'=>'manual',
+                            'inventory_management'=>'shopify',
+                            'cost'=>$purchase_cost+1,
+                        ]
+                    ]
+                ];
+
+                //variant data insertion
+                $variantsResponse = $this->putData($productId, $variantsData);
+
+
+                if ($variantsResponse !== false) {
                     $success=true;
                 } else {
                     $success=false;
                 }
-
+            } else {
+                echo "Failed to create a new product.\n";
+            }
         }
         if($success==true)
         {
@@ -320,5 +221,6 @@ class ProductApiController
         }
     }
 
-}
 
+
+}
