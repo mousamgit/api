@@ -292,7 +292,7 @@ const List = {
             }
         },
         getlistUrl(sku){
-            return('/list.php?sku='+sku);
+            return('/product.php?sku='+sku);
         },
         handleMouseDown(event) {
             this.isDragging = true;
