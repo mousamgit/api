@@ -60,79 +60,6 @@ class ProductApiController
     }
 
 
-    public function postData($productData)
-    {
-        // Construct the mutation with the variant data included
-        $mutation = '
-mutation ProductCreateWithVariant($productInput: ProductInput!) {
-  productCreate(input: $productInput) {
-    product {
-      id
-      title
-      descriptionHtml
-      vendor
-      productType
-      handle
-      tags
-      status
-    }
-    userErrors {
-      field
-      message
-    }
-  }
-}
-';
-
-        // Set the variables for the GraphQL request
-        $variables = [
-            'productInput' => $productData
-        ];
-
-        // Make the GraphQL request
-        return $this->makeGraphQLRequest($mutation, $variables);
-    }
-
-    public function putData($variantData,$productId)
-    {
-        $mutation = '
-    mutation 
-        productVariantCreate(input: $variantInput) {
-            productVariant {
-                sku
-            }
-            userErrors {
-                field
-                message
-            }
-        }
-    }';
-
-        $variables = [ 'productInput' =>$productData];
-
-        return $this->makeGraphQLRequest($mutation, $variables);
-    }
-
-//        public function putVariantData($productId, $variantsData)
-//    {
-//        $mutation = '
-//            mutation CreateProductVariant($productId: ID!, $variants: [ProductVariantInput!]!) {
-//                productVariantCreate(productId: $productId, variants: $variants) {
-//                    product {
-//                        id
-//                        title
-//                    }
-//                    userErrors {
-//                        field
-//                        message
-//                    }
-//                }
-//            }
-//        ';
-//
-//        return $this->makeGraphQLRequest($mutation, ['productId' => $productId, 'variants' => $variantsData]);
-//    }
-
     public function getData($query)
     {
         $storeUrl = $this->storeUrl;
@@ -144,34 +71,7 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
             "X-Shopify-Access-Token: {$accessToken}"
         ];
 
-        $query = '{
-            products(first: 10) {
-            edges {
-                node {
-                    id
-                    title
-                    descriptionHtml
-                    vendor
-                    productType
-                    handle
-                    tags
-                    status
-                    variants(first: 10) {
-                      edges {
-                        node {
-                          id
-                          sku
-                          price
-                          inventoryPolicy
-                          inventoryManagement
-                          inventoryQuantity
-                        }
-                      }
-                    }
-                }
-            }
-            }
-        }';
+        $query = $query;
 
         $data = [
             'query' => $query
@@ -191,7 +91,7 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
 
         if ($statusCode == 200 || $statusCode == 201) {
             $responseData = json_decode($response, true);
-            dd($responseData);
+            return $responseData;
             // Process the response data as needed
         } else {
             echo "Error: HTTP status code {$statusCode}\n";
@@ -199,35 +99,8 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
         }
     }
 
-    public function getQuantityUpdates($productId)
-    {
-        $query = '
-            product(id: "'.$productId.'") {
-                variants {
-                    sku
-                    # Add other variant fields you need here
-                }
-            }
-        ';
 
-        return $this->getData($query);
-    }
-
-    public function getProducts()
-    {
-        $query = 'products(first: 10) {
-            edges {
-                node {
-                    id
-                    title
-                    # Add other product fields you need here
-                }
-            }
-        }';
-
-        return $this->getData($query);
-    }
-
+   
     public function createProduct()
     {
 
@@ -236,8 +109,6 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
         $exporting_rows = $data['exportRows'];
 
         foreach ($exporting_rows as $key => $row) {
-
-            //check images
             $imageURL = [];
             if ($row['image1'] != "") {
                 $imageURL[] = $row['image1'];
@@ -260,7 +131,6 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
             if ($row['packaging_image'] != "") {
                 $imageURL .= $row['packaging_image'];
             }
-
 
             //Status - draft if steve, discontinued, wholesale only
             $status = "";
@@ -374,10 +244,12 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
                     $tags .= "argylecertified";
                 }
             }
+            $productCheck = $this->getProductSingle(7840161628335);
+            dd($productCheck);
 
             $productData = [
                 'input' => [
-                    'title' => 'riri' . $key . ' ' . $row['product_title'],
+                    'title' => $row['product_title'],
                     'descriptionHtml' => $row['description'],
                     'vendor' => $row['brand'],
                     'productType' => $row['type'],
@@ -386,99 +258,51 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
                     'status' => $status
                 ],
             ];
-
-
-
+            
             $productResponse = $this->createProductWithVariantAndInventory($productData);
-//            dd($productResponse);
 
             if(isset($productResponse['data']['productCreate']['product']['variants']['edges'][0]['node']))
             {
-//              $variantId =$productResponse['data']['productCreate']['product']['variants']['edges'][0]['node']['id'];
-//              $locationId =$productResponse['data']['productCreate']['product']['variants']['edges'][0]['node']['inventoryItem']['inventoryLevels']['edges'][0]['node']['location']['id'];
-                $variantId ='gid://shopify/ProductVariant/43596778700975';
-                $locationId ='gid://shopify/Location/70186860719';
-                $variantInput = [
-                "inventoryManagement"=> "SHOPIFY",
-                "sku" => $row['sku'],
-                "price" => $itemprice,
-                "id"=>$variantId,
-                "inventoryPolicy"=> "DENY",
-                'inventoryQuantities' => [
-                        [
-                            'availableQuantity' => 30,
-                            'locationId' => $locationId
-                        ]
-                ]
-                ];
-
-                $updateResponse=$this->updateProductVariant($variantInput);
-//                dd($updateResponse);
+                $variantId =$productResponse['data']['productCreate']['product']['variants']['edges'][0]['node']['id'];
+                $locationId =$productResponse['data']['productCreate']['product']['variants']['edges'][0]['node']['inventoryItem']['inventoryLevels']['edges'][0]['node']['location']['id'];
+                           
+                $variantUpdateInput = [
+                    "inventoryManagement"=> "SHOPIFY",
+                    "sku" => $row['sku'],
+                    "price" => $itemprice,
+                    "id"=>$variantId,
+                    "inventoryPolicy"=> "DENY"
+                    ];
+                  
+                $updateResponse=$this->updateProductVariant($variantUpdateInput);
                 if(isset($updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']))
                 {
                     $inventoryLevelId=$updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']['id'];
                     $inventoryId=$updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['id'];
-                    $locationId=$updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']['location']['id'];
-                    $quantity=$row['shopify_qty'];
+                    // $quantity=$row['shopify_qty'];
+                    $inventory_available_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][0]['quantity'];
+                    $inventory_on_hand_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][1]['quantity'];
+                    $inventory_commited_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][2]['quantity'];
 
-                    $resp =$this->adjustInventoryQuantity($inventoryId,$locationId,$quantity);
-                    dd($resp);
-                }
-
-            }
-
-        }
-    }
-
-    public function createProductWithVariantAndInventory($productData)
-    {
-        // Define the GraphQL mutation
-        $mutation = '
-    mutation CreateProductWithVariantAndInventory($input: ProductInput!) {
-      productCreate(input: $input) {
-        product {
-          id
-          title
-          variants(first: 1) {
-            edges {
-              node {
-                id
-                title
-                sku
-                inventoryItem {
-                  id
-                  inventoryLevels(first: 1) {
-                      edges {
-                        node {
-                          id
-                          location {
-                            id
-                            name
-                          }
-                        }
-                      }
+                    $quantity = $row['shopify_qty']-$inventory_available_quantity-$inventory_commited_quantity;
+                   
+                    if($quantity !=0)
+                    {
+                        $resp =$this->adjustInventoryQuantity($inventoryId,$locationId,$quantity);
+                        // dd($resp);
+                        $success='adjusted';
+                        dd($success);
                     }
+                    $success='default no adjustion required';
+                    dd($success);
                 }
-                
-              }
+
             }
-          }
+
         }
-      
-      }
-    }';
-
-        // Extract input data
-        $productInput = $productData['input'];
-
-        // Set variables for the mutation
-        $variables = [
-            'input' => $productInput
-        ];
-
-        // Make the GraphQL request with the mutation and variables
-        return $this->makeGraphQLRequest($mutation, $variables);
     }
+
+   
 
    
 
@@ -539,6 +363,7 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
                         }
                       }
                 ';
+                
         $variables = [
             'input' => [
                 'changes' => [
@@ -552,9 +377,80 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
                 'reason' => 'other'
             ]
         ];
+        return $this->makeGraphQLRequest($mutation, $variables);
+    }
+
+    
+    public function createProductWithVariantAndInventory($productData)
+    {
+        // Define the GraphQL mutation
+        $mutation = '
+    mutation CreateProductWithVariantAndInventory($input: ProductInput!) {
+      productCreate(input: $input) {
+        product {
+          id
+          title
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                title
+                sku
+                inventoryItem {
+                  id
+                  inventoryLevels(first: 1) {
+                      edges {
+                        node {
+                          id
+                          location {
+                            id
+                            name
+                          }
+                        }
+                      }
+                    }
+                }
+                
+              }
+            }
+          }
+        }
+      
+      }
+    }';
+
+        // Extract input data
+        $productInput = $productData['input'];
+
+        // Set variables for the mutation
+        $variables = [
+            'input' => $productInput
+        ];
 
         // Make the GraphQL request with the mutation and variables
         return $this->makeGraphQLRequest($mutation, $variables);
+    }
+    public function getInventoryLevelData($inventoryLevelId)
+    {
+        $query='{
+            inventoryLevel(id: "'.$inventoryLevelId.'") {
+              id
+              quantities(names: ["available","on_hand", "committed"]) {
+              name
+              quantity
+              }
+              item {
+                id
+              }
+              location {
+                id
+              }
+              createdAt
+              updatedAt
+              canDeactivate
+            }
+        }';
+       return $this->getData($query);
     }
     public function addBulkVariantForProduct($productId,$variantData)
     {
@@ -656,6 +552,34 @@ mutation ProductCreateWithVariant($productInput: ProductInput!) {
         // Make the GraphQL request
         return $this->makeGraphQLRequest($mutation, $variables);
     }
+    public function getProducts()
+    {
+        $query = 'products(first: 10) {
+            edges {
+                node {
+                    id
+                    title
+                }
+            }
+        }';
+
+        return $this->getData($query);
+    }
+    public function getProductSingle($productId)
+    {
+        
+        $query = 'product(id: "'.$productId.'") {
+            edges {
+                node {
+                    id
+                    title
+                }
+            }
+        }';
+
+        return $this->getData($query);
+    }
 
 }
+
 
