@@ -244,8 +244,11 @@ class ProductApiController
                     $tags .= "argylecertified";
                 }
             }
-            $productCheck = $this->getProductSingle(7840161628335);
-            dd($productCheck);
+            $productCheck = $this->getProductSingle($row['sku']);
+            if(count($productCheck['data']['products']['edges'])>0)
+            {
+                dd("product available");
+            }
 
             $productData = [
                 'input' => [
@@ -565,17 +568,27 @@ class ProductApiController
 
         return $this->getData($query);
     }
-    public function getProductSingle($productId)
+    public function getProductSingle($sku)
     {
         
-        $query = 'product(id: "'.$productId.'") {
-            edges {
+        $query = '{
+            products(first: 1, query: "sku:'.$sku.'") {
+              edges {
                 node {
-                    id
-                    title
+                  id
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        weight
+                        sku
+                      }
+                    }
+                  }
                 }
+              }
             }
-        }';
+          }';
 
         return $this->getData($query);
     }
