@@ -5,8 +5,6 @@ namespace controllers;
 require_once(__DIR__ . '../../vendor/autoload.php');
 require_once(__DIR__ . '../../bootstrap/app.php');
 
-use models\Products;
-
 class ProductApiController
 {
 
@@ -93,7 +91,6 @@ class ProductApiController
 
         if ($statusCode == 200 || $statusCode == 201) {
             $responseData = json_decode($response, true);
-            // dd($responseData);
             return $responseData;
             // Process the response data as needed
         } else {
@@ -101,42 +98,156 @@ class ProductApiController
             echo "Response: {$response}\n";
         }
     }
-    //view products
-    public function getProducts()
-    {
-        $query = 'products(first: 10) {
-            edges {
-                node {
-                    id
-                    title
-                }
-            }
-        }';
-
-        return $this->getData($query);
-    }
 
 
    
     public function createProduct()
     {
         $data = json_decode(file_get_contents("php://input"), true);
-
         $exporting_rows = $data['exportRows'];
-       
-       
+        //dd($exporting_rows);
 
         foreach ($exporting_rows as $key => $row) {
             
-            $imageURL = $this->getImageURLs($row);
-            $status = $this->getStatus($row);
-            $command = $this->getCommand($row, $status);
-            $itemprice = $this->getItemPrice($row);
-            $handle = $this->getHandle($row);
-            $purchase_cost = $this->getPurchaseCost($row);
-            $tags = $this->getTags($row);
+            $imageURL = [];
+            if ($row['image1'] != "") {
+                $imageURL[] = $row['image1'];
+            }
+            if ($row['image2'] != "") {
+                $imageURL[] = $row['image2'];
+            }
+            if ($row['image3'] != "") {
+                $imageURL[] = $row['image3'];
+            }
+            if ($row['image4'] != "") {
+                $imageURL[] = $row['image4'];
+            }
+            if ($row['image5'] != "") {
+                $imageURL[] = $row['image5'];
+            }
+            if ($row['image6'] != "") {
+                $imageURL[] = $row['image6'];
+            }
+            if ($row['packaging_image'] != "") {
+                $imageURL[] = $row['packaging_image'];
+            }
+           
 
+            //Status - draft if steve, discontinued, wholesale only
+            $status = "";
+            if (preg_match("/steve/i", strtolower($row['collections_2']))) {
+                $status = "DRAFT";
+            } elseif (preg_match("/discontinued/i", strtolower($row['collections_2']))) {
+                $status = "DRAFT";
+            } elseif (preg_match("/wholesale_only/i", strtolower($row['collections_2']))) {
+                $status = "DRAFT";
+            } else {
+                $status = "ACTIVE";
+            }
+
+            //Command - delete if 0 stock or marked for deletion (deletion = 1), MERGE if in stock but status is draft, MERGE if everything passes
+            $command = "";
+            if ($row['shopify_qty'] > 0) {
+                if ($status == "active") {
+                    $command = "MERGE";
+                }
+                if ($status == "draft") {
+                    $command = "MERGE";
+                }
+                if ($row['deletion'] == 1) {
+                    $command = "DELETE";
+                }
+            } else {
+                $command = "DELETE";
+            }
+
+            // Stone price vs item price
+            $itemprice = "";
+            if (strtolower($row['type']) == "loose diamonds") {
+                $itemprice = $row['stone_price_retail_aud'];
+            } else {
+                $itemprice = $row['retail_aud'];
+            }
+
+            // Create handle
+            $handle = "";
+            if (substr($row['sku'], 0, 3) == "TDR" || substr($row['sku'], 0, 3) == "TPR") {
+                $handle = "argyle-tender-diamond-" . $row['shape'] . "-" . $row['colour'] . "-" . $row['clarity'] . "-" . $row['sku'];
+                $handle = strtolower($handle);
+            } elseif (strtolower($row['type']) == "loose diamonds") {
+                $handle = "";
+                $handle = "argyle-pink-diamond-" . $row['shape'] . "-" . $row['colour'] . "-" . $row['clarity'] . "-" . $row['sku'];
+                $handle = strtolower($handle);
+            } else {
+                $handle = "";
+                $handle = str_replace(" ", "-", strtolower($row['product_title'])) . "-" . strtolower($row['sku']);
+            }
+            $handle = str_replace(["--", " "], "-", $handle);
+
+            // Purchase Cost Calculation
+            $purchase_cost = "";
+            if (strtolower($row['type']) == "loose diamonds") {
+                $purchase_cost = $row['purchase_cost_aud'] * $row['carat'];
+                $purchase_cost = round($purchase_cost, 2);
+            } else {
+                $purchase_cost = $row['purchase_cost_aud'];
+            }
+
+            // Tags
+            $tags = "";
+            if ($row['tags'] != "") {
+                $tags .= $row['tags'] . ", ";
+            }
+            if ($row['brand'] != "") {
+                $tags .= $row['brand'] . ", ";
+            }
+            if ($row['colour'] != "") {
+                $tags .= $row['colour'] . ", ";
+            }
+            if ($row['colour'] != "") {
+                if (preg_match("/pp/i", strtolower($row['colour'])) > 0) {
+                    $tags .= "PP - Purplish Pink, ";
+                } elseif (preg_match("/pr/i", strtolower($row['colour'])) > 0) {
+                    $tags .= "PR - Pink Rose, ";
+                } elseif (preg_match("/pc/i", strtolower($row['colour'])) > 0) {
+                    $tags .= "PC - Pink Champagne, ";
+                } elseif (preg_match("/bl/i", strtolower($row['colour'])) > 0) {
+                    $tags .= "BL - Blue, ";
+                } elseif (preg_match("/pred/i", strtolower($row['colour'])) > 0) {
+                    $tags .= "pRed - Pinkish Red, ";
+                } else {
+                    $tags .= "P - Pink, ";
+                }
+            }
+            if ($row['shape'] != "") {
+                $tags .= $row['shape'] . ", ";
+            }
+            if ($row['clarity'] != "") {
+                $tags .= $row['clarity'] . ", ";
+            }
+            if ($row['collections'] != "") {
+                $tags .= $row['collections'] . ", ";
+            }
+            if ($row['type'] != "") {
+                $tags .= $row['type'] . ", ";
+            }
+            if ($row['main_metal'] != "") {
+                $tags .= $row['main_metal'] . " Metal, ";
+            }
+            if ($row['preorder'] == 1) {
+                $tags .= "Preorder, ";
+            }
+            if (strtolower($row['type']) == "loose diamonds") {
+                if ($row['collections'] == "SKS") {
+                    $tags .= "pkcertified";
+                }
+                if ($row['collections'] == "STN") {
+                    $tags .= "argylecertified";
+                }
+            }
+          
             $mediaInputs = [];          
+           
             $productCheck = $this->getProductSingle($row['sku']);
             
             if(count($productCheck['data']['products']['edges'])>0)
@@ -177,6 +288,7 @@ class ProductApiController
                     
             }
             else{
+            //create a new product update its default variant and update it inventory level
             $productData = [
                 'input' => [
                     'title' => $row['product_title'],
@@ -237,7 +349,7 @@ class ProductApiController
                         $inventory_on_hand_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][1]['quantity'];
                         $inventory_commited_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][2]['quantity'];
                        
-                        $quantity = $row['shopify_qty']-$inventory_available_quantity-$inventory_commited_quantity;
+                        $quantity = $row['shopify_qty']-$inventory_available_quantity-$inventory_commited_quantity +1;
                        
                         if($quantity !=0)
                         {
@@ -256,7 +368,7 @@ class ProductApiController
 
         if($success==true)
         {
-            echo "uploaded successfully";
+            return "uploaded successfully";
         }
     }
 
@@ -302,7 +414,6 @@ class ProductApiController
         ];
         return $this->makeGraphQLRequest($mutation, $variables);
     }
-
     public function createProductWithVariantImageAndInventory($productData, $mediaInputs)
     {
     $mutation = '
@@ -344,32 +455,6 @@ class ProductApiController
         ];
         return $this->makeGraphQLRequest($mutation, $variables);
     }
-
-    public function getProductSingle($sku)
-    {
-        
-        $query = '{
-            products(first: 1, query: "sku:'.$sku.'") {
-              edges {
-                node {
-                  id
-                  variants(first: 1) {
-                    edges {
-                      node {
-                        id
-                        weight
-                        sku
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }';
-
-        return $this->getData($query);
-    }
-    
     public function updateProduct($productData)
     {
         $mutation = '
@@ -414,7 +499,6 @@ class ProductApiController
             ];
             return $this->makeGraphQLRequest($mutation, $variables);
     }
-
     public function updateProductWithImage($productData,$mediaInput)
     {
         $mutation = '
@@ -624,100 +708,75 @@ class ProductApiController
 
         return $productOptions;
     }
-
-
-        //logic implementations functions
-
-        private function getImageURLs($row)
-        {
-            $imageURL = [];
-            $imageFields = ['image1', 'image2', 'image3', 'image4', 'image5', 'image6', 'packaging_image'];
-            foreach ($imageFields as $field) {
-                if (!empty($row[$field])) {
-                    $imageURL[] = $row[$field];
+    
+    public function createProductVariant($variantInput)
+    {
+        $mutation = '
+        mutation CreateVariant($input: ProductVariantInput!) {
+            productVariantCreate(input: $input) {
+                product {
+                    id
+                    title
+                }
+                productVariant {
+                    id
+                    sku
+                    price
+                }
+                userErrors {
+                    field
+                    message
                 }
             }
-            return $imageURL;
         }
+    ';
 
-        private function getStatus($row)
-        {
-            $collections = strtolower($row['collections_2']);
-            if (preg_match("/steve|discontinued|wholesale_only/i", $collections)) {
-                return "DRAFT";
-            }
-            return "ACTIVE";
-        }
 
-        private function getCommand($row, $status)
-        {
-            if ($row['shopify_qty'] > 0) {
-                if ($status == "ACTIVE" || $status == "DRAFT") {
-                    return "MERGE";
+        // Set the variables for the mutation
+        $variables = [
+            'input' => $variantInput,
+        ];
+
+        // Make the GraphQL request
+        return $this->makeGraphQLRequest($mutation, $variables);
+    }
+    public function getProducts()
+    {
+        $query = 'products(first: 10) {
+            edges {
+                node {
+                    id
+                    title
                 }
-                if ($row['deletion'] == 1) {
-                    return "DELETE";
+            }
+        }';
+
+        return $this->getData($query);
+    }
+    public function getProductSingle($sku)
+    {
+        
+        $query = '{
+            products(first: 1, query: "sku:'.$sku.'") {
+              edges {
+                node {
+                  id
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        weight
+                        sku
+                      }
+                    }
+                  }
                 }
+              }
             }
-            return "DELETE";
-        }
+          }';
 
-        private function getItemPrice($row)
-        {
-            if (strtolower($row['type']) == "loose diamonds") {
-                return $row['stone_price_retail_aud'];
-            }
-            return $row['retail_aud'];
-        }
-
-        private function getHandle($row)
-        {
-            $sku = $row['sku'];
-            $shape = $row['shape'];
-            $colour = $row['colour'];
-            $clarity = $row['clarity'];
-            $product_title = $row['product_title'];
-
-            if (substr($sku, 0, 3) == "TDR" || substr($sku, 0, 3) == "TPR") {
-                $handle = "argyle-tender-diamond-$shape-$colour-$clarity-$sku";
-            } elseif (strtolower($row['type']) == "loose diamonds") {
-                $handle = "argyle-pink-diamond-$shape-$colour-$clarity-$sku";
-            } else {
-                $handle = str_replace(" ", "-", strtolower($product_title)) . "-$sku";
-            }
-            return str_replace(["--", " "], "-", strtolower($handle));
-        }
-
-        private function getPurchaseCost($row)
-        {
-            if (strtolower($row['type']) == "loose diamonds") {
-                return round($row['purchase_cost_aud'] * $row['carat'], 2);
-            }
-            return $row['purchase_cost_aud'];
-        }
-
-        private function getTags($row)
-        {
-            $tags = "";
-            $tags .= !empty($row['tags']) ? $row['tags'] . ", " : "";
-            $tags .= !empty($row['brand']) ? $row['brand'] . ", " : "";
-            $tags .= !empty($row['colour']) ? $row['colour'] . ", " : "";
-            $tags .= preg_match("/pp|pr|pc|bl|pred/i", strtolower($row['colour'])) ?
-                strtoupper(substr($row['colour'], 0, 2)) . " - " . ucfirst(strtolower($row['colour'])) . ", " : "";
-            $tags .= !empty($row['shape']) ? $row['shape'] . ", " : "";
-            $tags .= !empty($row['clarity']) ? $row['clarity'] . ", " : "";
-            $tags .= !empty($row['collections']) ? $row['collections'] . ", " : "";
-            $tags .= !empty($row['type']) ? $row['type'] . ", " : "";
-            $tags .= !empty($row['main_metal']) ? $row['main_metal'] . " Metal, " : "";
-            $tags .= $row['preorder'] == 1 ? "Preorder, " : "";
-            if (strtolower($row['type']) == "loose diamonds") {
-                $tags .= $row['collections'] == "SKS" ? "pkcertified" : "";
-                $tags .= $row['collections'] == "STN" ? "argylecertified" : "";
-            }
-            return $tags;
-        }
-
-   
+        return $this->getData($query);
+    }
 
 
 }
