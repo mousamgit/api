@@ -123,9 +123,8 @@ class ProductApiController
         $data = json_decode(file_get_contents("php://input"), true);
 
         $exporting_rows = $data['exportRows'];
+        
        
-       
-
         foreach ($exporting_rows as $key => $row) {
             
             $imageURL = $this->getImageURLs($row);
@@ -138,7 +137,8 @@ class ProductApiController
 
             $mediaInputs = [];          
             $productCheck = $this->getProductSingle($row['sku']);
-            
+          
+           
             if(count($productCheck['data']['products']['edges'])>0)
             {               
                     $productData = [
@@ -150,16 +150,28 @@ class ProductApiController
                             'productType' => $row['type'],
                             'handle' => $handle,
                             'tags' => $tags,
-                            'status' => $status
+                            'status' => $status, 
+                            'published'=> true,
+                            'collectionsToJoin'=> $this->getCollections(),
+                            'metafields'=> [
+                              'description'=>$row['description'],
+                              'key'=> $row['sku'],
+                              'namespace'=> $row['product_title'],
+                              'type'=> $row['type']
+                            ],
+                            'seo'=> [
+                              'description'=>$row['description'],
+                              'title'=> $row['product_title']
+                            ],
                         ]
-                    ];
+                        ];
                     if(count($imageURL)>0)
                     {           
                     foreach ($imageURL as $imageUrls) {
                         $mediaInput = [
-                            "alt" => $row['product_title'], 
-                            "mediaContentType" => "IMAGE",
-                            "originalSource" => $imageUrls 
+                            'alt' => $row['product_title'], 
+                            'mediaContentType' => 'IMAGE',
+                            'originalSource' => $imageUrls 
                         ];
                 
                         $mediaInputs[] = $mediaInput;
@@ -167,12 +179,14 @@ class ProductApiController
                                     
                         $productResponse = $this->updateProductWithImage($productData,$mediaInput);
                       
+                      
                     }
                     else{
                     
                         $productResponse = $this->updateProduct($productData);
                     } 
-                    
+                   dd($productResponse);
+                  
                     $productSavedCheck = $productResponse['data']['productUpdate']['product'];
                     
             }
@@ -185,7 +199,19 @@ class ProductApiController
                     'productType' => $row['type'],
                     'handle' => $handle,
                     'tags' => $tags,
-                    'status' => $status
+                    'status' => $status,
+                    'published'=>true,
+                    'collectionsToJoin'=> $this->getCollections(),
+                    'metafields'=> [
+                      'description'=>$row['description'],
+                      'key'=> $row['sku'],
+                      'namespace'=> $row['product_title'],
+                      'type'=> $row['type']
+                    ],
+                    'seo'=> [
+                      'description'=>$row['description'],
+                      'title'=> $row['product_title']
+                    ],
                 ]
             ];
             if(count($imageURL)>0)
@@ -205,7 +231,7 @@ class ProductApiController
             else{
               
                 $productResponse = $this->createProductWithVariantAndInventory($productData);
-            }              
+            }     
             $productSavedCheck = $productResponse['data']['productCreate']['product'];
         }
                 if(isset($productSavedCheck['variants']['edges'][0]['node']))
@@ -362,6 +388,7 @@ class ProductApiController
                       }
                     }
                   }
+                  
                 }
               }
             }
@@ -369,6 +396,62 @@ class ProductApiController
 
         return $this->getData($query);
     }
+    public function getCollections()
+    {
+        
+        $query = 'query {
+          collections(first: 5) {
+            edges {
+              node {
+                id
+                title
+                handle
+                updatedAt
+                sortOrder
+              }
+            }
+          }
+        }';
+
+      $response = $this->getData($query);
+      $collections =[];
+      foreach ($response['data']['collections']['edges'] as $edge) {
+          $collections[] =  $edge['node']['id'];
+      }
+  
+      return $collections;
+    }
+    function getAllPublications() {
+      $query = '
+      query publications {
+        publications(first: 5) {
+          edges {
+            node {
+              id
+              name
+              supportsFuturePublishing
+              app {
+                id
+                title
+                description
+                developerName
+              }
+            }
+          }
+        }
+      }
+      ';
+  
+      $response = $this->getData($query);
+      $publications = [];
+      foreach ($response['data']['publications']['edges'] as $edge) {
+          $publications =  $edge['node']['id'];
+      }
+  
+      return $publications;
+      
+  }
+  
     
     public function updateProduct($productData)
     {
