@@ -16,6 +16,7 @@ function route($method, $path, $controllerMethod) {
 }
 
 // Define API routes
+
 route('GET', '/mypimdata', 'ProductApiController@mypimdata');
 route('GET', '/', 'HomepageController@index');
 route('GET', '/api/get_products', 'ProductApiController@getProducts');

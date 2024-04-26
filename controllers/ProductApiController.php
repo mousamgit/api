@@ -6,6 +6,7 @@ require_once(__DIR__ . '../../vendor/autoload.php');
 require_once(__DIR__ . '../../bootstrap/app.php');
 
 use models\Products;
+use models\PimShopify;
 
 class ProductApiController
 {
@@ -112,7 +113,6 @@ class ProductApiController
                 }
             }
         }';
-
         return $this->getData($query);
     }
 
@@ -120,171 +120,177 @@ class ProductApiController
    
     public function createProduct()
     {
-        $data = json_decode(file_get_contents("php://input"), true);
-
-        $exporting_rows = $data['exportRows'];
-        
-       
-        foreach ($exporting_rows as $key => $row) {
-            
-            $imageURL = $this->getImageURLs($row);
-            $status = $this->getStatus($row);
-            $command = $this->getCommand($row, $status);
-            $itemprice = $this->getItemPrice($row);
-            $handle = $this->getHandle($row);
-            $purchase_cost = $this->getPurchaseCost($row);
-            $tags = $this->getTags($row);
-
-            $mediaInputs = [];          
-            $productCheck = $this->getProductSingle($row['sku']);
-          
-           
-            if(count($productCheck['data']['products']['edges'])>0)
-            {               
-                    $productData = [
-                        'input' => [
-                            'id'=>$productCheck['data']['products']['edges'][0]['node']['id'],
-                            'title' =>$row['product_title'],
-                            'descriptionHtml' => $row['description'],
-                            'vendor' => $row['brand'],
-                            'productType' => $row['type'],
-                            'handle' => $handle,
-                            'tags' => $tags,
-                            'status' => $status, 
-                            'published'=> true,
-                            'collectionsToJoin'=> $this->getCollections(),
-                            'metafields'=> [
-                              'description'=>$row['description'],
-                              'key'=> $row['sku'],
-                              'namespace'=> $row['product_title'],
-                              'type'=> $row['type']
-                            ],
-                            'seo'=> [
-                              'description'=>$row['description'],
-                              'title'=> $row['product_title']
-                            ],
-                        ]
-                        ];
-                    if(count($imageURL)>0)
-                    {           
-                    foreach ($imageURL as $imageUrls) {
-                        $mediaInput = [
-                            'alt' => $row['product_title'], 
-                            'mediaContentType' => 'IMAGE',
-                            'originalSource' => $imageUrls 
-                        ];
-                
-                        $mediaInputs[] = $mediaInput;
-                    }
-                                    
-                        $productResponse = $this->updateProductWithImage($productData,$mediaInput);
-                      
-                      
-                    }
-                    else{
-                    
-                        $productResponse = $this->updateProduct($productData);
-                    } 
-                   dd($productResponse);
-                  
-                    $productSavedCheck = $productResponse['data']['productUpdate']['product'];
-                    
-            }
-            else{
-            $productData = [
-                'input' => [
-                    'title' => $row['product_title'],
-                    'descriptionHtml' => $row['description'],
-                    'vendor' => $row['brand'],
-                    'productType' => $row['type'],
-                    'handle' => $handle,
-                    'tags' => $tags,
-                    'status' => $status,
-                    'published'=>true,
-                    'collectionsToJoin'=> $this->getCollections(),
-                    'metafields'=> [
-                      'description'=>$row['description'],
-                      'key'=> $row['sku'],
-                      'namespace'=> $row['product_title'],
-                      'type'=> $row['type']
-                    ],
-                    'seo'=> [
-                      'description'=>$row['description'],
-                      'title'=> $row['product_title']
-                    ],
-                ]
-            ];
-            if(count($imageURL)>0)
-            {           
-            foreach ($imageURL as $imageUrls) {
-                $mediaInput = [
-                    "alt" => $row['product_title'], 
-                    "mediaContentType" => "IMAGE",
-                    "originalSource" => $imageUrls 
-                ];
-        
-                $mediaInputs[] = $mediaInput;
-            }
-                            
-                $productResponse = $this->createProductWithVariantImageAndInventory($productData,$mediaInputs);
-            }
-            else{
-              
-                $productResponse = $this->createProductWithVariantAndInventory($productData);
-            }     
-            $productSavedCheck = $productResponse['data']['productCreate']['product'];
-        }
-                if(isset($productSavedCheck['variants']['edges'][0]['node']))
-                {
-                    
-                    $productId = $productSavedCheck['id'];
-                    
-                    $variantId =$productSavedCheck['variants']['edges'][0]['node']['id'];
-                    $locationId =$productSavedCheck['variants']['edges'][0]['node']['inventoryItem']['inventoryLevels']['edges'][0]['node']['location']['id'];
-                               
-                    $variantUpdateInput = [
-                        "inventoryManagement"=> "SHOPIFY",
-                        "sku" => $row['sku'],
-                        "price" => $itemprice,
-                        "id"=>$variantId,
-                        "inventoryPolicy"=> "DENY",
-                        "inventoryItem" => [
-                            "cost" => $purchase_cost,
-                        ],
-                        ];
-                      
-                    $updateResponse=$this->updateProductVariant($variantUpdateInput);
-                    if(isset($updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']))
-                    {
-                        $inventoryLevelId=$updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']['id'];
-                        $inventoryId=$updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['id'];
-                        // $quantity=$row['shopify_qty'];
-                        $inventory_available_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][0]['quantity'];
-                        $inventory_on_hand_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][1]['quantity'];
-                        $inventory_commited_quantity=$this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][2]['quantity'];
-                       
-                        $quantity = $row['shopify_qty']-$inventory_available_quantity-$inventory_commited_quantity;
-                       
-                        if($quantity !=0)
-                        {
-                            $inventoryAdjustResponse =$this->adjustInventoryQuantity($inventoryId,$locationId,$quantity);
-                            $success=true;
-                          
-                        }
-                        $success=true;
-                       
-                    }
-    
-                }
-               
-            }
-            
-
-        if($success==true)
-        {
-            echo "uploaded successfully";
-        }
+      
+      $data = json_decode(file_get_contents("php://input"), true);
+      $exporting_rows = $data['exportRows'];
+      foreach ($exporting_rows as $row) {
+        $row['status'] = 'pending';
+        PimShopify::create($row);
     }
+       
+    }
+
+    public function processProduct()
+    {
+      
+      $data= PimShopify::where('status','pending')->orderBy('id','ASC')->get();
+     
+      $success = false;
+       if(count($data)>0)
+       {
+        foreach ($data as $key => $row) {
+          try
+          {
+          $imageURL = $this->getImageURLs($row);
+          $status = $this->getStatus($row);
+          $command = $this->getCommand($row, $status);
+          $itemprice = $this->getItemPrice($row);
+          $handle = $this->getHandle($row);
+          $purchase_cost = $this->getPurchaseCost($row);
+          $tags = $this->getTags($row);
+          $mediaInputs = [];
+          
+          $productCheck = $this->getProductSingle($row['sku']);
+         
+                
+          if (count($productCheck['data']['products']['edges']) > 0) {
+              $productData = [
+                  'input' => [
+                      'id' => $productCheck['data']['products']['edges'][0]['node']['id'],
+                      'title' => $row['product_title'],
+                      'descriptionHtml' => $row['description'],
+                      'vendor' => $row['brand'],
+                      'productType' => $row['type'],
+                      'handle' => $handle,
+                      'tags' => $tags,
+                      'status' => $status, 
+                      'published' => true,
+                      'collectionsToJoin' => $this->getCollections(),
+                      'metafields' => [
+                          'description' => $row['description'],
+                          'key' => $row['sku'],
+                          'namespace' => $row['product_title'],
+                          'type' => $row['type']
+                      ],
+                      'seo' => [
+                          'description' => $row['description'],
+                          'title' => $row['product_title']
+                      ],
+                  ]
+              ];
+              if (count($imageURL) > 0) {
+                  foreach ($imageURL as $imageUrls) {
+                      $mediaInput = [
+                          'alt' => $row['product_title'], 
+                          'mediaContentType' => 'IMAGE',
+                          'originalSource' => $imageUrls 
+                      ];
+                      $mediaInputs[] = $mediaInput;
+                  }
+                  $productResponse = $this->updateProductWithImage($productData, $mediaInput);
+              } else {
+                  $productResponse = $this->updateProduct($productData);
+              } 
+              $productSavedCheck = $productResponse['data']['productUpdate']['product'];
+          } 
+        else {
+              $productData = [
+                  'input' => [
+                      'title' => $row['product_title'],
+                      'descriptionHtml' => $row['description'],
+                      'vendor' => $row['brand'],
+                      'productType' => $row['type'],
+                      'handle' => $handle,
+                      'tags' => $tags,
+                      'status' => $status,
+                      'published' => true,
+                      'collectionsToJoin' => $this->getCollections(),
+                      'metafields' => [
+                          'description' => $row['description'],
+                          'key' => $row['sku'],
+                          'namespace' => $row['product_title'],
+                          'type' => $row['type']
+                      ],
+                      'seo' => [
+                          'description' => $row['description'],
+                          'title' => $row['product_title']
+                      ],
+                  ]
+              ];
+              if (count($imageURL) > 0) {
+                  foreach ($imageURL as $imageUrls) {
+                      $mediaInput = [
+                          "alt" => $row['product_title'], 
+                          "mediaContentType" => "IMAGE",
+                          "originalSource" => $imageUrls 
+                      ];
+                      $mediaInputs[] = $mediaInput;
+                  }
+                  $productResponse = $this->createProductWithVariantImageAndInventory($productData, $mediaInputs);
+              } else {
+                  $productResponse = $this->createProductWithVariantAndInventory($productData);
+              }     
+              $productSavedCheck = $productResponse['data']['productCreate']['product'];
+          }
+
+          if (isset($productSavedCheck['variants']['edges'][0]['node'])) {
+              $productId = $productSavedCheck['id'];
+              $variantId = $productSavedCheck['variants']['edges'][0]['node']['id'];
+              $locationId = $productSavedCheck['variants']['edges'][0]['node']['inventoryItem']['inventoryLevels']['edges'][0]['node']['location']['id'];
+              $variantUpdateInput = [
+                  "inventoryManagement"=> "SHOPIFY",
+                  "sku" => $row['sku'],
+                  "price" => $itemprice,
+                  "id" => $variantId,
+                  "inventoryPolicy" => "DENY",
+                  "inventoryItem" => [
+                      "cost" => $purchase_cost,
+                  ],
+              ];
+              $updateResponse = $this->updateProductVariant($variantUpdateInput);
+              if (isset($updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node'])) {
+                  $inventoryLevelId = $updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']['id'];
+                  $inventoryId = $updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['id'];
+                  $inventory_available_quantity = $this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][0]['quantity'];
+                  $inventory_on_hand_quantity = $this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][1]['quantity'];
+                  $inventory_commited_quantity = $this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][2]['quantity'];
+                  $quantity = $row['shopify_qty'] - $inventory_available_quantity - $inventory_commited_quantity;
+                  if ($quantity != 0) {
+                      $inventoryAdjustResponse = $this->adjustInventoryQuantity($inventoryId, $locationId, $quantity);
+                      $success = true;
+                  }
+                  $success = true;
+              }
+          }
+          $status_update = PimShopify::where('id',$row['id'])->update(['status'=>'exported']);
+          if($status_update)
+          {
+            echo "Product ". $row['product_title']. " Uploaded \n";
+            $success = true;
+          }
+          
+        } catch (\Exception $e) {
+          \Log::error('Error processing product: ' . $e->getMessage());
+          $status_update = PimShopify::where('id', $row['id'])->update(['status' => 'failed']);
+          if ($status_update) {
+              echo "Product " . $row['product_title'] . " failed to upload \n";
+          }
+      }
+         
+      }
+
+      }
+      if ($success == true) {
+        echo "All Uploaded successfully \n";
+      }
+      else{
+        echo "No Pending Products";
+      }
+ 
+
+          
+    }
+
 
     public function createProductWithVariantAndInventory($productData)
     {
@@ -398,7 +404,7 @@ class ProductApiController
     }
     public function getCollections()
     {
-        
+        try{
         $query = 'query {
           collections(first: 5) {
             edges {
@@ -418,8 +424,14 @@ class ProductApiController
       foreach ($response['data']['collections']['edges'] as $edge) {
           $collections[] =  $edge['node']['id'];
       }
-  
       return $collections;
+    }
+    catch(Exception $e)
+    {
+      echo $e;
+      return [];
+    }
+      
     }
     function getAllPublications() {
       $query = '

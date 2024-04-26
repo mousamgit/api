@@ -174,14 +174,53 @@ const List = {
         },
         exportToShopify() {
             if (this.exportRows.length === 0) {
-                alert("Please Select Items From Table To Export")
+                alert("Please Select Items From Table To Export To Shopify")
                 // Export cannot proceed if there are no rows to export
                 return;
             }
             try {
+                // Original dataToSend object
                 let dataToSend = {
-                        'exportRows':this.exportRows
-                    }
+                    'exportRows': this.exportRows
+                };
+
+                // Columns needed for createProduct function
+                const neededColumns = [
+                    'sku',
+                    'product_title',
+                    'description',
+                    'brand',
+                    'type',
+                    'shopify_qty',
+                    'deletion',
+                    'stone_price_retail_aud',
+                    'retail_aud',
+                    'shape',
+                    'colour',
+                    'clarity',
+                    'tags',
+                    'collections',
+                    'main_metal',
+                    'preorder',
+                    'collections_2',
+                    'purchase_cost_aud',
+                    'image1',
+                    'image2', 
+                    'image3',
+                    'image4', 
+                    'image5',
+                    'image6',
+                    'packaging_image'
+                ];
+
+                // Filtering the exportRows array to include only the needed columns
+                dataToSend.exportRows = dataToSend.exportRows.map(row => {
+                    let filteredRow = {};
+                    neededColumns.forEach(column => {
+                        filteredRow[column] = row[column];
+                    });
+                    return filteredRow;
+                });
                 fetch(this.rootURL+'/api/create_products', {
                     method: 'POST',
                     headers: {
