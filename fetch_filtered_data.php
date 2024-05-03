@@ -126,12 +126,12 @@ class listDetailHandler {
         require_once('./connect.php');
         $columnValuesRow = [];
         $userOrderedColumns = $this->con->query("SELECT column_name FROM user_columns WHERE user_name = '".$_SESSION['username']."' AND table_name='".$this->primary_table."' AND status = 1 GROUP BY column_name ORDER BY MIN(order_no) ASC");
-        if($this->data_for_shopify==true)
-        {
-            $userOrderedColumns=$this->con->query("SELECT COLUMN_NAME as column_name
-                       FROM information_schema.columns
-                       WHERE table_schema = 'u288902296_pim' AND table_name = 'pim'");
-        }
+        // if($this->data_for_shopify==true)
+        // {
+        //     $userOrderedColumns=$this->con->query("SELECT COLUMN_NAME as column_name
+        //                FROM information_schema.columns
+        //                WHERE table_schema = 'u288902296_pim' AND table_name = 'pim'");
+        // }
         while ($row = $userOrderedColumns->fetch_assoc()) {
             $columnValuesRow[]=$row['column_name'];
         }

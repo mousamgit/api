@@ -259,7 +259,7 @@ const List = {
 
             let csvContent = "data:text/csv;charset=utf-8," + this.getHeaderRowCSV() + "\n";
             const columnNames = this.columnValues; // Get the column names in the correct order
-            console.log(this.exportRows);
+            // console.log(this.exportRows);
             this.exportRows.forEach(row => {
                 if(row)
                 {
@@ -275,7 +275,7 @@ const List = {
                 }
 
             });
-
+           
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);

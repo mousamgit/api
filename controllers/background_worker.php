@@ -8,7 +8,7 @@ use models\PimShopify;
 
 $products = PimShopify::where('status', 'pending')
                       ->orderBy('id', 'ASC')
-                      ->take(5) // Fetch 5 rows at a time
+                      ->take(5)
                       ->get();
                       
 if (count($products) > 0) {

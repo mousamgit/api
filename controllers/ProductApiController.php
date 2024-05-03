@@ -126,7 +126,7 @@ class ProductApiController
       $exporting_rows = $data['exportRows'];
       foreach ($exporting_rows as $row) {
         $row['status'] = 'pending';
-        $row['sku'] = $row['sku'].'_BLUSH_live_test_2';
+        $row['sku'] = $row['sku'].'UPDATE_BLUSH_live_test_2';
         PimShopify::create($row);
       }
 
@@ -151,8 +151,8 @@ class ProductApiController
                       $productData = [
                           'input' => [
                               'id' => $productCheck['data']['products']['edges'][0]['node']['id'],
-                              'title' => 'live2_update_test_update'.$product['product_title'],
-                              'descriptionHtml' => "hello".$product['description'],
+                              'title' => 'Friday_live2_update_test'.$product['product_title'],
+                              'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
                               'handle' => $handle,
@@ -170,7 +170,7 @@ class ProductApiController
                               ];
                               $mediaInputs[] = $mediaInput;
                           }
-                          $productResponse = $this->updateProductWithImage($productData, $mediaInput);
+                          $productResponse = $this->updateProductWithImage($productData, $mediaInputs);
                       } else {
                           $productResponse = $this->updateProduct($productData);
                       }
@@ -180,7 +180,7 @@ class ProductApiController
                   } else {
                       $productData = [
                           'input' => [
-                              'title' => 'live2_insert_status_test'.$product['product_title'],
+                              'title' => 'Friday_live2_insert_test'.$product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
