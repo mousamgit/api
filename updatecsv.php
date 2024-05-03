@@ -52,23 +52,19 @@
                 $sku = $values[0];
                 $head = $header[$i];
                 $val = $values[$i];
-
                 if ($head == "description")
                 {
                   $val = str_replace("'","\'",$val);
                 }
-
                 $key = $head."='".$val."'";
-
-               //prepping for log
+                //prepping for log
                 $logheader = $head; //pull header
                 $newrecord = $val; //get new value
                 $logsku = $sku;
                 include 'log.php'; 
                 
                 $sql = " INSERT into pim (sku, $head) VALUES ('$sku', '$val') ON DUPLICATE KEY UPDATE $key "; 
-                $result = mysqli_query($con, $sql) or die(mysqli_error($con)) ; 
-
+                $result = mysqli_query($con, $sql) or die(mysqli_error($con));
                 echo "<tr><td style='border:1px solid #000; padding:10px;'>".$sku."</td><td style='border:1px solid #000; padding:10px;'>".$head."</td><td style='border:1px solid #000; padding:10px;'>".$val."</td></tr>";
                }
                echo "</table><br><br>";

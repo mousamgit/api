@@ -1,6 +1,8 @@
 <?php
   include 'login_checking.php';
   include 'functions.php';
+  require_once(__DIR__ . '/vendor/autoload.php');
+  require_once(__DIR__ . '/bootstrap/app.php');
 ?>
 
 <html>
@@ -36,10 +38,20 @@
 include ('connect.php');
 $pieces = $_POST['check'];
 
+$sql = "UPDATE pim SET image2='https://samsgroup.info/pim-images/BPB-RDDRB0501_5.jpg' where sku = 'BPB-RDDRB0101'";
+$sql = "UPDATE pim SET image1='https://samsgroup.info/pim-images/BPB-RDDRB0501_5.jpg' where sku = 'BPB-RDDRB0101'";
+$result = mysqli_query($con, $sql);
+
+updateProductShopify('BPB-RDDRB0101');
+
+dd('done');
+
+
 foreach ($pieces as $key => $value)
 {
     //echo $key.":".$value."<br>";
     $values = explode(":", $value);
+  
     if( strpos($values[1],"_") > 0 ) 
     {
         $number = substr(strstr($values[1],'_'),1,1);
@@ -65,7 +77,10 @@ foreach ($pieces as $key => $value)
       include ('log.php');
 
       $sql = " UPDATE pim SET image".$number."='".$newImage."' where sku = '".$values[0]."';";
+      $sql = " UPDATE pim SET image".$number."='".$newImage."' where sku = '".$values[0]."';";
       $result = mysqli_query($con, $sql);
+      updateProductShopify($values[0]);
+     
     }
     
 }

@@ -210,7 +210,8 @@ const List = {
                     'image4', 
                     'image5',
                     'image6',
-                    'packaging_image'
+                    'packaging_image',
+                    'specifications'
                 ];
 
                 // Filtering the exportRows array to include only the needed columns

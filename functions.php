@@ -1,5 +1,11 @@
 <?php
 //require('./connect.php');
+require_once(__DIR__ . '/vendor/autoload.php');
+require_once(__DIR__ . '/bootstrap/app.php');
+
+use models\Products;
+use models\PimShopify;
+
 function loginChecking($allowed){
     session_start();
     if (!isset($_SESSION["username"])) {
@@ -251,17 +257,29 @@ function updateValue($db, $prkey,$keyvalue, $attribute, $value)
     $escapedKey = mysqli_real_escape_string($con, $prkey);
     $escapedAttribute = mysqli_real_escape_string($con, $attribute);
     $value = mysqli_real_escape_string($con, $value);
-
+   
     // Update query
     $query = "UPDATE `$escapedDb` SET `$escapedAttribute` = '$value' WHERE `$escapedKey` = '$keyvalue'";
+    
     // Execute query
     if ($con->query($query) === TRUE) {
         echo "<span class='updated'>Record updated successfully</span>";
+        if($escapedDb == 'pim')
+        {
+            updateProductShopify($keyvalue);
+        }
     } else {
         echo "Error updating record: " . $con->error;
     }
     // Close conection
     $con->close();
+}
+function updateProductShopify($keyvalue)
+{
+    $row = Products::where('sku',$keyvalue)->first();       
+    $row->status = 'pending';
+    $row->sku = $row['sku'].'UPDATE_BLUSH_live_test_2';
+    PimShopify::create($row->toArray());
 }
 function addtoLog($logsku, $logheader, $newrecord,$username)
 {

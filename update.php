@@ -2,11 +2,7 @@
   include 'login_checking.php';
   include 'functions.php';
 ?>
-
-
-
 <html lang="en">
-
 <head>
 <?php include 'header.php'; ?>
     <link rel="stylesheet" href="/css/dancss.css">

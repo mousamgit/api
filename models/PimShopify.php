@@ -13,5 +13,6 @@ class PimShopify extends Model
     'image4', 
     'image5',
     'image6',
-    'packaging_image'];
+    'packaging_image',
+    'specifications'];
 }

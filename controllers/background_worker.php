@@ -1,9 +1,22 @@
 <?php
 
 require_once '/var/www/html/pim/controllers/ProductApiController.php';
+require_once '/var/www/html/pim/models/PimShopify.php';
 
-$productApiController = new \controllers\ProductApiController();
+use models\PimShopify;
 
-$productApiController->processProduct();
 
-file_put_contents('queued_data.json', '');
+$products = PimShopify::where('status', 'pending')
+                      ->orderBy('id', 'ASC')
+                      ->take(5) // Fetch 5 rows at a time
+                      ->get();
+                      
+if (count($products) > 0) {
+    foreach ($products as $product) {
+        $productApiController = new \controllers\ProductApiController();
+        $productApiController->processProduct($product);
+    }
+} 
+
+
+
