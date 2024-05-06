@@ -151,7 +151,7 @@ class ProductApiController
                       $productData = [
                           'input' => [
                               'id' => $productCheck['data']['products']['edges'][0]['node']['id'],
-                              'title' => 'Friday_live2_update_test'.$product['product_title'],
+                              'title' => 'Sat_Friday_live2_update_test'.$product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
@@ -180,7 +180,7 @@ class ProductApiController
                   } else {
                       $productData = [
                           'input' => [
-                              'title' => 'Friday_live2_insert_test'.$product['product_title'],
+                              'title' => 'Sat_Friday_live2_insert_test'.$product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
