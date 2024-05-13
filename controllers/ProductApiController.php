@@ -17,8 +17,8 @@ class ProductApiController
     public function __construct()
     {
         $this->storeUrl = "pink-kimberley.myshopify.com";
-        // $this->accessToken = "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";
-        $this->accessToken = "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";
+        // $this->accessToken = "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";  sga-dev-token
+        $this->accessToken = "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";    
     }
 
     public function mypimdata()
@@ -151,7 +151,7 @@ class ProductApiController
                       $productData = [
                           'input' => [
                               'id' => $productCheck['data']['products']['edges'][0]['node']['id'],
-                              'title' => 'Sat_Friday_live2_update_test'.$product['product_title'],
+                              'title' => 'Mon Test'.$product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
@@ -180,7 +180,7 @@ class ProductApiController
                   } else {
                       $productData = [
                           'input' => [
-                              'title' => 'Sat_Friday_live2_insert_test'.$product['product_title'],
+                              'title' => 'Mon Test'.$product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
