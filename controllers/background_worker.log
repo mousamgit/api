@@ -1,3 +1,196 @@
-Product 14-43G-DBORUPDATE_BLUSH_live_test_2 Uploaded 
-Product Blakely Opal Diamond Uploaded 
-All Uploaded successfully 
+<pre>Array
+(
+    [errors] => Array
+        (
+            [0] => Array
+                (
+                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
+                    [locations] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [line] => 3
+                                    [column] => 21
+                                )
+
+                        )
+
+                    [path] => Array
+                        (
+                            [0] => mutation metafieldsSet
+                            [1] => metafieldsSet
+                            [2] => metafields
+                        )
+
+                    [extensions] => Array
+                        (
+                            [code] => variableMismatch
+                            [variableName] => metafields
+                            [typeName] => [MetafieldInput!]!
+                            [argumentName] => metafields
+                            [errorMessage] => Type mismatch
+                        )
+
+                )
+
+        )
+
+)
+
+</pre><pre>Array
+(
+    [errors] => Array
+        (
+            [0] => Array
+                (
+                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
+                    [locations] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [line] => 3
+                                    [column] => 21
+                                )
+
+                        )
+
+                    [path] => Array
+                        (
+                            [0] => mutation metafieldsSet
+                            [1] => metafieldsSet
+                            [2] => metafields
+                        )
+
+                    [extensions] => Array
+                        (
+                            [code] => variableMismatch
+                            [variableName] => metafields
+                            [typeName] => [MetafieldInput!]!
+                            [argumentName] => metafields
+                            [errorMessage] => Type mismatch
+                        )
+
+                )
+
+        )
+
+)
+
+</pre><pre>Array
+(
+    [errors] => Array
+        (
+            [0] => Array
+                (
+                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
+                    [locations] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [line] => 3
+                                    [column] => 21
+                                )
+
+                        )
+
+                    [path] => Array
+                        (
+                            [0] => mutation metafieldsSet
+                            [1] => metafieldsSet
+                            [2] => metafields
+                        )
+
+                    [extensions] => Array
+                        (
+                            [code] => variableMismatch
+                            [variableName] => metafields
+                            [typeName] => [MetafieldInput!]!
+                            [argumentName] => metafields
+                            [errorMessage] => Type mismatch
+                        )
+
+                )
+
+        )
+
+)
+
+</pre><pre>Array
+(
+    [errors] => Array
+        (
+            [0] => Array
+                (
+                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
+                    [locations] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [line] => 3
+                                    [column] => 21
+                                )
+
+                        )
+
+                    [path] => Array
+                        (
+                            [0] => mutation metafieldsSet
+                            [1] => metafieldsSet
+                            [2] => metafields
+                        )
+
+                    [extensions] => Array
+                        (
+                            [code] => variableMismatch
+                            [variableName] => metafields
+                            [typeName] => [MetafieldInput!]!
+                            [argumentName] => metafields
+                            [errorMessage] => Type mismatch
+                        )
+
+                )
+
+        )
+
+)
+
+</pre><pre>Array
+(
+    [errors] => Array
+        (
+            [0] => Array
+                (
+                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
+                    [locations] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [line] => 3
+                                    [column] => 21
+                                )
+
+                        )
+
+                    [path] => Array
+                        (
+                            [0] => mutation metafieldsSet
+                            [1] => metafieldsSet
+                            [2] => metafields
+                        )
+
+                    [extensions] => Array
+                        (
+                            [code] => variableMismatch
+                            [variableName] => metafields
+                            [typeName] => [MetafieldInput!]!
+                            [argumentName] => metafields
+                            [errorMessage] => Type mismatch
+                        )
+
+                )
+
+        )
+
+)
+
+</pre>

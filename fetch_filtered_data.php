@@ -6,7 +6,7 @@ class listDetailHandler {
     private $con;
     private $db_name='';
     private $listId;
-    private $itemsPerPage = 20;
+    private $itemsPerPage = 100;
     private $data_for_shopify = false;
 
     private $primary_table='products';

@@ -121,21 +121,39 @@ class ProductApiController
    
     public function createProduct()
     {
-      
       $data = json_decode(file_get_contents("php://input"), true);
-      $exporting_rows = $data['exportRows'];
-      foreach ($exporting_rows as $row) {
-        $row['status'] = 'pending';
-        $row['sku'] = $row['sku'].'UPDATE_BLUSH_live_test_2';
-        PimShopify::create($row);
-      }
 
-       
+// Check if 'exportRows' is present in the received data
+if(isset($data['exportRows']) && is_array($data['exportRows'])) {
+    $exporting_rows = $data['exportRows'];
+    $sku = array_column($exporting_rows, 'sku');
+    $products = Products::whereIn('sku', $sku)->get();
+    if($products->isNotEmpty()) {
+        foreach ($products as $product) {
+            $product->status = 'pending';
+            PimShopify::create($product->toArray());
+        }
+        echo "Products processed successfully.";
+    } else {
+        echo "No products found with the provided SKUs.";
+    }
+} else {
+    echo "'exportRows' missing or not an array in the received data.";
+}
+    }
+    public function getCategory($product)
+    {
+      $category = "Apparel & Accessories > Jewelry";
+          if ( strtolower($row['type']) == "rings") { $category .= " > Rings";}
+          if ( strtolower($row['type']) == "earrings") { $category .= " > Earrings";}
+          if ( strtolower($row['type']) == "bracelets") { $category .= "Bracelets";}
+          if ( strtolower($row['type']) == "necklaces") { $category .= " > Necklaces";}
+          if ( strtolower($row['type']) == "loose diamonds") { $category .= " > Loose Stones";}
+          return $category;
     }
 
     public function processProduct($product)
-    {
-               
+    {           
                   $imageURL = $this->getImageURLs($product);
                   $status = $this->getStatus($product);
                   $command = $this->getCommand($product, $status);
@@ -143,22 +161,37 @@ class ProductApiController
                   $handle = $this->getHandle($product);
                   $purchase_cost = $this->getPurchaseCost($product);
                   $tags = $this->getTags($product);
+                  $category = $this->getCategory($product);
                   $mediaInputs = [];
                   $productCheck = $this->getProductSingle($product['sku']);
                  
                   if (!empty($productCheck['data']['products']['edges'])) {
-
+                      
                       $productData = [
                           'input' => [
                               'id' => $productCheck['data']['products']['edges'][0]['node']['id'],
-                              'title' => 'Mon Test'.$product['product_title'],
+                              'title' => $product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
                               'handle' => $handle,
                               'tags' => $tags,
                               'status' => $status,
-                              'published' => true
+                              'published' => true,
+                              'metafields' => [
+                                [
+                                  'key' => 'Specifications',
+                                  'namespace' => 'custom',
+                                  'value' => $product['specifications'], 
+                                  'type'=>'multi_line_text_field'
+                                ],
+                                [
+                                  'key' => 'centrecolour',
+                                  'namespace' => 'custom',
+                                  'value' => $product['colour'],
+                                  'type'=>'single_line_text_field' 
+                                ]
+                                ],
                           ]
                       ];
                       if (count($imageURL) > 0) {
@@ -174,18 +207,22 @@ class ProductApiController
                       } else {
                           $productResponse = $this->updateProduct($productData);
                       }
+                      
+                      $metaResponse= $this->updateMetafields($productData);
+                      dd($metaResponse);
                       $productSavedCheck = $productResponse['data']['productUpdate']['product'];
                       $update_status_1 = true;
                       echo "updated";
                   } else {
                       $productData = [
                           'input' => [
-                              'title' => 'Mon Test'.$product['product_title'],
+                              'title' => $product['product_title'],
                               'descriptionHtml' => $product['description'],
                               'vendor' => $product['brand'],
                               'productType' => $product['type'],
                               'handle' => $handle,
                               'tags' => $tags,
+                              'category' => $category,
                               'status' => $status,
                               'published' => true,
                               'metafields' => [
@@ -224,6 +261,7 @@ class ProductApiController
                       }
                       $productSavedCheck = $productResponse['data']['productCreate']['product'];
                       $update_status_1 = true;
+                      echo "New ";
                   }
                   // dd($productSavedCheck);
                   echo "Product " . $product['sku'] . " Uploaded \n";
@@ -243,6 +281,7 @@ class ProductApiController
                           ],
                       ];
                       $updateResponse = $this->updateProductVariant($variantUpdateInput);
+                      
                       if (isset($updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node'])) {
                           $inventoryLevelId = $updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['inventoryLevels']['edges'][0]['node']['id'];
                           $inventoryId = $updateResponse['data']['productVariantUpdate']['productVariant']['inventoryItem']['id'];
@@ -250,6 +289,7 @@ class ProductApiController
                           $inventory_on_hand_quantity = $this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][1]['quantity'];
                           $inventory_commited_quantity = $this->getInventoryLevelData($inventoryLevelId)['data']['inventoryLevel']['quantities'][2]['quantity'];
                           $quantity = $product['shopify_qty'] - $inventory_available_quantity - $inventory_commited_quantity;
+                         
                           if ($quantity != 0) {
                               $inventoryAdjustResponse = $this->adjustInventoryQuantity($inventoryId, $locationId, $quantity);
                               $success = true;
@@ -258,12 +298,11 @@ class ProductApiController
                       }
                       $update_status_2 = true;
                   }
-                  if($update_status_1==true && $update_status_2==true)
-                  {
-                    $this->updateProductStatus($product, 'exported');
-                  }
                   
-                  $this->updateProductAndVariantId($product['sku'],$this->getIdFromGid($productId),$this->getIdFromGid($variantId));
+                    $this->updateProductStatus($product, 'exported');
+                  
+                  
+                  //$this->updateProductAndVariantId($product['sku'],$this->getIdFromGid($productId),$this->getIdFromGid($variantId));
   
                   echo "Product " . $product['product_title'] . " Uploaded \n";
                   $success = true;
@@ -536,54 +575,118 @@ return $id;
             ];
             return $this->makeGraphQLRequest($mutation, $variables);
     }
-
-    public function updateProductWithImage($productData,$mediaInput)
-    {
-        $mutation = '
+    public function updateProductWithImage($productData, $mediaInput)
+{
+    // Update product
+    $mutation = '
         mutation productUpdate($input: ProductInput!) {
-            productUpdate(input: $input) {
-                product {
-                    id
-                    title
-                    variants(first: 1) {
-                      edges {
-                        node {
-                          id
-                          title
-                          sku
-                          inventoryItem {
-                            id
-                            inventoryLevels(first: 1) {
-                              edges {
-                                node {
-                                  id
-                                  location {
-                                    id
-                                    name
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-              userErrors {
-                field
-                message
-              }
+          productUpdate(input: $input) {
+            product {
+              id
+              title
             }
-          }';
-           
-            $productInput = $productData['input'];
-            $variables = [
-                'input' => $productInput,
-                'media' => $mediaInput
-            ];
-
-            return $this->makeGraphQLRequest($mutation, $variables);
+            userErrors {
+              field
+              message
+            }
+          }
         }
+    ';
+    $productInput = $productData['input'];
+    $variables = [
+        'input' => $productInput,
+        'media' => $mediaInput
+    ];
+    $this->makeGraphQLRequest($mutation, $variables);
+}
+
+public function updateMetafields($productData)
+{
+    // Update metafields
+    $mutation = '
+    mutation metafieldsSet($metafields: [MetafieldInput!]!) {
+      metafieldsSet(metafields: $metafields) {
+        metafields {
+          id
+          value
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  ';
+    $metafields = $productData['input']['metafields'];
+    
+    foreach ($metafields as $metafield) {
+      $variables = [
+          'metafields' => $metafield
+      ];
+      $this->makeGraphQLRequest($mutation, $variables);
+  }
+        return $this->makeGraphQLRequest($mutation, $variables);
+   
+}
+
+    // public function updateProductWithImage($productData,$mediaInput)
+    // {
+    //     $mutation = '
+    //     mutation productUpdate($input: ProductInput!) {
+    //       productUpdate(input: $input) {
+    //         product {
+    //           id
+    //           title
+    //           metafields(first: 10) {
+    //             edges {
+    //               node {
+    //                 id
+    //                 namespace
+    //                 key
+    //                 value
+    //               }
+    //             }
+    //           }
+    //           variants(first: 1) {
+    //             edges {
+    //               node {
+    //                 id
+    //                 title
+    //                 sku
+    //                 inventoryItem {
+    //                   id
+    //                   inventoryLevels(first: 1) {
+    //                     edges {
+    //                       node {
+    //                         id
+    //                         location {
+    //                           id
+    //                           name
+    //                         }
+    //                       }
+    //                     }
+    //                   }
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         }
+    //         userErrors {
+    //           field
+    //           message
+    //         }
+    //       }
+    //     }';
+           
+    //         $productInput = $productData['input'];
+            
+    //         $variables = [
+    //             'input' => $productInput,
+    //             'media' => $mediaInput
+    //         ];
+
+    //         return $this->makeGraphQLRequest($mutation, $variables);
+    //     }
    
 
     public function updateProductVariant($variantInput)
@@ -768,7 +871,7 @@ return $id;
             if (preg_match("/steve|discontinued|wholesale_only/i", $collections)) {
                 return "DRAFT";
             }
-            return "DRAFT";
+            return "ACTIVE";
         }
 
         private function getCommand($row, $status)
@@ -812,25 +915,29 @@ return $id;
 
         private function getPurchaseCost($row)
         {
-            if (strtolower($row['type']) == "loose diamonds") {
-                return round($row['purchase_cost_aud'] * $row['carat'], 2);
-            }
-            return $row['purchase_cost_aud'];
+          $purchase_cost = "";
+          if( strtolower($row['type']) == "loose diamonds" ) { 
+            $purchase_cost = $row['purchase_cost_aud'] * $row['carat']; 
+            $purchase_cost = round($purchase_cost,2); } 
+            else{
+               $purchase_cost = $row['purchase_cost_aud']; 
+              }
+              return $purchase_cost;
         }
 
         private function getTags($row)
         {
-            $tags = "";
-            $tags .= !empty($row['tags']) ? $row['tags'] . ", " : "";
-            $tags .= !empty($row['brand']) ? $row['brand'] . ", " : "";
-            $tags .= !empty($row['colour']) ? $row['colour'] . ", " : "";
+            $tags = [];
+            $tags .= $row['tags'] ? $row['tags'] . ", " : "";
+            $tags .= $row['brand'] ? $row['brand'] . ", " : "";
+            $tags .= $row['colour'] ? $row['colour'] . ", " : "";
             $tags .= preg_match("/pp|pr|pc|bl|pred/i", strtolower($row['colour'])) ?
                 strtoupper(substr($row['colour'], 0, 2)) . " - " . ucfirst(strtolower($row['colour'])) . ", " : "";
-            $tags .= !empty($row['shape']) ? $row['shape'] . ", " : "";
-            $tags .= !empty($row['clarity']) ? $row['clarity'] . ", " : "";
-            $tags .= !empty($row['collections']) ? $row['collections'] . ", " : "";
-            $tags .= !empty($row['type']) ? $row['type'] . ", " : "";
-            $tags .= !empty($row['main_metal']) ? $row['main_metal'] . " Metal, " : "";
+            $tags .= $row['shape'] ? $row['shape'] . ", " : "";
+            $tags .= $row['clarity'] ? $row['clarity'] . ", " : "";
+            $tags .= $row['collections'] ? $row['collections'] . ", " : "";
+            $tags .= $row['type'] ? $row['type'] . ", " : "";
+            $tags .= $row['main_metal'] ? $row['main_metal'] . " Metal, " : "";
             $tags .= $row['preorder'] == 1 ? "Preorder, " : "";
             if (strtolower($row['type']) == "loose diamonds") {
                 $tags .= $row['collections'] == "SKS" ? "pkcertified" : "";

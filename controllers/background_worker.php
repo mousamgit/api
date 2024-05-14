@@ -9,8 +9,7 @@ use models\PimShopify;
 $products = PimShopify::where('status', 'pending')
                       ->orderBy('id', 'ASC')
                       ->take(5)
-                      ->get();
-                      
+                      ->get();           
 if (count($products) > 0) {
     foreach ($products as $product) {
         $productApiController = new \controllers\ProductApiController();

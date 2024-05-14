@@ -17,7 +17,7 @@ $deleteProductFilterQuery = "update table_filter set status=0 WHERE table_name= 
 
 $deleteUserFilterQuery = "update user_filter_details set status=0 WHERE table_name= '".$table_name."' AND id=" . $data['productDetId'];
 
-$deleting_row = $con->query("select attribute_name,op_value,index_no from product_filter WHERE table_name= '".$table_name."' AND id=".$data['productDetId']);
+$deleting_row = $con->query("select attribute_name,op_value,index_no from table_filter WHERE table_name= '".$table_name."' AND id=".$data['productDetId']);
 
 
 if($deleting_row->num_rows >0)
