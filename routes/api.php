@@ -21,6 +21,7 @@ route('GET', '/mypimdata', 'ProductApiController@mypimdata');
 route('GET', '/', 'HomepageController@index');
 route('GET', '/api/get_products', 'ProductApiController@getProducts');
 route('POST', '/api/create_products', 'ProductApiController@createProduct');
+route('GET', '/getAllPublications', 'ProductApiController@getAllPublications');
 
 // Handle invalid routes
 echo "404 Not Found\n";

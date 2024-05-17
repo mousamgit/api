@@ -5,7 +5,6 @@ require_once '/var/www/html/pim/models/PimShopify.php';
 
 use models\PimShopify;
 
-
 $products = PimShopify::where('status', 'pending')
                       ->orderBy('id', 'ASC')
                       ->take(5)

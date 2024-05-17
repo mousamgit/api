@@ -1,196 +1,39 @@
-<pre>Array
-(
-    [errors] => Array
-        (
-            [0] => Array
-                (
-                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
-                    [locations] => Array
-                        (
-                            [0] => Array
-                                (
-                                    [line] => 3
-                                    [column] => 21
-                                )
-
-                        )
-
-                    [path] => Array
-                        (
-                            [0] => mutation metafieldsSet
-                            [1] => metafieldsSet
-                            [2] => metafields
-                        )
-
-                    [extensions] => Array
-                        (
-                            [code] => variableMismatch
-                            [variableName] => metafields
-                            [typeName] => [MetafieldInput!]!
-                            [argumentName] => metafields
-                            [errorMessage] => Type mismatch
-                        )
-
-                )
-
-        )
-
-)
-
-</pre><pre>Array
-(
-    [errors] => Array
-        (
-            [0] => Array
-                (
-                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
-                    [locations] => Array
-                        (
-                            [0] => Array
-                                (
-                                    [line] => 3
-                                    [column] => 21
-                                )
-
-                        )
-
-                    [path] => Array
-                        (
-                            [0] => mutation metafieldsSet
-                            [1] => metafieldsSet
-                            [2] => metafields
-                        )
-
-                    [extensions] => Array
-                        (
-                            [code] => variableMismatch
-                            [variableName] => metafields
-                            [typeName] => [MetafieldInput!]!
-                            [argumentName] => metafields
-                            [errorMessage] => Type mismatch
-                        )
-
-                )
-
-        )
-
-)
-
-</pre><pre>Array
-(
-    [errors] => Array
-        (
-            [0] => Array
-                (
-                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
-                    [locations] => Array
-                        (
-                            [0] => Array
-                                (
-                                    [line] => 3
-                                    [column] => 21
-                                )
-
-                        )
-
-                    [path] => Array
-                        (
-                            [0] => mutation metafieldsSet
-                            [1] => metafieldsSet
-                            [2] => metafields
-                        )
-
-                    [extensions] => Array
-                        (
-                            [code] => variableMismatch
-                            [variableName] => metafields
-                            [typeName] => [MetafieldInput!]!
-                            [argumentName] => metafields
-                            [errorMessage] => Type mismatch
-                        )
-
-                )
-
-        )
-
-)
-
-</pre><pre>Array
-(
-    [errors] => Array
-        (
-            [0] => Array
-                (
-                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
-                    [locations] => Array
-                        (
-                            [0] => Array
-                                (
-                                    [line] => 3
-                                    [column] => 21
-                                )
-
-                        )
-
-                    [path] => Array
-                        (
-                            [0] => mutation metafieldsSet
-                            [1] => metafieldsSet
-                            [2] => metafields
-                        )
-
-                    [extensions] => Array
-                        (
-                            [code] => variableMismatch
-                            [variableName] => metafields
-                            [typeName] => [MetafieldInput!]!
-                            [argumentName] => metafields
-                            [errorMessage] => Type mismatch
-                        )
-
-                )
-
-        )
-
-)
-
-</pre><pre>Array
-(
-    [errors] => Array
-        (
-            [0] => Array
-                (
-                    [message] => Type mismatch on variable $metafields and argument metafields ([MetafieldInput!]! / [MetafieldsSetInput!]!)
-                    [locations] => Array
-                        (
-                            [0] => Array
-                                (
-                                    [line] => 3
-                                    [column] => 21
-                                )
-
-                        )
-
-                    [path] => Array
-                        (
-                            [0] => mutation metafieldsSet
-                            [1] => metafieldsSet
-                            [2] => metafields
-                        )
-
-                    [extensions] => Array
-                        (
-                            [code] => variableMismatch
-                            [variableName] => metafields
-                            [typeName] => [MetafieldInput!]!
-                            [argumentName] => metafields
-                            [errorMessage] => Type mismatch
-                        )
-
-                )
-
-        )
-
-)
-
-</pre>
+deleted PKP-RDMMB0315
+deleted PKP-RDMMB1720
+deleted PKP-RDPMW0101
+deleted PKP-RDXMB0401
+deleted PKP-RDCMB1021
+deleted PKP-RDCMB1046
+deleted PKP-RDCMB1464
+deleted PKP-RDCMB1468
+deleted PKP-RDCMB1471
+deleted PKP-RDCSB2501
+deleted PKP-RDDMB2506
+deleted PKP-RDDMB3901
+deleted PKP-RDDMB4001
+deleted PKP-RDDSB1901
+no item in shopifyno item in shopifyno item in shopifyno item in shopifyno item in shopifyNew Product PKP-RDCMB1021 Uploaded 
+Product Kimberley Peony Necklace Uploaded 
+All Uploaded successfully 
+New Product PKP-RDCMB1046 Uploaded 
+Product Kimberley Peony Necklace Uploaded 
+All Uploaded successfully 
+New Product PKP-RDCMB1464 Uploaded 
+Product Kimberley Peony Petite Necklace Uploaded 
+All Uploaded successfully 
+New Product PKP-RDCMB1468 Uploaded 
+Product Kimberley Peony Petite Necklace Uploaded 
+All Uploaded successfully 
+New Product PKP-RDCMB1471 Uploaded 
+Product Kimberley Peony Petite Necklace Uploaded 
+All Uploaded successfully 
+deleted PKP-RDCMB1021
+deleted PKP-RDCMB1046
+deleted PKP-RDCMB1464
+deleted PKP-RDCMB1468
+deleted PKP-RDCMB1471
+no item in shopifyno item in shopifyno item in shopifyno item in shopifyno item in shopifyno item in shopify 
+no item in shopify 
+no item in shopify 
+no item in shopify 
+no item in shopify 
