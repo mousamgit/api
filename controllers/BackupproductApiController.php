@@ -158,7 +158,7 @@ class ProductApiController
                     $command = "DELETE";
                 }
             } else {
-                $command = "DELETE";
+                $command = "MERGE";
             }
 
             // Stone price vs item price
@@ -678,7 +678,7 @@ class ProductApiController
     public function getProductOption($productId)
     {
         $query = '
-    query GetProductOptions($productId: ID!) {
+        query GetProductOptions($productId: ID!) {
         product(id: $productId) {
             options {
                 id
