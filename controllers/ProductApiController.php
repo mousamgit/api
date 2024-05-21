@@ -18,11 +18,11 @@ class ProductApiController
 
     public function __construct()
     {
-        $this->storeUrl = "pink-kimberley.myshopify.com";
+        $this->storeUrl = "sga-development.myshopify.com";
         // sga-dev-token
-        // $this->accessToken = "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";  
+         $this->accessToken = "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";  
         // pink-kimberley
-        $this->accessToken = "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";    
+        // $this->accessToken = "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";    
     }
 
     public function mypimdata()

@@ -19,7 +19,6 @@ include 'functions.php';
     <script src="/js/pimjs.js" ></script>
     <script src="/js/filter.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
-    <script type="module" src="/products/js/ProductFilters.js" ></script>
     <title>Homepage</title>
     <style>
     </style>
